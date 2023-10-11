@@ -1,0 +1,111 @@
+/* generated using openapi-typescript-codegen -- do no edit */
+/* istanbul ignore file */
+/* tslint:disable */
+/* eslint-disable */
+import type { IczpNet_Chat_WalletRecorders_Dtos_WalletRecorderDto } from '../models/IczpNet_Chat_WalletRecorders_Dtos_WalletRecorderDto';
+import type { IczpNet_Chat_WalletRecorders_Dtos_WalletRecorderDto_IczpNet_Chat_Application_Contracts_Version_0_1_1_0_Culture_neutral_PublicKeyToken_null_ } from '../models/IczpNet_Chat_WalletRecorders_Dtos_WalletRecorderDto_IczpNet_Chat_Application_Contracts_Version_0_1_1_0_Culture_neutral_PublicKeyToken_null_';
+import type { Volo_Abp_Application_Dtos_PagedResultDto_1 } from '../models/Volo_Abp_Application_Dtos_PagedResultDto_1';
+
+import type { CancelablePromise } from '../core/CancelablePromise';
+import { OpenAPI } from '../core/OpenAPI';
+import { request as __request } from '../core/request';
+
+export class WalletRecorderService {
+
+    /**
+     * @param id 
+     * @returns IczpNet_Chat_WalletRecorders_Dtos_WalletRecorderDto Success
+     * @throws ApiError
+     */
+    public static getApiChatWalletRecorder(
+id: string,
+): CancelablePromise<IczpNet_Chat_WalletRecorders_Dtos_WalletRecorderDto> {
+        return __request(OpenAPI, {
+            method: 'GET',
+            url: '/api/chat/wallet-recorder/{id}',
+            path: {
+                'id': id,
+            },
+            errors: {
+                400: `Bad Request`,
+                401: `Unauthorized`,
+                403: `Forbidden`,
+                404: `Not Found`,
+                500: `Server Error`,
+                501: `Server Error`,
+            },
+        });
+    }
+
+    /**
+     * @param ownerId 
+     * @param businessId 
+     * @param minAmount 
+     * @param maxAmount 
+     * @param keyword 关键字(支持拼音)
+     * @param maxResultCount 显示数量
+     * @param skipCount 跳过数量
+     * @param sorting 排序
+     * @returns Volo_Abp_Application_Dtos_PagedResultDto_1<IczpNet_Chat_WalletRecorders_Dtos_WalletRecorderDto_IczpNet_Chat_Application_Contracts_Version_0_1_1_0_Culture_neutral_PublicKeyToken_null_> Success
+     * @throws ApiError
+     */
+    public static getApiChatWalletRecorder1(
+ownerId?: number,
+businessId?: string,
+minAmount?: number,
+maxAmount?: number,
+keyword: string = null,
+maxResultCount?: number,
+skipCount?: number,
+sorting: string = null,
+): CancelablePromise<Volo_Abp_Application_Dtos_PagedResultDto_1> {
+        return __request(OpenAPI, {
+            method: 'GET',
+            url: '/api/chat/wallet-recorder',
+            query: {
+                'OwnerId': ownerId,
+                'BusinessId': businessId,
+                'MinAmount': minAmount,
+                'MaxAmount': maxAmount,
+                'Keyword': keyword,
+                'MaxResultCount': maxResultCount,
+                'SkipCount': skipCount,
+                'Sorting': sorting,
+            },
+            errors: {
+                400: `Bad Request`,
+                401: `Unauthorized`,
+                403: `Forbidden`,
+                404: `Not Found`,
+                500: `Server Error`,
+                501: `Server Error`,
+            },
+        });
+    }
+
+    /**
+     * @param idList 
+     * @returns IczpNet_Chat_WalletRecorders_Dtos_WalletRecorderDto Success
+     * @throws ApiError
+     */
+    public static getApiChatWalletRecorderMany(
+idList?: Array<string>,
+): CancelablePromise<Array<IczpNet_Chat_WalletRecorders_Dtos_WalletRecorderDto>> {
+        return __request(OpenAPI, {
+            method: 'GET',
+            url: '/api/chat/wallet-recorder/many',
+            query: {
+                'idList': idList,
+            },
+            errors: {
+                400: `Bad Request`,
+                401: `Unauthorized`,
+                403: `Forbidden`,
+                404: `Not Found`,
+                500: `Server Error`,
+                501: `Server Error`,
+            },
+        });
+    }
+
+}

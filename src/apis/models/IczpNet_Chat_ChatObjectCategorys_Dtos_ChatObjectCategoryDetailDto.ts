@@ -1,0 +1,20 @@
+/* generated using openapi-typescript-codegen -- do no edit */
+/* istanbul ignore file */
+/* tslint:disable */
+/* eslint-disable */
+
+/**
+ * ChatObjectCategory DetailDto
+ */
+export type IczpNet_Chat_ChatObjectCategorys_Dtos_ChatObjectCategoryDetailDto = {
+    id?: string;
+    parentId?: string | null;
+    name?: string | null;
+    depth?: number;
+    childrenCount?: number;
+    fullPath?: string | null;
+    fullPathName?: string | null;
+    sorting?: number;
+    chatObjectTypeId?: string | null;
+    description?: string | null;
+};
