@@ -32,13 +32,14 @@ export class ToolService {
 
     /**
      * Abp解密
-     * @param value 
      * @returns string Success
      * @throws ApiError
      */
-    public static postApiChatToolDecrpyt(
+    public static postApiChatToolDecrpyt({
+value,
+}: {
 value?: string,
-): CancelablePromise<string> {
+}): CancelablePromise<string> {
         return __request(OpenAPI, {
             method: 'POST',
             url: '/api/chat/tool/decrpyt',
@@ -58,13 +59,14 @@ value?: string,
 
     /**
      * Abp加密
-     * @param value 
      * @returns string Success
      * @throws ApiError
      */
-    public static postApiChatToolEncrypt(
+    public static postApiChatToolEncrypt({
+value,
+}: {
 value?: string,
-): CancelablePromise<string> {
+}): CancelablePromise<string> {
         return __request(OpenAPI, {
             method: 'POST',
             url: '/api/chat/tool/encrypt',
@@ -104,15 +106,16 @@ value?: string,
 
     /**
      * 获取系统权限列表
-     * @param providerName 
-     * @param providerKey 
      * @returns Volo_Abp_PermissionManagement_GetPermissionListResultDto Success
      * @throws ApiError
      */
-    public static postApiChatToolGet(
+    public static postApiChatToolGet({
+providerName,
+providerKey,
+}: {
 providerName?: string,
 providerKey?: string,
-): CancelablePromise<Volo_Abp_PermissionManagement_GetPermissionListResultDto> {
+}): CancelablePromise<Volo_Abp_PermissionManagement_GetPermissionListResultDto> {
         return __request(OpenAPI, {
             method: 'POST',
             url: '/api/chat/tool/get',
@@ -133,13 +136,14 @@ providerKey?: string,
 
     /**
      * string 转 Md5 再转 Guid
-     * @param input 
      * @returns string Success
      * @throws ApiError
      */
-    public static postApiChatToolToGuid(
+    public static postApiChatToolToGuid({
+input,
+}: {
 input?: string,
-): CancelablePromise<string> {
+}): CancelablePromise<string> {
         return __request(OpenAPI, {
             method: 'POST',
             url: '/api/chat/tool/to-guid',
@@ -159,13 +163,14 @@ input?: string,
 
     /**
      * 转Md5
-     * @param input 
      * @returns string Success
      * @throws ApiError
      */
-    public static postApiChatToolToMD5(
+    public static postApiChatToolToMD5({
+input,
+}: {
 input?: string,
-): CancelablePromise<string> {
+}): CancelablePromise<string> {
         return __request(OpenAPI, {
             method: 'POST',
             url: '/api/chat/tool/to-mD5',
@@ -185,13 +190,14 @@ input?: string,
 
     /**
      * ToUnixTimeMilliseconds
-     * @param dateTime 
      * @returns number Success
      * @throws ApiError
      */
-    public static getApiChatToolToUnixTimeMilliseconds(
+    public static getApiChatToolToUnixTimeMilliseconds({
+dateTime,
+}: {
 dateTime?: string,
-): CancelablePromise<number> {
+}): CancelablePromise<number> {
         return __request(OpenAPI, {
             method: 'GET',
             url: '/api/chat/tool/to-unix-time-milliseconds',
@@ -211,13 +217,14 @@ dateTime?: string,
 
     /**
      * ToUnixTimeSeconds
-     * @param dateTime 
      * @returns number Success
      * @throws ApiError
      */
-    public static getApiChatToolToUnixTimeSeconds(
+    public static getApiChatToolToUnixTimeSeconds({
+dateTime,
+}: {
 dateTime?: string,
-): CancelablePromise<number> {
+}): CancelablePromise<number> {
         return __request(OpenAPI, {
             method: 'GET',
             url: '/api/chat/tool/to-unix-time-seconds',

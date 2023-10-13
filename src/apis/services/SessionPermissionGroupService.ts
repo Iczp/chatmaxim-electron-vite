@@ -18,13 +18,14 @@ export class SessionPermissionGroupService {
 
     /**
      * 新增
-     * @param requestBody 
      * @returns IczpNet_Chat_SessionSections_SessionOrganiztions_Dtos_SessionPermissionGroupDetailDto Success
      * @throws ApiError
      */
-    public static postApiChatSessionPermissionGroup(
+    public static postApiChatSessionPermissionGroup({
+requestBody,
+}: {
 requestBody?: IczpNet_Chat_SessionSections_SessionOrganiztions_Dtos_SessionPermissionGroupCreateInput,
-): CancelablePromise<IczpNet_Chat_SessionSections_SessionOrganiztions_Dtos_SessionPermissionGroupDetailDto> {
+}): CancelablePromise<IczpNet_Chat_SessionSections_SessionOrganiztions_Dtos_SessionPermissionGroupDetailDto> {
         return __request(OpenAPI, {
             method: 'POST',
             url: '/api/chat/session-permission-group',
@@ -43,27 +44,49 @@ requestBody?: IczpNet_Chat_SessionSections_SessionOrganiztions_Dtos_SessionPermi
 
     /**
      * 列表
-     * @param depth 
-     * @param isEnabledParentId 是否启用 ParentId
-     * @param parentId 父级Id,当IsEnabledParentId=false时,查询全部
-     * @param depthList 层级
-     * @param keyword 关键字(支持拼音)
-     * @param maxResultCount 显示数量
-     * @param skipCount 跳过数量
-     * @param sorting 排序
      * @returns Volo_Abp_Application_Dtos_PagedResultDto_1<IczpNet_Chat_SessionSections_SessionOrganiztions_Dtos_SessionPermissionGroupDto_IczpNet_Chat_Application_Contracts_Version_0_1_1_0_Culture_neutral_PublicKeyToken_null_> Success
      * @throws ApiError
      */
-    public static getApiChatSessionPermissionGroup(
+    public static getApiChatSessionPermissionGroup({
+depth,
+isEnabledParentId = false,
+parentId = null,
+depthList = null,
+keyword = null,
+maxResultCount,
+skipCount,
+sorting = null,
+}: {
 depth?: number,
-isEnabledParentId: boolean = false,
-parentId: number = null,
-depthList: Array<number> = null,
-keyword: string = null,
+/**
+ * 是否启用 ParentId
+ */
+isEnabledParentId?: boolean,
+/**
+ * 父级Id,当IsEnabledParentId=false时,查询全部
+ */
+parentId?: number,
+/**
+ * 层级
+ */
+depthList?: Array<number>,
+/**
+ * 关键字(支持拼音)
+ */
+keyword?: string,
+/**
+ * 显示数量
+ */
 maxResultCount?: number,
+/**
+ * 跳过数量
+ */
 skipCount?: number,
-sorting: string = null,
-): CancelablePromise<Volo_Abp_Application_Dtos_PagedResultDto_1> {
+/**
+ * 排序
+ */
+sorting?: string,
+}): CancelablePromise<Volo_Abp_Application_Dtos_PagedResultDto_1> {
         return __request(OpenAPI, {
             method: 'GET',
             url: '/api/chat/session-permission-group',
@@ -90,13 +113,17 @@ sorting: string = null,
 
     /**
      * 删除一条数据
-     * @param id 主键Id
      * @returns any Success
      * @throws ApiError
      */
-    public static postApiChatSessionPermissionGroupDelete(
+    public static postApiChatSessionPermissionGroupDelete({
+id,
+}: {
+/**
+ * 主键Id
+ */
 id: number,
-): CancelablePromise<any> {
+}): CancelablePromise<any> {
         return __request(OpenAPI, {
             method: 'POST',
             url: '/api/chat/session-permission-group/{id}/delete',
@@ -116,13 +143,17 @@ id: number,
 
     /**
      * 删除多条数据
-     * @param requestBody 主键Id[多个]
      * @returns any Success
      * @throws ApiError
      */
-    public static postApiChatSessionPermissionGroupDeleteMany(
+    public static postApiChatSessionPermissionGroupDeleteMany({
+requestBody,
+}: {
+/**
+ * 主键Id[多个]
+ */
 requestBody?: Array<number>,
-): CancelablePromise<any> {
+}): CancelablePromise<any> {
         return __request(OpenAPI, {
             method: 'POST',
             url: '/api/chat/session-permission-group/delete-many',
@@ -141,13 +172,17 @@ requestBody?: Array<number>,
 
     /**
      * 获取一条数据
-     * @param id 主键Id
      * @returns IczpNet_Chat_SessionSections_SessionOrganiztions_Dtos_SessionPermissionGroupDetailDto Success
      * @throws ApiError
      */
-    public static getApiChatSessionPermissionGroup1(
+    public static getApiChatSessionPermissionGroup1({
+id,
+}: {
+/**
+ * 主键Id
+ */
 id: number,
-): CancelablePromise<IczpNet_Chat_SessionSections_SessionOrganiztions_Dtos_SessionPermissionGroupDetailDto> {
+}): CancelablePromise<IczpNet_Chat_SessionSections_SessionOrganiztions_Dtos_SessionPermissionGroupDetailDto> {
         return __request(OpenAPI, {
             method: 'GET',
             url: '/api/chat/session-permission-group/{id}',
@@ -167,25 +202,26 @@ id: number,
 
     /**
      * 列表(缓存)
-     * @param isEnabledParentId 
-     * @param depthList 
-     * @param parentId 
-     * @param keyword 
-     * @param sorting 
-     * @param skipCount 
-     * @param maxResultCount 
      * @returns Volo_Abp_Application_Dtos_PagedResultDto_1<IczpNet_Chat_SessionSections_SessionPermissionGroups_SessionPermissionGroupInfo_IczpNet_Chat_Domain_Shared_Version_0_1_1_0_Culture_neutral_PublicKeyToken_null_> Success
      * @throws ApiError
      */
-    public static getApiChatSessionPermissionGroupByCache(
-isEnabledParentId: boolean = false,
-depthList: Array<number> = null,
-parentId: number = null,
-keyword: string = null,
+    public static getApiChatSessionPermissionGroupByCache({
+isEnabledParentId = false,
+depthList = null,
+parentId = null,
+keyword = null,
+sorting,
+skipCount,
+maxResultCount,
+}: {
+isEnabledParentId?: boolean,
+depthList?: Array<number>,
+parentId?: number,
+keyword?: string,
 sorting?: string,
 skipCount?: number,
 maxResultCount?: number,
-): CancelablePromise<Volo_Abp_Application_Dtos_PagedResultDto_1> {
+}): CancelablePromise<Volo_Abp_Application_Dtos_PagedResultDto_1> {
         return __request(OpenAPI, {
             method: 'GET',
             url: '/api/chat/session-permission-group/by-cache',
@@ -211,13 +247,17 @@ maxResultCount?: number,
 
     /**
      * 获取一条数据(缓存)
-     * @param id 主键Id
      * @returns IczpNet_Chat_SessionSections_SessionPermissionGroups_SessionPermissionGroupInfo Success
      * @throws ApiError
      */
-    public static getApiChatSessionPermissionGroupItemByCache(
+    public static getApiChatSessionPermissionGroupItemByCache({
+id,
+}: {
+/**
+ * 主键Id
+ */
 id: number,
-): CancelablePromise<IczpNet_Chat_SessionSections_SessionPermissionGroups_SessionPermissionGroupInfo> {
+}): CancelablePromise<IczpNet_Chat_SessionSections_SessionPermissionGroups_SessionPermissionGroupInfo> {
         return __request(OpenAPI, {
             method: 'GET',
             url: '/api/chat/session-permission-group/{id}/item-by-cache',
@@ -237,13 +277,17 @@ id: number,
 
     /**
      * 获取多条数据(缓存)
-     * @param idList 主键Id[多个]
      * @returns IczpNet_Chat_SessionSections_SessionPermissionGroups_SessionPermissionGroupInfo Success
      * @throws ApiError
      */
-    public static getApiChatSessionPermissionGroupManayByCache(
+    public static getApiChatSessionPermissionGroupManayByCache({
+idList,
+}: {
+/**
+ * 主键Id[多个]
+ */
 idList?: Array<number>,
-): CancelablePromise<Array<IczpNet_Chat_SessionSections_SessionPermissionGroups_SessionPermissionGroupInfo>> {
+}): CancelablePromise<Array<IczpNet_Chat_SessionSections_SessionPermissionGroups_SessionPermissionGroupInfo>> {
         return __request(OpenAPI, {
             method: 'GET',
             url: '/api/chat/session-permission-group/manay-by-cache',
@@ -263,13 +307,17 @@ idList?: Array<number>,
 
     /**
      * 获取多条数据
-     * @param idList 主键Id[多个]
      * @returns IczpNet_Chat_SessionSections_SessionOrganiztions_Dtos_SessionPermissionGroupDetailDto Success
      * @throws ApiError
      */
-    public static getApiChatSessionPermissionGroupMany(
+    public static getApiChatSessionPermissionGroupMany({
+idList,
+}: {
+/**
+ * 主键Id[多个]
+ */
 idList?: Array<number>,
-): CancelablePromise<Array<IczpNet_Chat_SessionSections_SessionOrganiztions_Dtos_SessionPermissionGroupDetailDto>> {
+}): CancelablePromise<Array<IczpNet_Chat_SessionSections_SessionOrganiztions_Dtos_SessionPermissionGroupDetailDto>> {
         return __request(OpenAPI, {
             method: 'GET',
             url: '/api/chat/session-permission-group/many',
@@ -289,15 +337,22 @@ idList?: Array<number>,
 
     /**
      * 修复数据（fullPath,fullName,childrenCount,depth等）
-     * @param maxResultCount 每次修复最大数量（过多可能导致数据库超时）
-     * @param skinCount 跳过数量
      * @returns string Success
      * @throws ApiError
      */
-    public static postApiChatSessionPermissionGroupRepairData(
-maxResultCount: number = 100,
+    public static postApiChatSessionPermissionGroupRepairData({
+maxResultCount = 100,
+skinCount,
+}: {
+/**
+ * 每次修复最大数量（过多可能导致数据库超时）
+ */
+maxResultCount?: number,
+/**
+ * 跳过数量
+ */
 skinCount?: number,
-): CancelablePromise<string> {
+}): CancelablePromise<string> {
         return __request(OpenAPI, {
             method: 'POST',
             url: '/api/chat/session-permission-group/repair-data',
@@ -318,15 +373,19 @@ skinCount?: number,
 
     /**
      * 修改
-     * @param id 主键Id
-     * @param requestBody 
      * @returns IczpNet_Chat_SessionSections_SessionOrganiztions_Dtos_SessionPermissionGroupDetailDto Success
      * @throws ApiError
      */
-    public static postApiChatSessionPermissionGroupUpdate(
+    public static postApiChatSessionPermissionGroupUpdate({
+id,
+requestBody,
+}: {
+/**
+ * 主键Id
+ */
 id: number,
 requestBody?: IczpNet_Chat_SessionSections_SessionOrganiztions_Dtos_SessionPermissionGroupUpdateInput,
-): CancelablePromise<IczpNet_Chat_SessionSections_SessionOrganiztions_Dtos_SessionPermissionGroupDetailDto> {
+}): CancelablePromise<IczpNet_Chat_SessionSections_SessionOrganiztions_Dtos_SessionPermissionGroupDetailDto> {
         return __request(OpenAPI, {
             method: 'POST',
             url: '/api/chat/session-permission-group/{id}/update',

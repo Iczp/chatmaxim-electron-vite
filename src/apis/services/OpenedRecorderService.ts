@@ -14,13 +14,14 @@ export class OpenedRecorderService {
 
     /**
      * 获取消息【已打开】的数量
-     * @param messageIdList 
      * @returns number Success
      * @throws ApiError
      */
-    public static getApiChatOpenedRecorderCounts(
+    public static getApiChatOpenedRecorderCounts({
+messageIdList,
+}: {
 messageIdList?: Array<number>,
-): CancelablePromise<Record<string, number>> {
+}): CancelablePromise<Record<string, number>> {
         return __request(OpenAPI, {
             method: 'GET',
             url: '/api/chat/opened-recorder/counts',
@@ -40,23 +41,42 @@ messageIdList?: Array<number>,
 
     /**
      * 获取消息【已打开】的聊天对象
-     * @param messageId 消息Id
-     * @param isReaded 是否已读
-     * @param keyword 关键字(支持拼音)
-     * @param maxResultCount 显示数量
-     * @param skipCount 跳过数量
-     * @param sorting 排序
      * @returns Volo_Abp_Application_Dtos_PagedResultDto_1<IczpNet_Chat_SessionUnits_Dtos_SessionUnitDestinationDto_IczpNet_Chat_Application_Contracts_Version_0_1_1_0_Culture_neutral_PublicKeyToken_null_> Success
      * @throws ApiError
      */
-    public static getApiChatOpenedRecorderByMessageId(
+    public static getApiChatOpenedRecorderByMessageId({
+messageId,
+isReaded = true,
+keyword = null,
+maxResultCount,
+skipCount,
+sorting = null,
+}: {
+/**
+ * 消息Id
+ */
 messageId: number,
-isReaded: boolean = true,
-keyword: string = null,
+/**
+ * 是否已读
+ */
+isReaded?: boolean,
+/**
+ * 关键字(支持拼音)
+ */
+keyword?: string,
+/**
+ * 显示数量
+ */
 maxResultCount?: number,
+/**
+ * 跳过数量
+ */
 skipCount?: number,
-sorting: string = null,
-): CancelablePromise<Volo_Abp_Application_Dtos_PagedResultDto_1> {
+/**
+ * 排序
+ */
+sorting?: string,
+}): CancelablePromise<Volo_Abp_Application_Dtos_PagedResultDto_1> {
         return __request(OpenAPI, {
             method: 'GET',
             url: '/api/chat/opened-recorder/by-message-id',
@@ -81,17 +101,27 @@ sorting: string = null,
 
     /**
      * 设置为【已打开】
-     * @param sessionUnitId 会话单元
-     * @param messageId 消息id
-     * @param deviceId 设备id
      * @returns IczpNet_Chat_OpenedRecorders_Dtos_OpenedRecorderDto Success
      * @throws ApiError
      */
-    public static postApiChatOpenedRecorderSetOpened(
+    public static postApiChatOpenedRecorderSetOpened({
+sessionUnitId,
+messageId,
+deviceId,
+}: {
+/**
+ * 会话单元
+ */
 sessionUnitId: string,
+/**
+ * 消息id
+ */
 messageId: number,
+/**
+ * 设备id
+ */
 deviceId?: string,
-): CancelablePromise<IczpNet_Chat_OpenedRecorders_Dtos_OpenedRecorderDto> {
+}): CancelablePromise<IczpNet_Chat_OpenedRecorders_Dtos_OpenedRecorderDto> {
         return __request(OpenAPI, {
             method: 'POST',
             url: '/api/chat/opened-recorder/set-opened',

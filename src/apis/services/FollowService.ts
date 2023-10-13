@@ -13,15 +13,22 @@ export class FollowService {
 
     /**
      * 添加关注
-     * @param sessionUnitId 会话单元ID SessionUnitId
-     * @param idList 要关注的 SessionUnitId
      * @returns boolean Success
      * @throws ApiError
      */
-    public static postApiChatFollow(
+    public static postApiChatFollow({
+sessionUnitId,
+idList,
+}: {
+/**
+ * 会话单元ID SessionUnitId
+ */
 sessionUnitId?: string,
+/**
+ * 要关注的 SessionUnitId
+ */
 idList?: Array<string>,
-): CancelablePromise<boolean> {
+}): CancelablePromise<boolean> {
         return __request(OpenAPI, {
             method: 'POST',
             url: '/api/chat/follow',
@@ -42,15 +49,22 @@ idList?: Array<string>,
 
     /**
      * 取消关注
-     * @param sessionUnitId 会话单元ID SessionUnitId
-     * @param idList 要取消关注的 SessionUnitId
      * @returns any Success
      * @throws ApiError
      */
-    public static postApiChatFollowDelete(
+    public static postApiChatFollowDelete({
+sessionUnitId,
+idList,
+}: {
+/**
+ * 会话单元ID SessionUnitId
+ */
 sessionUnitId?: string,
+/**
+ * 要取消关注的 SessionUnitId
+ */
 idList?: Array<string>,
-): CancelablePromise<any> {
+}): CancelablePromise<any> {
         return __request(OpenAPI, {
             method: 'POST',
             url: '/api/chat/follow/delete',
@@ -71,21 +85,37 @@ idList?: Array<string>,
 
     /**
      * 关注我的
-     * @param sessionUnitId 会话单元Id
-     * @param keyword 关键字(支持拼音)
-     * @param maxResultCount 显示数量
-     * @param skipCount 跳过数量
-     * @param sorting 排序
      * @returns Volo_Abp_Application_Dtos_PagedResultDto_1<IczpNet_Chat_SessionUnits_Dtos_SessionUnitDestinationDto_IczpNet_Chat_Application_Contracts_Version_0_1_1_0_Culture_neutral_PublicKeyToken_null_> Success
      * @throws ApiError
      */
-    public static getApiChatFollowFollower(
+    public static getApiChatFollowFollower({
+sessionUnitId,
+keyword = null,
+maxResultCount,
+skipCount,
+sorting = null,
+}: {
+/**
+ * 会话单元Id
+ */
 sessionUnitId: string,
-keyword: string = null,
+/**
+ * 关键字(支持拼音)
+ */
+keyword?: string,
+/**
+ * 显示数量
+ */
 maxResultCount?: number,
+/**
+ * 跳过数量
+ */
 skipCount?: number,
-sorting: string = null,
-): CancelablePromise<Volo_Abp_Application_Dtos_PagedResultDto_1> {
+/**
+ * 排序
+ */
+sorting?: string,
+}): CancelablePromise<Volo_Abp_Application_Dtos_PagedResultDto_1> {
         return __request(OpenAPI, {
             method: 'GET',
             url: '/api/chat/follow/follower',
@@ -109,21 +139,37 @@ sorting: string = null,
 
     /**
      * 我关注的
-     * @param sessionUnitId 会话单元Id
-     * @param keyword 关键字(支持拼音)
-     * @param maxResultCount 显示数量
-     * @param skipCount 跳过数量
-     * @param sorting 排序
      * @returns Volo_Abp_Application_Dtos_PagedResultDto_1<IczpNet_Chat_SessionUnits_Dtos_SessionUnitDestinationDto_IczpNet_Chat_Application_Contracts_Version_0_1_1_0_Culture_neutral_PublicKeyToken_null_> Success
      * @throws ApiError
      */
-    public static getApiChatFollowFollowing(
+    public static getApiChatFollowFollowing({
+sessionUnitId,
+keyword = null,
+maxResultCount,
+skipCount,
+sorting = null,
+}: {
+/**
+ * 会话单元Id
+ */
 sessionUnitId: string,
-keyword: string = null,
+/**
+ * 关键字(支持拼音)
+ */
+keyword?: string,
+/**
+ * 显示数量
+ */
 maxResultCount?: number,
+/**
+ * 跳过数量
+ */
 skipCount?: number,
-sorting: string = null,
-): CancelablePromise<Volo_Abp_Application_Dtos_PagedResultDto_1> {
+/**
+ * 排序
+ */
+sorting?: string,
+}): CancelablePromise<Volo_Abp_Application_Dtos_PagedResultDto_1> {
         return __request(OpenAPI, {
             method: 'GET',
             url: '/api/chat/follow/following',

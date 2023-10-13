@@ -17,15 +17,16 @@ export class SessionService {
 
     /**
      * 添加会话角色
-     * @param sessionId 
-     * @param name 
      * @returns IczpNet_Chat_SessionSections_SessionRoles_Dtos_SessionRoleDto Success
      * @throws ApiError
      */
-    public static postApiChatSessionRole(
+    public static postApiChatSessionRole({
+sessionId,
+name,
+}: {
 sessionId: string,
 name?: string,
-): CancelablePromise<IczpNet_Chat_SessionSections_SessionRoles_Dtos_SessionRoleDto> {
+}): CancelablePromise<IczpNet_Chat_SessionSections_SessionRoles_Dtos_SessionRoleDto> {
         return __request(OpenAPI, {
             method: 'POST',
             url: '/api/chat/session/role/{sessionId}',
@@ -48,15 +49,22 @@ name?: string,
 
     /**
      * 添加角色成员
-     * @param roleId 会话角色Id
-     * @param requestBody 会话单元Id列表
      * @returns any Success
      * @throws ApiError
      */
-    public static postApiChatSessionRoleMembers(
+    public static postApiChatSessionRoleMembers({
+roleId,
+requestBody,
+}: {
+/**
+ * 会话角色Id
+ */
 roleId: string,
+/**
+ * 会话单元Id列表
+ */
 requestBody?: Array<string>,
-): CancelablePromise<any> {
+}): CancelablePromise<any> {
         return __request(OpenAPI, {
             method: 'POST',
             url: '/api/chat/session/role-members/{roleId}',
@@ -78,15 +86,22 @@ requestBody?: Array<string>,
 
     /**
      * 添加会话标签
-     * @param sessionId 会话Id
-     * @param name 名称
      * @returns IczpNet_Chat_SessionSections_SessionTags_Dtos_SessionTagDto Success
      * @throws ApiError
      */
-    public static postApiChatSessionTag(
+    public static postApiChatSessionTag({
+sessionId,
+name,
+}: {
+/**
+ * 会话Id
+ */
 sessionId: string,
+/**
+ * 名称
+ */
 name?: string,
-): CancelablePromise<IczpNet_Chat_SessionSections_SessionTags_Dtos_SessionTagDto> {
+}): CancelablePromise<IczpNet_Chat_SessionSections_SessionTags_Dtos_SessionTagDto> {
         return __request(OpenAPI, {
             method: 'POST',
             url: '/api/chat/session/tag/{sessionId}',
@@ -109,15 +124,22 @@ name?: string,
 
     /**
      * 添加标签成员
-     * @param tagId 会话标签Id
-     * @param requestBody 会话单元Id列表
      * @returns any Success
      * @throws ApiError
      */
-    public static postApiChatSessionTagMembers(
+    public static postApiChatSessionTagMembers({
+tagId,
+requestBody,
+}: {
+/**
+ * 会话标签Id
+ */
 tagId: string,
+/**
+ * 会话单元Id列表
+ */
 requestBody?: Array<string>,
-): CancelablePromise<any> {
+}): CancelablePromise<any> {
         return __request(OpenAPI, {
             method: 'POST',
             url: '/api/chat/session/tag-members/{tagId}',
@@ -159,13 +181,17 @@ requestBody?: Array<string>,
 
     /**
      * 获取一个聊天会话
-     * @param id 主建Id
      * @returns IczpNet_Chat_SessionSections_Sessions_Dtos_SessionDto Success
      * @throws ApiError
      */
-    public static getApiChatSession(
+    public static getApiChatSession({
+id,
+}: {
+/**
+ * 主建Id
+ */
 id: string,
-): CancelablePromise<IczpNet_Chat_SessionSections_Sessions_Dtos_SessionDto> {
+}): CancelablePromise<IczpNet_Chat_SessionSections_Sessions_Dtos_SessionDto> {
         return __request(OpenAPI, {
             method: 'GET',
             url: '/api/chat/session/{id}',
@@ -185,13 +211,17 @@ id: string,
 
     /**
      * 聊天会话详情
-     * @param id 主建Id
      * @returns IczpNet_Chat_SessionSections_Sessions_Dtos_SessionDetailDto Success
      * @throws ApiError
      */
-    public static getApiChatSessionDetail(
+    public static getApiChatSessionDetail({
+id,
+}: {
+/**
+ * 主建Id
+ */
 id: string,
-): CancelablePromise<IczpNet_Chat_SessionSections_Sessions_Dtos_SessionDetailDto> {
+}): CancelablePromise<IczpNet_Chat_SessionSections_Sessions_Dtos_SessionDetailDto> {
         return __request(OpenAPI, {
             method: 'GET',
             url: '/api/chat/session/{id}/detail',
@@ -211,21 +241,37 @@ id: string,
 
     /**
      * 聊天会话列表
-     * @param ownerId 聊天对象Id
-     * @param keyword 关键字(支持拼音)
-     * @param maxResultCount 显示数量
-     * @param skipCount 跳过数量
-     * @param sorting 排序
      * @returns Volo_Abp_Application_Dtos_PagedResultDto_1<IczpNet_Chat_SessionSections_Sessions_Dtos_SessionDto_IczpNet_Chat_Application_Contracts_Version_0_1_1_0_Culture_neutral_PublicKeyToken_null_> Success
      * @throws ApiError
      */
-    public static getApiChatSession1(
+    public static getApiChatSession1({
+ownerId,
+keyword = null,
+maxResultCount,
+skipCount,
+sorting = null,
+}: {
+/**
+ * 聊天对象Id
+ */
 ownerId?: number,
-keyword: string = null,
+/**
+ * 关键字(支持拼音)
+ */
+keyword?: string,
+/**
+ * 显示数量
+ */
 maxResultCount?: number,
+/**
+ * 跳过数量
+ */
 skipCount?: number,
-sorting: string = null,
-): CancelablePromise<Volo_Abp_Application_Dtos_PagedResultDto_1> {
+/**
+ * 排序
+ */
+sorting?: string,
+}): CancelablePromise<Volo_Abp_Application_Dtos_PagedResultDto_1> {
         return __request(OpenAPI, {
             method: 'GET',
             url: '/api/chat/session',
@@ -249,13 +295,17 @@ sorting: string = null,
 
     /**
      * 删除会话角色
-     * @param roleId 会话角色Id
      * @returns any Success
      * @throws ApiError
      */
-    public static postApiChatSessionRemoveRole(
+    public static postApiChatSessionRemoveRole({
+roleId,
+}: {
+/**
+ * 会话角色Id
+ */
 roleId: string,
-): CancelablePromise<any> {
+}): CancelablePromise<any> {
         return __request(OpenAPI, {
             method: 'POST',
             url: '/api/chat/session/remove-role/{roleId}',
@@ -275,15 +325,22 @@ roleId: string,
 
     /**
      * 删除角色成员
-     * @param roleId 会话角色Id
-     * @param requestBody 会话单元Id列表
      * @returns any Success
      * @throws ApiError
      */
-    public static postApiChatSessionRemoveRoleMembers(
+    public static postApiChatSessionRemoveRoleMembers({
+roleId,
+requestBody,
+}: {
+/**
+ * 会话角色Id
+ */
 roleId: string,
+/**
+ * 会话单元Id列表
+ */
 requestBody?: Array<string>,
-): CancelablePromise<any> {
+}): CancelablePromise<any> {
         return __request(OpenAPI, {
             method: 'POST',
             url: '/api/chat/session/remove-role-members/{roleId}',
@@ -305,13 +362,17 @@ requestBody?: Array<string>,
 
     /**
      * 删除会话标签
-     * @param tagId 会话标签Id
      * @returns any Success
      * @throws ApiError
      */
-    public static postApiChatSessionRemoveTag(
+    public static postApiChatSessionRemoveTag({
+tagId,
+}: {
+/**
+ * 会话标签Id
+ */
 tagId: string,
-): CancelablePromise<any> {
+}): CancelablePromise<any> {
         return __request(OpenAPI, {
             method: 'POST',
             url: '/api/chat/session/remove-tag/{tagId}',
@@ -331,15 +392,22 @@ tagId: string,
 
     /**
      * 删除标签成员
-     * @param tagId 会话标签Id
-     * @param requestBody 会话单元Id列表
      * @returns any Success
      * @throws ApiError
      */
-    public static postApiChatSessionRemoveTagMembers(
+    public static postApiChatSessionRemoveTagMembers({
+tagId,
+requestBody,
+}: {
+/**
+ * 会话标签Id
+ */
 tagId: string,
+/**
+ * 会话单元Id列表
+ */
 requestBody?: Array<string>,
-): CancelablePromise<any> {
+}): CancelablePromise<any> {
         return __request(OpenAPI, {
             method: 'POST',
             url: '/api/chat/session/remove-tag-members/{tagId}',
@@ -361,15 +429,22 @@ requestBody?: Array<string>,
 
     /**
      * 设置角色
-     * @param sessionUnitId 会话单元Id
-     * @param requestBody 会话角色Id
      * @returns IczpNet_Chat_SessionSections_SessionRoles_Dtos_SessionRoleDto Success
      * @throws ApiError
      */
-    public static postApiChatSessionSetRoles(
+    public static postApiChatSessionSetRoles({
+sessionUnitId,
+requestBody,
+}: {
+/**
+ * 会话单元Id
+ */
 sessionUnitId: string,
+/**
+ * 会话角色Id
+ */
 requestBody?: Array<string>,
-): CancelablePromise<Array<IczpNet_Chat_SessionSections_SessionRoles_Dtos_SessionRoleDto>> {
+}): CancelablePromise<Array<IczpNet_Chat_SessionSections_SessionRoles_Dtos_SessionRoleDto>> {
         return __request(OpenAPI, {
             method: 'POST',
             url: '/api/chat/session/set-roles/{sessionUnitId}',
@@ -391,15 +466,22 @@ requestBody?: Array<string>,
 
     /**
      * 设置标签
-     * @param sessionUnitId 会话单元Id
-     * @param requestBody 会话标签Id列表
      * @returns IczpNet_Chat_SessionSections_SessionTags_Dtos_SessionTagDto Success
      * @throws ApiError
      */
-    public static postApiChatSessionSetTags(
+    public static postApiChatSessionSetTags({
+sessionUnitId,
+requestBody,
+}: {
+/**
+ * 会话单元Id
+ */
 sessionUnitId: string,
+/**
+ * 会话标签Id列表
+ */
 requestBody?: Array<string>,
-): CancelablePromise<Array<IczpNet_Chat_SessionSections_SessionTags_Dtos_SessionTagDto>> {
+}): CancelablePromise<Array<IczpNet_Chat_SessionSections_SessionTags_Dtos_SessionTagDto>> {
         return __request(OpenAPI, {
             method: 'POST',
             url: '/api/chat/session/set-tags/{sessionUnitId}',

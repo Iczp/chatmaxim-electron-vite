@@ -19,13 +19,14 @@ export class EntryNameService {
 
     /**
      * 新增
-     * @param requestBody 
      * @returns IczpNet_Chat_EntryNames_Dtos_EntryNameDetailDto Success
      * @throws ApiError
      */
-    public static postApiChatEntryName(
+    public static postApiChatEntryName({
+requestBody,
+}: {
 requestBody?: IczpNet_Chat_EntryNames_Dtos_EntryNameCreateInput,
-): CancelablePromise<IczpNet_Chat_EntryNames_Dtos_EntryNameDetailDto> {
+}): CancelablePromise<IczpNet_Chat_EntryNames_Dtos_EntryNameDetailDto> {
         return __request(OpenAPI, {
             method: 'POST',
             url: '/api/chat/entry-name',
@@ -44,35 +45,72 @@ requestBody?: IczpNet_Chat_EntryNames_Dtos_EntryNameCreateInput,
 
     /**
      * 列表
-     * @param isChoice 是否选择
-     * @param isUniqued 是否唯一
-     * @param isRequired 是否必填
-     * @param isStatic 是否固定
-     * @param isPublic 是否公开
-     * @param isEnabledParentId 是否启用 ParentId
-     * @param parentId 父级Id,当IsEnabledParentId=false时,查询全部
-     * @param depthList 层级
-     * @param keyword 关键字(支持拼音)
-     * @param maxResultCount 显示数量
-     * @param skipCount 跳过数量
-     * @param sorting 排序
      * @returns Volo_Abp_Application_Dtos_PagedResultDto_1<IczpNet_Chat_EntryNames_Dtos_EntryNameDto_IczpNet_Chat_Application_Contracts_Version_0_1_1_0_Culture_neutral_PublicKeyToken_null_> Success
      * @throws ApiError
      */
-    public static getApiChatEntryName(
+    public static getApiChatEntryName({
+isChoice,
+isUniqued,
+isRequired,
+isStatic,
+isPublic,
+isEnabledParentId = false,
+parentId = null,
+depthList = null,
+keyword = null,
+maxResultCount,
+skipCount,
+sorting = null,
+}: {
+/**
+ * 是否选择
+ */
 isChoice?: boolean,
+/**
+ * 是否唯一
+ */
 isUniqued?: boolean,
+/**
+ * 是否必填
+ */
 isRequired?: boolean,
+/**
+ * 是否固定
+ */
 isStatic?: boolean,
+/**
+ * 是否公开
+ */
 isPublic?: boolean,
-isEnabledParentId: boolean = false,
-parentId: string = null,
-depthList: Array<number> = null,
-keyword: string = null,
+/**
+ * 是否启用 ParentId
+ */
+isEnabledParentId?: boolean,
+/**
+ * 父级Id,当IsEnabledParentId=false时,查询全部
+ */
+parentId?: string,
+/**
+ * 层级
+ */
+depthList?: Array<number>,
+/**
+ * 关键字(支持拼音)
+ */
+keyword?: string,
+/**
+ * 显示数量
+ */
 maxResultCount?: number,
+/**
+ * 跳过数量
+ */
 skipCount?: number,
-sorting: string = null,
-): CancelablePromise<Volo_Abp_Application_Dtos_PagedResultDto_1> {
+/**
+ * 排序
+ */
+sorting?: string,
+}): CancelablePromise<Volo_Abp_Application_Dtos_PagedResultDto_1> {
         return __request(OpenAPI, {
             method: 'GET',
             url: '/api/chat/entry-name',
@@ -103,13 +141,17 @@ sorting: string = null,
 
     /**
      * 删除一条数据
-     * @param id 主键Id
      * @returns any Success
      * @throws ApiError
      */
-    public static postApiChatEntryNameDelete(
+    public static postApiChatEntryNameDelete({
+id,
+}: {
+/**
+ * 主键Id
+ */
 id: string,
-): CancelablePromise<any> {
+}): CancelablePromise<any> {
         return __request(OpenAPI, {
             method: 'POST',
             url: '/api/chat/entry-name/{id}/delete',
@@ -129,13 +171,17 @@ id: string,
 
     /**
      * 删除多条数据
-     * @param requestBody 主键Id[多个]
      * @returns any Success
      * @throws ApiError
      */
-    public static postApiChatEntryNameDeleteMany(
+    public static postApiChatEntryNameDeleteMany({
+requestBody,
+}: {
+/**
+ * 主键Id[多个]
+ */
 requestBody?: Array<string>,
-): CancelablePromise<any> {
+}): CancelablePromise<any> {
         return __request(OpenAPI, {
             method: 'POST',
             url: '/api/chat/entry-name/delete-many',
@@ -154,13 +200,17 @@ requestBody?: Array<string>,
 
     /**
      * 获取一条数据
-     * @param id 主键Id
      * @returns IczpNet_Chat_EntryNames_Dtos_EntryNameDetailDto Success
      * @throws ApiError
      */
-    public static getApiChatEntryName1(
+    public static getApiChatEntryName1({
+id,
+}: {
+/**
+ * 主键Id
+ */
 id: string,
-): CancelablePromise<IczpNet_Chat_EntryNames_Dtos_EntryNameDetailDto> {
+}): CancelablePromise<IczpNet_Chat_EntryNames_Dtos_EntryNameDetailDto> {
         return __request(OpenAPI, {
             method: 'GET',
             url: '/api/chat/entry-name/{id}',
@@ -180,25 +230,26 @@ id: string,
 
     /**
      * 列表(缓存)
-     * @param isEnabledParentId 
-     * @param depthList 
-     * @param parentId 
-     * @param keyword 
-     * @param sorting 
-     * @param skipCount 
-     * @param maxResultCount 
      * @returns Volo_Abp_Application_Dtos_PagedResultDto_1<IczpNet_AbpTrees_TreeInfo_1_System_Guid_System_Private_CoreLib_Version_7_0_0_0_Culture_neutral_PublicKeyToken_7cec85d7bea7798e_IczpNet_AbpTrees_Domain_Shared_Version_0_2_1_0_Culture_neutral_PublicKeyToken_null_> Success
      * @throws ApiError
      */
-    public static getApiChatEntryNameByCache(
-isEnabledParentId: boolean = false,
-depthList: Array<number> = null,
-parentId: string = null,
-keyword: string = null,
+    public static getApiChatEntryNameByCache({
+isEnabledParentId = false,
+depthList = null,
+parentId = null,
+keyword = null,
+sorting,
+skipCount,
+maxResultCount,
+}: {
+isEnabledParentId?: boolean,
+depthList?: Array<number>,
+parentId?: string,
+keyword?: string,
 sorting?: string,
 skipCount?: number,
 maxResultCount?: number,
-): CancelablePromise<Volo_Abp_Application_Dtos_PagedResultDto_1> {
+}): CancelablePromise<Volo_Abp_Application_Dtos_PagedResultDto_1> {
         return __request(OpenAPI, {
             method: 'GET',
             url: '/api/chat/entry-name/by-cache',
@@ -224,13 +275,17 @@ maxResultCount?: number,
 
     /**
      * 获取一条数据(缓存)
-     * @param id 主键Id
      * @returns IczpNet_AbpTrees_TreeInfo_1<System_Guid_System_Private_CoreLib_Version_7_0_0_0_Culture_neutral_PublicKeyToken_7cec85d7bea7798e_> Success
      * @throws ApiError
      */
-    public static getApiChatEntryNameItemByCache(
+    public static getApiChatEntryNameItemByCache({
+id,
+}: {
+/**
+ * 主键Id
+ */
 id: string,
-): CancelablePromise<IczpNet_AbpTrees_TreeInfo_1> {
+}): CancelablePromise<IczpNet_AbpTrees_TreeInfo_1> {
         return __request(OpenAPI, {
             method: 'GET',
             url: '/api/chat/entry-name/{id}/item-by-cache',
@@ -250,13 +305,17 @@ id: string,
 
     /**
      * 获取多条数据(缓存)
-     * @param idList 主键Id[多个]
      * @returns IczpNet_AbpTrees_TreeInfo_1<System_Guid_System_Private_CoreLib_Version_7_0_0_0_Culture_neutral_PublicKeyToken_7cec85d7bea7798e_> Success
      * @throws ApiError
      */
-    public static getApiChatEntryNameManayByCache(
+    public static getApiChatEntryNameManayByCache({
+idList,
+}: {
+/**
+ * 主键Id[多个]
+ */
 idList?: Array<string>,
-): CancelablePromise<Array<IczpNet_AbpTrees_TreeInfo_1>> {
+}): CancelablePromise<Array<IczpNet_AbpTrees_TreeInfo_1>> {
         return __request(OpenAPI, {
             method: 'GET',
             url: '/api/chat/entry-name/manay-by-cache',
@@ -276,13 +335,17 @@ idList?: Array<string>,
 
     /**
      * 获取多条数据
-     * @param idList 主键Id[多个]
      * @returns IczpNet_Chat_EntryNames_Dtos_EntryNameDetailDto Success
      * @throws ApiError
      */
-    public static getApiChatEntryNameMany(
+    public static getApiChatEntryNameMany({
+idList,
+}: {
+/**
+ * 主键Id[多个]
+ */
 idList?: Array<string>,
-): CancelablePromise<Array<IczpNet_Chat_EntryNames_Dtos_EntryNameDetailDto>> {
+}): CancelablePromise<Array<IczpNet_Chat_EntryNames_Dtos_EntryNameDetailDto>> {
         return __request(OpenAPI, {
             method: 'GET',
             url: '/api/chat/entry-name/many',
@@ -302,15 +365,22 @@ idList?: Array<string>,
 
     /**
      * 修复数据（fullPath,fullName,childrenCount,depth等）
-     * @param maxResultCount 每次修复最大数量（过多可能导致数据库超时）
-     * @param skinCount 跳过数量
      * @returns string Success
      * @throws ApiError
      */
-    public static postApiChatEntryNameRepairData(
-maxResultCount: number = 100,
+    public static postApiChatEntryNameRepairData({
+maxResultCount = 100,
+skinCount,
+}: {
+/**
+ * 每次修复最大数量（过多可能导致数据库超时）
+ */
+maxResultCount?: number,
+/**
+ * 跳过数量
+ */
 skinCount?: number,
-): CancelablePromise<string> {
+}): CancelablePromise<string> {
         return __request(OpenAPI, {
             method: 'POST',
             url: '/api/chat/entry-name/repair-data',
@@ -331,15 +401,19 @@ skinCount?: number,
 
     /**
      * 修改
-     * @param id 主键Id
-     * @param requestBody 
      * @returns IczpNet_Chat_EntryNames_Dtos_EntryNameDetailDto Success
      * @throws ApiError
      */
-    public static postApiChatEntryNameUpdate(
+    public static postApiChatEntryNameUpdate({
+id,
+requestBody,
+}: {
+/**
+ * 主键Id
+ */
 id: string,
 requestBody?: IczpNet_Chat_EntryNames_Dtos_EntryNameUpdateInput,
-): CancelablePromise<IczpNet_Chat_EntryNames_Dtos_EntryNameDetailDto> {
+}): CancelablePromise<IczpNet_Chat_EntryNames_Dtos_EntryNameDetailDto> {
         return __request(OpenAPI, {
             method: 'POST',
             url: '/api/chat/entry-name/{id}/update',

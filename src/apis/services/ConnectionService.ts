@@ -15,15 +15,16 @@ import { request as __request } from '../core/request';
 export class ConnectionService {
 
     /**
-     * @param id 
-     * @param ticks 
      * @returns string Success
      * @throws ApiError
      */
-    public static postApiChatConnectionActive(
+    public static postApiChatConnectionActive({
+id,
+ticks,
+}: {
 id: string,
 ticks?: string,
-): CancelablePromise<string> {
+}): CancelablePromise<string> {
         return __request(OpenAPI, {
             method: 'POST',
             url: '/api/chat/connection/{id}/active',
@@ -45,13 +46,14 @@ ticks?: string,
     }
 
     /**
-     * @param requestBody 
      * @returns IczpNet_Chat_Connections_Dtos_ConnectionDto Success
      * @throws ApiError
      */
-    public static postApiChatConnection(
+    public static postApiChatConnection({
+requestBody,
+}: {
 requestBody?: IczpNet_Chat_Connections_Dtos_ConnectionCreateInput,
-): CancelablePromise<IczpNet_Chat_Connections_Dtos_ConnectionDto> {
+}): CancelablePromise<IczpNet_Chat_Connections_Dtos_ConnectionDto> {
         return __request(OpenAPI, {
             method: 'POST',
             url: '/api/chat/connection',
@@ -69,19 +71,32 @@ requestBody?: IczpNet_Chat_Connections_Dtos_ConnectionCreateInput,
     }
 
     /**
-     * @param keyword 关键字(支持拼音)
-     * @param maxResultCount 显示数量
-     * @param skipCount 跳过数量
-     * @param sorting 排序
      * @returns Volo_Abp_Application_Dtos_PagedResultDto_1<IczpNet_Chat_Connections_Dtos_ConnectionDto_IczpNet_Chat_Application_Contracts_Version_0_1_1_0_Culture_neutral_PublicKeyToken_null_> Success
      * @throws ApiError
      */
-    public static getApiChatConnection(
-keyword: string = null,
+    public static getApiChatConnection({
+keyword = null,
+maxResultCount,
+skipCount,
+sorting = null,
+}: {
+/**
+ * 关键字(支持拼音)
+ */
+keyword?: string,
+/**
+ * 显示数量
+ */
 maxResultCount?: number,
+/**
+ * 跳过数量
+ */
 skipCount?: number,
-sorting: string = null,
-): CancelablePromise<Volo_Abp_Application_Dtos_PagedResultDto_1> {
+/**
+ * 排序
+ */
+sorting?: string,
+}): CancelablePromise<Volo_Abp_Application_Dtos_PagedResultDto_1> {
         return __request(OpenAPI, {
             method: 'GET',
             url: '/api/chat/connection',
@@ -103,13 +118,14 @@ sorting: string = null,
     }
 
     /**
-     * @param id 
      * @returns IczpNet_Chat_Connections_Dtos_ConnectionDto Success
      * @throws ApiError
      */
-    public static getApiChatConnection1(
+    public static getApiChatConnection1({
+id,
+}: {
 id: string,
-): CancelablePromise<IczpNet_Chat_Connections_Dtos_ConnectionDto> {
+}): CancelablePromise<IczpNet_Chat_Connections_Dtos_ConnectionDto> {
         return __request(OpenAPI, {
             method: 'GET',
             url: '/api/chat/connection/{id}',

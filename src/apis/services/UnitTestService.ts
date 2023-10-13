@@ -9,17 +9,18 @@ import { request as __request } from '../core/request';
 export class UnitTestService {
 
     /**
-     * @param count 
-     * @param minValue 
-     * @param maxValue 
      * @returns number Success
      * @throws ApiError
      */
-    public static postApiChatUnitTestGenerateInt(
+    public static postApiChatUnitTestGenerateInt({
+count,
+minValue,
+maxValue,
+}: {
 count?: number,
 minValue?: number,
 maxValue?: number,
-): CancelablePromise<Array<number>> {
+}): CancelablePromise<Array<number>> {
         return __request(OpenAPI, {
             method: 'POST',
             url: '/api/chat/unit-test/generate-int',
@@ -40,13 +41,14 @@ maxValue?: number,
     }
 
     /**
-     * @param url 
      * @returns string Success
      * @throws ApiError
      */
-    public static postApiChatUnitTestHttpRequest(
+    public static postApiChatUnitTestHttpRequest({
+url,
+}: {
 url?: string,
-): CancelablePromise<string> {
+}): CancelablePromise<string> {
         return __request(OpenAPI, {
             method: 'POST',
             url: '/api/chat/unit-test/http-request',
@@ -65,15 +67,16 @@ url?: string,
     }
 
     /**
-     * @param v 
-     * @param length 
      * @returns string Success
      * @throws ApiError
      */
-    public static getApiChatUnitTestIntToString(
+    public static getApiChatUnitTestIntToString({
+v,
+length = 36,
+}: {
 v?: number,
-length: number = 36,
-): CancelablePromise<string> {
+length?: number,
+}): CancelablePromise<string> {
         return __request(OpenAPI, {
             method: 'GET',
             url: '/api/chat/unit-test/int-to-string',
@@ -93,15 +96,16 @@ length: number = 36,
     }
 
     /**
-     * @param ownerId 
-     * @param destinationId 
      * @returns string Success
      * @throws ApiError
      */
-    public static postApiChatUnitTestSessionUnitIdGenerate(
+    public static postApiChatUnitTestSessionUnitIdGenerate({
+ownerId,
+destinationId,
+}: {
 ownerId?: number,
 destinationId?: number,
-): CancelablePromise<string> {
+}): CancelablePromise<string> {
         return __request(OpenAPI, {
             method: 'POST',
             url: '/api/chat/unit-test/session-unit-id-generate',
@@ -121,15 +125,16 @@ destinationId?: number,
     }
 
     /**
-     * @param count 
-     * @param maxValue 
      * @returns number Success
      * @throws ApiError
      */
-    public static postApiChatUnitTestSessionUnitIdGenerateByRandom(
-count: number = 50,
-maxValue: number = 123456,
-): CancelablePromise<Record<string, Array<number>>> {
+    public static postApiChatUnitTestSessionUnitIdGenerateByRandom({
+count = 50,
+maxValue = 123456,
+}: {
+count?: number,
+maxValue?: number,
+}): CancelablePromise<Record<string, Array<number>>> {
         return __request(OpenAPI, {
             method: 'POST',
             url: '/api/chat/unit-test/session-unit-id-generate-by-random',
@@ -149,13 +154,14 @@ maxValue: number = 123456,
     }
 
     /**
-     * @param sessionUnitId 
      * @returns boolean Success
      * @throws ApiError
      */
-    public static postApiChatUnitTestSessionUnitIdIsVerified(
+    public static postApiChatUnitTestSessionUnitIdIsVerified({
+sessionUnitId,
+}: {
 sessionUnitId: string,
-): CancelablePromise<boolean> {
+}): CancelablePromise<boolean> {
         return __request(OpenAPI, {
             method: 'POST',
             url: '/api/chat/unit-test/session-unit-id-is-verified/{sessionUnitId}',
@@ -174,13 +180,14 @@ sessionUnitId: string,
     }
 
     /**
-     * @param sessionUnitId 
      * @returns number Success
      * @throws ApiError
      */
-    public static postApiChatUnitTestSessionUnitIdResolving(
+    public static postApiChatUnitTestSessionUnitIdResolving({
+sessionUnitId,
+}: {
 sessionUnitId: string,
-): CancelablePromise<Array<number>> {
+}): CancelablePromise<Array<number>> {
         return __request(OpenAPI, {
             method: 'POST',
             url: '/api/chat/unit-test/session-unit-id-resolving/{sessionUnitId}',
@@ -218,13 +225,14 @@ sessionUnitId: string,
     }
 
     /**
-     * @param count 
      * @returns number Success
      * @throws ApiError
      */
-    public static postApiChatUnitTestSetSessionUnitKey(
-count: number = 1000,
-): CancelablePromise<number> {
+    public static postApiChatUnitTestSetSessionUnitKey({
+count = 1000,
+}: {
+count?: number,
+}): CancelablePromise<number> {
         return __request(OpenAPI, {
             method: 'POST',
             url: '/api/chat/unit-test/set-session-unit-key',
@@ -243,15 +251,16 @@ count: number = 1000,
     }
 
     /**
-     * @param v 
-     * @param length 
      * @returns number Success
      * @throws ApiError
      */
-    public static getApiChatUnitTestStringToInt(
+    public static getApiChatUnitTestStringToInt({
+v,
+length = 36,
+}: {
 v?: string,
-length: number = 36,
-): CancelablePromise<number> {
+length?: number,
+}): CancelablePromise<number> {
         return __request(OpenAPI, {
             method: 'GET',
             url: '/api/chat/unit-test/string-to-int',
@@ -271,13 +280,14 @@ length: number = 36,
     }
 
     /**
-     * @param text 
      * @returns string Success
      * @throws ApiError
      */
-    public static postApiChatUnitTestTextSegmenter(
+    public static postApiChatUnitTestTextSegmenter({
+text,
+}: {
 text?: string,
-): CancelablePromise<Array<string>> {
+}): CancelablePromise<Array<string>> {
         return __request(OpenAPI, {
             method: 'POST',
             url: '/api/chat/unit-test/text-segmenter',
@@ -296,15 +306,16 @@ text?: string,
     }
 
     /**
-     * @param template 
-     * @param requestBody 
      * @returns string Success
      * @throws ApiError
      */
-    public static postApiChatUnitTestTextTemplate(
+    public static postApiChatUnitTestTextTemplate({
+template,
+requestBody,
+}: {
 template?: string,
 requestBody?: Record<string, any>,
-): CancelablePromise<string> {
+}): CancelablePromise<string> {
         return __request(OpenAPI, {
             method: 'POST',
             url: '/api/chat/unit-test/text-template',

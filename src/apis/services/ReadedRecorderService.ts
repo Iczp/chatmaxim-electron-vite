@@ -13,13 +13,14 @@ export class ReadedRecorderService {
 
     /**
      * 获取【已读】的数量
-     * @param messageIdList 
      * @returns number Success
      * @throws ApiError
      */
-    public static getApiChatReadedRecorderCounts(
+    public static getApiChatReadedRecorderCounts({
+messageIdList,
+}: {
 messageIdList?: Array<number>,
-): CancelablePromise<Record<string, number>> {
+}): CancelablePromise<Record<string, number>> {
         return __request(OpenAPI, {
             method: 'GET',
             url: '/api/chat/readed-recorder/counts',
@@ -39,23 +40,42 @@ messageIdList?: Array<number>,
 
     /**
      * 获取消息已读的聊天对象
-     * @param messageId 消息Id
-     * @param isReaded 是否已读
-     * @param keyword 关键字(支持拼音)
-     * @param maxResultCount 显示数量
-     * @param skipCount 跳过数量
-     * @param sorting 排序
      * @returns Volo_Abp_Application_Dtos_PagedResultDto_1<IczpNet_Chat_SessionUnits_Dtos_SessionUnitDestinationDto_IczpNet_Chat_Application_Contracts_Version_0_1_1_0_Culture_neutral_PublicKeyToken_null_> Success
      * @throws ApiError
      */
-    public static getApiChatReadedRecorderByMessageId(
+    public static getApiChatReadedRecorderByMessageId({
+messageId,
+isReaded = true,
+keyword = null,
+maxResultCount,
+skipCount,
+sorting = null,
+}: {
+/**
+ * 消息Id
+ */
 messageId: number,
-isReaded: boolean = true,
-keyword: string = null,
+/**
+ * 是否已读
+ */
+isReaded?: boolean,
+/**
+ * 关键字(支持拼音)
+ */
+keyword?: string,
+/**
+ * 显示数量
+ */
 maxResultCount?: number,
+/**
+ * 跳过数量
+ */
 skipCount?: number,
-sorting: string = null,
-): CancelablePromise<Volo_Abp_Application_Dtos_PagedResultDto_1> {
+/**
+ * 排序
+ */
+sorting?: string,
+}): CancelablePromise<Volo_Abp_Application_Dtos_PagedResultDto_1> {
         return __request(OpenAPI, {
             method: 'GET',
             url: '/api/chat/readed-recorder/by-message-id/{messageId}',
@@ -82,13 +102,17 @@ sorting: string = null,
 
     /**
      * 消息全部设置为已读
-     * @param messageId 消息Id
      * @returns number Success
      * @throws ApiError
      */
-    public static postApiChatReadedRecorderSetAll(
+    public static postApiChatReadedRecorderSetAll({
+messageId,
+}: {
+/**
+ * 消息Id
+ */
 messageId: number,
-): CancelablePromise<number> {
+}): CancelablePromise<number> {
         return __request(OpenAPI, {
             method: 'POST',
             url: '/api/chat/readed-recorder/set-all/{messageId}',
@@ -108,17 +132,27 @@ messageId: number,
 
     /**
      * 设置为【忌讳】
-     * @param sessunitUnitId 会话单元Id
-     * @param messageIdList 消息列表
-     * @param deviceId 设备Id
      * @returns number Success
      * @throws ApiError
      */
-    public static postApiChatReadedRecorderSetReadedMany(
+    public static postApiChatReadedRecorderSetReadedMany({
+sessunitUnitId,
+messageIdList,
+deviceId,
+}: {
+/**
+ * 会话单元Id
+ */
 sessunitUnitId: string,
+/**
+ * 消息列表
+ */
 messageIdList: Array<number>,
+/**
+ * 设备Id
+ */
 deviceId?: string,
-): CancelablePromise<number> {
+}): CancelablePromise<number> {
         return __request(OpenAPI, {
             method: 'POST',
             url: '/api/chat/readed-recorder/set-readed-many',

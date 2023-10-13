@@ -17,13 +17,14 @@ export class RoomService {
 
     /**
      * 创建群
-     * @param requestBody 
      * @returns IczpNet_Chat_ChatObjects_Dtos_ChatObjectDto Success
      * @throws ApiError
      */
-    public static postApiChatRoom(
+    public static postApiChatRoom({
+requestBody,
+}: {
 requestBody?: IczpNet_Chat_RoomSections_Rooms_Dtos_RoomCreateInput,
-): CancelablePromise<IczpNet_Chat_ChatObjects_Dtos_ChatObjectDto> {
+}): CancelablePromise<IczpNet_Chat_ChatObjects_Dtos_ChatObjectDto> {
         return __request(OpenAPI, {
             method: 'POST',
             url: '/api/chat/room',
@@ -42,13 +43,17 @@ requestBody?: IczpNet_Chat_RoomSections_Rooms_Dtos_RoomCreateInput,
 
     /**
      * 解散群
-     * @param sessionUnitId 会话单元Id
      * @returns any Success
      * @throws ApiError
      */
-    public static postApiChatRoomDissolve(
+    public static postApiChatRoomDissolve({
+sessionUnitId,
+}: {
+/**
+ * 会话单元Id
+ */
 sessionUnitId: string,
-): CancelablePromise<any> {
+}): CancelablePromise<any> {
         return __request(OpenAPI, {
             method: 'POST',
             url: '/api/chat/room/dissolve/{sessionUnitId}',
@@ -68,23 +73,42 @@ sessionUnitId: string,
 
     /**
      * 获取共同所在的群列表
-     * @param sourceChatObjectId 原聊天对象Id
-     * @param targetChatObjectId 目标对象Id
-     * @param keyword 关键字(支持拼音)
-     * @param maxResultCount 显示数量
-     * @param skipCount 跳过数量
-     * @param sorting 排序
      * @returns Volo_Abp_Application_Dtos_PagedResultDto_1<IczpNet_Chat_SessionUnits_Dtos_SessionUnitDto_IczpNet_Chat_Application_Contracts_Version_0_1_1_0_Culture_neutral_PublicKeyToken_null_> Success
      * @throws ApiError
      */
-    public static getApiChatRoomSame(
+    public static getApiChatRoomSame({
+sourceChatObjectId,
+targetChatObjectId,
+keyword = null,
+maxResultCount,
+skipCount,
+sorting = null,
+}: {
+/**
+ * 原聊天对象Id
+ */
 sourceChatObjectId?: number,
+/**
+ * 目标对象Id
+ */
 targetChatObjectId?: number,
-keyword: string = null,
+/**
+ * 关键字(支持拼音)
+ */
+keyword?: string,
+/**
+ * 显示数量
+ */
 maxResultCount?: number,
+/**
+ * 跳过数量
+ */
 skipCount?: number,
-sorting: string = null,
-): CancelablePromise<Volo_Abp_Application_Dtos_PagedResultDto_1> {
+/**
+ * 排序
+ */
+sorting?: string,
+}): CancelablePromise<Volo_Abp_Application_Dtos_PagedResultDto_1> {
         return __request(OpenAPI, {
             method: 'GET',
             url: '/api/chat/room/same',
@@ -109,15 +133,22 @@ sorting: string = null,
 
     /**
      * 获取共同所在的群数量
-     * @param sourceChatObjectId 原聊天对象Id
-     * @param targetChatObjectId 目标对象Id
      * @returns number Success
      * @throws ApiError
      */
-    public static getApiChatRoomSameCount(
+    public static getApiChatRoomSameCount({
+sourceChatObjectId,
+targetChatObjectId,
+}: {
+/**
+ * 原聊天对象Id
+ */
 sourceChatObjectId?: number,
+/**
+ * 目标对象Id
+ */
 targetChatObjectId?: number,
-): CancelablePromise<number> {
+}): CancelablePromise<number> {
         return __request(OpenAPI, {
             method: 'GET',
             url: '/api/chat/room/same-count',
@@ -138,13 +169,14 @@ targetChatObjectId?: number,
 
     /**
      * 邀请加入群聊
-     * @param requestBody 
      * @returns IczpNet_Chat_SessionSections_SessionUnits_SessionUnitSenderInfo Success
      * @throws ApiError
      */
-    public static postApiChatRoomInvite(
+    public static postApiChatRoomInvite({
+requestBody,
+}: {
 requestBody?: IczpNet_Chat_RoomSections_Rooms_InviteInput,
-): CancelablePromise<Array<IczpNet_Chat_SessionSections_SessionUnits_SessionUnitSenderInfo>> {
+}): CancelablePromise<Array<IczpNet_Chat_SessionSections_SessionUnits_SessionUnitSenderInfo>> {
         return __request(OpenAPI, {
             method: 'POST',
             url: '/api/chat/room/invite',
@@ -163,15 +195,22 @@ requestBody?: IczpNet_Chat_RoomSections_Rooms_InviteInput,
 
     /**
      * 转让群主
-     * @param sessionUnitId 会话单元Id
-     * @param targetSessionUnitId 目标会话单元Id(新群主Id)
      * @returns any Success
      * @throws ApiError
      */
-    public static postApiChatRoomTransferCreator(
+    public static postApiChatRoomTransferCreator({
+sessionUnitId,
+targetSessionUnitId,
+}: {
+/**
+ * 会话单元Id
+ */
 sessionUnitId?: string,
+/**
+ * 目标会话单元Id(新群主Id)
+ */
 targetSessionUnitId?: string,
-): CancelablePromise<any> {
+}): CancelablePromise<any> {
         return __request(OpenAPI, {
             method: 'POST',
             url: '/api/chat/room/transfer-creator',
@@ -192,15 +231,22 @@ targetSessionUnitId?: string,
 
     /**
      * 更新群名称并群内公告
-     * @param sessionUnitId 会话单元Id
-     * @param name 群名字
      * @returns IczpNet_Chat_ChatObjects_Dtos_ChatObjectDto Success
      * @throws ApiError
      */
-    public static postApiChatRoomUpdateName(
+    public static postApiChatRoomUpdateName({
+sessionUnitId,
+name,
+}: {
+/**
+ * 会话单元Id
+ */
 sessionUnitId: string,
+/**
+ * 群名字
+ */
 name?: string,
-): CancelablePromise<IczpNet_Chat_ChatObjects_Dtos_ChatObjectDto> {
+}): CancelablePromise<IczpNet_Chat_ChatObjects_Dtos_ChatObjectDto> {
         return __request(OpenAPI, {
             method: 'POST',
             url: '/api/chat/room/update-name/{sessionUnitId}',
@@ -223,15 +269,22 @@ name?: string,
 
     /**
      * 修改群头像
-     * @param sessionUnitId 会话单元Id
-     * @param portrait 头像,全地址或相对地址:"http://www.icpz.net/logo.png","/logo.png"
      * @returns IczpNet_Chat_ChatObjects_Dtos_ChatObjectDto Success
      * @throws ApiError
      */
-    public static postApiChatRoomUpdatePortrait(
+    public static postApiChatRoomUpdatePortrait({
+sessionUnitId,
+portrait,
+}: {
+/**
+ * 会话单元Id
+ */
 sessionUnitId: string,
+/**
+ * 头像,全地址或相对地址:"http://www.icpz.net/logo.png","/logo.png"
+ */
 portrait?: string,
-): CancelablePromise<IczpNet_Chat_ChatObjects_Dtos_ChatObjectDto> {
+}): CancelablePromise<IczpNet_Chat_ChatObjects_Dtos_ChatObjectDto> {
         return __request(OpenAPI, {
             method: 'POST',
             url: '/api/chat/room/update-portrait/{sessionUnitId}',

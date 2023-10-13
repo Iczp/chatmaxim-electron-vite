@@ -9,13 +9,14 @@ import { request as __request } from '../core/request';
 export class BlobService {
 
     /**
-     * @param id 
      * @returns string Success
      * @throws ApiError
      */
-    public static getBlob(
+    public static getBlob({
+id,
+}: {
 id?: string,
-): CancelablePromise<string> {
+}): CancelablePromise<string> {
         return __request(OpenAPI, {
             method: 'GET',
             url: '/Blob',
@@ -26,19 +27,20 @@ id?: string,
     }
 
     /**
-     * @param container 
-     * @param folder 
-     * @param formData 
      * @returns string Success
      * @throws ApiError
      */
-    public static postBlob(
+    public static postBlob({
+container,
+folder,
+formData,
+}: {
 container?: string,
 folder?: string,
 formData?: {
 file?: Blob;
 },
-): CancelablePromise<string> {
+}): CancelablePromise<string> {
         return __request(OpenAPI, {
             method: 'POST',
             url: '/Blob',
@@ -48,6 +50,7 @@ file?: Blob;
             },
             formData: formData,
             mediaType: 'multipart/form-data',
+            
         });
     }
 

@@ -15,13 +15,14 @@ import { request as __request } from '../core/request';
 export class WalletService {
 
     /**
-     * @param id 
      * @returns IczpNet_Chat_Wallets_Dtos_WalletDetailDto Success
      * @throws ApiError
      */
-    public static getApiChatWallet(
+    public static getApiChatWallet({
+id,
+}: {
 id: string,
-): CancelablePromise<IczpNet_Chat_Wallets_Dtos_WalletDetailDto> {
+}): CancelablePromise<IczpNet_Chat_Wallets_Dtos_WalletDetailDto> {
         return __request(OpenAPI, {
             method: 'GET',
             url: '/api/chat/wallet/{id}',
@@ -40,21 +41,34 @@ id: string,
     }
 
     /**
-     * @param ownerId 
-     * @param keyword 关键字(支持拼音)
-     * @param maxResultCount 显示数量
-     * @param skipCount 跳过数量
-     * @param sorting 排序
      * @returns Volo_Abp_Application_Dtos_PagedResultDto_1<IczpNet_Chat_Wallets_Dtos_WalletDto_IczpNet_Chat_Application_Contracts_Version_0_1_1_0_Culture_neutral_PublicKeyToken_null_> Success
      * @throws ApiError
      */
-    public static getApiChatWallet1(
+    public static getApiChatWallet1({
+ownerId,
+keyword = null,
+maxResultCount,
+skipCount,
+sorting = null,
+}: {
 ownerId?: number,
-keyword: string = null,
+/**
+ * 关键字(支持拼音)
+ */
+keyword?: string,
+/**
+ * 显示数量
+ */
 maxResultCount?: number,
+/**
+ * 跳过数量
+ */
 skipCount?: number,
-sorting: string = null,
-): CancelablePromise<Volo_Abp_Application_Dtos_PagedResultDto_1> {
+/**
+ * 排序
+ */
+sorting?: string,
+}): CancelablePromise<Volo_Abp_Application_Dtos_PagedResultDto_1> {
         return __request(OpenAPI, {
             method: 'GET',
             url: '/api/chat/wallet',
@@ -77,13 +91,14 @@ sorting: string = null,
     }
 
     /**
-     * @param idList 
      * @returns IczpNet_Chat_Wallets_Dtos_WalletDetailDto Success
      * @throws ApiError
      */
-    public static getApiChatWalletMany(
+    public static getApiChatWalletMany({
+idList,
+}: {
 idList?: Array<string>,
-): CancelablePromise<Array<IczpNet_Chat_Wallets_Dtos_WalletDetailDto>> {
+}): CancelablePromise<Array<IczpNet_Chat_Wallets_Dtos_WalletDetailDto>> {
         return __request(OpenAPI, {
             method: 'GET',
             url: '/api/chat/wallet/many',
@@ -102,13 +117,14 @@ idList?: Array<string>,
     }
 
     /**
-     * @param requestBody 
      * @returns IczpNet_Chat_Wallets_Dtos_WalletDto Success
      * @throws ApiError
      */
-    public static postApiChatWalletRecharge(
+    public static postApiChatWalletRecharge({
+requestBody,
+}: {
 requestBody?: IczpNet_Chat_Wallets_Dtos_RechargeInput,
-): CancelablePromise<IczpNet_Chat_Wallets_Dtos_WalletDto> {
+}): CancelablePromise<IczpNet_Chat_Wallets_Dtos_WalletDto> {
         return __request(OpenAPI, {
             method: 'POST',
             url: '/api/chat/wallet/recharge',

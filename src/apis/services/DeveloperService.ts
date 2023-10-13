@@ -16,13 +16,14 @@ export class DeveloperService {
 
     /**
      * Base64转String
-     * @param base64String 
      * @returns string Success
      * @throws ApiError
      */
-    public static postApiChatDeveloperBase64ToString(
+    public static postApiChatDeveloperBase64ToString({
+base64String,
+}: {
 base64String?: string,
-): CancelablePromise<string> {
+}): CancelablePromise<string> {
         return __request(OpenAPI, {
             method: 'POST',
             url: '/api/chat/developer/base64To-string',
@@ -42,19 +43,32 @@ base64String?: string,
 
     /**
      * 解密
-     * @param echo 密文
-     * @param chatObjectId 公众号Id
-     * @param encodingAesKey 公众平台上，开发者设置的 EncodingAesKey
-     * @param token 公众平台上，开发者设置的 Token
      * @returns IczpNet_Chat_Developers_Dtos_DecryptOutput Success
      * @throws ApiError
      */
-    public static postApiChatDeveloperDecrypt(
+    public static postApiChatDeveloperDecrypt({
+echo,
+chatObjectId,
+encodingAesKey,
+token,
+}: {
+/**
+ * 密文
+ */
 echo?: string,
+/**
+ * 公众号Id
+ */
 chatObjectId?: string,
+/**
+ * 公众平台上，开发者设置的 EncodingAesKey
+ */
 encodingAesKey?: string,
+/**
+ * 公众平台上，开发者设置的 Token
+ */
 token?: string,
-): CancelablePromise<IczpNet_Chat_Developers_Dtos_DecryptOutput> {
+}): CancelablePromise<IczpNet_Chat_Developers_Dtos_DecryptOutput> {
         return __request(OpenAPI, {
             method: 'POST',
             url: '/api/chat/developer/decrypt',
@@ -77,13 +91,14 @@ token?: string,
 
     /**
      * 加密
-     * @param requestBody 
      * @returns IczpNet_Chat_Developers_Dtos_EncryptOutput Success
      * @throws ApiError
      */
-    public static postApiChatDeveloperEncrypt(
+    public static postApiChatDeveloperEncrypt({
+requestBody,
+}: {
 requestBody?: IczpNet_Chat_Developers_Dtos_EncryptInput,
-): CancelablePromise<IczpNet_Chat_Developers_Dtos_EncryptOutput> {
+}): CancelablePromise<IczpNet_Chat_Developers_Dtos_EncryptOutput> {
         return __request(OpenAPI, {
             method: 'POST',
             url: '/api/chat/developer/encrypt',
@@ -122,19 +137,32 @@ requestBody?: IczpNet_Chat_Developers_Dtos_EncryptInput,
 
     /**
      * 生成签名
-     * @param token 公众平台上，开发者设置的 Token
-     * @param nonce 随机串，对应URL参数的 nonce
-     * @param timeStamp 时间戳，对应URL参数的 timestamp
-     * @param echo 随机串，对应URL参数的 Echo
      * @returns IczpNet_Chat_Developers_Dtos_GenerateSignatureOutput Success
      * @throws ApiError
      */
-    public static postApiChatDeveloperGenerateSignature(
+    public static postApiChatDeveloperGenerateSignature({
+token,
+nonce,
+timeStamp,
+echo,
+}: {
+/**
+ * 公众平台上，开发者设置的 Token
+ */
 token?: string,
+/**
+ * 随机串，对应URL参数的 nonce
+ */
 nonce?: string,
+/**
+ * 时间戳，对应URL参数的 timestamp
+ */
 timeStamp?: string,
+/**
+ * 随机串，对应URL参数的 Echo
+ */
 echo?: string,
-): CancelablePromise<IczpNet_Chat_Developers_Dtos_GenerateSignatureOutput> {
+}): CancelablePromise<IczpNet_Chat_Developers_Dtos_GenerateSignatureOutput> {
         return __request(OpenAPI, {
             method: 'POST',
             url: '/api/chat/developer/generate-signature',
@@ -156,13 +184,14 @@ echo?: string,
     }
 
     /**
-     * @param id 
      * @returns IczpNet_Chat_Developers_Dtos_DeveloperDto Success
      * @throws ApiError
      */
-    public static getApiChatDeveloper(
+    public static getApiChatDeveloper({
+id,
+}: {
 id: number,
-): CancelablePromise<IczpNet_Chat_Developers_Dtos_DeveloperDto> {
+}): CancelablePromise<IczpNet_Chat_Developers_Dtos_DeveloperDto> {
         return __request(OpenAPI, {
             method: 'GET',
             url: '/api/chat/developer/{id}',
@@ -182,19 +211,32 @@ id: number,
 
     /**
      * 开发者设置
-     * @param id 主建Id
-     * @param token 开发者设置的Token
-     * @param encodingAesKey 开发者设置的EncodingAESKey
-     * @param postUrl 开发者设置 的 Url
      * @returns IczpNet_Chat_Developers_Dtos_DeveloperDto Success
      * @throws ApiError
      */
-    public static postApiChatDeveloperSetConfig(
+    public static postApiChatDeveloperSetConfig({
+id,
+token = '95fd7796cc15d9f81f3f79dbc090ab03fb2941ef',
+encodingAesKey = 'GUhGDQKNcRpnp4XHQtnJY24MXWmMGV64KtahF3tjUQd',
+postUrl = 'https://',
+}: {
+/**
+ * 主建Id
+ */
 id: number,
-token: string = '95fd7796cc15d9f81f3f79dbc090ab03fb2941ef',
-encodingAesKey: string = 'GUhGDQKNcRpnp4XHQtnJY24MXWmMGV64KtahF3tjUQd',
-postUrl: string = 'https://',
-): CancelablePromise<IczpNet_Chat_Developers_Dtos_DeveloperDto> {
+/**
+ * 开发者设置的Token
+ */
+token?: string,
+/**
+ * 开发者设置的EncodingAESKey
+ */
+encodingAesKey?: string,
+/**
+ * 开发者设置 的 Url
+ */
+postUrl?: string,
+}): CancelablePromise<IczpNet_Chat_Developers_Dtos_DeveloperDto> {
         return __request(OpenAPI, {
             method: 'POST',
             url: '/api/chat/developer/{id}/set-config',
@@ -219,15 +261,19 @@ postUrl: string = 'https://',
 
     /**
      * 启用与关闭
-     * @param id 主建Id
-     * @param isEnabled 
      * @returns boolean Success
      * @throws ApiError
      */
-    public static postApiChatDeveloperSetIsEnabled(
+    public static postApiChatDeveloperSetIsEnabled({
+id,
+isEnabled,
+}: {
+/**
+ * 主建Id
+ */
 id: number,
 isEnabled?: boolean,
-): CancelablePromise<boolean> {
+}): CancelablePromise<boolean> {
         return __request(OpenAPI, {
             method: 'POST',
             url: '/api/chat/developer/{id}/set-is-enabled',
@@ -250,13 +296,14 @@ isEnabled?: boolean,
 
     /**
      * String转Base64
-     * @param input 
      * @returns string Success
      * @throws ApiError
      */
-    public static postApiChatDeveloperStringToBase64(
+    public static postApiChatDeveloperStringToBase64({
+input,
+}: {
 input?: string,
-): CancelablePromise<string> {
+}): CancelablePromise<string> {
         return __request(OpenAPI, {
             method: 'POST',
             url: '/api/chat/developer/string-to-base64',
@@ -276,21 +323,37 @@ input?: string,
 
     /**
      * 验证签名
-     * @param signature 签名 signature
-     * @param token 公众平台上，开发者设置的Token
-     * @param timeStamp 时间戳
-     * @param nonce 随机数
-     * @param cipherText 密文
      * @returns boolean Success
      * @throws ApiError
      */
-    public static postApiChatDeveloperVerifySignature(
+    public static postApiChatDeveloperVerifySignature({
+signature,
+token,
+timeStamp,
+nonce,
+cipherText,
+}: {
+/**
+ * 签名 signature
+ */
 signature?: string,
+/**
+ * 公众平台上，开发者设置的Token
+ */
 token?: string,
+/**
+ * 时间戳
+ */
 timeStamp?: string,
+/**
+ * 随机数
+ */
 nonce?: string,
+/**
+ * 密文
+ */
 cipherText?: string,
-): CancelablePromise<boolean> {
+}): CancelablePromise<boolean> {
         return __request(OpenAPI, {
             method: 'POST',
             url: '/api/chat/developer/verify-signature',

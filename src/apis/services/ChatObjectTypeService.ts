@@ -16,13 +16,14 @@ export class ChatObjectTypeService {
 
     /**
      * 新增
-     * @param requestBody 
      * @returns IczpNet_Chat_ChatObjectTypes_Dtos_ChatObjectTypeDetailDto Success
      * @throws ApiError
      */
-    public static postApiChatChatObjectType(
+    public static postApiChatChatObjectType({
+requestBody,
+}: {
 requestBody?: IczpNet_Chat_ChatObjectTypes_Dtos_ChatObjectTypeCreateInput,
-): CancelablePromise<IczpNet_Chat_ChatObjectTypes_Dtos_ChatObjectTypeDetailDto> {
+}): CancelablePromise<IczpNet_Chat_ChatObjectTypes_Dtos_ChatObjectTypeDetailDto> {
         return __request(OpenAPI, {
             method: 'POST',
             url: '/api/chat/chat-object-type',
@@ -41,19 +42,32 @@ requestBody?: IczpNet_Chat_ChatObjectTypes_Dtos_ChatObjectTypeCreateInput,
 
     /**
      * 获取列表
-     * @param keyword 关键字(支持拼音)
-     * @param maxResultCount 显示数量
-     * @param skipCount 跳过数量
-     * @param sorting 排序
      * @returns Volo_Abp_Application_Dtos_PagedResultDto_1<IczpNet_Chat_ChatObjectTypes_Dtos_ChatObjectTypeDto_IczpNet_Chat_Application_Contracts_Version_0_1_1_0_Culture_neutral_PublicKeyToken_null_> Success
      * @throws ApiError
      */
-    public static getApiChatChatObjectType(
-keyword: string = null,
+    public static getApiChatChatObjectType({
+keyword = null,
+maxResultCount,
+skipCount,
+sorting = null,
+}: {
+/**
+ * 关键字(支持拼音)
+ */
+keyword?: string,
+/**
+ * 显示数量
+ */
 maxResultCount?: number,
+/**
+ * 跳过数量
+ */
 skipCount?: number,
-sorting: string = null,
-): CancelablePromise<Volo_Abp_Application_Dtos_PagedResultDto_1> {
+/**
+ * 排序
+ */
+sorting?: string,
+}): CancelablePromise<Volo_Abp_Application_Dtos_PagedResultDto_1> {
         return __request(OpenAPI, {
             method: 'GET',
             url: '/api/chat/chat-object-type',
@@ -76,13 +90,17 @@ sorting: string = null,
 
     /**
      * 删除一条数据
-     * @param id 主键Id
      * @returns any Success
      * @throws ApiError
      */
-    public static postApiChatChatObjectTypeDelete(
+    public static postApiChatChatObjectTypeDelete({
+id,
+}: {
+/**
+ * 主键Id
+ */
 id: string,
-): CancelablePromise<any> {
+}): CancelablePromise<any> {
         return __request(OpenAPI, {
             method: 'POST',
             url: '/api/chat/chat-object-type/{id}/delete',
@@ -102,13 +120,17 @@ id: string,
 
     /**
      * 删除多条数据
-     * @param requestBody 主键Id[多个]
      * @returns any Success
      * @throws ApiError
      */
-    public static postApiChatChatObjectTypeDeleteMany(
+    public static postApiChatChatObjectTypeDeleteMany({
+requestBody,
+}: {
+/**
+ * 主键Id[多个]
+ */
 requestBody?: Array<string>,
-): CancelablePromise<any> {
+}): CancelablePromise<any> {
         return __request(OpenAPI, {
             method: 'POST',
             url: '/api/chat/chat-object-type/delete-many',
@@ -127,13 +149,17 @@ requestBody?: Array<string>,
 
     /**
      * 获取一条记录 Get
-     * @param id 主键Id
      * @returns IczpNet_Chat_ChatObjectTypes_Dtos_ChatObjectTypeDetailDto Success
      * @throws ApiError
      */
-    public static getApiChatChatObjectType1(
+    public static getApiChatChatObjectType1({
+id,
+}: {
+/**
+ * 主键Id
+ */
 id: string,
-): CancelablePromise<IczpNet_Chat_ChatObjectTypes_Dtos_ChatObjectTypeDetailDto> {
+}): CancelablePromise<IczpNet_Chat_ChatObjectTypes_Dtos_ChatObjectTypeDetailDto> {
         return __request(OpenAPI, {
             method: 'GET',
             url: '/api/chat/chat-object-type/{id}',
@@ -153,13 +179,17 @@ id: string,
 
     /**
      * 获取多条数据
-     * @param idList 主键Id[多个]
      * @returns IczpNet_Chat_ChatObjectTypes_Dtos_ChatObjectTypeDetailDto Success
      * @throws ApiError
      */
-    public static getApiChatChatObjectTypeMany(
+    public static getApiChatChatObjectTypeMany({
+idList,
+}: {
+/**
+ * 主键Id[多个]
+ */
 idList?: Array<string>,
-): CancelablePromise<Array<IczpNet_Chat_ChatObjectTypes_Dtos_ChatObjectTypeDetailDto>> {
+}): CancelablePromise<Array<IczpNet_Chat_ChatObjectTypes_Dtos_ChatObjectTypeDetailDto>> {
         return __request(OpenAPI, {
             method: 'GET',
             url: '/api/chat/chat-object-type/many',
@@ -179,15 +209,19 @@ idList?: Array<string>,
 
     /**
      * 修改
-     * @param id 主键Id
-     * @param requestBody 
      * @returns IczpNet_Chat_ChatObjectTypes_Dtos_ChatObjectTypeDetailDto Success
      * @throws ApiError
      */
-    public static postApiChatChatObjectTypeUpdate(
+    public static postApiChatChatObjectTypeUpdate({
+id,
+requestBody,
+}: {
+/**
+ * 主键Id
+ */
 id: string,
 requestBody?: IczpNet_Chat_ChatObjectTypes_Dtos_ChatObjectTypeUpdateInput,
-): CancelablePromise<IczpNet_Chat_ChatObjectTypes_Dtos_ChatObjectTypeDetailDto> {
+}): CancelablePromise<IczpNet_Chat_ChatObjectTypes_Dtos_ChatObjectTypeDetailDto> {
         return __request(OpenAPI, {
             method: 'POST',
             url: '/api/chat/chat-object-type/{id}/update',

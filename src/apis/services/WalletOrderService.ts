@@ -15,13 +15,14 @@ import { request as __request } from '../core/request';
 export class WalletOrderService {
 
     /**
-     * @param id 
      * @returns IczpNet_Chat_WalletOrders_Dtos_WalletOrderDetailDto Success
      * @throws ApiError
      */
-    public static postApiChatWalletOrderClose(
+    public static postApiChatWalletOrderClose({
+id,
+}: {
 id: string,
-): CancelablePromise<IczpNet_Chat_WalletOrders_Dtos_WalletOrderDetailDto> {
+}): CancelablePromise<IczpNet_Chat_WalletOrders_Dtos_WalletOrderDetailDto> {
         return __request(OpenAPI, {
             method: 'POST',
             url: '/api/chat/wallet-order/{id}/close',
@@ -40,13 +41,14 @@ id: string,
     }
 
     /**
-     * @param requestBody 
      * @returns IczpNet_Chat_WalletOrders_Dtos_WalletOrderDetailDto Success
      * @throws ApiError
      */
-    public static postApiChatWalletOrder(
+    public static postApiChatWalletOrder({
+requestBody,
+}: {
 requestBody?: IczpNet_Chat_WalletOrders_Dtos_WalletOrderCreateInput,
-): CancelablePromise<IczpNet_Chat_WalletOrders_Dtos_WalletOrderDetailDto> {
+}): CancelablePromise<IczpNet_Chat_WalletOrders_Dtos_WalletOrderDetailDto> {
         return __request(OpenAPI, {
             method: 'POST',
             url: '/api/chat/wallet-order',
@@ -65,21 +67,22 @@ requestBody?: IczpNet_Chat_WalletOrders_Dtos_WalletOrderCreateInput,
 
     /**
      * 获取列表
-     * @param ownerId 
-     * @param businessId 
-     * @param status 
-     * @param businessType 
-     * @param minAmount 
-     * @param maxAmount 
-     * @param isEnabled 
-     * @param keyword 关键字(支持拼音)
-     * @param maxResultCount 显示数量
-     * @param skipCount 跳过数量
-     * @param sorting 排序
      * @returns Volo_Abp_Application_Dtos_PagedResultDto_1<IczpNet_Chat_WalletOrders_Dtos_WalletOrderDto_IczpNet_Chat_Application_Contracts_Version_0_1_1_0_Culture_neutral_PublicKeyToken_null_> Success
      * @throws ApiError
      */
-    public static getApiChatWalletOrder(
+    public static getApiChatWalletOrder({
+ownerId,
+businessId,
+status,
+businessType,
+minAmount,
+maxAmount,
+isEnabled,
+keyword = null,
+maxResultCount,
+skipCount,
+sorting = null,
+}: {
 ownerId?: number,
 businessId?: string,
 status?: 0 | 1 | 2 | 3 | 4,
@@ -87,11 +90,23 @@ businessType?: 0 | 1 | -1,
 minAmount?: number,
 maxAmount?: number,
 isEnabled?: boolean,
-keyword: string = null,
+/**
+ * 关键字(支持拼音)
+ */
+keyword?: string,
+/**
+ * 显示数量
+ */
 maxResultCount?: number,
+/**
+ * 跳过数量
+ */
 skipCount?: number,
-sorting: string = null,
-): CancelablePromise<Volo_Abp_Application_Dtos_PagedResultDto_1> {
+/**
+ * 排序
+ */
+sorting?: string,
+}): CancelablePromise<Volo_Abp_Application_Dtos_PagedResultDto_1> {
         return __request(OpenAPI, {
             method: 'GET',
             url: '/api/chat/wallet-order',
@@ -121,13 +136,17 @@ sorting: string = null,
 
     /**
      * 删除一条数据
-     * @param id 主键Id
      * @returns any Success
      * @throws ApiError
      */
-    public static postApiChatWalletOrderDelete(
+    public static postApiChatWalletOrderDelete({
+id,
+}: {
+/**
+ * 主键Id
+ */
 id: string,
-): CancelablePromise<any> {
+}): CancelablePromise<any> {
         return __request(OpenAPI, {
             method: 'POST',
             url: '/api/chat/wallet-order/{id}/delete',
@@ -147,13 +166,17 @@ id: string,
 
     /**
      * 删除多条数据
-     * @param requestBody 主键Id[多个]
      * @returns any Success
      * @throws ApiError
      */
-    public static postApiChatWalletOrderDeleteMany(
+    public static postApiChatWalletOrderDeleteMany({
+requestBody,
+}: {
+/**
+ * 主键Id[多个]
+ */
 requestBody?: Array<string>,
-): CancelablePromise<any> {
+}): CancelablePromise<any> {
         return __request(OpenAPI, {
             method: 'POST',
             url: '/api/chat/wallet-order/delete-many',
@@ -172,13 +195,17 @@ requestBody?: Array<string>,
 
     /**
      * 获取一条记录 Get
-     * @param id 主键Id
      * @returns IczpNet_Chat_WalletOrders_Dtos_WalletOrderDetailDto Success
      * @throws ApiError
      */
-    public static getApiChatWalletOrder1(
+    public static getApiChatWalletOrder1({
+id,
+}: {
+/**
+ * 主键Id
+ */
 id: string,
-): CancelablePromise<IczpNet_Chat_WalletOrders_Dtos_WalletOrderDetailDto> {
+}): CancelablePromise<IczpNet_Chat_WalletOrders_Dtos_WalletOrderDetailDto> {
         return __request(OpenAPI, {
             method: 'GET',
             url: '/api/chat/wallet-order/{id}',
@@ -198,13 +225,17 @@ id: string,
 
     /**
      * 获取多条数据
-     * @param idList 主键Id[多个]
      * @returns IczpNet_Chat_WalletOrders_Dtos_WalletOrderDetailDto Success
      * @throws ApiError
      */
-    public static getApiChatWalletOrderMany(
+    public static getApiChatWalletOrderMany({
+idList,
+}: {
+/**
+ * 主键Id[多个]
+ */
 idList?: Array<string>,
-): CancelablePromise<Array<IczpNet_Chat_WalletOrders_Dtos_WalletOrderDetailDto>> {
+}): CancelablePromise<Array<IczpNet_Chat_WalletOrders_Dtos_WalletOrderDetailDto>> {
         return __request(OpenAPI, {
             method: 'GET',
             url: '/api/chat/wallet-order/many',
@@ -223,15 +254,16 @@ idList?: Array<string>,
     }
 
     /**
-     * @param id 
-     * @param requestBody 
      * @returns IczpNet_Chat_WalletOrders_Dtos_WalletOrderDetailDto Success
      * @throws ApiError
      */
-    public static postApiChatWalletOrderUpdate(
+    public static postApiChatWalletOrderUpdate({
+id,
+requestBody,
+}: {
 id: string,
 requestBody?: IczpNet_Chat_WalletOrders_Dtos_WalletOrderUpdateInput,
-): CancelablePromise<IczpNet_Chat_WalletOrders_Dtos_WalletOrderDetailDto> {
+}): CancelablePromise<IczpNet_Chat_WalletOrders_Dtos_WalletOrderDetailDto> {
         return __request(OpenAPI, {
             method: 'POST',
             url: '/api/chat/wallet-order/{id}/update',

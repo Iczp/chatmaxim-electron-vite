@@ -15,15 +15,16 @@ import { request as __request } from '../core/request';
 export class SessionRoleBySessionUnitService {
 
     /**
-     * @param sessionUnitId 
-     * @param requestBody 
      * @returns IczpNet_Chat_SessionSections_SessionRoles_Dtos_SessionRoleDetailDto Success
      * @throws ApiError
      */
-    public static postApiChatSessionRoleBySessionUnit(
+    public static postApiChatSessionRoleBySessionUnit({
+sessionUnitId,
+requestBody,
+}: {
 sessionUnitId?: string,
 requestBody?: IczpNet_Chat_SessionSections_SessionRoles_Dtos_SessionRoleCreateBySessionUnitInput,
-): CancelablePromise<IczpNet_Chat_SessionSections_SessionRoles_Dtos_SessionRoleDetailDto> {
+}): CancelablePromise<IczpNet_Chat_SessionSections_SessionRoles_Dtos_SessionRoleDetailDto> {
         return __request(OpenAPI, {
             method: 'POST',
             url: '/api/chat/session-role-by-session-unit',
@@ -44,21 +45,34 @@ requestBody?: IczpNet_Chat_SessionSections_SessionRoles_Dtos_SessionRoleCreateBy
     }
 
     /**
-     * @param sessionUnitId 
-     * @param keyword 关键字(支持拼音)
-     * @param maxResultCount 显示数量
-     * @param skipCount 跳过数量
-     * @param sorting 排序
      * @returns Volo_Abp_Application_Dtos_PagedResultDto_1<IczpNet_Chat_SessionSections_SessionRoles_Dtos_SessionRoleDto_IczpNet_Chat_Application_Contracts_Version_0_1_1_0_Culture_neutral_PublicKeyToken_null_> Success
      * @throws ApiError
      */
-    public static getApiChatSessionRoleBySessionUnit(
+    public static getApiChatSessionRoleBySessionUnit({
+sessionUnitId,
+keyword = null,
+maxResultCount,
+skipCount,
+sorting = null,
+}: {
 sessionUnitId?: string,
-keyword: string = null,
+/**
+ * 关键字(支持拼音)
+ */
+keyword?: string,
+/**
+ * 显示数量
+ */
 maxResultCount?: number,
+/**
+ * 跳过数量
+ */
 skipCount?: number,
-sorting: string = null,
-): CancelablePromise<Volo_Abp_Application_Dtos_PagedResultDto_1> {
+/**
+ * 排序
+ */
+sorting?: string,
+}): CancelablePromise<Volo_Abp_Application_Dtos_PagedResultDto_1> {
         return __request(OpenAPI, {
             method: 'GET',
             url: '/api/chat/session-role-by-session-unit',
@@ -81,15 +95,16 @@ sorting: string = null,
     }
 
     /**
-     * @param sessionUnitId 
-     * @param id 
      * @returns any Success
      * @throws ApiError
      */
-    public static postApiChatSessionRoleBySessionUnitDeleteBy(
+    public static postApiChatSessionRoleBySessionUnitDeleteBy({
+sessionUnitId,
+id,
+}: {
 sessionUnitId: string,
 id: string,
-): CancelablePromise<any> {
+}): CancelablePromise<any> {
         return __request(OpenAPI, {
             method: 'POST',
             url: '/api/chat/session-role-by-session-unit/{id}/delete-by/{sessionUnitId}',
@@ -109,15 +124,16 @@ id: string,
     }
 
     /**
-     * @param sessionUnitId 
-     * @param requestBody 
      * @returns any Success
      * @throws ApiError
      */
-    public static postApiChatSessionRoleBySessionUnitDeleteMany(
+    public static postApiChatSessionRoleBySessionUnitDeleteMany({
+sessionUnitId,
+requestBody,
+}: {
 sessionUnitId: string,
 requestBody?: Array<string>,
-): CancelablePromise<any> {
+}): CancelablePromise<any> {
         return __request(OpenAPI, {
             method: 'POST',
             url: '/api/chat/session-role-by-session-unit/delete-many/{sessionUnitId}',
@@ -138,15 +154,16 @@ requestBody?: Array<string>,
     }
 
     /**
-     * @param id 
-     * @param sessionUnitId 
      * @returns IczpNet_Chat_SessionSections_SessionRoles_Dtos_SessionRoleDetailDto Success
      * @throws ApiError
      */
-    public static getApiChatSessionRoleBySessionUnit1(
+    public static getApiChatSessionRoleBySessionUnit1({
+id,
+sessionUnitId,
+}: {
 id: string,
 sessionUnitId?: string,
-): CancelablePromise<IczpNet_Chat_SessionSections_SessionRoles_Dtos_SessionRoleDetailDto> {
+}): CancelablePromise<IczpNet_Chat_SessionSections_SessionRoles_Dtos_SessionRoleDetailDto> {
         return __request(OpenAPI, {
             method: 'GET',
             url: '/api/chat/session-role-by-session-unit/{id}',
@@ -169,13 +186,17 @@ sessionUnitId?: string,
 
     /**
      * 获取多条数据
-     * @param idList 主键Id[多个]
      * @returns IczpNet_Chat_SessionSections_SessionRoles_Dtos_SessionRoleDetailDto Success
      * @throws ApiError
      */
-    public static getApiChatSessionRoleBySessionUnitMany(
+    public static getApiChatSessionRoleBySessionUnitMany({
+idList,
+}: {
+/**
+ * 主键Id[多个]
+ */
 idList?: Array<string>,
-): CancelablePromise<Array<IczpNet_Chat_SessionSections_SessionRoles_Dtos_SessionRoleDetailDto>> {
+}): CancelablePromise<Array<IczpNet_Chat_SessionSections_SessionRoles_Dtos_SessionRoleDetailDto>> {
         return __request(OpenAPI, {
             method: 'GET',
             url: '/api/chat/session-role-by-session-unit/many',
@@ -194,17 +215,18 @@ idList?: Array<string>,
     }
 
     /**
-     * @param sessionUnitId 
-     * @param id 
-     * @param requestBody 
      * @returns IczpNet_Chat_SessionSections_SessionRoles_Dtos_SessionRoleDetailDto Success
      * @throws ApiError
      */
-    public static postApiChatSessionRoleBySessionUnitUpdate(
+    public static postApiChatSessionRoleBySessionUnitUpdate({
+sessionUnitId,
+id,
+requestBody,
+}: {
 sessionUnitId: string,
 id: string,
 requestBody?: IczpNet_Chat_SessionSections_SessionRoles_Dtos_SessionRoleUpdateInput,
-): CancelablePromise<IczpNet_Chat_SessionSections_SessionRoles_Dtos_SessionRoleDetailDto> {
+}): CancelablePromise<IczpNet_Chat_SessionSections_SessionRoles_Dtos_SessionRoleDetailDto> {
         return __request(OpenAPI, {
             method: 'POST',
             url: '/api/chat/session-role-by-session-unit/{id}/update/{sessionUnitId}',

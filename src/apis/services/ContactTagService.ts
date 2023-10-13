@@ -16,13 +16,14 @@ export class ContactTagService {
 
     /**
      * 新增
-     * @param requestBody 
      * @returns IczpNet_Chat_ContactTags_Dtos_ContactTagDetailDto Success
      * @throws ApiError
      */
-    public static postApiChatContactTag(
+    public static postApiChatContactTag({
+requestBody,
+}: {
 requestBody?: IczpNet_Chat_ContactTags_Dtos_ContactTagCreateInput,
-): CancelablePromise<IczpNet_Chat_ContactTags_Dtos_ContactTagDetailDto> {
+}): CancelablePromise<IczpNet_Chat_ContactTags_Dtos_ContactTagDetailDto> {
         return __request(OpenAPI, {
             method: 'POST',
             url: '/api/chat/contact-tag',
@@ -41,21 +42,34 @@ requestBody?: IczpNet_Chat_ContactTags_Dtos_ContactTagCreateInput,
 
     /**
      * 获取列表
-     * @param ownerId 
-     * @param keyword 关键字(支持拼音)
-     * @param maxResultCount 显示数量
-     * @param skipCount 跳过数量
-     * @param sorting 排序
      * @returns Volo_Abp_Application_Dtos_PagedResultDto_1<IczpNet_Chat_ContactTags_Dtos_ContactTagDto_IczpNet_Chat_Application_Contracts_Version_0_1_1_0_Culture_neutral_PublicKeyToken_null_> Success
      * @throws ApiError
      */
-    public static getApiChatContactTag(
+    public static getApiChatContactTag({
+ownerId,
+keyword = null,
+maxResultCount,
+skipCount,
+sorting = null,
+}: {
 ownerId?: number,
-keyword: string = null,
+/**
+ * 关键字(支持拼音)
+ */
+keyword?: string,
+/**
+ * 显示数量
+ */
 maxResultCount?: number,
+/**
+ * 跳过数量
+ */
 skipCount?: number,
-sorting: string = null,
-): CancelablePromise<Volo_Abp_Application_Dtos_PagedResultDto_1> {
+/**
+ * 排序
+ */
+sorting?: string,
+}): CancelablePromise<Volo_Abp_Application_Dtos_PagedResultDto_1> {
         return __request(OpenAPI, {
             method: 'GET',
             url: '/api/chat/contact-tag',
@@ -79,13 +93,17 @@ sorting: string = null,
 
     /**
      * 删除一条数据
-     * @param id 主键Id
      * @returns any Success
      * @throws ApiError
      */
-    public static postApiChatContactTagDelete(
+    public static postApiChatContactTagDelete({
+id,
+}: {
+/**
+ * 主键Id
+ */
 id: string,
-): CancelablePromise<any> {
+}): CancelablePromise<any> {
         return __request(OpenAPI, {
             method: 'POST',
             url: '/api/chat/contact-tag/{id}/delete',
@@ -105,13 +123,17 @@ id: string,
 
     /**
      * 删除多条数据
-     * @param requestBody 主键Id[多个]
      * @returns any Success
      * @throws ApiError
      */
-    public static postApiChatContactTagDeleteMany(
+    public static postApiChatContactTagDeleteMany({
+requestBody,
+}: {
+/**
+ * 主键Id[多个]
+ */
 requestBody?: Array<string>,
-): CancelablePromise<any> {
+}): CancelablePromise<any> {
         return __request(OpenAPI, {
             method: 'POST',
             url: '/api/chat/contact-tag/delete-many',
@@ -130,13 +152,17 @@ requestBody?: Array<string>,
 
     /**
      * 获取一条记录 Get
-     * @param id 主键Id
      * @returns IczpNet_Chat_ContactTags_Dtos_ContactTagDetailDto Success
      * @throws ApiError
      */
-    public static getApiChatContactTag1(
+    public static getApiChatContactTag1({
+id,
+}: {
+/**
+ * 主键Id
+ */
 id: string,
-): CancelablePromise<IczpNet_Chat_ContactTags_Dtos_ContactTagDetailDto> {
+}): CancelablePromise<IczpNet_Chat_ContactTags_Dtos_ContactTagDetailDto> {
         return __request(OpenAPI, {
             method: 'GET',
             url: '/api/chat/contact-tag/{id}',
@@ -156,13 +182,17 @@ id: string,
 
     /**
      * 获取多条数据
-     * @param idList 主键Id[多个]
      * @returns IczpNet_Chat_ContactTags_Dtos_ContactTagDetailDto Success
      * @throws ApiError
      */
-    public static getApiChatContactTagMany(
+    public static getApiChatContactTagMany({
+idList,
+}: {
+/**
+ * 主键Id[多个]
+ */
 idList?: Array<string>,
-): CancelablePromise<Array<IczpNet_Chat_ContactTags_Dtos_ContactTagDetailDto>> {
+}): CancelablePromise<Array<IczpNet_Chat_ContactTags_Dtos_ContactTagDetailDto>> {
         return __request(OpenAPI, {
             method: 'GET',
             url: '/api/chat/contact-tag/many',
@@ -182,15 +212,19 @@ idList?: Array<string>,
 
     /**
      * 修改
-     * @param id 主键Id
-     * @param requestBody 
      * @returns IczpNet_Chat_ContactTags_Dtos_ContactTagDetailDto Success
      * @throws ApiError
      */
-    public static postApiChatContactTagUpdate(
+    public static postApiChatContactTagUpdate({
+id,
+requestBody,
+}: {
+/**
+ * 主键Id
+ */
 id: string,
 requestBody?: IczpNet_Chat_ContactTags_Dtos_ContactTagUpdateInput,
-): CancelablePromise<IczpNet_Chat_ContactTags_Dtos_ContactTagDetailDto> {
+}): CancelablePromise<IczpNet_Chat_ContactTags_Dtos_ContactTagDetailDto> {
         return __request(OpenAPI, {
             method: 'POST',
             url: '/api/chat/contact-tag/{id}/update',

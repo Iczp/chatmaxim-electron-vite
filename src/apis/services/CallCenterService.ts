@@ -10,15 +10,22 @@ export class CallCenterService {
 
     /**
      * 转接
-     * @param sessionUnitId 当前会话单元Id
-     * @param destinationId 目标会话单元Id
      * @returns any Success
      * @throws ApiError
      */
-    public static postApiChatCallCenterTransferTo(
+    public static postApiChatCallCenterTransferTo({
+sessionUnitId,
+destinationId,
+}: {
+/**
+ * 当前会话单元Id
+ */
 sessionUnitId: string,
+/**
+ * 目标会话单元Id
+ */
 destinationId: number,
-): CancelablePromise<any> {
+}): CancelablePromise<any> {
         return __request(OpenAPI, {
             method: 'POST',
             url: '/api/chat/call-center/transfer-to',

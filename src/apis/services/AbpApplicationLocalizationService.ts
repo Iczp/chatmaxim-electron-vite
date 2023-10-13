@@ -11,15 +11,16 @@ import { request as __request } from '../core/request';
 export class AbpApplicationLocalizationService {
 
     /**
-     * @param cultureName 
-     * @param onlyDynamics 
      * @returns Volo_Abp_AspNetCore_Mvc_ApplicationConfigurations_ApplicationLocalizationDto Success
      * @throws ApiError
      */
-    public static getApiAbpApplicationLocalization(
+    public static getApiAbpApplicationLocalization({
+cultureName,
+onlyDynamics,
+}: {
 cultureName: string,
 onlyDynamics?: boolean,
-): CancelablePromise<Volo_Abp_AspNetCore_Mvc_ApplicationConfigurations_ApplicationLocalizationDto> {
+}): CancelablePromise<Volo_Abp_AspNetCore_Mvc_ApplicationConfigurations_ApplicationLocalizationDto> {
         return __request(OpenAPI, {
             method: 'GET',
             url: '/api/abp/application-localization',

@@ -14,13 +14,14 @@ export class OfficialService {
 
     /**
      * 创建公众号
-     * @param requestBody 
      * @returns IczpNet_Chat_ChatObjects_Dtos_ChatObjectDto Success
      * @throws ApiError
      */
-    public static postApiChatOfficial(
+    public static postApiChatOfficial({
+requestBody,
+}: {
 requestBody?: IczpNet_Chat_OfficialSections_Officials_Dtos_OfficialCreateInput,
-): CancelablePromise<IczpNet_Chat_ChatObjects_Dtos_ChatObjectDto> {
+}): CancelablePromise<IczpNet_Chat_ChatObjects_Dtos_ChatObjectDto> {
         return __request(OpenAPI, {
             method: 'POST',
             url: '/api/chat/official',
@@ -39,15 +40,19 @@ requestBody?: IczpNet_Chat_OfficialSections_Officials_Dtos_OfficialCreateInput,
 
     /**
      * 关注公众号[ownerId]
-     * @param ownerId 聊天对象Id
-     * @param destinationId 
      * @returns IczpNet_Chat_SessionUnits_Dtos_SessionUnitOwnerDto Success
      * @throws ApiError
      */
-    public static postApiChatOfficialSubscribe(
+    public static postApiChatOfficialSubscribe({
+ownerId,
+destinationId,
+}: {
+/**
+ * 聊天对象Id
+ */
 ownerId?: number,
 destinationId?: number,
-): CancelablePromise<IczpNet_Chat_SessionUnits_Dtos_SessionUnitOwnerDto> {
+}): CancelablePromise<IczpNet_Chat_SessionUnits_Dtos_SessionUnitOwnerDto> {
         return __request(OpenAPI, {
             method: 'POST',
             url: '/api/chat/official/subscribe',
@@ -68,13 +73,17 @@ destinationId?: number,
 
     /**
      * 关注公众号[sessionUnitId]
-     * @param sessionUnitId 会话单元Id
      * @returns IczpNet_Chat_SessionUnits_Dtos_SessionUnitOwnerDto Success
      * @throws ApiError
      */
-    public static postApiChatOfficialSubscribeById(
+    public static postApiChatOfficialSubscribeById({
+sessionUnitId,
+}: {
+/**
+ * 会话单元Id
+ */
 sessionUnitId: string,
-): CancelablePromise<IczpNet_Chat_SessionUnits_Dtos_SessionUnitOwnerDto> {
+}): CancelablePromise<IczpNet_Chat_SessionUnits_Dtos_SessionUnitOwnerDto> {
         return __request(OpenAPI, {
             method: 'POST',
             url: '/api/chat/official/subscribe-by-id/{sessionUnitId}',
@@ -94,13 +103,17 @@ sessionUnitId: string,
 
     /**
      * 取消关注公众号
-     * @param sessionUnitId 会话单元Id
      * @returns IczpNet_Chat_SessionUnits_Dtos_SessionUnitOwnerDto Success
      * @throws ApiError
      */
-    public static postApiChatOfficialUnsubscribe(
+    public static postApiChatOfficialUnsubscribe({
+sessionUnitId,
+}: {
+/**
+ * 会话单元Id
+ */
 sessionUnitId: string,
-): CancelablePromise<IczpNet_Chat_SessionUnits_Dtos_SessionUnitOwnerDto> {
+}): CancelablePromise<IczpNet_Chat_SessionUnits_Dtos_SessionUnitOwnerDto> {
         return __request(OpenAPI, {
             method: 'POST',
             url: '/api/chat/official/unsubscribe/{sessionUnitId}',

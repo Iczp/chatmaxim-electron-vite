@@ -18,13 +18,14 @@ export class MenuService {
 
     /**
      * 添加菜单
-     * @param requestBody 
      * @returns IczpNet_Chat_Menus_Dtos_MenuDto Success
      * @throws ApiError
      */
-    public static postApiChatMenu(
+    public static postApiChatMenu({
+requestBody,
+}: {
 requestBody?: IczpNet_Chat_Menus_Dtos_MenuCreateInput,
-): CancelablePromise<IczpNet_Chat_Menus_Dtos_MenuDto> {
+}): CancelablePromise<IczpNet_Chat_Menus_Dtos_MenuDto> {
         return __request(OpenAPI, {
             method: 'POST',
             url: '/api/chat/menu',
@@ -43,27 +44,52 @@ requestBody?: IczpNet_Chat_Menus_Dtos_MenuCreateInput,
 
     /**
      * 列表
-     * @param ownerId 所属聊天对角
-     * @param isEnabledParentId 是否启用 ParentId
-     * @param parentId 父级Id,当IsEnabledParentId=false时,查询全部
-     * @param depthList 层级
-     * @param keyword 关键字(支持拼音)
-     * @param maxResultCount 显示数量
-     * @param skipCount 跳过数量
-     * @param sorting 排序
      * @returns Volo_Abp_Application_Dtos_PagedResultDto_1<IczpNet_Chat_Menus_Dtos_MenuDto_IczpNet_Chat_Application_Contracts_Version_0_1_1_0_Culture_neutral_PublicKeyToken_null_> Success
      * @throws ApiError
      */
-    public static getApiChatMenu(
+    public static getApiChatMenu({
+ownerId,
+isEnabledParentId = false,
+parentId = null,
+depthList = null,
+keyword = null,
+maxResultCount,
+skipCount,
+sorting = null,
+}: {
+/**
+ * 所属聊天对角
+ */
 ownerId?: number,
-isEnabledParentId: boolean = false,
-parentId: string = null,
-depthList: Array<number> = null,
-keyword: string = null,
+/**
+ * 是否启用 ParentId
+ */
+isEnabledParentId?: boolean,
+/**
+ * 父级Id,当IsEnabledParentId=false时,查询全部
+ */
+parentId?: string,
+/**
+ * 层级
+ */
+depthList?: Array<number>,
+/**
+ * 关键字(支持拼音)
+ */
+keyword?: string,
+/**
+ * 显示数量
+ */
 maxResultCount?: number,
+/**
+ * 跳过数量
+ */
 skipCount?: number,
-sorting: string = null,
-): CancelablePromise<Volo_Abp_Application_Dtos_PagedResultDto_1> {
+/**
+ * 排序
+ */
+sorting?: string,
+}): CancelablePromise<Volo_Abp_Application_Dtos_PagedResultDto_1> {
         return __request(OpenAPI, {
             method: 'GET',
             url: '/api/chat/menu',
@@ -90,13 +116,17 @@ sorting: string = null,
 
     /**
      * 删除一条数据
-     * @param id 主键Id
      * @returns any Success
      * @throws ApiError
      */
-    public static postApiChatMenuDelete(
+    public static postApiChatMenuDelete({
+id,
+}: {
+/**
+ * 主键Id
+ */
 id: string,
-): CancelablePromise<any> {
+}): CancelablePromise<any> {
         return __request(OpenAPI, {
             method: 'POST',
             url: '/api/chat/menu/{id}/delete',
@@ -116,13 +146,17 @@ id: string,
 
     /**
      * 删除多条数据
-     * @param requestBody 主键Id[多个]
      * @returns any Success
      * @throws ApiError
      */
-    public static postApiChatMenuDeleteMany(
+    public static postApiChatMenuDeleteMany({
+requestBody,
+}: {
+/**
+ * 主键Id[多个]
+ */
 requestBody?: Array<string>,
-): CancelablePromise<any> {
+}): CancelablePromise<any> {
         return __request(OpenAPI, {
             method: 'POST',
             url: '/api/chat/menu/delete-many',
@@ -141,13 +175,17 @@ requestBody?: Array<string>,
 
     /**
      * 获取一条数据
-     * @param id 主键Id
      * @returns IczpNet_Chat_Menus_Dtos_MenuDto Success
      * @throws ApiError
      */
-    public static getApiChatMenu1(
+    public static getApiChatMenu1({
+id,
+}: {
+/**
+ * 主键Id
+ */
 id: string,
-): CancelablePromise<IczpNet_Chat_Menus_Dtos_MenuDto> {
+}): CancelablePromise<IczpNet_Chat_Menus_Dtos_MenuDto> {
         return __request(OpenAPI, {
             method: 'GET',
             url: '/api/chat/menu/{id}',
@@ -167,25 +205,26 @@ id: string,
 
     /**
      * 列表(缓存)
-     * @param isEnabledParentId 
-     * @param depthList 
-     * @param parentId 
-     * @param keyword 
-     * @param sorting 
-     * @param skipCount 
-     * @param maxResultCount 
      * @returns Volo_Abp_Application_Dtos_PagedResultDto_1<IczpNet_Chat_Menus_MenuInfo_IczpNet_Chat_Domain_Shared_Version_0_1_1_0_Culture_neutral_PublicKeyToken_null_> Success
      * @throws ApiError
      */
-    public static getApiChatMenuByCache(
-isEnabledParentId: boolean = false,
-depthList: Array<number> = null,
-parentId: string = null,
-keyword: string = null,
+    public static getApiChatMenuByCache({
+isEnabledParentId = false,
+depthList = null,
+parentId = null,
+keyword = null,
+sorting,
+skipCount,
+maxResultCount,
+}: {
+isEnabledParentId?: boolean,
+depthList?: Array<number>,
+parentId?: string,
+keyword?: string,
 sorting?: string,
 skipCount?: number,
 maxResultCount?: number,
-): CancelablePromise<Volo_Abp_Application_Dtos_PagedResultDto_1> {
+}): CancelablePromise<Volo_Abp_Application_Dtos_PagedResultDto_1> {
         return __request(OpenAPI, {
             method: 'GET',
             url: '/api/chat/menu/by-cache',
@@ -211,13 +250,17 @@ maxResultCount?: number,
 
     /**
      * 获取一条数据(缓存)
-     * @param id 主键Id
      * @returns IczpNet_Chat_Menus_MenuInfo Success
      * @throws ApiError
      */
-    public static getApiChatMenuItemByCache(
+    public static getApiChatMenuItemByCache({
+id,
+}: {
+/**
+ * 主键Id
+ */
 id: string,
-): CancelablePromise<IczpNet_Chat_Menus_MenuInfo> {
+}): CancelablePromise<IczpNet_Chat_Menus_MenuInfo> {
         return __request(OpenAPI, {
             method: 'GET',
             url: '/api/chat/menu/{id}/item-by-cache',
@@ -237,13 +280,17 @@ id: string,
 
     /**
      * 获取多条数据(缓存)
-     * @param idList 主键Id[多个]
      * @returns IczpNet_Chat_Menus_MenuInfo Success
      * @throws ApiError
      */
-    public static getApiChatMenuManayByCache(
+    public static getApiChatMenuManayByCache({
+idList,
+}: {
+/**
+ * 主键Id[多个]
+ */
 idList?: Array<string>,
-): CancelablePromise<Array<IczpNet_Chat_Menus_MenuInfo>> {
+}): CancelablePromise<Array<IczpNet_Chat_Menus_MenuInfo>> {
         return __request(OpenAPI, {
             method: 'GET',
             url: '/api/chat/menu/manay-by-cache',
@@ -263,13 +310,17 @@ idList?: Array<string>,
 
     /**
      * 获取多条数据
-     * @param idList 主键Id[多个]
      * @returns IczpNet_Chat_Menus_Dtos_MenuDto Success
      * @throws ApiError
      */
-    public static getApiChatMenuMany(
+    public static getApiChatMenuMany({
+idList,
+}: {
+/**
+ * 主键Id[多个]
+ */
 idList?: Array<string>,
-): CancelablePromise<Array<IczpNet_Chat_Menus_Dtos_MenuDto>> {
+}): CancelablePromise<Array<IczpNet_Chat_Menus_Dtos_MenuDto>> {
         return __request(OpenAPI, {
             method: 'GET',
             url: '/api/chat/menu/many',
@@ -289,15 +340,22 @@ idList?: Array<string>,
 
     /**
      * 修复数据（fullPath,fullName,childrenCount,depth等）
-     * @param maxResultCount 每次修复最大数量（过多可能导致数据库超时）
-     * @param skinCount 跳过数量
      * @returns string Success
      * @throws ApiError
      */
-    public static postApiChatMenuRepairData(
-maxResultCount: number = 100,
+    public static postApiChatMenuRepairData({
+maxResultCount = 100,
+skinCount,
+}: {
+/**
+ * 每次修复最大数量（过多可能导致数据库超时）
+ */
+maxResultCount?: number,
+/**
+ * 跳过数量
+ */
 skinCount?: number,
-): CancelablePromise<string> {
+}): CancelablePromise<string> {
         return __request(OpenAPI, {
             method: 'POST',
             url: '/api/chat/menu/repair-data',
@@ -318,13 +376,17 @@ skinCount?: number,
 
     /**
      * 菜单触发器(调用后台作业)
-     * @param id 菜单Id
      * @returns string Success
      * @throws ApiError
      */
-    public static getApiChatMenuTrigger(
+    public static getApiChatMenuTrigger({
+id,
+}: {
+/**
+ * 菜单Id
+ */
 id: string,
-): CancelablePromise<string> {
+}): CancelablePromise<string> {
         return __request(OpenAPI, {
             method: 'GET',
             url: '/api/chat/menu/{id}/trigger',
@@ -344,15 +406,19 @@ id: string,
 
     /**
      * 修改菜单
-     * @param id 菜单Id
-     * @param requestBody 
      * @returns IczpNet_Chat_Menus_Dtos_MenuDto Success
      * @throws ApiError
      */
-    public static postApiChatMenuUpdate(
+    public static postApiChatMenuUpdate({
+id,
+requestBody,
+}: {
+/**
+ * 菜单Id
+ */
 id: string,
 requestBody?: IczpNet_Chat_Menus_Dtos_MenuUpdateInput,
-): CancelablePromise<IczpNet_Chat_Menus_Dtos_MenuDto> {
+}): CancelablePromise<IczpNet_Chat_Menus_Dtos_MenuDto> {
         return __request(OpenAPI, {
             method: 'POST',
             url: '/api/chat/menu/{id}/update',

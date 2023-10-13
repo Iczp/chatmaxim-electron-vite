@@ -16,13 +16,14 @@ import { request as __request } from '../core/request';
 export class RoleService {
 
     /**
-     * @param requestBody 
      * @returns Volo_Abp_Identity_IdentityRoleDto Success
      * @throws ApiError
      */
-    public static postApiIdentityRoles(
+    public static postApiIdentityRoles({
+requestBody,
+}: {
 requestBody?: Volo_Abp_Identity_IdentityRoleCreateDto,
-): CancelablePromise<Volo_Abp_Identity_IdentityRoleDto> {
+}): CancelablePromise<Volo_Abp_Identity_IdentityRoleDto> {
         return __request(OpenAPI, {
             method: 'POST',
             url: '/api/identity/roles',
@@ -40,19 +41,20 @@ requestBody?: Volo_Abp_Identity_IdentityRoleCreateDto,
     }
 
     /**
-     * @param filter 
-     * @param sorting 
-     * @param skipCount 
-     * @param maxResultCount 
      * @returns Volo_Abp_Application_Dtos_PagedResultDto_1<Volo_Abp_Identity_IdentityRoleDto_Volo_Abp_Identity_Application_Contracts_Version_7_3_0_0_Culture_neutral_PublicKeyToken_null_> Success
      * @throws ApiError
      */
-    public static getApiIdentityRoles(
+    public static getApiIdentityRoles({
+filter,
+sorting,
+skipCount,
+maxResultCount,
+}: {
 filter?: string,
 sorting?: string,
 skipCount?: number,
 maxResultCount?: number,
-): CancelablePromise<Volo_Abp_Application_Dtos_PagedResultDto_1> {
+}): CancelablePromise<Volo_Abp_Application_Dtos_PagedResultDto_1> {
         return __request(OpenAPI, {
             method: 'GET',
             url: '/api/identity/roles',
@@ -74,13 +76,14 @@ maxResultCount?: number,
     }
 
     /**
-     * @param id 
      * @returns any Success
      * @throws ApiError
      */
-    public static deleteApiIdentityRoles(
+    public static deleteApiIdentityRoles({
+id,
+}: {
 id: string,
-): CancelablePromise<any> {
+}): CancelablePromise<any> {
         return __request(OpenAPI, {
             method: 'DELETE',
             url: '/api/identity/roles/{id}',
@@ -99,13 +102,14 @@ id: string,
     }
 
     /**
-     * @param id 
      * @returns Volo_Abp_Identity_IdentityRoleDto Success
      * @throws ApiError
      */
-    public static getApiIdentityRoles1(
+    public static getApiIdentityRoles1({
+id,
+}: {
 id: string,
-): CancelablePromise<Volo_Abp_Identity_IdentityRoleDto> {
+}): CancelablePromise<Volo_Abp_Identity_IdentityRoleDto> {
         return __request(OpenAPI, {
             method: 'GET',
             url: '/api/identity/roles/{id}',
@@ -124,15 +128,16 @@ id: string,
     }
 
     /**
-     * @param id 
-     * @param requestBody 
      * @returns Volo_Abp_Identity_IdentityRoleDto Success
      * @throws ApiError
      */
-    public static putApiIdentityRoles(
+    public static putApiIdentityRoles({
+id,
+requestBody,
+}: {
 id: string,
 requestBody?: Volo_Abp_Identity_IdentityRoleUpdateDto,
-): CancelablePromise<Volo_Abp_Identity_IdentityRoleDto> {
+}): CancelablePromise<Volo_Abp_Identity_IdentityRoleDto> {
         return __request(OpenAPI, {
             method: 'PUT',
             url: '/api/identity/roles/{id}',

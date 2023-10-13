@@ -12,13 +12,17 @@ export class SettingService {
 
     /**
      * 清空消息
-     * @param sessionUnitId 会话单元Id
      * @returns IczpNet_Chat_SessionUnits_Dtos_SessionUnitOwnerDto Success
      * @throws ApiError
      */
-    public static postApiChatSettingClearMessage(
+    public static postApiChatSettingClearMessage({
+sessionUnitId,
+}: {
+/**
+ * 会话单元Id
+ */
 sessionUnitId: string,
-): CancelablePromise<IczpNet_Chat_SessionUnits_Dtos_SessionUnitOwnerDto> {
+}): CancelablePromise<IczpNet_Chat_SessionUnits_Dtos_SessionUnitOwnerDto> {
         return __request(OpenAPI, {
             method: 'POST',
             url: '/api/chat/setting/clear-message/{sessionUnitId}',
@@ -38,15 +42,22 @@ sessionUnitId: string,
 
     /**
      * 删除消息
-     * @param sessionUnitId 会话单元Id
-     * @param messageId 消息Id
      * @returns any Success
      * @throws ApiError
      */
-    public static postApiChatSettingDeleteMessage(
+    public static postApiChatSettingDeleteMessage({
+sessionUnitId,
+messageId,
+}: {
+/**
+ * 会话单元Id
+ */
 sessionUnitId: string,
+/**
+ * 消息Id
+ */
 messageId?: number,
-): CancelablePromise<any> {
+}): CancelablePromise<any> {
         return __request(OpenAPI, {
             method: 'POST',
             url: '/api/chat/setting/delete-message',
@@ -67,13 +78,17 @@ messageId?: number,
 
     /**
      * 退出会话
-     * @param sessionUnitId 会话单元Id
      * @returns IczpNet_Chat_SessionUnits_Dtos_SessionUnitOwnerDto Success
      * @throws ApiError
      */
-    public static postApiChatSettingExit(
+    public static postApiChatSettingExit({
+sessionUnitId,
+}: {
+/**
+ * 会话单元Id
+ */
 sessionUnitId: string,
-): CancelablePromise<IczpNet_Chat_SessionUnits_Dtos_SessionUnitOwnerDto> {
+}): CancelablePromise<IczpNet_Chat_SessionUnits_Dtos_SessionUnitOwnerDto> {
         return __request(OpenAPI, {
             method: 'POST',
             url: '/api/chat/setting/exit/{sessionUnitId}',
@@ -93,13 +108,17 @@ sessionUnitId: string,
 
     /**
      * 删除会话
-     * @param sessionUnitId 会话单元Id
      * @returns IczpNet_Chat_SessionUnits_Dtos_SessionUnitOwnerDto Success
      * @throws ApiError
      */
-    public static postApiChatSettingKill(
+    public static postApiChatSettingKill({
+sessionUnitId,
+}: {
+/**
+ * 会话单元Id
+ */
 sessionUnitId: string,
-): CancelablePromise<IczpNet_Chat_SessionUnits_Dtos_SessionUnitOwnerDto> {
+}): CancelablePromise<IczpNet_Chat_SessionUnits_Dtos_SessionUnitOwnerDto> {
         return __request(OpenAPI, {
             method: 'POST',
             url: '/api/chat/setting/kill/{sessionUnitId}',
@@ -119,13 +138,17 @@ sessionUnitId: string,
 
     /**
      * 移除会话
-     * @param sessionUnitId 会话单元Id
      * @returns IczpNet_Chat_SessionUnits_Dtos_SessionUnitOwnerDto Success
      * @throws ApiError
      */
-    public static postApiChatSettingRemove(
+    public static postApiChatSettingRemove({
+sessionUnitId,
+}: {
+/**
+ * 会话单元Id
+ */
 sessionUnitId: string,
-): CancelablePromise<IczpNet_Chat_SessionUnits_Dtos_SessionUnitOwnerDto> {
+}): CancelablePromise<IczpNet_Chat_SessionUnits_Dtos_SessionUnitOwnerDto> {
         return __request(OpenAPI, {
             method: 'POST',
             url: '/api/chat/setting/remove/{sessionUnitId}',
@@ -145,15 +168,22 @@ sessionUnitId: string,
 
     /**
      * 设置联系人标签
-     * @param sessionUnitId 会话单元Id
-     * @param requestBody 联系人标签Id
      * @returns any Success
      * @throws ApiError
      */
-    public static postApiChatSettingSetContactTags(
+    public static postApiChatSettingSetContactTags({
+sessionUnitId,
+requestBody,
+}: {
+/**
+ * 会话单元Id
+ */
 sessionUnitId: string,
+/**
+ * 联系人标签Id
+ */
 requestBody?: Array<string>,
-): CancelablePromise<any> {
+}): CancelablePromise<any> {
         return __request(OpenAPI, {
             method: 'POST',
             url: '/api/chat/setting/set-contact-tags/{sessionUnitId}',
@@ -175,15 +205,19 @@ requestBody?: Array<string>,
 
     /**
      * 设置为静默模式（免打扰）
-     * @param sessionUnitId 会话单元Id
-     * @param isImmersed 
      * @returns IczpNet_Chat_SessionUnits_Dtos_SessionUnitOwnerDto Success
      * @throws ApiError
      */
-    public static postApiChatSettingSetImmersed(
+    public static postApiChatSettingSetImmersed({
+sessionUnitId,
+isImmersed,
+}: {
+/**
+ * 会话单元Id
+ */
 sessionUnitId: string,
 isImmersed?: boolean,
-): CancelablePromise<IczpNet_Chat_SessionUnits_Dtos_SessionUnitOwnerDto> {
+}): CancelablePromise<IczpNet_Chat_SessionUnits_Dtos_SessionUnitOwnerDto> {
         return __request(OpenAPI, {
             method: 'POST',
             url: '/api/chat/setting/set-immersed/{sessionUnitId}',
@@ -206,15 +240,22 @@ isImmersed?: boolean,
 
     /**
      * 设置成员（群内名称，会话内名称）
-     * @param sessionUnitId 会话单元Id
-     * @param memberName 会话内名称
      * @returns IczpNet_Chat_SessionUnits_Dtos_SessionUnitOwnerDto Success
      * @throws ApiError
      */
-    public static postApiChatSettingSetMemberName(
+    public static postApiChatSettingSetMemberName({
+sessionUnitId,
+memberName,
+}: {
+/**
+ * 会话单元Id
+ */
 sessionUnitId: string,
+/**
+ * 会话内名称
+ */
 memberName?: string,
-): CancelablePromise<IczpNet_Chat_SessionUnits_Dtos_SessionUnitOwnerDto> {
+}): CancelablePromise<IczpNet_Chat_SessionUnits_Dtos_SessionUnitOwnerDto> {
         return __request(OpenAPI, {
             method: 'POST',
             url: '/api/chat/setting/set-member-name/{sessionUnitId}',
@@ -237,17 +278,27 @@ memberName?: string,
 
     /**
      * 禁言过期时间，为空则不禁言
-     * @param muterSessionUnitId 被设置的会话单元Id
-     * @param setterSessionUnitId 设置者会话单元Id
-     * @param seconds 禁言(秒)，为0则取消禁言
      * @returns string Success
      * @throws ApiError
      */
-    public static postApiChatSettingSetMuteExpireTime(
+    public static postApiChatSettingSetMuteExpireTime({
+muterSessionUnitId,
+setterSessionUnitId,
+seconds,
+}: {
+/**
+ * 被设置的会话单元Id
+ */
 muterSessionUnitId: string,
+/**
+ * 设置者会话单元Id
+ */
 setterSessionUnitId: string,
+/**
+ * 禁言(秒)，为0则取消禁言
+ */
 seconds?: number,
-): CancelablePromise<string> {
+}): CancelablePromise<string> {
         return __request(OpenAPI, {
             method: 'POST',
             url: '/api/chat/setting/set-mute-expire-time',
@@ -269,17 +320,27 @@ seconds?: number,
 
     /**
      * 设置已读消息Id
-     * @param sessionUnitId 会话单元Id
-     * @param isForce 是否强制
-     * @param messageId 消息Id
      * @returns IczpNet_Chat_SessionUnits_Dtos_SessionUnitOwnerDto Success
      * @throws ApiError
      */
-    public static postApiChatSettingSetReadedMessageId(
+    public static postApiChatSettingSetReadedMessageId({
+sessionUnitId,
+isForce = false,
+messageId,
+}: {
+/**
+ * 会话单元Id
+ */
 sessionUnitId: string,
-isForce: boolean = false,
+/**
+ * 是否强制
+ */
+isForce?: boolean,
+/**
+ * 消息Id
+ */
 messageId?: number,
-): CancelablePromise<IczpNet_Chat_SessionUnits_Dtos_SessionUnitOwnerDto> {
+}): CancelablePromise<IczpNet_Chat_SessionUnits_Dtos_SessionUnitOwnerDto> {
         return __request(OpenAPI, {
             method: 'POST',
             url: '/api/chat/setting/set-readed-message-id',
@@ -301,15 +362,22 @@ messageId?: number,
 
     /**
      * 备注名称
-     * @param sessionUnitId 会话单元Id
-     * @param rename 名称
      * @returns IczpNet_Chat_SessionUnits_Dtos_SessionUnitOwnerDto Success
      * @throws ApiError
      */
-    public static postApiChatSettingSetRename(
+    public static postApiChatSettingSetRename({
+sessionUnitId,
+rename,
+}: {
+/**
+ * 会话单元Id
+ */
 sessionUnitId: string,
+/**
+ * 名称
+ */
 rename?: string,
-): CancelablePromise<IczpNet_Chat_SessionUnits_Dtos_SessionUnitOwnerDto> {
+}): CancelablePromise<IczpNet_Chat_SessionUnits_Dtos_SessionUnitOwnerDto> {
         return __request(OpenAPI, {
             method: 'POST',
             url: '/api/chat/setting/set-rename/{sessionUnitId}',
@@ -332,15 +400,22 @@ rename?: string,
 
     /**
      * 设置置顶
-     * @param sessionUnitId 会话单元Id
-     * @param isTopping 是否置顶
      * @returns IczpNet_Chat_SessionUnits_Dtos_SessionUnitOwnerDto Success
      * @throws ApiError
      */
-    public static postApiChatSettingSetTopping(
+    public static postApiChatSettingSetTopping({
+sessionUnitId,
+isTopping,
+}: {
+/**
+ * 会话单元Id
+ */
 sessionUnitId: string,
+/**
+ * 是否置顶
+ */
 isTopping?: boolean,
-): CancelablePromise<IczpNet_Chat_SessionUnits_Dtos_SessionUnitOwnerDto> {
+}): CancelablePromise<IczpNet_Chat_SessionUnits_Dtos_SessionUnitOwnerDto> {
         return __request(OpenAPI, {
             method: 'POST',
             url: '/api/chat/setting/set-topping/{sessionUnitId}',

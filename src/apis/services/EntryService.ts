@@ -13,15 +13,22 @@ export class EntryService {
 
     /**
      * 设置聊天对象条目
-     * @param ownerId 聊天对象Id
-     * @param requestBody {entryNameId:["v1","v2"]}
      * @returns IczpNet_Chat_ChatObjects_Dtos_ChatObjectDetailDto Success
      * @throws ApiError
      */
-    public static postApiChatEntrySetForChatObject(
+    public static postApiChatEntrySetForChatObject({
+ownerId,
+requestBody,
+}: {
+/**
+ * 聊天对象Id
+ */
 ownerId: number,
+/**
+ * {entryNameId:["v1","v2"]}
+ */
 requestBody: Record<string, Array<string>>,
-): CancelablePromise<IczpNet_Chat_ChatObjects_Dtos_ChatObjectDetailDto> {
+}): CancelablePromise<IczpNet_Chat_ChatObjects_Dtos_ChatObjectDetailDto> {
         return __request(OpenAPI, {
             method: 'POST',
             url: '/api/chat/entry/set-for-chat-object/{ownerId}',
@@ -43,15 +50,22 @@ requestBody: Record<string, Array<string>>,
 
     /**
      * 设置会话单元Id条目值
-     * @param sessionUnitId 会话单元Id
-     * @param requestBody {entryNameId:["v1","v2"]}
      * @returns IczpNet_Chat_SessionUnits_Dtos_SessionUnitDestinationDetailDto Success
      * @throws ApiError
      */
-    public static postApiChatEntrySetForSessionUnit(
+    public static postApiChatEntrySetForSessionUnit({
+sessionUnitId,
+requestBody,
+}: {
+/**
+ * 会话单元Id
+ */
 sessionUnitId: string,
+/**
+ * {entryNameId:["v1","v2"]}
+ */
 requestBody: Record<string, Array<string>>,
-): CancelablePromise<IczpNet_Chat_SessionUnits_Dtos_SessionUnitDestinationDetailDto> {
+}): CancelablePromise<IczpNet_Chat_SessionUnits_Dtos_SessionUnitDestinationDetailDto> {
         return __request(OpenAPI, {
             method: 'POST',
             url: '/api/chat/entry/set-for-session-unit/{sessionUnitId}',

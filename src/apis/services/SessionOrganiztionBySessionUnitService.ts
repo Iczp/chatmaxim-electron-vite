@@ -15,15 +15,16 @@ import { request as __request } from '../core/request';
 export class SessionOrganiztionBySessionUnitService {
 
     /**
-     * @param sessionUnitId 
-     * @param requestBody 
      * @returns IczpNet_Chat_SessionSections_SessionOrganiztions_Dtos_SessionOrganizationDetailDto Success
      * @throws ApiError
      */
-    public static postApiChatSessionOrganiztionBySessionUnit(
+    public static postApiChatSessionOrganiztionBySessionUnit({
+sessionUnitId,
+requestBody,
+}: {
 sessionUnitId?: string,
 requestBody?: IczpNet_Chat_SessionSections_SessionOrganiztions_Dtos_SessionOrganizationCreateBySessionUnitInput,
-): CancelablePromise<IczpNet_Chat_SessionSections_SessionOrganiztions_Dtos_SessionOrganizationDetailDto> {
+}): CancelablePromise<IczpNet_Chat_SessionSections_SessionOrganiztions_Dtos_SessionOrganizationDetailDto> {
         return __request(OpenAPI, {
             method: 'POST',
             url: '/api/chat/session-organiztion-by-session-unit',
@@ -44,27 +45,49 @@ requestBody?: IczpNet_Chat_SessionSections_SessionOrganiztions_Dtos_SessionOrgan
     }
 
     /**
-     * @param sessionUnitId 
-     * @param isEnabledParentId 是否启用 ParentId
-     * @param parentId 父级Id,当IsEnabledParentId=false时,查询全部
-     * @param depthList 层级
-     * @param keyword 关键字(支持拼音)
-     * @param maxResultCount 显示数量
-     * @param skipCount 跳过数量
-     * @param sorting 排序
      * @returns Volo_Abp_Application_Dtos_PagedResultDto_1<IczpNet_Chat_SessionSections_SessionOrganiztions_Dtos_SessionOrganizationDto_IczpNet_Chat_Application_Contracts_Version_0_1_1_0_Culture_neutral_PublicKeyToken_null_> Success
      * @throws ApiError
      */
-    public static getApiChatSessionOrganiztionBySessionUnit(
+    public static getApiChatSessionOrganiztionBySessionUnit({
+sessionUnitId,
+isEnabledParentId = false,
+parentId = null,
+depthList = null,
+keyword = null,
+maxResultCount,
+skipCount,
+sorting = null,
+}: {
 sessionUnitId?: string,
-isEnabledParentId: boolean = false,
-parentId: number = null,
-depthList: Array<number> = null,
-keyword: string = null,
+/**
+ * 是否启用 ParentId
+ */
+isEnabledParentId?: boolean,
+/**
+ * 父级Id,当IsEnabledParentId=false时,查询全部
+ */
+parentId?: number,
+/**
+ * 层级
+ */
+depthList?: Array<number>,
+/**
+ * 关键字(支持拼音)
+ */
+keyword?: string,
+/**
+ * 显示数量
+ */
 maxResultCount?: number,
+/**
+ * 跳过数量
+ */
 skipCount?: number,
-sorting: string = null,
-): CancelablePromise<Volo_Abp_Application_Dtos_PagedResultDto_1> {
+/**
+ * 排序
+ */
+sorting?: string,
+}): CancelablePromise<Volo_Abp_Application_Dtos_PagedResultDto_1> {
         return __request(OpenAPI, {
             method: 'GET',
             url: '/api/chat/session-organiztion-by-session-unit',
@@ -90,15 +113,16 @@ sorting: string = null,
     }
 
     /**
-     * @param sessionUnitId 
-     * @param id 
      * @returns any Success
      * @throws ApiError
      */
-    public static postApiChatSessionOrganiztionBySessionUnitDelete(
+    public static postApiChatSessionOrganiztionBySessionUnitDelete({
+sessionUnitId,
+id,
+}: {
 sessionUnitId: string,
 id: number,
-): CancelablePromise<any> {
+}): CancelablePromise<any> {
         return __request(OpenAPI, {
             method: 'POST',
             url: '/api/chat/session-organiztion-by-session-unit/{id}/delete/{sessionUnitId}',
@@ -118,15 +142,16 @@ id: number,
     }
 
     /**
-     * @param sessionUnitId 
-     * @param requestBody 
      * @returns any Success
      * @throws ApiError
      */
-    public static postApiChatSessionOrganiztionBySessionUnitDeleteMany(
+    public static postApiChatSessionOrganiztionBySessionUnitDeleteMany({
+sessionUnitId,
+requestBody,
+}: {
 sessionUnitId: string,
 requestBody?: Array<number>,
-): CancelablePromise<any> {
+}): CancelablePromise<any> {
         return __request(OpenAPI, {
             method: 'POST',
             url: '/api/chat/session-organiztion-by-session-unit/delete-many/{sessionUnitId}',
@@ -147,15 +172,16 @@ requestBody?: Array<number>,
     }
 
     /**
-     * @param id 
-     * @param sessionUnitId 
      * @returns IczpNet_Chat_SessionSections_SessionOrganiztions_Dtos_SessionOrganizationDetailDto Success
      * @throws ApiError
      */
-    public static getApiChatSessionOrganiztionBySessionUnit1(
+    public static getApiChatSessionOrganiztionBySessionUnit1({
+id,
+sessionUnitId,
+}: {
 id: number,
 sessionUnitId?: string,
-): CancelablePromise<IczpNet_Chat_SessionSections_SessionOrganiztions_Dtos_SessionOrganizationDetailDto> {
+}): CancelablePromise<IczpNet_Chat_SessionSections_SessionOrganiztions_Dtos_SessionOrganizationDetailDto> {
         return __request(OpenAPI, {
             method: 'GET',
             url: '/api/chat/session-organiztion-by-session-unit/{id}',
@@ -177,13 +203,14 @@ sessionUnitId?: string,
     }
 
     /**
-     * @param idList 
      * @returns IczpNet_Chat_SessionSections_SessionOrganiztions_Dtos_SessionOrganizationDetailDto Success
      * @throws ApiError
      */
-    public static getApiChatSessionOrganiztionBySessionUnitMany(
+    public static getApiChatSessionOrganiztionBySessionUnitMany({
+idList,
+}: {
 idList?: Array<number>,
-): CancelablePromise<Array<IczpNet_Chat_SessionSections_SessionOrganiztions_Dtos_SessionOrganizationDetailDto>> {
+}): CancelablePromise<Array<IczpNet_Chat_SessionSections_SessionOrganiztions_Dtos_SessionOrganizationDetailDto>> {
         return __request(OpenAPI, {
             method: 'GET',
             url: '/api/chat/session-organiztion-by-session-unit/many',
@@ -202,17 +229,18 @@ idList?: Array<number>,
     }
 
     /**
-     * @param sessionUnitId 
-     * @param id 
-     * @param requestBody 
      * @returns IczpNet_Chat_SessionSections_SessionOrganiztions_Dtos_SessionOrganizationDetailDto Success
      * @throws ApiError
      */
-    public static postApiChatSessionOrganiztionBySessionUnitUpdate(
+    public static postApiChatSessionOrganiztionBySessionUnitUpdate({
+sessionUnitId,
+id,
+requestBody,
+}: {
 sessionUnitId: string,
 id: number,
 requestBody?: IczpNet_Chat_SessionSections_SessionOrganiztions_Dtos_SessionOrganizationUpdateInput,
-): CancelablePromise<IczpNet_Chat_SessionSections_SessionOrganiztions_Dtos_SessionOrganizationDetailDto> {
+}): CancelablePromise<IczpNet_Chat_SessionSections_SessionOrganiztions_Dtos_SessionOrganizationDetailDto> {
         return __request(OpenAPI, {
             method: 'POST',
             url: '/api/chat/session-organiztion-by-session-unit/{id}/update/{sessionUnitId}',

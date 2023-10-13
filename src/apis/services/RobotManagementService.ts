@@ -13,13 +13,14 @@ import { request as __request } from '../core/request';
 export class RobotManagementService {
 
     /**
-     * @param requestBody 
      * @returns IczpNet_Chat_Robots_Dtos_RobotDto Success
      * @throws ApiError
      */
-    public static postApiChatRobotManagement(
+    public static postApiChatRobotManagement({
+requestBody,
+}: {
 requestBody?: IczpNet_Chat_Robots_Dtos_RobotCreateInput,
-): CancelablePromise<IczpNet_Chat_Robots_Dtos_RobotDto> {
+}): CancelablePromise<IczpNet_Chat_Robots_Dtos_RobotDto> {
         return __request(OpenAPI, {
             method: 'POST',
             url: '/api/chat/robot-management',
@@ -37,15 +38,16 @@ requestBody?: IczpNet_Chat_Robots_Dtos_RobotCreateInput,
     }
 
     /**
-     * @param id 
-     * @param requestBody 
      * @returns IczpNet_Chat_Robots_Dtos_RobotDto Success
      * @throws ApiError
      */
-    public static postApiChatRobotManagementUpdate(
+    public static postApiChatRobotManagementUpdate({
+id,
+requestBody,
+}: {
 id: number,
 requestBody?: IczpNet_Chat_Robots_Dtos_RobotUpdateInput,
-): CancelablePromise<IczpNet_Chat_Robots_Dtos_RobotDto> {
+}): CancelablePromise<IczpNet_Chat_Robots_Dtos_RobotDto> {
         return __request(OpenAPI, {
             method: 'POST',
             url: '/api/chat/robot-management/{id}/update',

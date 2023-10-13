@@ -35,15 +35,22 @@ export class MessageService {
 
     /**
      * 获取一条消息
-     * @param sessionUnitId 会话单元Id
-     * @param messageId 消息Id
      * @returns IczpNet_Chat_MessageSections_Messages_Dtos_MessageDto Success
      * @throws ApiError
      */
-    public static getApiChatMessageItem(
+    public static getApiChatMessageItem({
+sessionUnitId,
+messageId,
+}: {
+/**
+ * 会话单元Id
+ */
 sessionUnitId: string,
+/**
+ * 消息Id
+ */
 messageId: number,
-): CancelablePromise<IczpNet_Chat_MessageSections_Messages_Dtos_MessageDto> {
+}): CancelablePromise<IczpNet_Chat_MessageSections_Messages_Dtos_MessageDto> {
         return __request(OpenAPI, {
             method: 'GET',
             url: '/api/chat/message/item',
@@ -64,37 +71,77 @@ messageId: number,
 
     /**
      * 获取消息列表
-     * @param sessionUnitId 会话单元Id
-     * @param senderId 发送人【聊天对象】
-     * @param isRemind 是否有提醒
-     * @param messageType 消息类型
-     * @param isFollowed 是否特别关注
-     * @param forwardDepth 转发层级
-     * @param quoteDepth 引用层级
-     * @param minMessageId 最小消息Id
-     * @param maxMessageId 最大消息Id
-     * @param keyword 关键字(支持拼音)
-     * @param maxResultCount 显示数量
-     * @param skipCount 跳过数量
-     * @param sorting 排序
      * @returns Volo_Abp_Application_Dtos_PagedResultDto_1<IczpNet_Chat_MessageSections_Messages_Dtos_MessageOwnerDto_IczpNet_Chat_Application_Contracts_Version_0_1_1_0_Culture_neutral_PublicKeyToken_null_> Success
      * @throws ApiError
      */
-    public static getApiChatMessage(
+    public static getApiChatMessage({
+sessionUnitId,
+senderId,
+isRemind,
+messageType,
+isFollowed,
+forwardDepth,
+quoteDepth,
+minMessageId,
+maxMessageId,
+keyword = null,
+maxResultCount,
+skipCount,
+sorting = null,
+}: {
+/**
+ * 会话单元Id
+ */
 sessionUnitId: string,
+/**
+ * 发送人【聊天对象】
+ */
 senderId?: number,
+/**
+ * 是否有提醒
+ */
 isRemind?: boolean,
+/**
+ * 消息类型
+ */
 messageType?: 0 | 1 | 2 | 3 | 4 | 5 | 6 | 7 | 8 | 9 | 10 | 11 | 12,
+/**
+ * 是否特别关注
+ */
 isFollowed?: boolean,
+/**
+ * 转发层级
+ */
 forwardDepth?: number,
+/**
+ * 引用层级
+ */
 quoteDepth?: number,
+/**
+ * 最小消息Id
+ */
 minMessageId?: number,
+/**
+ * 最大消息Id
+ */
 maxMessageId?: number,
-keyword: string = null,
+/**
+ * 关键字(支持拼音)
+ */
+keyword?: string,
+/**
+ * 显示数量
+ */
 maxResultCount?: number,
+/**
+ * 跳过数量
+ */
 skipCount?: number,
-sorting: string = null,
-): CancelablePromise<Volo_Abp_Application_Dtos_PagedResultDto_1> {
+/**
+ * 排序
+ */
+sorting?: string,
+}): CancelablePromise<Volo_Abp_Application_Dtos_PagedResultDto_1> {
         return __request(OpenAPI, {
             method: 'GET',
             url: '/api/chat/message',

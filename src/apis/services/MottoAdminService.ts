@@ -14,13 +14,17 @@ export class MottoAdminService {
 
     /**
      * 删除一条数据
-     * @param id 主键Id
      * @returns any Success
      * @throws ApiError
      */
-    public static postApiChatMottoAdminDelete(
+    public static postApiChatMottoAdminDelete({
+id,
+}: {
+/**
+ * 主键Id
+ */
 id: string,
-): CancelablePromise<any> {
+}): CancelablePromise<any> {
         return __request(OpenAPI, {
             method: 'POST',
             url: '/api/chat/motto-admin/{id}/delete',
@@ -40,13 +44,17 @@ id: string,
 
     /**
      * 删除多条数据
-     * @param requestBody 主键Id[多个]
      * @returns any Success
      * @throws ApiError
      */
-    public static postApiChatMottoAdminDeleteMany(
+    public static postApiChatMottoAdminDeleteMany({
+requestBody,
+}: {
+/**
+ * 主键Id[多个]
+ */
 requestBody?: Array<string>,
-): CancelablePromise<any> {
+}): CancelablePromise<any> {
         return __request(OpenAPI, {
             method: 'POST',
             url: '/api/chat/motto-admin/delete-many',
@@ -65,13 +73,17 @@ requestBody?: Array<string>,
 
     /**
      * 获取一条记录 Get
-     * @param id 主键Id
      * @returns IczpNet_Chat_Mottos_Dtos_MottoDetailDto Success
      * @throws ApiError
      */
-    public static getApiChatMottoAdmin(
+    public static getApiChatMottoAdmin({
+id,
+}: {
+/**
+ * 主键Id
+ */
 id: string,
-): CancelablePromise<IczpNet_Chat_Mottos_Dtos_MottoDetailDto> {
+}): CancelablePromise<IczpNet_Chat_Mottos_Dtos_MottoDetailDto> {
         return __request(OpenAPI, {
             method: 'GET',
             url: '/api/chat/motto-admin/{id}',
@@ -91,21 +103,34 @@ id: string,
 
     /**
      * 获取列表
-     * @param ownerId 
-     * @param keyword 关键字(支持拼音)
-     * @param maxResultCount 显示数量
-     * @param skipCount 跳过数量
-     * @param sorting 排序
      * @returns Volo_Abp_Application_Dtos_PagedResultDto_1<IczpNet_Chat_Mottos_Dtos_MottoDto_IczpNet_Chat_Application_Contracts_Version_0_1_1_0_Culture_neutral_PublicKeyToken_null_> Success
      * @throws ApiError
      */
-    public static getApiChatMottoAdmin1(
+    public static getApiChatMottoAdmin1({
+ownerId,
+keyword = null,
+maxResultCount,
+skipCount,
+sorting = null,
+}: {
 ownerId?: number,
-keyword: string = null,
+/**
+ * 关键字(支持拼音)
+ */
+keyword?: string,
+/**
+ * 显示数量
+ */
 maxResultCount?: number,
+/**
+ * 跳过数量
+ */
 skipCount?: number,
-sorting: string = null,
-): CancelablePromise<Volo_Abp_Application_Dtos_PagedResultDto_1> {
+/**
+ * 排序
+ */
+sorting?: string,
+}): CancelablePromise<Volo_Abp_Application_Dtos_PagedResultDto_1> {
         return __request(OpenAPI, {
             method: 'GET',
             url: '/api/chat/motto-admin',
@@ -129,13 +154,17 @@ sorting: string = null,
 
     /**
      * 获取多条数据
-     * @param idList 主键Id[多个]
      * @returns IczpNet_Chat_Mottos_Dtos_MottoDetailDto Success
      * @throws ApiError
      */
-    public static getApiChatMottoAdminMany(
+    public static getApiChatMottoAdminMany({
+idList,
+}: {
+/**
+ * 主键Id[多个]
+ */
 idList?: Array<string>,
-): CancelablePromise<Array<IczpNet_Chat_Mottos_Dtos_MottoDetailDto>> {
+}): CancelablePromise<Array<IczpNet_Chat_Mottos_Dtos_MottoDetailDto>> {
         return __request(OpenAPI, {
             method: 'GET',
             url: '/api/chat/motto-admin/many',

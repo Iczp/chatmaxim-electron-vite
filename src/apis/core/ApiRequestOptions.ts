@@ -1,6 +1,13 @@
 /* generated using openapi-typescript-codegen -- do no edit */
 /* istanbul ignore file */
 /* tslint:disable */
+
+import { AxiosProgressEvent, AxiosRequestConfig } from "axios";
+
+export interface ApiRequestConfig extends  AxiosRequestConfig{
+    
+}
+
 /* eslint-disable */
 export type ApiRequestOptions = {
     readonly method: 'GET' | 'PUT' | 'POST' | 'DELETE' | 'OPTIONS' | 'HEAD' | 'PATCH';
@@ -14,4 +21,6 @@ export type ApiRequestOptions = {
     readonly mediaType?: string;
     readonly responseHeader?: string;
     readonly errors?: Record<number, string>;
+    readonly onUploadProgress?: ((progressEvent: AxiosProgressEvent) => void) | undefined;
+    readonly onDownloadProgress?: ((progressEvent: AxiosProgressEvent) => void) | undefined;
 };

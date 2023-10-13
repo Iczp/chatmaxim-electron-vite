@@ -16,13 +16,14 @@ import { request as __request } from '../core/request';
 export class RoomAdminService {
 
     /**
-     * @param requestBody 
      * @returns IczpNet_Chat_ChatObjects_Dtos_ChatObjectDto Success
      * @throws ApiError
      */
-    public static postApiChatRoomAdmin(
+    public static postApiChatRoomAdmin({
+requestBody,
+}: {
 requestBody?: IczpNet_Chat_RoomSections_Rooms_Dtos_RoomCreateInput,
-): CancelablePromise<IczpNet_Chat_ChatObjects_Dtos_ChatObjectDto> {
+}): CancelablePromise<IczpNet_Chat_ChatObjects_Dtos_ChatObjectDto> {
         return __request(OpenAPI, {
             method: 'POST',
             url: '/api/chat/room-admin',
@@ -40,13 +41,14 @@ requestBody?: IczpNet_Chat_RoomSections_Rooms_Dtos_RoomCreateInput,
     }
 
     /**
-     * @param name 
      * @returns IczpNet_Chat_ChatObjects_Dtos_ChatObjectDto Success
      * @throws ApiError
      */
-    public static postApiChatRoomAdminByAllUsers(
+    public static postApiChatRoomAdminByAllUsers({
+name,
+}: {
 name?: string,
-): CancelablePromise<IczpNet_Chat_ChatObjects_Dtos_ChatObjectDto> {
+}): CancelablePromise<IczpNet_Chat_ChatObjects_Dtos_ChatObjectDto> {
         return __request(OpenAPI, {
             method: 'POST',
             url: '/api/chat/room-admin/by-all-users',
@@ -65,13 +67,14 @@ name?: string,
     }
 
     /**
-     * @param sessionUnitId 
      * @returns any Success
      * @throws ApiError
      */
-    public static postApiChatRoomAdminDissolve(
+    public static postApiChatRoomAdminDissolve({
+sessionUnitId,
+}: {
 sessionUnitId: string,
-): CancelablePromise<any> {
+}): CancelablePromise<any> {
         return __request(OpenAPI, {
             method: 'POST',
             url: '/api/chat/room-admin/dissolve/{sessionUnitId}',
@@ -90,23 +93,42 @@ sessionUnitId: string,
     }
 
     /**
-     * @param sourceChatObjectId 原聊天对象Id
-     * @param targetChatObjectId 目标对象Id
-     * @param keyword 关键字(支持拼音)
-     * @param maxResultCount 显示数量
-     * @param skipCount 跳过数量
-     * @param sorting 排序
      * @returns Volo_Abp_Application_Dtos_PagedResultDto_1<IczpNet_Chat_SessionUnits_Dtos_SessionUnitDto_IczpNet_Chat_Application_Contracts_Version_0_1_1_0_Culture_neutral_PublicKeyToken_null_> Success
      * @throws ApiError
      */
-    public static getApiChatRoomAdminSame(
+    public static getApiChatRoomAdminSame({
+sourceChatObjectId,
+targetChatObjectId,
+keyword = null,
+maxResultCount,
+skipCount,
+sorting = null,
+}: {
+/**
+ * 原聊天对象Id
+ */
 sourceChatObjectId?: number,
+/**
+ * 目标对象Id
+ */
 targetChatObjectId?: number,
-keyword: string = null,
+/**
+ * 关键字(支持拼音)
+ */
+keyword?: string,
+/**
+ * 显示数量
+ */
 maxResultCount?: number,
+/**
+ * 跳过数量
+ */
 skipCount?: number,
-sorting: string = null,
-): CancelablePromise<Volo_Abp_Application_Dtos_PagedResultDto_1> {
+/**
+ * 排序
+ */
+sorting?: string,
+}): CancelablePromise<Volo_Abp_Application_Dtos_PagedResultDto_1> {
         return __request(OpenAPI, {
             method: 'GET',
             url: '/api/chat/room-admin/same',
@@ -130,15 +152,16 @@ sorting: string = null,
     }
 
     /**
-     * @param sourceChatObjectId 
-     * @param targetChatObjectId 
      * @returns number Success
      * @throws ApiError
      */
-    public static getApiChatRoomAdminSameCount(
+    public static getApiChatRoomAdminSameCount({
+sourceChatObjectId,
+targetChatObjectId,
+}: {
 sourceChatObjectId?: number,
 targetChatObjectId?: number,
-): CancelablePromise<number> {
+}): CancelablePromise<number> {
         return __request(OpenAPI, {
             method: 'GET',
             url: '/api/chat/room-admin/same-count',
@@ -158,13 +181,14 @@ targetChatObjectId?: number,
     }
 
     /**
-     * @param requestBody 
      * @returns IczpNet_Chat_SessionSections_SessionUnits_SessionUnitSenderInfo Success
      * @throws ApiError
      */
-    public static postApiChatRoomAdminInvite(
+    public static postApiChatRoomAdminInvite({
+requestBody,
+}: {
 requestBody?: IczpNet_Chat_RoomSections_Rooms_InviteInput,
-): CancelablePromise<Array<IczpNet_Chat_SessionSections_SessionUnits_SessionUnitSenderInfo>> {
+}): CancelablePromise<Array<IczpNet_Chat_SessionSections_SessionUnits_SessionUnitSenderInfo>> {
         return __request(OpenAPI, {
             method: 'POST',
             url: '/api/chat/room-admin/invite',
@@ -182,15 +206,16 @@ requestBody?: IczpNet_Chat_RoomSections_Rooms_InviteInput,
     }
 
     /**
-     * @param sessionUnitId 
-     * @param targetSessionUnitId 
      * @returns any Success
      * @throws ApiError
      */
-    public static postApiChatRoomAdminTransferCreator(
+    public static postApiChatRoomAdminTransferCreator({
+sessionUnitId,
+targetSessionUnitId,
+}: {
 sessionUnitId?: string,
 targetSessionUnitId?: string,
-): CancelablePromise<any> {
+}): CancelablePromise<any> {
         return __request(OpenAPI, {
             method: 'POST',
             url: '/api/chat/room-admin/transfer-creator',
@@ -210,15 +235,16 @@ targetSessionUnitId?: string,
     }
 
     /**
-     * @param sessionUnitId 
-     * @param name 
      * @returns IczpNet_Chat_ChatObjects_Dtos_ChatObjectDto Success
      * @throws ApiError
      */
-    public static postApiChatRoomAdminUpdateName(
+    public static postApiChatRoomAdminUpdateName({
+sessionUnitId,
+name,
+}: {
 sessionUnitId: string,
 name?: string,
-): CancelablePromise<IczpNet_Chat_ChatObjects_Dtos_ChatObjectDto> {
+}): CancelablePromise<IczpNet_Chat_ChatObjects_Dtos_ChatObjectDto> {
         return __request(OpenAPI, {
             method: 'POST',
             url: '/api/chat/room-admin/update-name/{sessionUnitId}',
@@ -240,15 +266,16 @@ name?: string,
     }
 
     /**
-     * @param sessionUnitId 
-     * @param portrait 
      * @returns IczpNet_Chat_ChatObjects_Dtos_ChatObjectDto Success
      * @throws ApiError
      */
-    public static postApiChatRoomAdminUpdatePortrait(
+    public static postApiChatRoomAdminUpdatePortrait({
+sessionUnitId,
+portrait,
+}: {
 sessionUnitId: string,
 portrait?: string,
-): CancelablePromise<IczpNet_Chat_ChatObjects_Dtos_ChatObjectDto> {
+}): CancelablePromise<IczpNet_Chat_ChatObjects_Dtos_ChatObjectDto> {
         return __request(OpenAPI, {
             method: 'POST',
             url: '/api/chat/room-admin/update-portrait/{sessionUnitId}',

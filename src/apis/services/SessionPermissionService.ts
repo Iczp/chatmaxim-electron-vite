@@ -15,13 +15,17 @@ export class SessionPermissionService {
 
     /**
      * 获取会话角色权限
-     * @param sessionRoleId 会话角色Id
      * @returns IczpNet_Chat_SessionSections_SessionPermissions_PermissionGrantValue Success
      * @throws ApiError
      */
-    public static getApiChatSessionPermissionGrantedBySessionRole(
+    public static getApiChatSessionPermissionGrantedBySessionRole({
+sessionRoleId,
+}: {
+/**
+ * 会话角色Id
+ */
 sessionRoleId: string,
-): CancelablePromise<Record<string, IczpNet_Chat_SessionSections_SessionPermissions_PermissionGrantValue>> {
+}): CancelablePromise<Record<string, IczpNet_Chat_SessionSections_SessionPermissions_PermissionGrantValue>> {
         return __request(OpenAPI, {
             method: 'GET',
             url: '/api/chat/session-permission/granted-by-session-role/{sessionRoleId}',
@@ -41,15 +45,22 @@ sessionRoleId: string,
 
     /**
      * 获取授予权限的会话单元
-     * @param permissionDefinitionId 权限Id
-     * @param sessionUnitId 会话单元Id
      * @returns IczpNet_Chat_SessionSections_SessionPermissions_Dtos_SessionPermissionGrantDto Success
      * @throws ApiError
      */
-    public static getApiChatSessionPermissionGrantedBySessionUnit(
+    public static getApiChatSessionPermissionGrantedBySessionUnit({
+permissionDefinitionId,
+sessionUnitId,
+}: {
+/**
+ * 权限Id
+ */
 permissionDefinitionId?: string,
+/**
+ * 会话单元Id
+ */
 sessionUnitId?: string,
-): CancelablePromise<IczpNet_Chat_SessionSections_SessionPermissions_Dtos_SessionPermissionGrantDto> {
+}): CancelablePromise<IczpNet_Chat_SessionSections_SessionPermissions_Dtos_SessionPermissionGrantDto> {
         return __request(OpenAPI, {
             method: 'GET',
             url: '/api/chat/session-permission/granted-by-session-unit',
@@ -70,17 +81,27 @@ sessionUnitId?: string,
 
     /**
      * 授予会话角色权限
-     * @param definitionId 权限Id
-     * @param sessionRoleId 角色Id
-     * @param requestBody 授予值
      * @returns IczpNet_Chat_SessionSections_SessionPermissions_Dtos_SessionPermissionRoleGrantDto Success
      * @throws ApiError
      */
-    public static postApiChatSessionPermissionGrantBySessionRole(
+    public static postApiChatSessionPermissionGrantBySessionRole({
+definitionId,
+sessionRoleId,
+requestBody,
+}: {
+/**
+ * 权限Id
+ */
 definitionId?: string,
+/**
+ * 角色Id
+ */
 sessionRoleId?: string,
+/**
+ * 授予值
+ */
 requestBody?: IczpNet_Chat_SessionSections_SessionPermissions_PermissionGrantValue,
-): CancelablePromise<IczpNet_Chat_SessionSections_SessionPermissions_Dtos_SessionPermissionRoleGrantDto> {
+}): CancelablePromise<IczpNet_Chat_SessionSections_SessionPermissions_Dtos_SessionPermissionRoleGrantDto> {
         return __request(OpenAPI, {
             method: 'POST',
             url: '/api/chat/session-permission/grant-by-session-role',
@@ -103,17 +124,27 @@ requestBody?: IczpNet_Chat_SessionSections_SessionPermissions_PermissionGrantVal
 
     /**
      * 授予会话单元权限
-     * @param definitionId 权限Id
-     * @param sessionUnitId 会话单元
-     * @param requestBody 授予值
      * @returns IczpNet_Chat_SessionSections_SessionPermissions_Dtos_SessionPermissionUnitGrantDto Success
      * @throws ApiError
      */
-    public static postApiChatSessionPermissionGrantBySessionUnit(
+    public static postApiChatSessionPermissionGrantBySessionUnit({
+definitionId,
+sessionUnitId,
+requestBody,
+}: {
+/**
+ * 权限Id
+ */
 definitionId?: string,
+/**
+ * 会话单元
+ */
 sessionUnitId?: string,
+/**
+ * 授予值
+ */
 requestBody?: IczpNet_Chat_SessionSections_SessionPermissions_PermissionGrantValue,
-): CancelablePromise<IczpNet_Chat_SessionSections_SessionPermissions_Dtos_SessionPermissionUnitGrantDto> {
+}): CancelablePromise<IczpNet_Chat_SessionSections_SessionPermissions_Dtos_SessionPermissionUnitGrantDto> {
         return __request(OpenAPI, {
             method: 'POST',
             url: '/api/chat/session-permission/grant-by-session-unit',
