@@ -2,7 +2,7 @@
 /* istanbul ignore file */
 /* tslint:disable */
 /* eslint-disable */
-import type { IczpNet_Chat_SessionUnits_Dtos_SessionUnitOwnerDto } from '../models/IczpNet_Chat_SessionUnits_Dtos_SessionUnitOwnerDto';
+import type { SessionUnitOwnerDto } from '../models/SessionUnitOwnerDto';
 
 import type { CancelablePromise } from '../core/CancelablePromise';
 import { OpenAPI } from '../core/OpenAPI';
@@ -22,7 +22,7 @@ sessionUnitId,
  * 会话单元Id
  */
 sessionUnitId: string,
-}): CancelablePromise<IczpNet_Chat_SessionUnits_Dtos_SessionUnitOwnerDto> {
+}): CancelablePromise<SessionUnitOwnerDto> {
         return __request(OpenAPI, {
             method: 'POST',
             url: '/api/chat/setting/clear-message/{sessionUnitId}',
@@ -88,7 +88,7 @@ sessionUnitId,
  * 会话单元Id
  */
 sessionUnitId: string,
-}): CancelablePromise<IczpNet_Chat_SessionUnits_Dtos_SessionUnitOwnerDto> {
+}): CancelablePromise<SessionUnitOwnerDto> {
         return __request(OpenAPI, {
             method: 'POST',
             url: '/api/chat/setting/exit/{sessionUnitId}',
@@ -118,7 +118,7 @@ sessionUnitId,
  * 会话单元Id
  */
 sessionUnitId: string,
-}): CancelablePromise<IczpNet_Chat_SessionUnits_Dtos_SessionUnitOwnerDto> {
+}): CancelablePromise<SessionUnitOwnerDto> {
         return __request(OpenAPI, {
             method: 'POST',
             url: '/api/chat/setting/kill/{sessionUnitId}',
@@ -148,7 +148,7 @@ sessionUnitId,
  * 会话单元Id
  */
 sessionUnitId: string,
-}): CancelablePromise<IczpNet_Chat_SessionUnits_Dtos_SessionUnitOwnerDto> {
+}): CancelablePromise<SessionUnitOwnerDto> {
         return __request(OpenAPI, {
             method: 'POST',
             url: '/api/chat/setting/remove/{sessionUnitId}',
@@ -217,7 +217,7 @@ isImmersed,
  */
 sessionUnitId: string,
 isImmersed?: boolean,
-}): CancelablePromise<IczpNet_Chat_SessionUnits_Dtos_SessionUnitOwnerDto> {
+}): CancelablePromise<SessionUnitOwnerDto> {
         return __request(OpenAPI, {
             method: 'POST',
             url: '/api/chat/setting/set-immersed/{sessionUnitId}',
@@ -255,7 +255,7 @@ sessionUnitId: string,
  * 会话内名称
  */
 memberName?: string,
-}): CancelablePromise<IczpNet_Chat_SessionUnits_Dtos_SessionUnitOwnerDto> {
+}): CancelablePromise<SessionUnitOwnerDto> {
         return __request(OpenAPI, {
             method: 'POST',
             url: '/api/chat/setting/set-member-name/{sessionUnitId}',
@@ -340,7 +340,7 @@ isForce?: boolean,
  * 消息Id
  */
 messageId?: number,
-}): CancelablePromise<IczpNet_Chat_SessionUnits_Dtos_SessionUnitOwnerDto> {
+}): CancelablePromise<SessionUnitOwnerDto> {
         return __request(OpenAPI, {
             method: 'POST',
             url: '/api/chat/setting/set-readed-message-id',
@@ -377,7 +377,7 @@ sessionUnitId: string,
  * 名称
  */
 rename?: string,
-}): CancelablePromise<IczpNet_Chat_SessionUnits_Dtos_SessionUnitOwnerDto> {
+}): CancelablePromise<SessionUnitOwnerDto> {
         return __request(OpenAPI, {
             method: 'POST',
             url: '/api/chat/setting/set-rename/{sessionUnitId}',
@@ -415,7 +415,7 @@ sessionUnitId: string,
  * 是否置顶
  */
 isTopping?: boolean,
-}): CancelablePromise<IczpNet_Chat_SessionUnits_Dtos_SessionUnitOwnerDto> {
+}): CancelablePromise<SessionUnitOwnerDto> {
         return __request(OpenAPI, {
             method: 'POST',
             url: '/api/chat/setting/set-topping/{sessionUnitId}',

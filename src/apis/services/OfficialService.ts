@@ -4,7 +4,7 @@
 /* eslint-disable */
 import type { IczpNet_Chat_ChatObjects_Dtos_ChatObjectDto } from '../models/IczpNet_Chat_ChatObjects_Dtos_ChatObjectDto';
 import type { IczpNet_Chat_OfficialSections_Officials_Dtos_OfficialCreateInput } from '../models/IczpNet_Chat_OfficialSections_Officials_Dtos_OfficialCreateInput';
-import type { IczpNet_Chat_SessionUnits_Dtos_SessionUnitOwnerDto } from '../models/IczpNet_Chat_SessionUnits_Dtos_SessionUnitOwnerDto';
+import type { SessionUnitOwnerDto } from '../models/SessionUnitOwnerDto';
 
 import type { CancelablePromise } from '../core/CancelablePromise';
 import { OpenAPI } from '../core/OpenAPI';
@@ -52,7 +52,7 @@ destinationId,
  */
 ownerId?: number,
 destinationId?: number,
-}): CancelablePromise<IczpNet_Chat_SessionUnits_Dtos_SessionUnitOwnerDto> {
+}): CancelablePromise<SessionUnitOwnerDto> {
         return __request(OpenAPI, {
             method: 'POST',
             url: '/api/chat/official/subscribe',
@@ -83,7 +83,7 @@ sessionUnitId,
  * 会话单元Id
  */
 sessionUnitId: string,
-}): CancelablePromise<IczpNet_Chat_SessionUnits_Dtos_SessionUnitOwnerDto> {
+}): CancelablePromise<SessionUnitOwnerDto> {
         return __request(OpenAPI, {
             method: 'POST',
             url: '/api/chat/official/subscribe-by-id/{sessionUnitId}',
@@ -113,7 +113,7 @@ sessionUnitId,
  * 会话单元Id
  */
 sessionUnitId: string,
-}): CancelablePromise<IczpNet_Chat_SessionUnits_Dtos_SessionUnitOwnerDto> {
+}): CancelablePromise<SessionUnitOwnerDto> {
         return __request(OpenAPI, {
             method: 'POST',
             url: '/api/chat/official/unsubscribe/{sessionUnitId}',

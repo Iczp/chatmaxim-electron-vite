@@ -5,9 +5,6 @@ import { TokenDto, TokenCreateInput, RefreshTokenInput } from './dto';
 import { toQueryString } from '../../commons/utils';
 import { TOKEN_URL } from './TokenController';
 
-
-
-
 export class TokenService {
   /**
    * 获取Token
@@ -17,9 +14,7 @@ export class TokenService {
    * @return {*}  {CancelablePromise<TokenDto>}
    * @memberof TokenService
    */
-  public static fetchToken(
-    input: TokenCreateInput
-  ): CancelablePromise<TokenDto> {
+  public static fetchToken(input: TokenCreateInput): CancelablePromise<TokenDto> {
     return __request(OpenAPI, {
       method: 'POST',
       url: TOKEN_URL,
@@ -36,9 +31,7 @@ export class TokenService {
    * @return {*}  {CancelablePromise<TokenDto>}
    * @memberof TokenService
    */
-  public static RefreshToken(
-    input: RefreshTokenInput
-  ): CancelablePromise<TokenDto> {
+  public static RefreshToken(input: RefreshTokenInput): CancelablePromise<TokenDto> {
     return __request(OpenAPI, {
       method: 'POST',
       url: TOKEN_URL,

@@ -1,7 +1,7 @@
 // import { CancelablePromise } from '../core/CancelablePromise';
 
 import { TokenService } from './TokenService';
-import { TokenDto } from './dto';
+import { TokenDto, LoginResult } from './dto';
 
 export const TOKEN_KEY: string = 'TOKEN-V2023';
 export const TOKEN_URL: string = '/connect/token';
@@ -15,28 +15,6 @@ export const isTokenUrl = (url?: string): boolean => {
   return url != null && (url == TOKEN_URL || url.endsWith(TOKEN_URL));
 };
 
-export type loginResult = {
-  /**
-   *
-   *
-   * @type {string}
-   */
-  message: string;
-
-  /**
-   *
-   *
-   * @type {boolean}
-   */
-  success: boolean;
-
-  /**
-   *
-   *
-   * @type {*}
-   */
-  detail?: any;
-};
 export const login = ({
   username,
   password,
@@ -54,7 +32,7 @@ export const login = ({
    * @type {string}
    */
   password?: string;
-}): Promise<loginResult> => {
+}): Promise<LoginResult> => {
   return new Promise((resolve, reject) => {
     TokenService.fetchToken({
       client_id: 'IM_App',
@@ -64,7 +42,7 @@ export const login = ({
       password: password || '1q2w3E*',
       scope: 'IM offline_access roles profile phone email address',
     })
-      .then((token) => {
+      .then(token => {
         token = handleToken(token);
         resolve({
           message: '',
@@ -72,7 +50,7 @@ export const login = ({
           detail: token,
         });
       })
-      .catch((err) => {
+      .catch(err => {
         console.error(err);
         reject({
           message: '登录失败',
@@ -101,44 +79,56 @@ const refreshToken = async (token: TokenDto) => {
   return newToken;
 };
 
+export let isPostToken: boolean = false;
+
+/**
+ * 获取Token
+ *
+ * @param {number} [tryCount=100] 重试次数
+ * @return {*}  {(Promise<TokenDto | null>)}
+ */
+
+export const getToken = (tryCount: number = 100): Promise<TokenDto | null> => {
+  return new Promise(async (resolve, reject) => {
+    if (isPostToken) {
+      // console.log('isPostToken', isPostToken, tryCount);
+      if (tryCount < 0) {
+        reject('超过重试次数');
+        return;
+      }
+      setTimeout(async () => {
+        // console.log('setTimeout isPostToken', isPostToken);
+        tryCount--;
+        resolve(await getToken(tryCount));
+      }, 100);
+      return;
+    }
+    isPostToken = true;
+    let token = await postToken();
+    isPostToken = false;
+    resolve(token);
+  });
+};
 /**
  * 获取Token
  *
  * @return {*}  {(Promise<TokenDto | null>)}
  */
-
-// export const getToken = (): Promise<TokenDto | null> => {
-//   return new Promise(async (resolve, reject) => {
-//     let token = getLocalToken();
-//     console.log('getToken 1', token);
-//     if (token) {
-//       if (isTokenExpired(token)) {
-//         token = await refreshToken(token);
-//       }
-//       resolve(token);
-//       return;
-//     }
-//     console.log('getToken 2', token);
-//     var ret = await login({});
-//     console.log('getToken 3 cacheToken', cacheToken);
-//     resolve(ret.detail);
-//   });
-// };
-
-export const getToken = async (): Promise<TokenDto | null> => {
+export const postToken = async (): Promise<TokenDto | null> => {
   let token = getLocalToken();
-  console.log('getToken 1', token);
+  // console.log('postToken 1', token);
   if (token) {
     if (isTokenExpired(token)) {
       token = await refreshToken(token);
     }
     return token;
   }
-  console.log('getToken 2', token);
+  // console.log('postToken 2', token);
   var ret = await login({});
-  console.log('getToken 3 cacheToken', cacheToken);
+  // console.log('postToken 3 cacheToken', cacheToken);
   return ret.detail;
 };
+
 /**
  * 存储Token
  *
@@ -177,7 +167,7 @@ export const getLocalToken = (): TokenDto | null => {
   let token: TokenDto | null = null;
   if (cacheToken) {
     token = cacheToken;
-    console.log('getLocalToken cacheToken');
+    // console.log('getLocalToken cacheToken');
   } else {
     let tokenString = localStorage.getItem(TOKEN_KEY);
     if (tokenString) {

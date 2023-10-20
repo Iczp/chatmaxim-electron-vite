@@ -9,14 +9,32 @@ import {
 } from '../apis';
 import { login } from '../apis/auth/TokenController';
 import { Volo_Abp_Application_Dtos_PagedResultDto_1 } from '../apis/models/Volo_Abp_Application_Dtos_PagedResultDto_1';
+import { Button } from 'ant-design-vue';
+
+interface FormState {
+  username: string;
+  password: string;
+  remember: boolean;
+}
+
+const formState = reactive<FormState>({
+  username: '',
+  password: '',
+  remember: true,
+});
+const onFinish = (values: any) => {
+  console.log('Success:', values);
+};
+
+const onFinishFailed = (errorInfo: any) => {
+  console.log('Failed:', errorInfo);
+};
 
 const count = ref(0);
 const d = reactive({
   d: 'Volo_Abp_Application_Dtos_PagedResultDto_1',
 });
-const sessionUnitRet: Ref<
-  Volo_Abp_Application_Dtos_PagedResultDto_1 | undefined
-> = ref({});
+const sessionUnitRet: Ref<Volo_Abp_Application_Dtos_PagedResultDto_1 | undefined> = ref({});
 const onclick = (): void => {
   count.value++;
 
@@ -27,13 +45,15 @@ const onclick = (): void => {
 
   SessionUnitService.getApiChatSessionUnit1({
     ownerId: 555,
-  }).then((res) => {
+  }).then(res => {
     sessionUnitRet.value = res;
-    console.log(
-      'res SessionUnitService.getApiChatSessionUnit1',
-      res,
-      res.totalCount
-    );
+    console.log('res SessionUnitService.getApiChatSessionUnit1', res, res.totalCount);
+  });
+  SessionUnitService.getApiChatSessionUnit1({
+    ownerId: 112,
+  }).then(res => {
+    sessionUnitRet.value = res;
+    console.log('res SessionUnitService.getApiChatSessionUnit1', res, res.totalCount);
   });
   // console.log('SessionUnitService', SessionUnitService.getApiChatSessionUnit1);
 };
@@ -46,9 +66,9 @@ const badgeItems: Ref<BadgeDetialDto[]> = ref([]);
 const loadBadgeItems = () => {
   SessionUnitService.getApiChatSessionUnitBadgeByCurrentUser({
     isImmersed: false,
-  }).then((res) => {
+  }).then(res => {
     console.log('badge', res);
-    badgeItems.value = res.map((x) => ({
+    badgeItems.value = res.map(x => ({
       ...x,
       isShow: false,
       detail: undefined,
@@ -62,7 +82,7 @@ const onLogin = () => {
   login({
     username: username.value,
     password: password.value,
-  }).then((res) => {
+  }).then(res => {
     console.log('dddddd', res);
   });
 };
@@ -71,7 +91,7 @@ const showDetial = (item: BadgeDetialDto) => {
   item.detail = 'dddddd';
   ChatObjectService.getApiChatChatObjectDetail({
     id: item.chatObjectId!,
-  }).then((res) => {
+  }).then(res => {
     item.detail = JSON.stringify(res);
   });
 };
@@ -79,8 +99,49 @@ const showDetial = (item: BadgeDetialDto) => {
 
 <template>
   <h1>{{ msg }}</h1>
+  <a-space wrap>
+    <a-button type="primary">Primary Button</a-button>
+    <a-button>Default Button</a-button>
+    <a-button type="dashed">Dashed Button</a-button>
+    <a-button type="text">Text Button</a-button>
+    <a-button type="link">Link Button</a-button>
+  </a-space>
 
+  <a-form
+    :model="formState"
+    name="basic"
+    :label-col="{ span: 8 }"
+    :wrapper-col="{ span: 16 }"
+    autocomplete="off"
+    @finish="onFinish"
+    @finishFailed="onFinishFailed"
+  >
+    <a-form-item
+      label="Username"
+      name="username"
+      :rules="[{ required: true, message: 'Please input your username!' }]"
+    >
+      <a-input v-model:value="formState.username" />
+    </a-form-item>
+
+    <a-form-item
+      label="Password"
+      name="password"
+      :rules="[{ required: true, message: 'Please input your password!' }]"
+    >
+      <a-input-password v-model:value="formState.password" />
+    </a-form-item>
+
+    <a-form-item name="remember" :wrapper-col="{ offset: 8, span: 16 }">
+      <a-checkbox v-model:checked="formState.remember">Remember me</a-checkbox>
+    </a-form-item>
+
+    <a-form-item :wrapper-col="{ offset: 8, span: 16 }">
+      <a-button type="primary" html-type="submit">Submit</a-button>
+    </a-form-item>
+  </a-form>
   <div class="card">
+    <Button>dd</Button>
     <div>
       <input v-model="username" type="text" placeholder="用户名" />
       <input v-model="password" type="password" placeholder="密码" />
@@ -108,15 +169,15 @@ const showDetial = (item: BadgeDetialDto) => {
     </button>
     <p>
       Edit
-      <code>components/HelloWorld.vue</code> to test HMR
+      <code>components/HelloWorld.vue</code>
+      to test HMR
     </p>
   </div>
 
   <p>
     Check out
-    <a href="https://vuejs.org/guide/quick-start.html#local" target="_blank"
-      >create-vue</a
-    >, the official Vue + Vite starter
+    <a href="https://vuejs.org/guide/quick-start.html#local" target="_blank">create-vue</a>
+    , the official Vue + Vite starter
   </p>
   <p>
     Install

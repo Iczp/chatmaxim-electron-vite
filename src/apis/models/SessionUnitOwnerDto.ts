@@ -7,7 +7,7 @@ import type { IczpNet_Chat_ChatObjects_Dtos_ChatObjectDto } from './IczpNet_Chat
 import type { IczpNet_Chat_MessageSections_Messages_Dtos_MessageDto } from './IczpNet_Chat_MessageSections_Messages_Dtos_MessageDto';
 import type { IczpNet_Chat_SessionUnits_Dtos_SessionUnitSettingDto } from './IczpNet_Chat_SessionUnits_Dtos_SessionUnitSettingDto';
 
-export type IczpNet_Chat_SessionUnits_Dtos_SessionUnitOwnerDto = {
+export type SessionUnitOwnerDto = {
     id?: string;
     sessionId?: string;
     ownerId?: number;
