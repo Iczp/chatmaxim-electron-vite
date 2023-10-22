@@ -14,9 +14,12 @@ import {
 } from '@ant-design/icons-vue';
 import { IczpNet_Chat_SessionUnits_Dtos_BadgeDto as BadgeDto, SessionUnitService } from '../apis';
 
+import { navToChat } from '../commons/utils';
+import { router, chatHistorys } from '../routes';
+
 const chatObjectItems: Ref<BadgeDto[]> = ref([]);
 
-const router = useRouter();
+// const router = useRouter();
 
 onMounted(() => {
   //
@@ -26,13 +29,24 @@ onMounted(() => {
   });
 });
 
-const navToChat = (item: BadgeDto) => {
+const navToChatHitory = (item: BadgeDto) => {
+  const chatObjectId = item.chatObjectId!;
+  const arg = chatHistorys[chatObjectId];
+  if (arg) {
+    navToChat({
+      chatObjectId,
+      sessionUnitId: arg.sessionUnitId,
+      title: arg.title,
+    });
+    return;
+  }
+
   router.push({
-    // path: `/chat/${item.chatObjectId}`,
-    name: 'im',
-    params: {
-      chatObjectId: item.chatObjectId,
-    },
+    path: `/chat/${item.chatObjectId}`,
+    // name: 'im',
+    // params: {
+    //   chatObjectId: item.chatObjectId,
+    // },
   });
 };
 </script>
@@ -54,7 +68,7 @@ const navToChat = (item: BadgeDto) => {
             class="tab-item"
             v-for="(item, index) in chatObjectItems"
             :key="index"
-            @click="navToChat(item)"
+            @click="navToChatHitory(item)"
           >
             <a-badge color="red" :count="item.badge">
               <!-- <router-link :to="`/chat/` + item.chatObjectId"> -->
@@ -69,7 +83,7 @@ const navToChat = (item: BadgeDto) => {
           </div>
           <div class="tab-item">
             <router-link to="/login">
-              <AndroidOutlined two-tone-color="#ff0000" />
+              <AndroidOutlined />
             </router-link>
           </div>
           <div class="tab-item"><SketchOutlined /></div>
@@ -79,11 +93,19 @@ const navToChat = (item: BadgeDto) => {
 
         <div class="side-bottom">
           <div class="tab-item">
-            <a-badge color="red" count="5">
-              <SettingOutlined />
-            </a-badge>
+            <router-link to="/settings">
+              <a-badge color="red" count="5">
+                <SettingOutlined />
+              </a-badge>
+            </router-link>
           </div>
-          <div class="tab-item"><UserOutlined /></div>
+          <div class="tab-item" title="用户">
+            <router-link to="/user">
+              <a-badge color="red" count="5">
+                <UserOutlined />
+              </a-badge>
+            </router-link>
+          </div>
         </div>
       </div>
       <!-- 路由出口 -->
@@ -132,6 +154,9 @@ const navToChat = (item: BadgeDto) => {
 }
 .side :deep(.anticon) {
   font-size: 24px;
+}
+:deep(.ant-badge) {
+  color: unset;
 }
 .side {
   position: fixed;

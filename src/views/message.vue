@@ -140,12 +140,16 @@ fetchData();
 //   { immediate: true },
 // );
 const onReachEnd = (event: CustomEvent) => {
+  console.log('onReachEnd', event, props.chatObjectId, JSON.stringify(getListInput));
+  if (!event.target) {
+    return;
+  }
+  console.log('onReachEnd router.currentRoute', router.currentRoute.value);
   if (props.chatObjectId != Number(router.currentRoute.value.params.chatObjectId)) {
     console.warn('onReachEnd', props.chatObjectId, router.currentRoute.value);
     return;
   }
-  console.log('onReachEnd', props.chatObjectId, JSON.stringify(getListInput));
-  console.log('onReachEnd router.currentRoute', router.currentRoute.value);
+
   // getListInput.maxMessageId = maxMessageId.value! - 1;
   // fetchData();
 };

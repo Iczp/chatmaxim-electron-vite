@@ -1,11 +1,16 @@
-import { createRouter, createWebHistory, createWebHashHistory } from 'vue-router';
+import { createRouter, createWebHistory, createWebHashHistory, RouteRecordRaw } from 'vue-router';
 
-export const routes = [
+export const routes = <RouteRecordRaw[]>[
   {
     path: '/',
     component: () => import('../views/Home.vue'),
     props: true,
     children: [
+      {
+        path: '',
+        name: 'im-empty',
+        component: () => import('../views/UserProfile.vue'),
+      },
       {
         path: 'chat/:chatObjectId(\\d+)',
         component: () => import('../views/message.vue'),
@@ -33,6 +38,7 @@ export const routes = [
         props: true,
       },
       { path: '/about', component: () => import('../views/about.vue'), props: true },
+      { path: '/settings', component: () => import('../views/Settings.vue'), props: true },
     ],
   },
   { path: '/login', component: () => import('../views/Login.vue') },
@@ -49,8 +55,8 @@ export const router = createRouter({
   // 下面这个 可以写成ES6的简写 routers
   routes: routes,
 });
-
-const chatHistorys = <
+/** asdff @type {*} */
+export const chatHistorys = <
   Record<string, { chatObjectId: string; sessionUnitId: string; title: string }>
 >{};
 
@@ -59,22 +65,22 @@ router.beforeEach((to, from) => {
   // 返回 false 以取消导航
   // return false
   console.log('router.beforeEach', to);
-  if (to.name == 'im') {
-    const chatObjectId = to.params.chatObjectId as string;
-    const arg = chatHistorys[chatObjectId];
-    if (arg) {
-      return {
-        name: 'chat',
-        params: {
-          chatObjectId,
-          sessionUnitId: arg.sessionUnitId,
-        },
-        query: {
-          title: arg.title,
-        },
-      };
-    }
-  }
+  // if (to.name == 'im') {
+  //   const chatObjectId = to.params.chatObjectId as string;
+  //   const arg = chatHistorys[chatObjectId];
+  //   if (arg) {
+  //     return {
+  //       name: 'chat',
+  //       params: {
+  //         chatObjectId,
+  //         sessionUnitId: arg.sessionUnitId,
+  //       },
+  //       query: {
+  //         title: arg.title,
+  //       },
+  //     };
+  //   }
+  // }
 });
 
 router.afterEach((to, from) => {

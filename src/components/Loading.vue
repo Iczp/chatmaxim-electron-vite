@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { SyncOutlined, LoadingOutlined } from '@ant-design/icons-vue';
-import { reactive, defineProps } from 'vue';
+import { reactive } from 'vue';
 const props = defineProps<{
   height?: number;
   text?: string;

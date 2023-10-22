@@ -1,6 +1,6 @@
 import moment from 'moment';
 import { useRouter } from 'vue-router';
-import { router } from '../routes';
+import { router, chatHistorys } from '../routes';
 /**
  * toQueryString
  *
@@ -86,8 +86,6 @@ export const navToChat = ({
   sessionUnitId?: string;
   title?: string;
 }) => {
-  console.log(router);
-
   router.push({
     // path: `/message/1/${item.id}`,
     name: 'chat',
