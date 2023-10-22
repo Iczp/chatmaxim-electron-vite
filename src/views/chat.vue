@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import { Ref, computed, onMounted, reactive, ref, watch } from 'vue';
+import { onBeforeRouteLeave, onBeforeRouteUpdate, useRoute, useRouter } from 'vue-router';
 import {
   IczpNet_Chat_MessageSections_Messages_Dtos_MessageOwnerDto as MessageOwnerDto,
   IczpNet_Chat_SessionUnits_Dtos_SessionUnitOwnerDetailDto as IczpSessionUnitOwnerDetailDto,
@@ -7,6 +8,7 @@ import {
   PagedResultDto,
   SessionUnitService,
 } from '../apis';
+import type { CancelablePromise } from '../apis/core/CancelablePromise';
 import {
   UploadOutlined,
   MehOutlined,
@@ -15,8 +17,8 @@ import {
   ScissorOutlined,
   MoreOutlined,
 } from '@ant-design/icons-vue';
+// import { Mentions, Form } from 'ant-design-vue';
 
-import { useRoute } from 'vue-router';
 
 const props = defineProps<{
   sessionUnitId: string;
@@ -25,43 +27,63 @@ const props = defineProps<{
 }>();
 const route = useRoute();
 
-const entity: Ref<IczpSessionUnitOwnerDetailDto> = ref({});
+const entity = ref<IczpSessionUnitOwnerDetailDto>({});
 
-onMounted(() => {});
+const messages = ref<MessageOwnerDto[]>([]);
 
-const messages: Ref<MessageOwnerDto[]> = ref([]);
+let task1: CancelablePromise<IczpSessionUnitOwnerDetailDto> | null;
 
 const fetchData = ({ sessionUnitId }: { sessionUnitId: string }) => {
-  SessionUnitService.getApiChatSessionUnitDetail({
+  task1 = SessionUnitService.getApiChatSessionUnitDetail({
     id: sessionUnitId,
-  }).then(res => {
-    console.log('SessionUnitService.getApiChatSessionUnitDetail', res);
+  });
+  // task1?.cancel();
+
+  task1.then(res => {
+    // console.log('SessionUnitService.getApiChatSessionUnitDetail', res);
     entity.value = res;
   });
 
   MessageService.getApiChatMessage({
     sessionUnitId: props.sessionUnitId,
+    maxResultCount: 30,
   }).then(res => {
     messages.value = res.items!;
-    console.log('MessageService.getApiChatMessage', res);
+    // console.log('MessageService.getApiChatMessage', res);
   });
 };
 
-const displayName = computed(
-  () => props.title || entity.value?.displayName || entity.value?.destination?.name,
-);
+// const displayName = computed(
+//   () => route.query.title || props.title || entity.value?.displayName || entity.value?.destination?.name,
+// );
+const pageTitle = ref('');
 
 const scroll = ref(null);
 
 watch(
   () => props.sessionUnitId,
   sessionUnitId => {
-    console.log('watch scroll', sessionUnitId, scroll.value);
+    task1?.cancel();
+    // console.log('watch scroll', sessionUnitId, scroll.value);
+    pageTitle.value = route.query.title as string;
     fetchData({ sessionUnitId });
   },
   { immediate: true },
 );
-
+const options = [
+  {
+    value: 'afc163',
+    label: 'afc163',
+  },
+  {
+    value: 'zombieJ',
+    label: 'zombieJ',
+  },
+  {
+    value: 'yesmeck',
+    label: 'yesmeck',
+  },
+];
 const textValue = ref('');
 </script>
 
@@ -69,7 +91,7 @@ const textValue = ref('');
   <div class="page-container">
     <div class="page-title">
       <div class="page-title-left">
-        <h1 class="main-title">{{ displayName }}</h1>
+        <h1 class="main-title">{{ pageTitle }}</h1>
         <h2 class="sub-title">
           code{{ entity?.destination?.code }},title: {{ route.query.title }}当前在心
         </h2>
@@ -79,7 +101,7 @@ const textValue = ref('');
       </div>
     </div>
     <scroll-view class="message-container" ref="scroll">
-      <p>Chating-{{ sessionUnitId }}.</p>
+      <p>prop.id :{{ sessionUnitId }}.</p>
 
       <div>entity id:{{ entity?.id }}</div>
 
@@ -106,16 +128,26 @@ const textValue = ref('');
         </a-space>
       </div>
       <div class="input-area">
-        <a-textarea
-          v-model:value="textValue"
-          class="textarea"
-          placeholder="说点什么..."
-          :rows="4"
-        />
-        <br />
+        <scroll-view>
+          <!-- <a-textarea
+            v-model:value="textValue"
+            class="textarea"
+            placeholder="说点什么..."
+            :rows="4"
+          /> -->
+          <a-mentions
+            class="textarea"
+            v-model:value="textValue"
+            rows="5"
+            placeholder="说点什么..."
+            :options="options"
+            :autofocus="true"
+          ></a-mentions>
+          <!-- <br /> <br /> <br /> <br /> <br /> -->
+        </scroll-view>
       </div>
       <div class="input-footer">
-        <div class="footer-left">200/1000</div>
+        <div class="footer-left">{{ textValue.length }} /1000</div>
         <div class="footer-right">
           <a-button type="primary" html-type="submit">
             发送(
@@ -129,10 +161,26 @@ const textValue = ref('');
 </template>
 
 <style scoped>
+:deep(.ant-mentions) {
+  /* background-color: #f5f5f5ac; */
+  border: none;
+  /* padding: 12px; */
+  border-radius: 0;
+  resize: none;
+  box-shadow: none;
+}
+.ps {
+  width: 100%;
+  height: 100%;
+}
 .page-container {
   display: flex;
   flex-direction: column;
   width: 100%;
+}
+.qs {
+  width: 100%;
+  height: 100%;
 }
 .page-title {
   display: flex;
@@ -194,12 +242,13 @@ const textValue = ref('');
 .input-area {
   display: flex;
   flex: 1;
+  width: 100%;
 }
 .textarea {
   width: 100%;
   height: 100%;
   border: none;
-  padding: 12px;
+  /* padding: 12px; */
   border-radius: 0;
   resize: none;
   font-size: 14px;

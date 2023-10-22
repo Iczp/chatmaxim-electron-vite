@@ -20,19 +20,23 @@ export type IczpNet_Chat_MessageSections_Messages_Dtos_MessageDto = {
 export namespace IczpNet_Chat_MessageSections_Messages_Dtos_MessageDto {
 
     export enum messageType {
-        '_0' = 0,
-        '_1' = 1,
-        '_2' = 2,
-        '_3' = 3,
-        '_4' = 4,
-        '_5' = 5,
-        '_6' = 6,
-        '_7' = 7,
-        '_8' = 8,
-        '_9' = 9,
-        '_10' = 10,
-        '_11' = 11,
-        '_12' = 12,
+
+        /**
+         * 文本类型
+         */
+        'Text' = 0,
+        'Cmd' = 1,
+        'Image' = 2,
+        'Sound' = 3,
+        'Video' = 4,
+        'File' = 5,
+        'Link' = 6,
+        'Location' = 7,
+        'Contacts' = 8,
+        'RedEnvelope' = 9,
+        'Html' = 10,
+        'Article' = 11,
+        'History' = 12,
     }
 
     export enum reminderType {

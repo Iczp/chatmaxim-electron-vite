@@ -42,6 +42,7 @@
     "ant-design-vue": "^4.0.3",
     "axios": "^1.5.1",
     "moment": "^2.29.4",
+    "pinia": "^2.1.7",
     "qs": "^6.11.2",
     "vue-router": "^4.2.5",
     "vue3-perfect-scrollbar": "^1.6.1"

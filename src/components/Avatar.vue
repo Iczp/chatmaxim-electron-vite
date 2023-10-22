@@ -2,10 +2,14 @@
 const props = defineProps<{
   value?: string | number;
 }>();
+import { UserOutlined } from '@ant-design/icons-vue';
 </script>
 
 <template>
-  <div class="avatar">img</div>
+  <!-- <div class="avatar">img</div> -->
+  <a-avatar :size="48">
+    <template #icon><UserOutlined /></template>
+  </a-avatar>
 </template>
 
 <style scoped>

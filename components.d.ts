@@ -7,6 +7,7 @@ export {}
 
 declare module 'vue' {
   export interface GlobalComponents {
+    AAvatar: typeof import('ant-design-vue/es')['Avatar']
     ABadge: typeof import('ant-design-vue/es')['Badge']
     AButton: typeof import('ant-design-vue/es')['Button']
     ACheckbox: typeof import('ant-design-vue/es')['Checkbox']
@@ -15,6 +16,7 @@ declare module 'vue' {
     AInput: typeof import('ant-design-vue/es')['Input']
     AInputPassword: typeof import('ant-design-vue/es')['InputPassword']
     AInputSearch: typeof import('ant-design-vue/es')['InputSearch']
+    AMentions: typeof import('ant-design-vue/es')['Mentions']
     APopconfirm: typeof import('ant-design-vue/es')['Popconfirm']
     ASpace: typeof import('ant-design-vue/es')['Space']
     ATextarea: typeof import('ant-design-vue/es')['Textarea']
@@ -23,6 +25,7 @@ declare module 'vue' {
     Badge: typeof import('./src/components/Badge.vue')['default']
     copy: typeof import('./src/components/Badge copy.vue')['default']
     HelloWorld: typeof import('./src/views/HelloWorld.vue')['default']
+    Loading: typeof import('./src/components/Loading.vue')['default']
     RouterLink: typeof import('vue-router')['RouterLink']
     RouterView: typeof import('vue-router')['RouterView']
     SessionItem: typeof import('./src/components/SessionItem.vue')['default']

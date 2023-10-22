@@ -11,7 +11,9 @@ import Antd from 'ant-design-vue';
 import ProLayout, { PageContainer } from '@ant-design-vue/pro-layout';
 
 import { router } from './routes';
+import { createPinia } from 'pinia'
 
+const pinia = createPinia()
 const app = createApp(App);
 app
   .use(PerfectScrollbar, <PerfectScrollbarOptions>{
@@ -21,6 +23,7 @@ app
   // .use(ProLayout)
   // .use(PageContainer)
   .use(router)
+  .use(pinia)
   .mount('#app')
   .$nextTick(() => {
     postMessage({ payload: 'removeLoading' }, '*');

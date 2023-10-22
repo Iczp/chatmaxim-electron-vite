@@ -5,7 +5,7 @@ import { Ref, reactive, ref } from 'vue';
 
 <template>
   <h1>
-    <router-link to="/">About</router-link>
+    <router-link to="/">UserProfile</router-link>
   </h1>
   <p>Lorem Ipsum is simply dummy text of the printing and typesetting industry.</p>
 </template>

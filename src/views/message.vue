@@ -1,38 +1,36 @@
 <script setup lang="ts">
-import { Ref, onMounted, reactive, ref, watch } from 'vue';
+import { Ref, computed, onMounted, reactive, ref, watch } from 'vue';
 import { onBeforeRouteLeave, onBeforeRouteUpdate, useRoute, useRouter } from 'vue-router';
 // import { router } from '../routes';
 import { SessionUnitOwnerDto, SessionUnitService, PagedResultDto } from '../apis';
 import SessionItem from '../components/SessionItem.vue';
+import Loading from '../components/Loading.vue';
+import { SessionUnitGetListInput } from '../apis/models/SessionUnitGetListInput';
+import { useImStore } from '../stores/im';
+import { navToChat as navToChatX } from '../commons/utils';
 const route = useRoute();
 const router = useRouter();
+const store = useImStore();
 const props = defineProps<{ chatObjectId: number | undefined }>();
 
-const sessionUnitRet: Ref<PagedResultDto<SessionUnitOwnerDto> | undefined> = ref({
+const sessionUnitRet = ref<PagedResultDto<SessionUnitOwnerDto>>({
   totalCount: 0,
   items: [],
 });
-const sessionItems: Ref<SessionUnitOwnerDto[]> = ref([]);
+const sessionItems = ref<SessionUnitOwnerDto[]>([]);
 
 const options = reactive({
   minScrollbarLength: 100,
 });
-const sessionUnitId = ref('');
-
-watch(
-  () => route.params.sessionUnitId,
-  v => {
-    console.log('watch-route.params.sessionUnitId', v, typeof v);
-    if (typeof v == 'string') {
-      sessionUnitId.value = v;
-    }
-  },
-  {
-    immediate: true,
-  },
-);
+const sessionUnitId = computed(() => route.params.sessionUnitId);
 
 const navToChat = (item: SessionUnitOwnerDto) => {
+  navToChatX({
+    chatObjectId: props.chatObjectId!,
+    sessionUnitId: item.id,
+    title: `${item.destination?.name}`,
+  });
+  return;
   router.push({
     // path: `/message/1/${item.id}`,
     name: 'chat',
@@ -41,18 +39,17 @@ const navToChat = (item: SessionUnitOwnerDto) => {
       sessionUnitId: item.id,
     },
     query: {
-      title: 'vb',
-      aa: 'bb',
+      title: `${item.destination?.name}`,
     },
   });
   // sessionUnitId.value = item.id!;
-  console.log(router.currentRoute.value);
-  console.log('ref:session', session.value[0].getBoundingClientRect());
+  // console.log(router.currentRoute.value);
+  // console.log('ref:session', session.value[0].getBoundingClientRect());
 };
 
 // 与 beforeRouteLeave 相同，无法访问 `this`
 onBeforeRouteLeave((to, from) => {
-  // console.log('onBeforeRouteLeave', to, from);
+  console.log('onBeforeRouteLeave', to, from);
 });
 
 // 与 onBeforeRouteUpdate 相同，无法访问 `this`
@@ -63,20 +60,26 @@ onBeforeRouteUpdate((to, from) => {
 //   console.log('onBeforeRouteEnter', to, from);
 // });
 
-onMounted(() => {
-  SessionUnitService.getApiChatSessionUnit1({
-    ownerId: props.chatObjectId || 555,
-    maxResultCount: 40,
-  }).then(res => {
-    sessionUnitRet.value = res;
-    sessionItems.value = res.items!;
-    console.log('res SessionUnitService.getApiChatSessionUnit1', res, res.totalCount);
-  });
-});
+const maxMessageId = ref<number>();
+const record = reactive<{
+  maxMessageId?: number;
+  minMessageId?: number;
+}>({});
 
+const getListInput = reactive<SessionUnitGetListInput>({
+  ownerId: props.chatObjectId,
+  maxResultCount: 40,
+  maxMessageId: maxMessageId.value,
+});
+const ret = reactive({
+  isPosting: false,
+  isEof: false,
+  totalCount: 0,
+});
 const onScroll = (event: CustomEvent) => {
-  console.log(event);
+  // console.log(typeof event.target, event.target);
 };
+
 const session = ref<HTMLImageElement[]>([]);
 onMounted(() => console.log(session.value));
 
@@ -85,25 +88,67 @@ const onSearch = (e: any) => {
   console.log('onSearch', e);
 };
 
-const fetchData = ({ chatObjectId }: { chatObjectId: number }) => {
-  SessionUnitService.getApiChatSessionUnit1({
-    ownerId: chatObjectId,
-    maxResultCount: 40,
-  }).then(res => {
-    sessionUnitRet.value = res;
-    sessionItems.value = res.items!;
-    console.log('res SessionUnitService.getApiChatSessionUnit1', res, res.totalCount);
-  });
-};
+const fetchData = () => {
+  if (ret.isEof || ret.isPosting) {
+    console.warn('fetchData isFetchSession');
+    return;
+  }
+  ret.isPosting = true;
+  SessionUnitService.getApiChatSessionUnit1(getListInput)
+    .then(res => {
+      sessionUnitRet.value = res;
+      ret.totalCount = res.totalCount!;
 
-watch(
-  () => props.chatObjectId,
-  chatObjectId => {
-    console.log('watch scroll', chatObjectId);
-    fetchData({ chatObjectId: chatObjectId! });
-  },
-  { immediate: true },
-);
+      ret.isEof = res.items!.length == 0;
+      if (!ret.isEof) {
+        maxMessageId.value = res.items![res.items!.length - 1].lastMessageId!;
+        record.minMessageId = maxMessageId.value;
+        sessionItems.value = sessionItems.value.concat(res.items!);
+      }
+      console.log('res SessionUnitService.getApiChatSessionUnit1', res, res.totalCount);
+    })
+    .finally(() => {
+      ret.isPosting = false;
+    });
+};
+fetchData();
+// watch(
+//   () => props.chatObjectId,
+//   chatObjectId => {
+//     console.log('watch scroll', chatObjectId);
+//     maxMessageId.value = undefined;
+//     Object.assign(
+//       ret,
+//       reactive({
+//         isPosting: false,
+//         isEof: false,
+//         totalCount: 0,
+//       }),
+//     );
+//     Object.assign(
+//       getListInput,
+//       reactive<SessionUnitGetListInput>({
+//         ownerId: props.chatObjectId,
+//         maxResultCount: 40,
+//         maxMessageId: maxMessageId.value,
+//       }),
+//     );
+//     sessionItems.value = [];
+
+//     fetchData();
+//   },
+//   { immediate: true },
+// );
+const onReachEnd = (event: CustomEvent) => {
+  if (props.chatObjectId != Number(router.currentRoute.value.params.chatObjectId)) {
+    console.warn('onReachEnd', props.chatObjectId, router.currentRoute.value);
+    return;
+  }
+  console.log('onReachEnd', props.chatObjectId, JSON.stringify(getListInput));
+  console.log('onReachEnd router.currentRoute', router.currentRoute.value);
+  // getListInput.maxMessageId = maxMessageId.value! - 1;
+  // fetchData();
+};
 </script>
 
 <template>
@@ -119,9 +164,15 @@ watch(
             style="width: 100%"
             @search="onSearch"
           />
+          maxMessageId:{{ maxMessageId }}
         </a-space>
       </div>
-      <scroll-view class="session-scroll-view" ref="scroll" @ps-scroll-y="onScroll">
+      <scroll-view
+        class="session-scroll-view"
+        ref="scroll"
+        @ps-scroll-y="onScroll"
+        @ps-y-reach-end="onReachEnd"
+      >
         <div class="session-list">
           <div
             ref="session"
@@ -131,13 +182,19 @@ watch(
           >
             <SessionItem :entity="item" :active="sessionUnitId == item.id" />
           </div>
+          <Loading v-if="ret.isPosting && !ret.isEof" :height="64" />
         </div>
       </scroll-view>
     </div>
 
     <!-- <p>{{ router }}</p> -->
     <div class="content">
-      <router-view></router-view>
+      <!-- <router-view></router-view> -->
+      <router-view v-slot="{ Component, route }">
+        <keep-alive>
+          <component :is="Component" :key="route.path" />
+        </keep-alive>
+      </router-view>
     </div>
   </div>
 </template>

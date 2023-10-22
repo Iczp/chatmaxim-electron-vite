@@ -1,5 +1,6 @@
-
 import moment from 'moment';
+import { useRouter } from 'vue-router';
+import { router } from '../routes';
 /**
  * toQueryString
  *
@@ -19,7 +20,6 @@ export const toQueryString = <T>(obj: T): string => {
     }
   return str.join('&');
 };
-
 
 /**
  *
@@ -61,5 +61,42 @@ export function formatMessageTime(datetime: Date): any {
     }
   }
   //fmt = "yyyy年MM月dd日"
-  return moment(datetime).format("YYYY-MM-DD");
+  return moment(datetime).format('YYYY-MM-DD');
 }
+/**
+ *
+ *
+ * @param {{
+ *   chatObjectId: number;
+ *   sessionUnitId?: string;
+ *   title?: string;
+ * }} {
+ *   chatObjectId,
+ *   sessionUnitId,
+ *   title,
+ * }
+ */
+
+export const navToChat = ({
+  chatObjectId,
+  sessionUnitId,
+  title,
+}: {
+  chatObjectId: number;
+  sessionUnitId?: string;
+  title?: string;
+}) => {
+  console.log(router);
+
+  router.push({
+    // path: `/message/1/${item.id}`,
+    name: 'chat',
+    params: {
+      chatObjectId,
+      sessionUnitId,
+    },
+    query: {
+      title,
+    },
+  });
+};
