@@ -28,13 +28,18 @@ onMounted(() => {
   <!-- <router-link to="/">
     <HomeOutlined two-tone-color="#ff0000" />
   </router-link> -->
-  <scroll-view>
-    <router-view v-slot="{ Component }">
-      <keep-alive>
-        <component :is="Component" />
-      </keep-alive>
-    </router-view>
-  </scroll-view>
+  <!-- <scroll-view> -->
+  <div id="app">
+    <!-- <a-watermark content="Ant Design Vue"> -->
+      <router-view v-slot="{ Component }">
+        <keep-alive>
+          <component :is="Component" />
+        </keep-alive>
+      </router-view>
+    <!-- </a-watermark> -->
+  </div>
+
+  <!-- </scroll-view> -->
 
   <!-- <div>
     <a href="https://www.electronjs.org/" target="_blank">

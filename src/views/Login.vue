@@ -1,13 +1,94 @@
 <script setup lang="ts">
-import { Ref, reactive, ref } from 'vue';
-// defineProps<{ msg: string }>();
+import { reactive } from 'vue';
+import { login } from '../apis/auth/TokenController';
+import { router } from '../routes';
+
+import { message } from 'ant-design-vue';
+import { ref } from 'vue';
+const key = 'updatable';
+
+interface FormState {
+  username: string;
+  password: string;
+  remember: boolean;
+}
+
+const formState = reactive<FormState>({
+  username: 'admin',
+  password: '1q2w3E*',
+  remember: true,
+});
+const onFinish = (values: any) => {
+  console.log('Success:', values, message);
+  message.loading({ content: 'Loading...', key });
+  login({
+    username: formState.username,
+    password: formState.password,
+  }).then(res => {
+    console.log('登录成功！', res);
+    message.success({ content: '欢迎回来!', key, duration: 2 });
+    router.push('/')
+  });
+};
+
+const onFinishFailed = (errorInfo: any) => {
+  console.log('Failed:', errorInfo);
+};
 </script>
 
 <template>
-  <h1>
-    <router-link to="/">Login</router-link>
-  </h1>
-  <p>Lorem Ipsum is simply dummy text of the printing and typesetting industry.</p>
+  <div class="login-page">
+    <a-form
+      :model="formState"
+      name="basic"
+      :label-col="{ span: 8 }"
+      :wrapper-col="{ span: 16 }"
+      autocomplete="off"
+      @finish="onFinish"
+      @finishFailed="onFinishFailed"
+      class="login-form"
+    >
+      <a-form-item
+        label="用户名"
+        name="username"
+        :rules="[{ required: true, message: 'Please input your username!' }]"
+      >
+        <a-input v-model:value="formState.username" />
+      </a-form-item>
+
+      <a-form-item
+        label="密码"
+        name="password"
+        :rules="[{ required: true, message: 'Please input your password!' }]"
+      >
+        <a-input-password v-model:value="formState.password" />
+      </a-form-item>
+
+      <a-form-item name="remember" :wrapper-col="{ offset: 8, span: 16 }">
+        <a-checkbox v-model:checked="formState.remember">Remember me</a-checkbox>
+      </a-form-item>
+
+      <a-form-item :wrapper-col="{ offset: 8, span: 16 }">
+        <a-button type="primary" html-type="submit">Submit</a-button>
+      </a-form-item>
+    </a-form>
+  </div>
 </template>
 
-<style scoped></style>
+<style scoped>
+.login-page {
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  /* background-color: rgb(11, 7, 37); */
+}
+.login-form {
+  /* display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center; */
+  margin: 0 auto;
+  max-width: 500px;
+}
+</style>

@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { Ref, computed, onMounted, reactive, ref, watch } from 'vue';
 import { onBeforeRouteLeave, onBeforeRouteUpdate, useRoute, useRouter } from 'vue-router';
-// import { router } from '../routes';
+import { router, chatHistorys } from '../routes';
 import { SessionUnitOwnerDto, SessionUnitService, PagedResultDto } from '../apis';
 import SessionItem from '../components/SessionItem.vue';
 import Loading from '../components/Loading.vue';
@@ -9,7 +9,7 @@ import { SessionUnitGetListInput } from '../apis/models/SessionUnitGetListInput'
 import { useImStore } from '../stores/im';
 import { navToChat as navToChatX } from '../commons/utils';
 const route = useRoute();
-const router = useRouter();
+// const router = useRouter();
 const store = useImStore();
 const props = defineProps<{ chatObjectId: number | undefined }>();
 
@@ -25,6 +25,13 @@ const options = reactive({
 const sessionUnitId = computed(() => route.params.sessionUnitId);
 
 const navToChat = (item: SessionUnitOwnerDto) => {
+  console.log(item);
+
+  if (item.id == sessionUnitId.value) {
+    delete chatHistorys[props.chatObjectId!];
+    router.push(`/chat/${props.chatObjectId}`);
+    return;
+  }
   navToChatX({
     chatObjectId: props.chatObjectId!,
     sessionUnitId: item.id,

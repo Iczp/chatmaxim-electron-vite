@@ -3,6 +3,7 @@
 /* tslint:disable */
 /* eslint-disable */
 
+import { IczpNet_Chat_MessageSections_Templates_TextContentInfo } from './IczpNet_Chat_MessageSections_Templates_TextContentInfo';
 import type { IczpNet_Chat_MessageSections_Templates_VideoContentInfo } from './IczpNet_Chat_MessageSections_Templates_VideoContentInfo';
 
 export type IczpNet_Chat_MessageSections_Messages_MessageInput_1 = {
@@ -18,5 +19,5 @@ export type IczpNet_Chat_MessageSections_Messages_MessageInput_1 = {
      * Remind SessionUnitId
      */
     remindList?: Array<string> | null;
-    content?: IczpNet_Chat_MessageSections_Templates_VideoContentInfo;
+    content?: IczpNet_Chat_MessageSections_Templates_TextContentInfo;
 };

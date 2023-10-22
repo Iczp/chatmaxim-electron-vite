@@ -7,6 +7,8 @@ import {
   MessageService,
   PagedResultDto,
   SessionUnitService,
+  MessageSenderService,
+  ApiError,
 } from '../apis';
 import type { CancelablePromise } from '../apis/core/CancelablePromise';
 import {
@@ -17,8 +19,9 @@ import {
   ScissorOutlined,
   MoreOutlined,
 } from '@ant-design/icons-vue';
-// import { Mentions, Form } from 'ant-design-vue';
 
+import { message } from 'ant-design-vue';
+// import { Mentions, Form } from 'ant-design-vue';
 
 const props = defineProps<{
   sessionUnitId: string;
@@ -85,21 +88,81 @@ const options = [
   },
 ];
 const textValue = ref('');
+
+const open = ref(false);
+
+const showDrawer = () => {
+  open.value = true;
+};
+
+const onClose = () => {
+  open.value = false;
+};
+const isSendBtnEnabled = ref(true);
+const onSend = async () => {
+  console.log('send', textValue.value);
+  isSendBtnEnabled.value = false;
+  MessageSenderService.postApiChatMessageSenderSendText({
+    sessionUnitId: props.sessionUnitId,
+    requestBody: {
+      quoteMessageId: null,
+
+      ignoreConnections: null,
+
+      remindList: [],
+      content: {
+        text: textValue.value,
+      },
+    },
+  })
+    .then(res => {
+      console.log('sendRet', res);
+      textValue.value = '';
+
+      fetchData({ sessionUnitId: props.sessionUnitId });
+    })
+    .catch((err: ApiError) => {
+      console.error('sendRet', err.body.error.message);
+      message.error({
+        key: 'vm-chat',
+        content: err.body.error.message,
+      });
+    })
+    .finally(() => {
+      isSendBtnEnabled.value = true;
+    });
+};
+const onTitleClick = () => {
+  console.log('onTitleClick', entity.value);
+};
 </script>
 
 <template>
   <div class="page-container">
     <div class="page-title">
-      <div class="page-title-left">
+      <div class="page-title-left" @click="onTitleClick">
         <h1 class="main-title">{{ pageTitle }}</h1>
         <h2 class="sub-title">
           code{{ entity?.destination?.code }},title: {{ route.query.title }}当前在心
         </h2>
       </div>
-      <div class="page-title-right">
+      <div class="page-title-right" @click="showDrawer">
         <MoreOutlined />
       </div>
     </div>
+
+    <a-drawer
+      title="Basic Drawer"
+      placement="right"
+      :closable="true"
+      :open="open"
+      :get-container="false"
+      :style="{ position: 'absolute' }"
+      @close="onClose"
+    >
+      <p>Some contents...</p>
+    </a-drawer>
+
     <scroll-view class="message-container" ref="scroll">
       <p>prop.id :{{ sessionUnitId }}.</p>
 
@@ -149,7 +212,7 @@ const textValue = ref('');
       <div class="input-footer">
         <div class="footer-left">{{ textValue.length }} /1000</div>
         <div class="footer-right">
-          <a-button type="primary" html-type="submit">
+          <a-button type="primary" @click="onSend" :disabled="!isSendBtnEnabled">
             发送(
             <u>S</u>
             )

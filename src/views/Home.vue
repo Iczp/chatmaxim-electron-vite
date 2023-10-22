@@ -11,7 +11,9 @@ import {
   ClockCircleOutlined,
   SketchOutlined,
   AppstoreOutlined,
+  EllipsisOutlined
 } from '@ant-design/icons-vue';
+
 import { IczpNet_Chat_SessionUnits_Dtos_BadgeDto as BadgeDto, SessionUnitService } from '../apis';
 
 import { navToChat } from '../commons/utils';
@@ -89,6 +91,8 @@ const navToChatHitory = (item: BadgeDto) => {
           <div class="tab-item"><SketchOutlined /></div>
           <div class="tab-item"><AppstoreOutlined /></div>
           <div class="tab-item"><ClockCircleOutlined /></div>
+          <div class="tab-item"><EllipsisOutlined /></div>
+          
         </div>
 
         <div class="side-bottom">

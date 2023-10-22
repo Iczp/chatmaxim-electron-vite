@@ -52,7 +52,7 @@ const senderName = computed(() => props.entity?.lastMessage?.senderName);
             <!-- <span>不支持的类型=========================</span> -->
             <!-- @我 -->
             <span v-if="entity!.remindMeCount!>0" class="remind">
-              [{{ entity?.remindMeCount }}人@我]
+              {{ Number(entity?.remindMeCount) > 99 ? '99+' : entity?.remindMeCount }}人@我
             </span>
             <!-- 发送人信息 -->
             <span v-if="senderName && messageType != MessageTypeEnums.Cmd" class="sender">
@@ -189,6 +189,13 @@ const senderName = computed(() => props.entity?.lastMessage?.senderName);
   height: 20px;
 }
 .remind {
-  color: red;
+  display: inline-flex;
+
+  color: white;
+  background: #ff4d4f;
+  border-radius: 4px;
+  padding: 0 4px;
+  box-shadow: 0 0 0 1px #ffffff;
+  margin-right: 4px;
 }
 </style>
