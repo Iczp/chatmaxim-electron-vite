@@ -30,13 +30,13 @@ onMounted(() => {
   </router-link> -->
   <!-- <scroll-view> -->
   <div id="app">
-    <!-- <a-watermark content="Ant Design Vue"> -->
-      <router-view v-slot="{ Component }">
+    <!-- <router-view v-slot="{ Component }">
         <keep-alive>
           <component :is="Component" />
         </keep-alive>
-      </router-view>
-    <!-- </a-watermark> -->
+      </router-view> -->
+    <div class="top-bar drag"></div>
+    <router-view></router-view>
   </div>
 
   <!-- </scroll-view> -->
@@ -62,4 +62,14 @@ onMounted(() => {
   </div> -->
 </template>
 
-<style scoped></style>
+<style scoped>
+.top-bar {
+  position: fixed;
+  width: 100%;
+  height: 20px;
+  /* background-color: rgba(95, 177, 249, 0.415); */
+  z-index: 0;
+  -webkit-app-region: drag;
+  user-select: none;
+}
+</style>

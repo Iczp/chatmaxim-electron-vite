@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { Ref, computed, onMounted, reactive, ref, watch } from 'vue';
+import { CSSProperties, Ref, computed, onMounted, reactive, ref, watch } from 'vue';
 import { onBeforeRouteLeave, onBeforeRouteUpdate, useRoute, useRouter } from 'vue-router';
 import {
   IczpNet_Chat_MessageSections_Messages_Dtos_MessageOwnerDto as MessageOwnerDto,
@@ -18,10 +18,15 @@ import {
   FolderOpenOutlined,
   ScissorOutlined,
   MoreOutlined,
+  EllipsisOutlined,
 } from '@ant-design/icons-vue';
-
+import ChatSetting from './Settings.vue';
 import { message } from 'ant-design-vue';
 // import { Mentions, Form } from 'ant-design-vue';
+
+import { useImStore } from '../stores/im';
+
+const store = useImStore();
 
 const props = defineProps<{
   sessionUnitId: string;
@@ -31,6 +36,12 @@ const props = defineProps<{
 const route = useRoute();
 
 const entity = ref<IczpSessionUnitOwnerDetailDto>({});
+
+const info = computed(() =>
+  store.getSessionUnit(Number(route.params.chatObjectId), props.sessionUnitId!),
+);
+
+const setting = computed(() => info.value?.setting);
 
 const messages = ref<MessageOwnerDto[]>([]);
 
@@ -89,14 +100,18 @@ const options = [
 ];
 const textValue = ref('');
 
-const open = ref(false);
-
+const chatSettingDisplay = ref(false);
+const open = ref<boolean>(false);
 const showDrawer = () => {
   open.value = true;
 };
 
 const onClose = () => {
   open.value = false;
+};
+
+const afterOpenChange = (bool: boolean) => {
+  console.log('open', bool);
 };
 const isSendBtnEnabled = ref(true);
 const onSend = async () => {
@@ -135,95 +150,159 @@ const onSend = async () => {
 const onTitleClick = () => {
   console.log('onTitleClick', entity.value);
 };
+
+const entries = computed(() =>
+  Object.keys(entity.value).map(key => ({
+    key,
+    value: (entity.value as Record<string, any>)[key],
+  })),
+);
+const entryItems = computed(() => [
+  {
+    text: '名称',
+    value: entity.value.destination?.name,
+  },
+  {
+    text: '类型',
+    value: entity.value.destination?.objectType,
+  },
+  {
+    text: 'SessionId',
+    value: entity.value.sessionId,
+  },
+  {
+    text: '群内名称',
+    value: setting.value?.memberName,
+  },
+]);
+
+const contentStyle: CSSProperties = {
+  // display: 'flex',
+  // textAlign: 'center',
+  // minHeight: '100%',
+  // lineHeight: '120px',
+  // color: '#fff',
+  // backgroundColor: '#108ee9',
+};
+
+const siderStyle: CSSProperties = {
+  // display: 'flex',
+  // backgroundColor: '#108ee9',
+};
 </script>
 
 <template>
-  <div class="page-container">
-    <div class="page-title">
-      <div class="page-title-left" @click="onTitleClick">
-        <h1 class="main-title">{{ pageTitle }}</h1>
-        <h2 class="sub-title">
-          code{{ entity?.destination?.code }},title: {{ route.query.title }}当前在心
-        </h2>
-      </div>
-      <div class="page-title-right" @click="showDrawer">
-        <MoreOutlined />
-      </div>
-    </div>
+  <a-layout class="layout">
+    <a-layout-content :style="contentStyle" class="layout-content">
+      <a-drawer
+        v-model:open="open"
+        class="custom-class"
+        root-class-name="root-class-name"
+        :root-style="{ color: 'blue' }"
+        title="聊天设置"
+        placement="right"
+        @after-open-change="afterOpenChange"
+      >
+        <p>Some contents...</p>
+        <p>Some contents...</p>
+        <p>Some contents...</p>
+      </a-drawer>
 
-    <a-drawer
-      title="Basic Drawer"
-      placement="right"
-      :closable="true"
-      :open="open"
-      :get-container="false"
-      :style="{ position: 'absolute' }"
-      @close="onClose"
-    >
-      <p>Some contents...</p>
-    </a-drawer>
+      <div class="page-container">
+        <div class="page-title drag">
+          <div class="page-title-left" @click="onTitleClick">
+            <h1 class="main-title">{{ pageTitle }}</h1>
+            <h2 class="sub-title">
+              code{{ entity?.destination?.code }},title: {{ route.query.title }}当前在心
+            </h2>
+          </div>
+          <div class="page-title-right no-drag">
+            <div>.</div>
+            <a-button type="text" @click="showDrawer">
+              <EllipsisOutlined />
+            </a-button>
+          </div>
+        </div>
 
-    <scroll-view class="message-container" ref="scroll">
-      <p>prop.id :{{ sessionUnitId }}.</p>
+        <scroll-view class="message-container" ref="scroll">
+          <p>prop.id :{{ sessionUnitId }}.</p>
+          <div>entity id:{{ entity?.id }}</div>
+          <h3>setting:{{ setting }}</h3>
 
-      <div>entity id:{{ entity?.id }}</div>
+          <div v-for="(item, index) in messages" class="message-item">
+            <h3>senderName:{{ item.senderName }}</h3>
+            <p>{{ item.content }}</p>
+          </div>
+        </scroll-view>
+        <div class="chat-input">
+          <div class="tool-bar">
+            <a-space>
+              <a-button type="text"><MehOutlined /></a-button>
+              <a-button type="text"><FolderOpenOutlined /></a-button>
+              <a-button type="text"><VideoCameraOutlined /></a-button>
+              <a-button type="text"><ScissorOutlined /></a-button>
 
-      <div v-for="(item, index) in messages" class="message-item">
-        <h3>senderName:{{ item.senderName }}</h3>
-        <p>{{ item.content }}</p>
-      </div>
-    </scroll-view>
-    <div class="chat-input">
-      <div class="tool-bar">
-        <a-space>
-          <a-button type="text"><MehOutlined /></a-button>
-          <a-button type="text"><FolderOpenOutlined /></a-button>
-          <a-button type="text"><VideoCameraOutlined /></a-button>
-          <a-button type="text"><ScissorOutlined /></a-button>
+              <a-button type="text">
+                <UploadOutlined />
+              </a-button>
 
-          <a-button type="text">
-            <UploadOutlined />
-          </a-button>
-
-          <a-popconfirm title="Are you sure delete this task?" ok-text="Yes" cancel-text="No">
-            <a-button type="text">Confirm</a-button>
-          </a-popconfirm>
-        </a-space>
-      </div>
-      <div class="input-area">
-        <scroll-view>
-          <!-- <a-textarea
+              <a-popconfirm title="Are you sure delete this task?" ok-text="Yes" cancel-text="No">
+                <a-button type="text">Confirm</a-button>
+              </a-popconfirm>
+            </a-space>
+          </div>
+          <div class="input-area">
+            <scroll-view>
+              <!-- <a-textarea
             v-model:value="textValue"
             class="textarea"
             placeholder="说点什么..."
             :rows="4"
           /> -->
-          <a-mentions
-            class="textarea"
-            v-model:value="textValue"
-            rows="5"
-            placeholder="说点什么..."
-            :options="options"
-            :autofocus="true"
-          ></a-mentions>
-          <!-- <br /> <br /> <br /> <br /> <br /> -->
-        </scroll-view>
-      </div>
-      <div class="input-footer">
-        <div class="footer-left">{{ textValue.length }} /1000</div>
-        <div class="footer-right">
-          <a-button type="primary" @click="onSend" :disabled="!isSendBtnEnabled">
-            发送(
-            <u>S</u>
-            )
-          </a-button>
+              <a-mentions
+                class="textarea"
+                v-model:value="textValue"
+                rows="5"
+                placeholder="说点什么..."
+                :options="options"
+                :autofocus="true"
+              ></a-mentions>
+              <!-- <br /> <br /> <br /> <br /> <br /> -->
+            </scroll-view>
+          </div>
+          <div class="input-footer">
+            <div class="footer-left">{{ textValue.length }} /1000</div>
+            <div class="footer-right">
+              <a-button type="primary" @click="onSend" :disabled="!isSendBtnEnabled">
+                发送(
+                <u>S</u>
+                )
+              </a-button>
+            </div>
+          </div>
         </div>
       </div>
-    </div>
-  </div>
+    </a-layout-content>
+    <a-layout-sider v-if="chatSettingDisplay" :style="siderStyle" class="layout-side">
+      <ChatSetting />
+    </a-layout-sider>
+  </a-layout>
 </template>
 
 <style scoped>
+.layout{
+  background-color: unset;
+}
+.layout-side {
+  display: flex;
+  /* background-color: #f5f5f5ac; */
+  background-color: unset;
+  border-left: 1px solid #ccc;
+}
+.layout-content {
+  display: flex;
+  background-color: unset;
+}
 :deep(.ant-mentions) {
   /* background-color: #f5f5f5ac; */
   border: none;
@@ -255,8 +334,18 @@ const onTitleClick = () => {
   font-size: 16px;
   flex-shrink: 0;
   border-bottom: 1px solid #ccc;
-  padding: 0 12px;
+
   box-sizing: border-box;
+}
+.page-title-left {
+  display: flex;
+  flex-direction: column;
+  padding: 0 12px;
+}
+.page-title-right {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
 }
 .main-title {
   display: flex;

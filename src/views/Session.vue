@@ -11,13 +11,16 @@ import { navToChat as navToChatX } from '../commons/utils';
 const route = useRoute();
 // const router = useRouter();
 const store = useImStore();
+
 const props = defineProps<{ chatObjectId: number | undefined }>();
 
 const sessionUnitRet = ref<PagedResultDto<SessionUnitOwnerDto>>({
   totalCount: 0,
   items: [],
 });
-const sessionItems = ref<SessionUnitOwnerDto[]>([]);
+
+// console.log('ddd', store.getSessionItems(props.chatObjectId!));
+const sessionItems = ref<SessionUnitOwnerDto[]>(store.getSessionItems(props.chatObjectId!));
 
 const options = reactive({
   minScrollbarLength: 100,
@@ -56,7 +59,7 @@ const navToChat = (item: SessionUnitOwnerDto) => {
 
 // 与 beforeRouteLeave 相同，无法访问 `this`
 onBeforeRouteLeave((to, from) => {
-  console.log('onBeforeRouteLeave', to, from);
+  // console.log('onBeforeRouteLeave', to, from);
 });
 
 // 与 onBeforeRouteUpdate 相同，无法访问 `this`
@@ -88,7 +91,7 @@ const onScroll = (event: CustomEvent) => {
 };
 
 const session = ref<HTMLImageElement[]>([]);
-onMounted(() => console.log(session.value));
+// onMounted(() => console.log(session.value));
 
 const keyword = ref<string>('');
 const onSearch = (e: any) => {
@@ -110,15 +113,23 @@ const fetchData = () => {
       if (!ret.isEof) {
         maxMessageId.value = res.items![res.items!.length - 1].lastMessageId!;
         record.minMessageId = maxMessageId.value;
-        sessionItems.value = sessionItems.value.concat(res.items!);
+        if (getListInput.maxMessageId) {
+          sessionItems.value = sessionItems.value.concat(res.items!);
+        } else {
+          sessionItems.value = res.items!;
+        }
       }
+      store.setSessionItems(props.chatObjectId!, sessionItems.value);
       console.log('res SessionUnitService.getApiChatSessionUnit1', res, res.totalCount);
     })
     .finally(() => {
       ret.isPosting = false;
     });
 };
-fetchData();
+if (sessionItems.value.length == 0) {
+  fetchData();
+}
+
 // watch(
 //   () => props.chatObjectId,
 //   chatObjectId => {
@@ -163,7 +174,7 @@ const onReachEnd = (event: CustomEvent) => {
 </script>
 
 <template>
-  <div class="message-page">
+  <div class="page">
     <div class="nav-side">
       <div class="search-bar">
         <a-space direction="vertical">
@@ -171,11 +182,10 @@ const onReachEnd = (event: CustomEvent) => {
             :bordered="true"
             :allowClear="true"
             v-model:value="keyword"
-            placeholder="搜索"
+            :placeholder="`搜索:${record.minMessageId}`"
             style="width: 100%"
             @search="onSearch"
           />
-          maxMessageId:{{ maxMessageId }}
         </a-space>
       </div>
       <scroll-view
@@ -211,6 +221,9 @@ const onReachEnd = (event: CustomEvent) => {
 </template>
 
 <style scoped>
+:deep(.ant-input:focus),
+:deep(.ant-input:hover),
+:deep(.ant-input-focused),
 .ant-input:focus,
 .ant-input:hover,
 .ant-input-focused {
@@ -221,7 +234,7 @@ const onReachEnd = (event: CustomEvent) => {
   border: none;
 }
 
-.message-page {
+.page {
   display: flex;
   position: absolute;
   top: 0;
@@ -234,7 +247,7 @@ const onReachEnd = (event: CustomEvent) => {
   display: flex;
   flex-direction: column;
   width: 280px;
-  background-color: rgba(139, 139, 139, 0.097);
+  /* background-color: rgba(139, 139, 139, 0.097); */
   border-right: 1px solid #ccc;
 }
 .search-bar {

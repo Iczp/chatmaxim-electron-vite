@@ -29,6 +29,9 @@ const sendTime = computed(() =>
 );
 const badge = computed(() => props.entity?.publicBadge || 0);
 const senderName = computed(() => props.entity?.lastMessage?.senderName);
+const destinationName = computed(
+  () => props.entity?.destination?.name + '-' + props.entity?.ownerId,
+);
 </script>
 
 <template>
@@ -38,11 +41,11 @@ const senderName = computed(() => props.entity?.lastMessage?.senderName);
     <a-avatar :size="48" :alt="destination?.name">
       <template #icon><UserOutlined /></template>
     </a-avatar>
-    <!-- <div class="">{{ entity?.destination?.name }}</div> -->
+
     <div class="session-description">
       <div class="session-title">
         <div class="title-left">
-          <div class="text-ellipsis">{{ entity?.destination?.name }}</div>
+          <div class="text-ellipsis">{{ destinationName }}</div>
         </div>
         <div class="title-right">{{ sendTime }}</div>
       </div>

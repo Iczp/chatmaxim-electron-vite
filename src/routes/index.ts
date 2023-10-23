@@ -13,7 +13,7 @@ export const routes = <RouteRecordRaw[]>[
       },
       {
         path: 'chat/:chatObjectId(\\d+)',
-        component: () => import('../views/message.vue'),
+        component: () => import('../views/Session.vue'),
         // props: r => ({ query: r.query.m }),
         name: 'im',
         props: true,
@@ -21,12 +21,12 @@ export const routes = <RouteRecordRaw[]>[
           {
             path: '',
             name: 'chat-empty',
-            component: () => import('../views/chat-empty.vue'),
+            component: () => import('../views/ChatEmpty.vue'),
           },
           {
             path: ':sessionUnitId',
             name: 'chat',
-            component: () => import('../views/chat.vue'),
+            component: () => import('../views/Chat.vue'),
             props: true,
           },
         ],
@@ -64,7 +64,7 @@ router.beforeEach((to, from) => {
   // ...
   // 返回 false 以取消导航
   // return false
-  console.log('router.beforeEach', to);
+  // console.log('router.beforeEach', to);
   // if (to.name == 'im') {
   //   const chatObjectId = to.params.chatObjectId as string;
   //   const arg = chatHistorys[chatObjectId];

@@ -16,6 +16,16 @@
   --side-width:64px;
 }
 
+.drag{
+  -webkit-app-region: drag;
+  user-select: none;
+}
+.no-drag{
+  -webkit-app-region: no-drag;
+}
+.no-select{
+  user-select: none;
+}
 a {
   font-weight: 500;
   color: #646cff;
@@ -31,6 +41,7 @@ body {
   /* place-items: center; */
   min-width: 320px;
   min-height: 100vh;
+  background-color: #f5f5f5 !important;
 }
 
 h1 {

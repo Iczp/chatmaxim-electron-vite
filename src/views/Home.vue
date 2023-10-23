@@ -174,6 +174,7 @@ const navToChatHitory = (item: BadgeDto) => {
   justify-content: space-between;
   align-items: center;
   color: #9feaf9;
+  user-select: none;
 }
 .side-top {
   display: flex;
@@ -191,13 +192,14 @@ const navToChatHitory = (item: BadgeDto) => {
   width: var(--side-width);
   align-items: center;
   justify-content: center;
-  background-color: rgba(0, 128, 255, 0.427);
+  /* background-color: rgba(0, 128, 255, 0.427); */
+  cursor: pointer;
 }
 .tab-item:hover {
-  background-color: rgba(59, 160, 103, 0.427);
+  background-color: rgba(46, 40, 220, 0.427);
 }
 .tab-item:active {
-  background-color: rgba(206, 219, 34, 0.427);
+  background-color: rgba(39, 25, 127, 0.427);
 }
 .content-page {
   position: fixed;

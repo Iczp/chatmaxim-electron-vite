@@ -8,6 +8,7 @@ interface State {
   sessionMap: Record<number, SessionUnitOwnerDto[]>;
   messageMap: Record<string, MessageOwnerDto[]>;
 }
+
 export const useImStore = defineStore('im', {
   state: (): State => {
     return {
@@ -15,7 +16,21 @@ export const useImStore = defineStore('im', {
       messageMap: {},
     };
   },
+  getters: {
+    getSessionItems:
+      state =>
+      (chatObjectId: number): SessionUnitOwnerDto[] =>
+        state.sessionMap[chatObjectId] || [],
+    getSessionUnit:
+      state =>
+      (chatObjectId: number, sessionUnitId: string): SessionUnitOwnerDto | undefined =>
+        state.sessionMap[chatObjectId]?.find(x => x.id == sessionUnitId),
+  },
   // 也可以这样定义
   // state: () => ({ count: 0 })
-  actions: {},
+  actions: {
+    setSessionItems(chatObjectId: number, items: SessionUnitOwnerDto[]) {
+      this.sessionMap[chatObjectId] = items;
+    },
+  },
 });

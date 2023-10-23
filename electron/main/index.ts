@@ -55,8 +55,10 @@ async function createWindow() {
       nodeIntegration: true,
       contextIsolation: false,
     },
+    autoHideMenuBar: false,
+    frame: false,
   });
-
+  win.removeMenu();
   if (process.env.VITE_DEV_SERVER_URL) {
     // electron-vite-vue#298
     win.loadURL(url);
