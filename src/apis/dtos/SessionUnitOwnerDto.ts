@@ -3,9 +3,9 @@
 /* tslint:disable */
 /* eslint-disable */
 
-import type { IczpNet_Chat_ChatObjects_Dtos_ChatObjectDto } from './IczpNet_Chat_ChatObjects_Dtos_ChatObjectDto';
-import type { IczpNet_Chat_MessageSections_Messages_Dtos_MessageDto } from './IczpNet_Chat_MessageSections_Messages_Dtos_MessageDto';
-import type { IczpNet_Chat_SessionUnits_Dtos_SessionUnitSettingDto } from './IczpNet_Chat_SessionUnits_Dtos_SessionUnitSettingDto';
+import type { IczpNet_Chat_ChatObjects_Dtos_ChatObjectDto } from '../models/IczpNet_Chat_ChatObjects_Dtos_ChatObjectDto';
+import type { IczpNet_Chat_MessageSections_Messages_Dtos_MessageDto } from '../models/IczpNet_Chat_MessageSections_Messages_Dtos_MessageDto';
+import type { IczpNet_Chat_SessionUnits_Dtos_SessionUnitSettingDto } from '../models/IczpNet_Chat_SessionUnits_Dtos_SessionUnitSettingDto';
 
 export type SessionUnitOwnerDto = {
     id?: string;

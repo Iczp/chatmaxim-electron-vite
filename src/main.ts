@@ -10,11 +10,13 @@ import '@ant-design-vue/pro-layout/dist/style.css';
 import Antd from 'ant-design-vue';
 import ProLayout, { PageContainer } from '@ant-design-vue/pro-layout';
 
+import PageTitle from './Components/PageTitle.vue';
 import { router } from './routes';
-import { createPinia } from 'pinia'
+import { createPinia } from 'pinia';
 
-const pinia = createPinia()
+const pinia = createPinia();
 const app = createApp(App);
+app.component('PageTitle', PageTitle);
 app
   .use(PerfectScrollbar, <PerfectScrollbarOptions>{
     // tag: 'scroll-view',
@@ -24,6 +26,7 @@ app
   // .use(PageContainer)
   .use(router)
   .use(pinia)
+
   .mount('#app')
   .$nextTick(() => {
     postMessage({ payload: 'removeLoading' }, '*');

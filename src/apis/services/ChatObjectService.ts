@@ -14,6 +14,7 @@ import type { Volo_Abp_Application_Dtos_PagedResultDto_1 } from '../models/Volo_
 import type { CancelablePromise } from '../core/CancelablePromise';
 import { OpenAPI } from '../core/OpenAPI';
 import { request as __request } from '../core/request';
+import { PagedResultDto } from '../dtos/PagedResultDto';
 
 export class ChatObjectService {
 
@@ -485,7 +486,7 @@ skipCount?: number,
  * 排序
  */
 sorting?: string,
-}): CancelablePromise<Volo_Abp_Application_Dtos_PagedResultDto_1> {
+}): CancelablePromise<PagedResultDto<IczpNet_Chat_ChatObjects_Dtos_ChatObjectDto>> {
         return __request(OpenAPI, {
             method: 'GET',
             url: '/api/chat/chat-object/by-current-user',

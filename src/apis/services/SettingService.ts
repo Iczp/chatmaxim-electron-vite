@@ -2,7 +2,7 @@
 /* istanbul ignore file */
 /* tslint:disable */
 /* eslint-disable */
-import type { SessionUnitOwnerDto } from '../models/SessionUnitOwnerDto';
+import type { SessionUnitOwnerDto } from '../dtos/SessionUnitOwnerDto';
 
 import type { CancelablePromise } from '../core/CancelablePromise';
 import { OpenAPI } from '../core/OpenAPI';

@@ -15,13 +15,13 @@ import {
 import { IczpNet_Chat_SessionUnits_Dtos_BadgeDto as BadgeDto, SessionUnitService } from './apis';
 
 const chatObjectItems: Ref<BadgeDto[]> = ref([]);
-onMounted(() => {
-  //
-  SessionUnitService.getApiChatSessionUnitBadgeByCurrentUser({}).then(res => {
-    console.log('', res);
-    chatObjectItems.value = res;
-  });
-});
+// onMounted(() => {
+//   //
+//   SessionUnitService.getApiChatSessionUnitBadgeByCurrentUser({}).then(res => {
+//     console.log('', res);
+//     chatObjectItems.value = res;
+//   });
+// });
 </script>
 
 <template>

@@ -60,7 +60,7 @@ const fetchData = ({ sessionUnitId }: { sessionUnitId: string }) => {
 
   MessageService.getApiChatMessage({
     sessionUnitId: props.sessionUnitId,
-    maxResultCount: 30,
+    maxResultCount: 50,
   }).then(res => {
     messages.value = res.items!;
     // console.log('MessageService.getApiChatMessage', res);
@@ -209,20 +209,11 @@ const siderStyle: CSSProperties = {
       </a-drawer>
 
       <div class="page-container">
-        <div class="page-title drag">
-          <div class="page-title-left" @click="onTitleClick">
-            <h1 class="main-title">{{ pageTitle }}</h1>
-            <h2 class="sub-title">
-              code{{ entity?.destination?.code }},title: {{ route.query.title }}当前在心
-            </h2>
-          </div>
-          <div class="page-title-right no-drag">
-            <div>.</div>
-            <a-button type="text" @click="showDrawer">
-              <EllipsisOutlined />
-            </a-button>
-          </div>
-        </div>
+        <PageTitle
+          :title="pageTitle"
+          :description="`code${entity?.destination?.code},title: ${route.query.title}当前在心`"
+          @more="showDrawer"
+          more />
 
         <scroll-view class="message-container" ref="scroll">
           <p>prop.id :{{ sessionUnitId }}.</p>
@@ -290,7 +281,7 @@ const siderStyle: CSSProperties = {
 </template>
 
 <style scoped>
-.layout{
+.layout {
   background-color: unset;
 }
 .layout-side {

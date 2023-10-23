@@ -55,7 +55,7 @@ const destinationName = computed(
             <!-- <span>不支持的类型=========================</span> -->
             <!-- @我 -->
             <span v-if="entity!.remindMeCount!>0" class="remind">
-              {{ Number(entity?.remindMeCount) > 99 ? '99+' : entity?.remindMeCount }}人@我
+              {{ Number(entity?.remindMeCount) > 99 ? '99+' : entity?.remindMeCount }}@我
             </span>
             <!-- 发送人信息 -->
             <span v-if="senderName && messageType != MessageTypeEnums.Cmd" class="sender">

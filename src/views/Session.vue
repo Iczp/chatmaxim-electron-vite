@@ -5,7 +5,7 @@ import { router, chatHistorys } from '../routes';
 import { SessionUnitOwnerDto, SessionUnitService, PagedResultDto } from '../apis';
 import SessionItem from '../components/SessionItem.vue';
 import Loading from '../components/Loading.vue';
-import { SessionUnitGetListInput } from '../apis/models/SessionUnitGetListInput';
+import { SessionUnitGetListInput } from '../apis/dtos';
 import { useImStore } from '../stores/im';
 import { navToChat as navToChatX } from '../commons/utils';
 const route = useRoute();
@@ -188,7 +188,11 @@ const onReachEnd = (event: CustomEvent) => {
           />
         </a-space>
       </div>
+      <scroll-view v-if="keyword.length != 0">
+        <div>搜索：{{ keyword }}</div>
+      </scroll-view>
       <scroll-view
+        v-else
         class="session-scroll-view"
         ref="scroll"
         @ps-scroll-y="onScroll"
@@ -275,3 +279,4 @@ const onReachEnd = (event: CustomEvent) => {
   width: 100%;
 }
 </style>
+../apis/dtos/SessionUnitGetListInput

@@ -4,9 +4,7 @@ import { Ref, reactive, ref } from 'vue';
 </script>
 
 <template>
-  <h1>
-    <router-link to="/">Settings</router-link>
-  </h1>
+  <page-title title="Settings" description="Lorem Ipsum is simply dummy text of the printing and typesetting industry."/>
   <p>Lorem Ipsum is simply dummy text of the printing and typesetting industry.</p>
 </template>
 

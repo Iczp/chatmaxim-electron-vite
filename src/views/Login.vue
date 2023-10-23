@@ -37,45 +37,51 @@ const onFinishFailed = (errorInfo: any) => {
 </script>
 
 <template>
-  <div class="login-page">
-    <a-form
-      :model="formState"
-      name="basic"
-      :label-col="{ span: 8 }"
-      :wrapper-col="{ span: 16 }"
-      autocomplete="off"
-      @finish="onFinish"
-      @finishFailed="onFinishFailed"
-      class="login-form"
-    >
-      <a-form-item
-        label="用户名"
-        name="username"
-        :rules="[{ message: 'Please input your username!' }]"
+  <div class="page drag">
+    <div class="login-page no-drag">
+      <a-form
+        :model="formState"
+        name="basic"
+        :label-col="{ span: 8 }"
+        :wrapper-col="{ span: 16 }"
+        autocomplete="off"
+        @finish="onFinish"
+        @finishFailed="onFinishFailed"
+        class="login-form"
       >
-        <a-input v-model:value="formState.username" />
-      </a-form-item>
+        <a-form-item
+          label="用户名"
+          name="username"
+          :rules="[{ message: 'Please input your username!' }]"
+        >
+          <a-input v-model:value="formState.username" />
+        </a-form-item>
 
-      <a-form-item
-        label="密码"
-        name="password"
-        :rules="[{ message: 'Please input your password!' }]"
-      >
-        <a-input-password v-model:value="formState.password" />
-      </a-form-item>
+        <a-form-item
+          label="密码"
+          name="password"
+          :rules="[{ message: 'Please input your password!' }]"
+        >
+          <a-input-password v-model:value="formState.password" />
+        </a-form-item>
 
-      <a-form-item name="isAutoLogin" :wrapper-col="{ offset: 8, span: 16 }">
-        <a-checkbox v-model:checked="formState.isAutoLogin">自动登录</a-checkbox>
-      </a-form-item>
+        <a-form-item name="isAutoLogin" :wrapper-col="{ offset: 8, span: 16 }">
+          <a-checkbox v-model:checked="formState.isAutoLogin">自动登录</a-checkbox>
+        </a-form-item>
 
-      <a-form-item :wrapper-col="{ offset: 8, span: 16 }">
-        <a-button type="primary" html-type="submit">登录</a-button>
-      </a-form-item>
-    </a-form>
+        <a-form-item :wrapper-col="{ offset: 8, span: 16 }">
+          <a-button type="primary" html-type="submit">登录</a-button>
+        </a-form-item>
+      </a-form>
+    </div>
   </div>
 </template>
 
 <style scoped>
+.page {
+  width: 100%;
+  height: 100%;
+}
 .login-page {
   position: fixed;
   top: 50%;

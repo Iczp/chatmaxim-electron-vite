@@ -7,7 +7,7 @@ export { CancelablePromise, CancelError } from './core/CancelablePromise';
 export { OpenAPI } from './core/OpenAPI';
 export type { OpenAPIConfig } from './core/OpenAPI';
 
-export type { PagedResultDto } from './models/PagedResultDto';
+export type { PagedResultDto } from './dtos/PagedResultDto';
 export type { IczpNet_AbpTrees_TreeInfo_1 } from './models/IczpNet_AbpTrees_TreeInfo_1';
 export { IczpNet_Chat_Articles_Dtos_ArticleCreateInput } from './models/IczpNet_Chat_Articles_Dtos_ArticleCreateInput';
 export { IczpNet_Chat_Articles_Dtos_ArticleDetailDto } from './models/IczpNet_Chat_Articles_Dtos_ArticleDetailDto';
@@ -145,7 +145,7 @@ export type { IczpNet_Chat_SessionUnits_Dtos_SessionUnitDestinationDetailDto } f
 export type { IczpNet_Chat_SessionUnits_Dtos_SessionUnitDestinationDto } from './models/IczpNet_Chat_SessionUnits_Dtos_SessionUnitDestinationDto';
 export type { IczpNet_Chat_SessionUnits_Dtos_SessionUnitDto } from './models/IczpNet_Chat_SessionUnits_Dtos_SessionUnitDto';
 export type { IczpNet_Chat_SessionUnits_Dtos_SessionUnitOwnerDetailDto } from './models/IczpNet_Chat_SessionUnits_Dtos_SessionUnitOwnerDetailDto';
-export type { SessionUnitOwnerDto as SessionUnitOwnerDto } from './models/SessionUnitOwnerDto';
+export type { SessionUnitOwnerDto as SessionUnitOwnerDto } from './dtos/SessionUnitOwnerDto';
 export type { IczpNet_Chat_SessionUnits_Dtos_SessionUnitSettingDto } from './models/IczpNet_Chat_SessionUnits_Dtos_SessionUnitSettingDto';
 export type { IczpNet_Chat_SessionUnits_SessionUnitStatModel } from './models/IczpNet_Chat_SessionUnits_SessionUnitStatModel';
 export type { IczpNet_Chat_ShopKeepers_Dtos_ShopKeeperCreateInput } from './models/IczpNet_Chat_ShopKeepers_Dtos_ShopKeeperCreateInput';
