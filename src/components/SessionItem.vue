@@ -83,8 +83,15 @@ const destinationName = computed(
           </div>
         </div>
         <div class="content-right">
-          <a-badge v-if="badge != 0" :count="badge" :overflow-count="99" :dot="setting?.isImmersed" />
-          <icon v-if="setting?.isImmersed" type="mute" size="14" />
+          <a-space>
+            <a-badge
+              v-if="badge != 0"
+              :count="badge"
+              :overflow-count="99"
+              :dot="setting?.isImmersed"
+            />
+            <icon v-if="setting?.isImmersed" type="mute" size="14" />
+          </a-space>
         </div>
       </div>
     </div>

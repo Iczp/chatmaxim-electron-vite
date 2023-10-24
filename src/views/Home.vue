@@ -59,6 +59,7 @@ const navToChatHitory = (item: BadgeDto) => {
     // },
   });
 };
+const navTo = (p: any) => router.push(p);
 </script>
 
 <template>
@@ -66,11 +67,9 @@ const navToChatHitory = (item: BadgeDto) => {
     <div id="chatMaxim">
       <div class="side">
         <div class="side-top">
-          <div class="tab-item">
-            <a-badge color="red" :count="1">
-              <router-link to="/">
-                <HomeOutlined two-tone-color="#ff0000" />
-              </router-link>
+          <div class="tab-item" @click="navTo('/')">
+            <a-badge :count="1">
+              <HomeOutlined two-tone-color="#ff0000" />
             </a-badge>
           </div>
 
@@ -80,21 +79,15 @@ const navToChatHitory = (item: BadgeDto) => {
             :key="index"
             @click="navToChatHitory(item)"
           >
-            <a-badge color="red" :count="item.badge">
-              <!-- <router-link :to="`/chat/` + item.chatObjectId"> -->
+            <a-badge :count="item.badge">
               <MessageOutlined />
-              <!-- </router-link> -->
             </a-badge>
           </div>
-          <div class="tab-item">
-            <router-link to="/about">
-              <CodepenCircleOutlined two-tone-color="#ff0000" />
-            </router-link>
+          <div class="tab-item" @click="navTo('/about')">
+            <CodepenCircleOutlined two-tone-color="#ff0000" />
           </div>
-          <div class="tab-item">
-            <router-link to="/login">
-              <AndroidOutlined />
-            </router-link>
+          <div class="tab-item" @click="navTo('/login')">
+            <AndroidOutlined />
           </div>
           <div class="tab-item"><SketchOutlined /></div>
           <div class="tab-item"><AppstoreOutlined /></div>
@@ -103,19 +96,17 @@ const navToChatHitory = (item: BadgeDto) => {
         </div>
 
         <div class="side-bottom">
-          <div class="tab-item">
+          <div class="tab-item" @click="navTo('/settings')">
             <router-link to="/settings">
               <a-badge color="red" count="5">
                 <SettingOutlined />
               </a-badge>
             </router-link>
           </div>
-          <div class="tab-item" title="用户">
-            <router-link to="/user">
-              <a-badge :dot="true">
-                <UserOutlined />
-              </a-badge>
-            </router-link>
+          <div class="tab-item" title="用户" @click="navTo('/user')">
+            <a-badge :dot="true">
+              <UserOutlined />
+            </a-badge>
           </div>
         </div>
       </div>

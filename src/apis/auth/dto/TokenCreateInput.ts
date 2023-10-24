@@ -1,27 +1,6 @@
-export type TokenCreateInput = {
-  /**
-   * Client Id
-   *
-   * @type {string}
-   * @memberof TokenCreateInput
-   */
-  client_id: string;
+import { TokenInputBase } from './TokenInputBase';
 
-  /**
-   * Client 密钥
-   *
-   * @type {(string | undefined)}
-   */
-  client_secret?: string | undefined;
-
-  /**
-   * Bearer
-   *
-   * @type {string}
-   * @memberof TokenCreateInput
-   */
-  grant_type: string | 'password';
-
+export type TokenCreateInput = TokenInputBase & {
   /**
    * 用户名
    *

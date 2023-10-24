@@ -1,31 +1,11 @@
-export type RefreshTokenInput = {
-  /**
-   * Client Id
-   *
-   * @type {string}
-   * @memberof RefreshTokenInput
-   */
-  client_id: string;
+import { GrantTypeEnum } from './GrantTypeEnum';
+import { TokenInputBase } from './TokenInputBase';
 
-  /**
-   * Client 密钥
-   *
-   * @type {(string | undefined)}
-   */
-  client_secret?: string;
-
-  /**
-   * Bearer
-   *
-   * @type {string}
-   * @memberof RefreshTokenInput
-   */
-  readonly grant_type: 'refresh_token';
-
+export type RefreshTokenInput = TokenInputBase & {
   /**
    * refresh_token value
    *
-   * @type {(string | null | undefined)}
+   * @type {(string | GrantTypeEnum)}
    */
-  refresh_token: string | null | undefined;
+  refresh_token: string | GrantTypeEnum;
 };

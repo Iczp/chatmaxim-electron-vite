@@ -1,11 +1,17 @@
 // import { CancelablePromise } from '../core/CancelablePromise';
 
 import { TokenService } from './TokenService';
-import { TokenDto, LoginResult } from './dto';
+import { TokenDto, LoginResult, LoginInput } from './dto';
+import { GrantTypeEnum } from './dto/GrantTypeEnum';
 
 export const TOKEN_KEY: string = 'TOKEN-V2023';
+
 export const TOKEN_URL: string = '/connect/token';
+
 let cacheToken: TokenDto | null = null;
+
+export let isPostToken: boolean = false;
+
 /**
  * 是否TokenUrl
  * @param {string} url 输入
@@ -15,29 +21,26 @@ export const isTokenUrl = (url?: string): boolean => {
   return url != null && (url == TOKEN_URL || url.endsWith(TOKEN_URL));
 };
 
-export const login = ({
-  username,
-  password,
-}: {
-  /**
-   * 用户名
-   *
-   * @type {string}
-   */
-  username?: string;
+/**
+ * 是否登录
+ *
+ * @return {*}  {boolean}
+ */
+export const isLogin = (): boolean => getLocalToken() != null;
 
-  /**
-   * 密码
-   *
-   * @type {string}
-   */
-  password?: string;
-}): Promise<LoginResult> => {
+/**
+ * 登录
+ *
+ * @param {LoginInput} { username, password }
+ * @return {*}  {Promise<LoginResult>}
+ */
+
+export const login = ({ username, password }: LoginInput): Promise<LoginResult> => {
   return new Promise((resolve, reject) => {
     TokenService.fetchToken({
       client_id: 'IM_App',
       // client_secret: '1q2w3E*',
-      grant_type: 'password',
+      grant_type: GrantTypeEnum.Password,
       username: username || 'admin',
       password: password || '1q2w3E*',
       scope: 'IM offline_access roles profile phone email address',
@@ -61,25 +64,36 @@ export const login = ({
   });
 };
 
-const handleToken = (token: TokenDto): TokenDto => {
+/**
+ *
+ *
+ * @param {TokenDto} token
+ * @return {*}  {TokenDto}
+ */
+export const handleToken = (token: TokenDto): TokenDto => {
   token.creation_time = new Date();
   cacheToken = token;
   // console.log('handleToken', token);
   storageToken(JSON.stringify(token));
   return token;
 };
-const refreshToken = async (token: TokenDto) => {
+
+/**
+ *
+ *
+ * @param {TokenDto} token
+ * @return {*}
+ */
+export const refreshToken = async (token: TokenDto) => {
   var newToken = await TokenService.RefreshToken({
     client_id: 'IM_App',
     // client_secret: '1q2w3E*',
     refresh_token: token.refresh_token,
-    grant_type: 'refresh_token',
+    grant_type: GrantTypeEnum.Refresh_token,
   });
   newToken = handleToken(newToken);
   return newToken;
 };
-
-export let isPostToken: boolean = false;
 
 /**
  * 获取Token
@@ -124,7 +138,10 @@ export const postToken = async (): Promise<TokenDto | null> => {
     return token;
   }
   // console.log('postToken 2', token);
-  var ret = await login({});
+  var ret = await login({
+    username: 'admin',
+    password: '1q2w3E*',
+  });
   // console.log('postToken 3 cacheToken', cacheToken);
   return ret.detail;
 };
