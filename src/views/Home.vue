@@ -112,7 +112,7 @@ const navToChatHitory = (item: BadgeDto) => {
           </div>
           <div class="tab-item" title="用户">
             <router-link to="/user">
-              <a-badge color="red" count="5">
+              <a-badge :dot="true">
                 <UserOutlined />
               </a-badge>
             </router-link>
@@ -123,11 +123,18 @@ const navToChatHitory = (item: BadgeDto) => {
       <!-- 路由匹配到的组件将渲染在这里 -->
       <div class="content-page">
         <router-view v-slot="{ Component, route }">
-          <keep-alive v-if="route.path.startsWith('/chat')">
+          <!-- <keep-alive v-if="route.path.startsWith('/chat')">
             <component :is="Component" :key="route.params.chatObjectId" />
           </keep-alive>
           <keep-alive v-else>
             <component :is="Component" :key="route.path" />
+          </keep-alive> -->
+
+          <keep-alive>
+            <component
+              :is="Component"
+              :key="route.path.startsWith('/chat') ? route.params.chatObjectId : route.path"
+            />
           </keep-alive>
         </router-view>
       </div>

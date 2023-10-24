@@ -13,15 +13,20 @@ const onTitleClick = () => {
 <template>
   <div class="page-title drag">
     <div class="page-title-left" @click="onTitleClick">
-      <h1 class="main-title">{{ title }}</h1>
-      <h2 v-if="description" class="sub-title">
-        {{ description }}
-      </h2>
+      <div class="main-title">
+        <text>{{ title }}</text>
+        <!-- <icon type="play" /> -->
+        <icon type="mute" size="14" color="gray" />
+      </div>
+      <div v-if="description" class="sub-title">
+        <text>{{ description }}</text>
+      </div>
     </div>
     <div class="page-title-right no-drag">
       <slot v-if="more">
         <a-button type="text" @click="$emit('more', $event)">
-          <EllipsisOutlined />
+          <!-- <EllipsisOutlined /> -->
+          <icon type="more" />
         </a-button>
       </slot>
     </div>

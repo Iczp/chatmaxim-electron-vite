@@ -10,13 +10,15 @@ import '@ant-design-vue/pro-layout/dist/style.css';
 import Antd from 'ant-design-vue';
 import ProLayout, { PageContainer } from '@ant-design-vue/pro-layout';
 
-import PageTitle from './Components/PageTitle.vue';
+import PageTitle from './components/PageTitle.vue';
+import Icon from './components/Icon.vue';
 import { router } from './routes';
 import { createPinia } from 'pinia';
 
 const pinia = createPinia();
 const app = createApp(App);
 app.component('PageTitle', PageTitle);
+app.component('Icon', Icon);
 app
   .use(PerfectScrollbar, <PerfectScrollbarOptions>{
     // tag: 'scroll-view',

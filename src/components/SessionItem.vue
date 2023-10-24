@@ -24,6 +24,7 @@ const destination = computed(() => props.entity?.destination);
 const lastMessage = computed(() => props.entity?.lastMessage);
 const objectType = computed(() => props.entity?.destination?.objectType);
 const content = computed(() => props.entity?.lastMessage?.content);
+const setting = computed(() => props.entity?.setting);
 const sendTime = computed(() =>
   formatMessageTime(new Date(props.entity?.lastMessage?.creationTime!)),
 );
@@ -82,7 +83,8 @@ const destinationName = computed(
           </div>
         </div>
         <div class="content-right">
-          <a-badge v-if="badge != 0" :count="badge" :overflow-count="99" />
+          <a-badge v-if="badge != 0" :count="badge" :overflow-count="99" :dot="setting?.isImmersed" />
+          <icon v-if="setting?.isImmersed" type="mute" size="14" />
         </div>
       </div>
     </div>
@@ -164,6 +166,11 @@ const destinationName = computed(
   flex: 1;
   /* max-width: calc(100% - 30px); */
   max-width: 150px;
+}
+.content-right {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
 }
 .session-title {
   display: flex;
