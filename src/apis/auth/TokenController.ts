@@ -26,7 +26,7 @@ export const isTokenUrl = (url?: string): boolean => {
  *
  * @return {*}  {boolean}
  */
-export const isLogin = (): boolean => getLocalToken() != null;
+export const isLogined = (): boolean => getLocalToken() != null;
 
 /**
  * 登录

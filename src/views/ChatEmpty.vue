@@ -18,7 +18,7 @@ import { SettingOutlined, EditOutlined, EllipsisOutlined } from '@ant-design/ico
       </template>
       <a-card-meta title="Card title" description="This is the description">
         <template #avatar>
-          <a-avatar src="https://joeschmoe.io/api/v1/random" />
+          <a-avatar src="https://www.rctea.com/uploadFiles/product/163/320x320/a8df2da9.png" />
         </template>
       </a-card-meta>
     </a-card>

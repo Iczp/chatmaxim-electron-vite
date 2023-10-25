@@ -1,4 +1,5 @@
 import { createRouter, createWebHistory, createWebHashHistory, RouteRecordRaw } from 'vue-router';
+import { isLogined } from '../apis/auth/TokenController';
 
 export const routes = <RouteRecordRaw[]>[
   {
@@ -37,7 +38,7 @@ export const routes = <RouteRecordRaw[]>[
         component: () => import('../views/UserProfile.vue'),
         props: true,
       },
-      { path: '/about', component: () => import('../views/about.vue'), props: true },
+      { path: '/about', component: () => import('../views/About.vue'), props: true },
       { path: '/settings', component: () => import('../views/Settings.vue'), props: true },
     ],
   },
@@ -61,6 +62,10 @@ export const chatHistorys = <
 >{};
 
 router.beforeEach((to, from) => {
+  if (to.path != '/login' && !isLogined()) {
+    return '/login';
+  }
+
   // ...
   // 返回 false 以取消导航
   // return false

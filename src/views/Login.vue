@@ -1,6 +1,22 @@
 <script setup lang="ts">
+import { app, ipcRenderer } from 'electron';
+// // const electron = require('electron');
+// const path = require('path');
+// const fs = require('fs');
+// const userDataPath = app.getPath('userData');
+
+// let win = app.remote.getCurrentWindow()
+// // win.setBounds({
+// //     width: 320,
+// //     height: 480,
+// // })
+// win.center()
+// win.setMaximizable(false)
+// win.setFullScreenable(false)
+// win.setResizable(false)
+
 import { reactive } from 'vue';
-import { login } from '../apis/auth/TokenController';
+import { login, isLogined } from '../apis/auth/TokenController';
 import { router } from '../routes';
 
 import { message } from 'ant-design-vue';
@@ -21,6 +37,19 @@ const formState = reactive<FormState>({
 const onFinish = (values: any) => {
   console.log('Success:', values, message);
   message.loading({ content: 'Loading...', key });
+
+  ipcRenderer.send('login', 'ping');
+
+  ipcRenderer
+    .invoke('win-info', {
+      window: 'main',
+    })
+    .then(res => {
+      console.log('ipcRenderer.invoke:win-info', res);
+    });
+
+  // window.electronAPI.setTitle(title)
+  // window.electron?.ping();
   login({
     username: formState.username,
     password: formState.password,
@@ -39,6 +68,8 @@ const onFinishFailed = (errorInfo: any) => {
 <template>
   <div class="page drag">
     <div class="login-page no-drag">
+      <div>isLogined:{{ isLogined() }}</div>
+      <!-- <p>userDataPath:{{ userDataPath }}</p> -->
       <a-form
         :model="formState"
         name="basic"
@@ -88,6 +119,12 @@ const onFinishFailed = (errorInfo: any) => {
   left: 50%;
   transform: translate(-50%, -50%);
   /* background-color: rgb(11, 7, 37); */
+  box-shadow: 0 0 5px #cccccc89;
+  padding: 30px;
+  border-radius: 5px;
+}
+.login-page:hover {
+  box-shadow: 0 0 10px #cccccc89;
 }
 .login-form {
   /* display: flex;

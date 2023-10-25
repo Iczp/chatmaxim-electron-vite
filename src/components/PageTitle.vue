@@ -50,7 +50,7 @@ const onTitleClick = () => {
   display: flex;
   flex: 1;
   flex-direction: column;
-  padding: 0 12px;
+  padding: 0 20px;
 }
 .page-title-right {
   display: flex;

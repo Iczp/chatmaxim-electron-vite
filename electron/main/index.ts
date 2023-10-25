@@ -81,6 +81,11 @@ async function createWindow() {
     return { action: 'deny' };
   });
   // win.webContents.on('will-navigate', (event, url) => { }) #344
+
+  ipcMain.on('login', (_, arg) => {
+    console.log('login', arg);
+    win?.webContents.send('main-process-message', arg);
+  });
 }
 
 app.whenReady().then(createWindow);
@@ -122,4 +127,11 @@ ipcMain.handle('open-win', (_, arg) => {
   } else {
     childWindow.loadFile(indexHtml, { hash: arg });
   }
+});
+
+ipcMain.handle('win-info', (_, arg) => {
+  console.log('win-info', arg);
+  return {
+    return: 5,
+  };
 });

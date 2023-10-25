@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { Ref, onMounted, ref } from 'vue';
+import { Ref, computed, onMounted, ref } from 'vue';
 import { onBeforeRouteLeave, onBeforeRouteUpdate, useRoute, useRouter } from 'vue-router';
 import {
   HomeOutlined,
@@ -59,7 +59,20 @@ const navToChatHitory = (item: BadgeDto) => {
     // },
   });
 };
-const navTo = (p: any) => router.push(p);
+
+const goto = (p: any) => router.push(p);
+
+const chatObjectId = computed(() => Number(router.currentRoute.value.params.chatObjectId));
+
+const isChatActive = (chatObjectId: number): boolean => {
+  const route = router.currentRoute.value;
+  return route.path.startsWith('/chat/') && chatObjectId == Number(route.params.chatObjectId);
+};
+
+const isNavActive = (pattern: string | RegExp, flags?: string | undefined): boolean => {
+  const reg = new RegExp(pattern, flags);
+  return reg.test(router.currentRoute.value.path);
+};
 </script>
 
 <template>
@@ -67,43 +80,46 @@ const navTo = (p: any) => router.push(p);
     <div id="chatMaxim">
       <div class="side">
         <div class="side-top">
-          <div class="tab-item" @click="navTo('/')">
+          <div class="nav-item" @click="goto('/')">
             <a-badge :count="1">
-              <HomeOutlined two-tone-color="#ff0000" />
+              <HomeOutlined />
             </a-badge>
           </div>
 
           <div
-            class="tab-item"
+            class="nav-item"
             v-for="(item, index) in chatObjectItems"
             :key="index"
             @click="navToChatHitory(item)"
+            :class="{
+              active: isChatActive(item.chatObjectId!),
+            }"
           >
             <a-badge :count="item.badge">
               <MessageOutlined />
             </a-badge>
           </div>
-          <div class="tab-item" @click="navTo('/about')">
+          <div class="nav-item" @click="goto('/about')">
             <CodepenCircleOutlined two-tone-color="#ff0000" />
           </div>
-          <div class="tab-item" @click="navTo('/login')">
+          <div class="nav-item" @click="goto('/login')">
             <AndroidOutlined />
           </div>
-          <div class="tab-item"><SketchOutlined /></div>
-          <div class="tab-item"><AppstoreOutlined /></div>
-          <div class="tab-item"><ClockCircleOutlined /></div>
-          <div class="tab-item"><MoreOutlined /></div>
+          <div class="nav-item"><SketchOutlined /></div>
+          <div class="nav-item"><AppstoreOutlined /></div>
+          <div class="nav-item"><ClockCircleOutlined /></div>
+          <div class="nav-item"><MoreOutlined /></div>
         </div>
 
         <div class="side-bottom">
-          <div class="tab-item" @click="navTo('/settings')">
+          <div class="nav-item" @click="goto('/settings')">
             <router-link to="/settings">
               <a-badge color="red" count="5">
                 <SettingOutlined />
               </a-badge>
             </router-link>
           </div>
-          <div class="tab-item" title="用户" @click="navTo('/user')">
+          <div class="nav-item" title="用户" @click="goto('/user')">
             <a-badge :dot="true">
               <UserOutlined />
             </a-badge>
@@ -191,7 +207,7 @@ const navTo = (p: any) => router.push(p);
   flex-direction: column;
 }
 
-.tab-item {
+.nav-item {
   display: flex;
   height: 64px;
   width: var(--side-width);
@@ -200,11 +216,21 @@ const navTo = (p: any) => router.push(p);
   /* background-color: rgba(0, 128, 255, 0.427); */
   cursor: pointer;
 }
-.tab-item:hover {
-  background-color: rgba(46, 40, 220, 0.427);
+
+.nav-item.active {
+  background-color: rgb(65 65 65 / 84%);
+  color: #1890ff;
 }
-.tab-item:active {
-  background-color: rgba(39, 25, 127, 0.427);
+.nav-item.active:hover {
+  background-color: rgba(77, 76, 76, 0.84);
+  color: #0084ff;
+}
+.nav-item:hover {
+  background-color: rgba(50, 50, 50, 0.427);
+  color: #008cb6;
+}
+.nav-item:active {
+  background-color: rgba(19, 4, 93, 0.427);
 }
 .content-page {
   position: fixed;
