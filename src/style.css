@@ -15,18 +15,18 @@
   -moz-osx-font-smoothing: grayscale;
   -webkit-text-size-adjust: 100%;
 
-  --side-width:64px;
-  --page-title-height:64px;
+  --side-width: 64px;
+  --page-title-height: 64px;
 }
 
-.drag{
+.drag {
   -webkit-app-region: drag;
   user-select: none;
 }
-.no-drag{
+.no-drag {
   -webkit-app-region: no-drag;
 }
-.no-select{
+.no-select {
   user-select: none;
 }
 a {
@@ -107,38 +107,36 @@ code {
   }
 }
 &::-webkit-scrollbar-thumb {
-
   border-radius: 8px;
-  
+
   -webkit-box-shadow: inset 0 0 2px rgba(0, 0, 0, 0.2);
-  
+
   background: #949494;
-  
+
   margin-bottom: 10px;
-  
- }
-  
+}
+
 /* 文本溢出隐藏 */
 .text-ellipsis,
 .text-ellipsis1 {
-    overflow: hidden;
-    white-space: nowrap;
-    text-overflow: ellipsis;
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
 }
 
 .text-ellipsis2,
 .text-ellipsis3 {
-    overflow: hidden;
-    text-overflow: ellipsis;
-    display: -webkit-box;
-    -webkit-box-orient: vertical;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  display: -webkit-box;
+  -webkit-box-orient: vertical;
 }
 .text-ellipsis2 {
-    -webkit-line-clamp: 1;
+  -webkit-line-clamp: 1;
 }
 .text-ellipsis2 {
-    -webkit-line-clamp: 2;
+  -webkit-line-clamp: 2;
 }
 .text-ellipsis3 {
-    -webkit-line-clamp: 3;
+  -webkit-line-clamp: 3;
 }

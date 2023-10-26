@@ -124,12 +124,18 @@ app.on('activate', () => {
 // New window example arg: new windows url
 ipcMain.handle('open-win', (_, arg) => {
   const childWindow = new BrowserWindow({
+    parent: win,
+    modal: true,
+    maximizable: false,
+    minimizable: false,
     webPreferences: {
       preload,
       nodeIntegration: true,
       contextIsolation: false,
     },
   });
+
+  childWindow.removeMenu();
 
   if (process.env.VITE_DEV_SERVER_URL) {
     childWindow.loadURL(`${url}#${arg}`);

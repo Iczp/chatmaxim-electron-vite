@@ -39,10 +39,10 @@ export const routes = <RouteRecordRaw[]>[
         props: true,
       },
       { path: '/about', component: () => import('../views/About.vue'), props: true },
-      { path: '/settings', component: () => import('../views/Settings.vue'), props: true },
     ],
   },
   { path: '/login', component: () => import('../views/Login.vue') },
+  { path: '/settings', component: () => import('../views/Settings.vue'), props: true },
 ];
 
 // 3、创建一个路由的对象
