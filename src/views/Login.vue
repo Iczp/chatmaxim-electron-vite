@@ -41,8 +41,6 @@ const onFinish = (values: any) => {
 
   ipcRenderer.send('login', 'ping');
 
-  ipcRenderer.invoke('open-win', '/settings');
-
   ipcRenderer
     .invoke('win-info', {
       window: 'main',

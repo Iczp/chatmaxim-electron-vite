@@ -139,6 +139,10 @@ ipcMain.handle('open-win', (_, arg) => {
 
   if (process.env.VITE_DEV_SERVER_URL) {
     childWindow.loadURL(`${url}#${arg}`);
+    // Open devTool if the app is not packaged
+    childWindow.webContents.openDevTools({
+      mode: 'detach',
+    });
   } else {
     childWindow.loadFile(indexHtml, { hash: arg });
   }

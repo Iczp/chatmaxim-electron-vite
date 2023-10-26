@@ -1,6 +1,13 @@
 <script setup lang="ts">
 import { Ref, computed, onMounted, ref } from 'vue';
-import { onBeforeRouteLeave, onBeforeRouteUpdate, useRoute, useRouter } from 'vue-router';
+import { ipcRenderer } from 'electron';
+import {
+  RouteLocationNormalizedLoaded,
+  onBeforeRouteLeave,
+  onBeforeRouteUpdate,
+  useRoute,
+  useRouter,
+} from 'vue-router';
 import {
   HomeOutlined,
   AndroidOutlined,
@@ -73,6 +80,18 @@ const isNavActive = (pattern: string | RegExp, flags?: string | undefined): bool
   const reg = new RegExp(pattern, flags);
   return reg.test(router.currentRoute.value.path);
 };
+
+const gotoSetting = () => {
+  // console.log('app.getAppPath', app.getAppPath());
+  ipcRenderer.invoke('open-win', '/settings');
+};
+
+const getKey = (route: RouteLocationNormalizedLoaded): string | string[] => {
+  const m = route.path.match(/^\/(chat|object)\/\d+/gi);
+  const key = m != null ? m[0] : route.path;
+  console.warn('key:', key);
+  return key;
+};
 </script>
 
 <template>
@@ -112,12 +131,12 @@ const isNavActive = (pattern: string | RegExp, flags?: string | undefined): bool
         </div>
 
         <div class="side-bottom">
-          <div class="nav-item" @click="goto('/settings')">
-            <router-link to="/settings">
-              <a-badge color="red" count="5">
-                <SettingOutlined />
-              </a-badge>
-            </router-link>
+          <div class="nav-item" @click="gotoSetting()">
+            <!-- <router-link to="/settings"> -->
+            <a-badge color="red" count="5">
+              <SettingOutlined />
+            </a-badge>
+            <!-- </router-link> -->
           </div>
           <div class="nav-item" title="用户" @click="goto('/user')">
             <a-badge :dot="true">
@@ -138,10 +157,7 @@ const isNavActive = (pattern: string | RegExp, flags?: string | undefined): bool
           </keep-alive> -->
 
           <keep-alive>
-            <component
-              :is="Component"
-              :key="route.path.startsWith('/chat') ? route.params.chatObjectId : route.path"
-            />
+            <component :is="Component" :key="getKey(route)" />
           </keep-alive>
         </router-view>
       </div>
