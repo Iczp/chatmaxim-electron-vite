@@ -4,7 +4,7 @@
 /* eslint-disable */
 import type { IczpNet_Chat_WalletOrders_Dtos_WalletOrderCreateInput } from '../models/IczpNet_Chat_WalletOrders_Dtos_WalletOrderCreateInput';
 import type { IczpNet_Chat_WalletOrders_Dtos_WalletOrderDetailDto } from '../models/IczpNet_Chat_WalletOrders_Dtos_WalletOrderDetailDto';
-import type { IczpNet_Chat_WalletOrders_Dtos_WalletOrderDto_IczpNet_Chat_Application_Contracts_Version_0_1_1_0_Culture_neutral_PublicKeyToken_null_ } from '../models/IczpNet_Chat_WalletOrders_Dtos_WalletOrderDto_IczpNet_Chat_Application_Contracts_Version_0_1_1_0_Culture_neutral_PublicKeyToken_null_';
+// import type { IczpNet_Chat_WalletOrders_Dtos_WalletOrderDto_IczpNet_Chat_Application_Contracts_Version_0_1_1_0_Culture_neutral_PublicKeyToken_null_ } from '../models/IczpNet_Chat_WalletOrders_Dtos_WalletOrderDto_IczpNet_Chat_Application_Contracts_Version_0_1_1_0_Culture_neutral_PublicKeyToken_null_';
 import type { IczpNet_Chat_WalletOrders_Dtos_WalletOrderUpdateInput } from '../models/IczpNet_Chat_WalletOrders_Dtos_WalletOrderUpdateInput';
 import type { Volo_Abp_Application_Dtos_PagedResultDto_1 } from '../models/Volo_Abp_Application_Dtos_PagedResultDto_1';
 
@@ -78,10 +78,10 @@ businessType,
 minAmount,
 maxAmount,
 isEnabled,
-keyword = null,
+keyword,
 maxResultCount,
 skipCount,
-sorting = null,
+sorting,
 }: {
 ownerId?: number,
 businessId?: string,

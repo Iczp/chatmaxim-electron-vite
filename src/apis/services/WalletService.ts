@@ -5,7 +5,7 @@
 import type { IczpNet_Chat_Wallets_Dtos_RechargeInput } from '../models/IczpNet_Chat_Wallets_Dtos_RechargeInput';
 import type { IczpNet_Chat_Wallets_Dtos_WalletDetailDto } from '../models/IczpNet_Chat_Wallets_Dtos_WalletDetailDto';
 import type { IczpNet_Chat_Wallets_Dtos_WalletDto } from '../models/IczpNet_Chat_Wallets_Dtos_WalletDto';
-import type { IczpNet_Chat_Wallets_Dtos_WalletDto_IczpNet_Chat_Application_Contracts_Version_0_1_1_0_Culture_neutral_PublicKeyToken_null_ } from '../models/IczpNet_Chat_Wallets_Dtos_WalletDto_IczpNet_Chat_Application_Contracts_Version_0_1_1_0_Culture_neutral_PublicKeyToken_null_';
+// import type { IczpNet_Chat_Wallets_Dtos_WalletDto_IczpNet_Chat_Application_Contracts_Version_0_1_1_0_Culture_neutral_PublicKeyToken_null_ } from '../models/IczpNet_Chat_Wallets_Dtos_WalletDto_IczpNet_Chat_Application_Contracts_Version_0_1_1_0_Culture_neutral_PublicKeyToken_null_';
 import type { Volo_Abp_Application_Dtos_PagedResultDto_1 } from '../models/Volo_Abp_Application_Dtos_PagedResultDto_1';
 
 import type { CancelablePromise } from '../core/CancelablePromise';
@@ -46,10 +46,10 @@ id: string,
      */
     public static getApiChatWallet1({
 ownerId,
-keyword = null,
+keyword,
 maxResultCount,
 skipCount,
-sorting = null,
+sorting,
 }: {
 ownerId?: number,
 /**

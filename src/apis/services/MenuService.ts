@@ -4,10 +4,10 @@
 /* eslint-disable */
 import type { IczpNet_Chat_Menus_Dtos_MenuCreateInput } from '../models/IczpNet_Chat_Menus_Dtos_MenuCreateInput';
 import type { IczpNet_Chat_Menus_Dtos_MenuDto } from '../models/IczpNet_Chat_Menus_Dtos_MenuDto';
-import type { IczpNet_Chat_Menus_Dtos_MenuDto_IczpNet_Chat_Application_Contracts_Version_0_1_1_0_Culture_neutral_PublicKeyToken_null_ } from '../models/IczpNet_Chat_Menus_Dtos_MenuDto_IczpNet_Chat_Application_Contracts_Version_0_1_1_0_Culture_neutral_PublicKeyToken_null_';
+// import type { IczpNet_Chat_Menus_Dtos_MenuDto_IczpNet_Chat_Application_Contracts_Version_0_1_1_0_Culture_neutral_PublicKeyToken_null_ } from '../models/IczpNet_Chat_Menus_Dtos_MenuDto_IczpNet_Chat_Application_Contracts_Version_0_1_1_0_Culture_neutral_PublicKeyToken_null_';
 import type { IczpNet_Chat_Menus_Dtos_MenuUpdateInput } from '../models/IczpNet_Chat_Menus_Dtos_MenuUpdateInput';
 import type { IczpNet_Chat_Menus_MenuInfo } from '../models/IczpNet_Chat_Menus_MenuInfo';
-import type { IczpNet_Chat_Menus_MenuInfo_IczpNet_Chat_Domain_Shared_Version_0_1_1_0_Culture_neutral_PublicKeyToken_null_ } from '../models/IczpNet_Chat_Menus_MenuInfo_IczpNet_Chat_Domain_Shared_Version_0_1_1_0_Culture_neutral_PublicKeyToken_null_';
+// import type { IczpNet_Chat_Menus_MenuInfo_IczpNet_Chat_Domain_Shared_Version_0_1_1_0_Culture_neutral_PublicKeyToken_null_ } from '../models/IczpNet_Chat_Menus_MenuInfo_IczpNet_Chat_Domain_Shared_Version_0_1_1_0_Culture_neutral_PublicKeyToken_null_';
 import type { Volo_Abp_Application_Dtos_PagedResultDto_1 } from '../models/Volo_Abp_Application_Dtos_PagedResultDto_1';
 
 import type { CancelablePromise } from '../core/CancelablePromise';
@@ -50,12 +50,12 @@ requestBody?: IczpNet_Chat_Menus_Dtos_MenuCreateInput,
     public static getApiChatMenu({
 ownerId,
 isEnabledParentId = false,
-parentId = null,
-depthList = null,
-keyword = null,
+parentId,
+depthList,
+keyword,
 maxResultCount,
 skipCount,
-sorting = null,
+sorting,
 }: {
 /**
  * 所属聊天对角
@@ -210,9 +210,9 @@ id: string,
      */
     public static getApiChatMenuByCache({
 isEnabledParentId = false,
-depthList = null,
-parentId = null,
-keyword = null,
+depthList,
+parentId,
+keyword,
 sorting,
 skipCount,
 maxResultCount,

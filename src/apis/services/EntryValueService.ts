@@ -4,7 +4,7 @@
 /* eslint-disable */
 import type { IczpNet_Chat_EntryValues_Dtos_EntryValueCreateInput } from '../models/IczpNet_Chat_EntryValues_Dtos_EntryValueCreateInput';
 import type { IczpNet_Chat_EntryValues_Dtos_EntryValueDetailDto } from '../models/IczpNet_Chat_EntryValues_Dtos_EntryValueDetailDto';
-import type { IczpNet_Chat_EntryValues_Dtos_EntryValueDto_IczpNet_Chat_Application_Contracts_Version_0_1_1_0_Culture_neutral_PublicKeyToken_null_ } from '../models/IczpNet_Chat_EntryValues_Dtos_EntryValueDto_IczpNet_Chat_Application_Contracts_Version_0_1_1_0_Culture_neutral_PublicKeyToken_null_';
+// import type { IczpNet_Chat_EntryValues_Dtos_EntryValueDto_IczpNet_Chat_Application_Contracts_Version_0_1_1_0_Culture_neutral_PublicKeyToken_null_ } from '../models/IczpNet_Chat_EntryValues_Dtos_EntryValueDto_IczpNet_Chat_Application_Contracts_Version_0_1_1_0_Culture_neutral_PublicKeyToken_null_';
 import type { IczpNet_Chat_EntryValues_Dtos_EntryValueUpdateInput } from '../models/IczpNet_Chat_EntryValues_Dtos_EntryValueUpdateInput';
 import type { Volo_Abp_Application_Dtos_PagedResultDto_1 } from '../models/Volo_Abp_Application_Dtos_PagedResultDto_1';
 
@@ -50,10 +50,10 @@ entryNameId,
 isStatic,
 isPublic,
 isOption,
-keyword = null,
+keyword,
 maxResultCount,
 skipCount,
-sorting = null,
+sorting,
 }: {
 entryNameId?: string,
 isStatic?: boolean,

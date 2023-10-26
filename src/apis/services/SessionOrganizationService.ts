@@ -3,10 +3,10 @@
 /* tslint:disable */
 /* eslint-disable */
 import type { IczpNet_Chat_SessionSections_SessionOrganizations_SessionOrganizationInfo } from '../models/IczpNet_Chat_SessionSections_SessionOrganizations_SessionOrganizationInfo';
-import type { IczpNet_Chat_SessionSections_SessionOrganizations_SessionOrganizationInfo_IczpNet_Chat_Domain_Shared_Version_0_1_1_0_Culture_neutral_PublicKeyToken_null_ } from '../models/IczpNet_Chat_SessionSections_SessionOrganizations_SessionOrganizationInfo_IczpNet_Chat_Domain_Shared_Version_0_1_1_0_Culture_neutral_PublicKeyToken_null_';
+// import type { IczpNet_Chat_SessionSections_SessionOrganizations_SessionOrganizationInfo_IczpNet_Chat_Domain_Shared_Version_0_1_1_0_Culture_neutral_PublicKeyToken_null_ } from '../models/IczpNet_Chat_SessionSections_SessionOrganizations_SessionOrganizationInfo_IczpNet_Chat_Domain_Shared_Version_0_1_1_0_Culture_neutral_PublicKeyToken_null_';
 import type { IczpNet_Chat_SessionSections_SessionOrganiztions_Dtos_SessionOrganizationCreateInput } from '../models/IczpNet_Chat_SessionSections_SessionOrganiztions_Dtos_SessionOrganizationCreateInput';
 import type { IczpNet_Chat_SessionSections_SessionOrganiztions_Dtos_SessionOrganizationDetailDto } from '../models/IczpNet_Chat_SessionSections_SessionOrganiztions_Dtos_SessionOrganizationDetailDto';
-import type { IczpNet_Chat_SessionSections_SessionOrganiztions_Dtos_SessionOrganizationDto_IczpNet_Chat_Application_Contracts_Version_0_1_1_0_Culture_neutral_PublicKeyToken_null_ } from '../models/IczpNet_Chat_SessionSections_SessionOrganiztions_Dtos_SessionOrganizationDto_IczpNet_Chat_Application_Contracts_Version_0_1_1_0_Culture_neutral_PublicKeyToken_null_';
+// import type { IczpNet_Chat_SessionSections_SessionOrganiztions_Dtos_SessionOrganizationDto_IczpNet_Chat_Application_Contracts_Version_0_1_1_0_Culture_neutral_PublicKeyToken_null_ } from '../models/IczpNet_Chat_SessionSections_SessionOrganiztions_Dtos_SessionOrganizationDto_IczpNet_Chat_Application_Contracts_Version_0_1_1_0_Culture_neutral_PublicKeyToken_null_';
 import type { IczpNet_Chat_SessionSections_SessionOrganiztions_Dtos_SessionOrganizationUpdateInput } from '../models/IczpNet_Chat_SessionSections_SessionOrganiztions_Dtos_SessionOrganizationUpdateInput';
 import type { Volo_Abp_Application_Dtos_PagedResultDto_1 } from '../models/Volo_Abp_Application_Dtos_PagedResultDto_1';
 
@@ -51,12 +51,12 @@ requestBody?: IczpNet_Chat_SessionSections_SessionOrganiztions_Dtos_SessionOrgan
 sessionId,
 sessionUnitId,
 isEnabledParentId = false,
-parentId = null,
-depthList = null,
-keyword = null,
+parentId,
+depthList,
+keyword,
 maxResultCount,
 skipCount,
-sorting = null,
+sorting,
 }: {
 /**
  * 会话Id
@@ -216,9 +216,9 @@ id: number,
      */
     public static getApiChatSessionOrganizationByCache({
 isEnabledParentId = false,
-depthList = null,
-parentId = null,
-keyword = null,
+depthList,
+parentId,
+keyword,
 sorting,
 skipCount,
 maxResultCount,

@@ -3,7 +3,7 @@
 /* tslint:disable */
 /* eslint-disable */
 import type { IczpNet_Chat_Mottos_Dtos_MottoDetailDto } from '../models/IczpNet_Chat_Mottos_Dtos_MottoDetailDto';
-import type { IczpNet_Chat_Mottos_Dtos_MottoDto_IczpNet_Chat_Application_Contracts_Version_0_1_1_0_Culture_neutral_PublicKeyToken_null_ } from '../models/IczpNet_Chat_Mottos_Dtos_MottoDto_IczpNet_Chat_Application_Contracts_Version_0_1_1_0_Culture_neutral_PublicKeyToken_null_';
+// import type { IczpNet_Chat_Mottos_Dtos_MottoDto_IczpNet_Chat_Application_Contracts_Version_0_1_1_0_Culture_neutral_PublicKeyToken_null_ } from '../models/IczpNet_Chat_Mottos_Dtos_MottoDto_IczpNet_Chat_Application_Contracts_Version_0_1_1_0_Culture_neutral_PublicKeyToken_null_';
 import type { Volo_Abp_Application_Dtos_PagedResultDto_1 } from '../models/Volo_Abp_Application_Dtos_PagedResultDto_1';
 
 import type { CancelablePromise } from '../core/CancelablePromise';
@@ -108,10 +108,10 @@ id: string,
      */
     public static getApiChatMottoAdmin1({
 ownerId,
-keyword = null,
+keyword,
 maxResultCount,
 skipCount,
-sorting = null,
+sorting,
 }: {
 ownerId?: number,
 /**

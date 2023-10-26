@@ -6,7 +6,7 @@ import type { IczpNet_Chat_ChatObjects_Dtos_ChatObjectDto } from '../models/Iczp
 import type { IczpNet_Chat_RoomSections_Rooms_Dtos_RoomCreateInput } from '../models/IczpNet_Chat_RoomSections_Rooms_Dtos_RoomCreateInput';
 import type { IczpNet_Chat_RoomSections_Rooms_InviteInput } from '../models/IczpNet_Chat_RoomSections_Rooms_InviteInput';
 import type { IczpNet_Chat_SessionSections_SessionUnits_SessionUnitSenderInfo } from '../models/IczpNet_Chat_SessionSections_SessionUnits_SessionUnitSenderInfo';
-import type { IczpNet_Chat_SessionUnits_Dtos_SessionUnitDto_IczpNet_Chat_Application_Contracts_Version_0_1_1_0_Culture_neutral_PublicKeyToken_null_ } from '../models/IczpNet_Chat_SessionUnits_Dtos_SessionUnitDto_IczpNet_Chat_Application_Contracts_Version_0_1_1_0_Culture_neutral_PublicKeyToken_null_';
+// import type { IczpNet_Chat_SessionUnits_Dtos_SessionUnitDto_IczpNet_Chat_Application_Contracts_Version_0_1_1_0_Culture_neutral_PublicKeyToken_null_ } from '../models/IczpNet_Chat_SessionUnits_Dtos_SessionUnitDto_IczpNet_Chat_Application_Contracts_Version_0_1_1_0_Culture_neutral_PublicKeyToken_null_';
 import type { Volo_Abp_Application_Dtos_PagedResultDto_1 } from '../models/Volo_Abp_Application_Dtos_PagedResultDto_1';
 
 import type { CancelablePromise } from '../core/CancelablePromise';
@@ -99,10 +99,10 @@ sessionUnitId: string,
     public static getApiChatRoomAdminSame({
 sourceChatObjectId,
 targetChatObjectId,
-keyword = null,
+keyword,
 maxResultCount,
 skipCount,
-sorting = null,
+sorting,
 }: {
 /**
  * 原聊天对象Id

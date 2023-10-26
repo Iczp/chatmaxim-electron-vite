@@ -3,10 +3,10 @@
 /* tslint:disable */
 /* eslint-disable */
 import type { IczpNet_Chat_ChatObjectCategorys_ChatObjectCategoryInfo } from '../models/IczpNet_Chat_ChatObjectCategorys_ChatObjectCategoryInfo';
-import type { IczpNet_Chat_ChatObjectCategorys_ChatObjectCategoryInfo_IczpNet_Chat_Domain_Shared_Version_0_1_1_0_Culture_neutral_PublicKeyToken_null_ } from '../models/IczpNet_Chat_ChatObjectCategorys_ChatObjectCategoryInfo_IczpNet_Chat_Domain_Shared_Version_0_1_1_0_Culture_neutral_PublicKeyToken_null_';
+// import type { IczpNet_Chat_ChatObjectCategorys_ChatObjectCategoryInfo_IczpNet_Chat_Domain_Shared_Version_0_1_1_0_Culture_neutral_PublicKeyToken_null_ } from '../models/IczpNet_Chat_ChatObjectCategorys_ChatObjectCategoryInfo_IczpNet_Chat_Domain_Shared_Version_0_1_1_0_Culture_neutral_PublicKeyToken_null_';
 import type { IczpNet_Chat_ChatObjectCategorys_Dtos_ChatObjectCategoryCreateInput } from '../models/IczpNet_Chat_ChatObjectCategorys_Dtos_ChatObjectCategoryCreateInput';
 import type { IczpNet_Chat_ChatObjectCategorys_Dtos_ChatObjectCategoryDetailDto } from '../models/IczpNet_Chat_ChatObjectCategorys_Dtos_ChatObjectCategoryDetailDto';
-import type { IczpNet_Chat_ChatObjectCategorys_Dtos_ChatObjectCategoryDto_IczpNet_Chat_Application_Contracts_Version_0_1_1_0_Culture_neutral_PublicKeyToken_null_ } from '../models/IczpNet_Chat_ChatObjectCategorys_Dtos_ChatObjectCategoryDto_IczpNet_Chat_Application_Contracts_Version_0_1_1_0_Culture_neutral_PublicKeyToken_null_';
+// import type { IczpNet_Chat_ChatObjectCategorys_Dtos_ChatObjectCategoryDto_IczpNet_Chat_Application_Contracts_Version_0_1_1_0_Culture_neutral_PublicKeyToken_null_ } from '../models/IczpNet_Chat_ChatObjectCategorys_Dtos_ChatObjectCategoryDto_IczpNet_Chat_Application_Contracts_Version_0_1_1_0_Culture_neutral_PublicKeyToken_null_';
 import type { IczpNet_Chat_ChatObjectCategorys_Dtos_ChatObjectCategoryUpdateInput } from '../models/IczpNet_Chat_ChatObjectCategorys_Dtos_ChatObjectCategoryUpdateInput';
 import type { Volo_Abp_Application_Dtos_PagedResultDto_1 } from '../models/Volo_Abp_Application_Dtos_PagedResultDto_1';
 
@@ -50,12 +50,12 @@ requestBody?: IczpNet_Chat_ChatObjectCategorys_Dtos_ChatObjectCategoryCreateInpu
     public static getApiChatChatObjectCategory({
 chatObjectTypeId,
 isEnabledParentId = false,
-parentId = null,
-depthList = null,
-keyword = null,
+parentId,
+depthList,
+keyword,
 maxResultCount,
 skipCount,
-sorting = null,
+sorting,
 }: {
 chatObjectTypeId?: string,
 /**
@@ -207,9 +207,9 @@ id: string,
      */
     public static getApiChatChatObjectCategoryByCache({
 isEnabledParentId = false,
-depthList = null,
-parentId = null,
-keyword = null,
+depthList,
+parentId,
+keyword,
 sorting,
 skipCount,
 maxResultCount,

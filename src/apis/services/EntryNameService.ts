@@ -3,12 +3,12 @@
 /* tslint:disable */
 /* eslint-disable */
 import type { IczpNet_AbpTrees_TreeInfo_1 } from '../models/IczpNet_AbpTrees_TreeInfo_1';
-import type { IczpNet_AbpTrees_TreeInfo_1_System_Guid_System_Private_CoreLib_Version_7_0_0_0_Culture_neutral_PublicKeyToken_7cec85d7bea7798e_IczpNet_AbpTrees_Domain_Shared_Version_0_2_1_0_Culture_neutral_PublicKeyToken_null_ } from '../models/IczpNet_AbpTrees_TreeInfo_1_System_Guid_System_Private_CoreLib_Version_7_0_0_0_Culture_neutral_PublicKeyToken_7cec85d7bea7798e_IczpNet_AbpTrees_Domain_Shared_Version_0_2_1_0_Culture_neutral_PublicKeyToken_null_';
+// import type { IczpNet_AbpTrees_TreeInfo_1_System_Guid_System_Private_CoreLib_Version_7_0_0_0_Culture_neutral_PublicKeyToken_7cec85d7bea7798e_IczpNet_AbpTrees_Domain_Shared_Version_0_2_1_0_Culture_neutral_PublicKeyToken_null_ } from '../models/IczpNet_AbpTrees_TreeInfo_1_System_Guid_System_Private_CoreLib_Version_7_0_0_0_Culture_neutral_PublicKeyToken_7cec85d7bea7798e_IczpNet_AbpTrees_Domain_Shared_Version_0_2_1_0_Culture_neutral_PublicKeyToken_null_';
 import type { IczpNet_Chat_EntryNames_Dtos_EntryNameCreateInput } from '../models/IczpNet_Chat_EntryNames_Dtos_EntryNameCreateInput';
 import type { IczpNet_Chat_EntryNames_Dtos_EntryNameDetailDto } from '../models/IczpNet_Chat_EntryNames_Dtos_EntryNameDetailDto';
-import type { IczpNet_Chat_EntryNames_Dtos_EntryNameDto_IczpNet_Chat_Application_Contracts_Version_0_1_1_0_Culture_neutral_PublicKeyToken_null_ } from '../models/IczpNet_Chat_EntryNames_Dtos_EntryNameDto_IczpNet_Chat_Application_Contracts_Version_0_1_1_0_Culture_neutral_PublicKeyToken_null_';
+// import type { IczpNet_Chat_EntryNames_Dtos_EntryNameDto_IczpNet_Chat_Application_Contracts_Version_0_1_1_0_Culture_neutral_PublicKeyToken_null_ } from '../models/IczpNet_Chat_EntryNames_Dtos_EntryNameDto_IczpNet_Chat_Application_Contracts_Version_0_1_1_0_Culture_neutral_PublicKeyToken_null_';
 import type { IczpNet_Chat_EntryNames_Dtos_EntryNameUpdateInput } from '../models/IczpNet_Chat_EntryNames_Dtos_EntryNameUpdateInput';
-import type { System_Guid_System_Private_CoreLib_Version_7_0_0_0_Culture_neutral_PublicKeyToken_7cec85d7bea7798e_ } from '../models/System_Guid_System_Private_CoreLib_Version_7_0_0_0_Culture_neutral_PublicKeyToken_7cec85d7bea7798e_';
+// import type { System_Guid_System_Private_CoreLib_Version_7_0_0_0_Culture_neutral_PublicKeyToken_7cec85d7bea7798e_ } from '../models/System_Guid_System_Private_CoreLib_Version_7_0_0_0_Culture_neutral_PublicKeyToken_7cec85d7bea7798e_';
 import type { Volo_Abp_Application_Dtos_PagedResultDto_1 } from '../models/Volo_Abp_Application_Dtos_PagedResultDto_1';
 
 import type { CancelablePromise } from '../core/CancelablePromise';
@@ -55,12 +55,12 @@ isRequired,
 isStatic,
 isPublic,
 isEnabledParentId = false,
-parentId = null,
-depthList = null,
-keyword = null,
+parentId,
+depthList,
+keyword,
 maxResultCount,
 skipCount,
-sorting = null,
+sorting,
 }: {
 /**
  * 是否选择
@@ -235,9 +235,9 @@ id: string,
      */
     public static getApiChatEntryNameByCache({
 isEnabledParentId = false,
-depthList = null,
-parentId = null,
-keyword = null,
+depthList,
+parentId,
+keyword,
 sorting,
 skipCount,
 maxResultCount,

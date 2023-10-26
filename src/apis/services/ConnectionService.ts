@@ -4,7 +4,7 @@
 /* eslint-disable */
 import type { IczpNet_Chat_Connections_Dtos_ConnectionCreateInput } from '../models/IczpNet_Chat_Connections_Dtos_ConnectionCreateInput';
 import type { IczpNet_Chat_Connections_Dtos_ConnectionDto } from '../models/IczpNet_Chat_Connections_Dtos_ConnectionDto';
-import type { IczpNet_Chat_Connections_Dtos_ConnectionDto_IczpNet_Chat_Application_Contracts_Version_0_1_1_0_Culture_neutral_PublicKeyToken_null_ } from '../models/IczpNet_Chat_Connections_Dtos_ConnectionDto_IczpNet_Chat_Application_Contracts_Version_0_1_1_0_Culture_neutral_PublicKeyToken_null_';
+// import type { IczpNet_Chat_Connections_Dtos_ConnectionDto_IczpNet_Chat_Application_Contracts_Version_0_1_1_0_Culture_neutral_PublicKeyToken_null_ } from '../models/IczpNet_Chat_Connections_Dtos_ConnectionDto_IczpNet_Chat_Application_Contracts_Version_0_1_1_0_Culture_neutral_PublicKeyToken_null_';
 import type { IczpNet_Chat_Connections_Dtos_GetOnlineCountOutput } from '../models/IczpNet_Chat_Connections_Dtos_GetOnlineCountOutput';
 import type { Volo_Abp_Application_Dtos_PagedResultDto_1 } from '../models/Volo_Abp_Application_Dtos_PagedResultDto_1';
 
@@ -75,10 +75,10 @@ requestBody?: IczpNet_Chat_Connections_Dtos_ConnectionCreateInput,
      * @throws ApiError
      */
     public static getApiChatConnection({
-keyword = null,
+keyword,
 maxResultCount,
 skipCount,
-sorting = null,
+sorting,
 }: {
 /**
  * 关键字(支持拼音)

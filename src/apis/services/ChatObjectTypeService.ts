@@ -4,7 +4,7 @@
 /* eslint-disable */
 import type { IczpNet_Chat_ChatObjectTypes_Dtos_ChatObjectTypeCreateInput } from '../models/IczpNet_Chat_ChatObjectTypes_Dtos_ChatObjectTypeCreateInput';
 import type { IczpNet_Chat_ChatObjectTypes_Dtos_ChatObjectTypeDetailDto } from '../models/IczpNet_Chat_ChatObjectTypes_Dtos_ChatObjectTypeDetailDto';
-import type { IczpNet_Chat_ChatObjectTypes_Dtos_ChatObjectTypeDto_IczpNet_Chat_Application_Contracts_Version_0_1_1_0_Culture_neutral_PublicKeyToken_null_ } from '../models/IczpNet_Chat_ChatObjectTypes_Dtos_ChatObjectTypeDto_IczpNet_Chat_Application_Contracts_Version_0_1_1_0_Culture_neutral_PublicKeyToken_null_';
+// import type { IczpNet_Chat_ChatObjectTypes_Dtos_ChatObjectTypeDto_IczpNet_Chat_Application_Contracts_Version_0_1_1_0_Culture_neutral_PublicKeyToken_null_ } from '../models/IczpNet_Chat_ChatObjectTypes_Dtos_ChatObjectTypeDto_IczpNet_Chat_Application_Contracts_Version_0_1_1_0_Culture_neutral_PublicKeyToken_null_';
 import type { IczpNet_Chat_ChatObjectTypes_Dtos_ChatObjectTypeUpdateInput } from '../models/IczpNet_Chat_ChatObjectTypes_Dtos_ChatObjectTypeUpdateInput';
 import type { Volo_Abp_Application_Dtos_PagedResultDto_1 } from '../models/Volo_Abp_Application_Dtos_PagedResultDto_1';
 
@@ -46,10 +46,10 @@ requestBody?: IczpNet_Chat_ChatObjectTypes_Dtos_ChatObjectTypeCreateInput,
      * @throws ApiError
      */
     public static getApiChatChatObjectType({
-keyword = null,
+keyword,
 maxResultCount,
 skipCount,
-sorting = null,
+sorting,
 }: {
 /**
  * 关键字(支持拼音)

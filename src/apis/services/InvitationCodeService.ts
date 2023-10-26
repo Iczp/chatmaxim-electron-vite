@@ -4,7 +4,7 @@
 /* eslint-disable */
 import type { IczpNet_Chat_InvitationCodes_Dtos_InvitationCodeCreateInput } from '../models/IczpNet_Chat_InvitationCodes_Dtos_InvitationCodeCreateInput';
 import type { IczpNet_Chat_InvitationCodes_Dtos_InvitationCodeDetailDto } from '../models/IczpNet_Chat_InvitationCodes_Dtos_InvitationCodeDetailDto';
-import type { IczpNet_Chat_InvitationCodes_Dtos_InvitationCodeDto_IczpNet_Chat_Application_Contracts_Version_0_1_1_0_Culture_neutral_PublicKeyToken_null_ } from '../models/IczpNet_Chat_InvitationCodes_Dtos_InvitationCodeDto_IczpNet_Chat_Application_Contracts_Version_0_1_1_0_Culture_neutral_PublicKeyToken_null_';
+// import type { IczpNet_Chat_InvitationCodes_Dtos_InvitationCodeDto_IczpNet_Chat_Application_Contracts_Version_0_1_1_0_Culture_neutral_PublicKeyToken_null_ } from '../models/IczpNet_Chat_InvitationCodes_Dtos_InvitationCodeDto_IczpNet_Chat_Application_Contracts_Version_0_1_1_0_Culture_neutral_PublicKeyToken_null_';
 import type { IczpNet_Chat_InvitationCodes_Dtos_InvitationCodeUpdateInput } from '../models/IczpNet_Chat_InvitationCodes_Dtos_InvitationCodeUpdateInput';
 import type { Volo_Abp_Application_Dtos_PagedResultDto_1 } from '../models/Volo_Abp_Application_Dtos_PagedResultDto_1';
 
@@ -46,10 +46,10 @@ requestBody?: IczpNet_Chat_InvitationCodes_Dtos_InvitationCodeCreateInput,
      * @throws ApiError
      */
     public static getApiChatInvitationCode({
-keyword = null,
+keyword,
 maxResultCount,
 skipCount,
-sorting = null,
+sorting,
 }: {
 /**
  * 关键字(支持拼音)

@@ -4,7 +4,7 @@
 /* eslint-disable */
 import type { IczpNet_Chat_SessionSections_SessionPermissionDefinitions_Dtos_SessionPermissionDefinitionDetailDto } from '../models/IczpNet_Chat_SessionSections_SessionPermissionDefinitions_Dtos_SessionPermissionDefinitionDetailDto';
 import type { IczpNet_Chat_SessionSections_SessionPermissionDefinitions_Dtos_SessionPermissionDefinitionDto } from '../models/IczpNet_Chat_SessionSections_SessionPermissionDefinitions_Dtos_SessionPermissionDefinitionDto';
-import type { IczpNet_Chat_SessionSections_SessionPermissionDefinitions_Dtos_SessionPermissionDefinitionDto_IczpNet_Chat_Application_Contracts_Version_0_1_1_0_Culture_neutral_PublicKeyToken_null_ } from '../models/IczpNet_Chat_SessionSections_SessionPermissionDefinitions_Dtos_SessionPermissionDefinitionDto_IczpNet_Chat_Application_Contracts_Version_0_1_1_0_Culture_neutral_PublicKeyToken_null_';
+// import type { IczpNet_Chat_SessionSections_SessionPermissionDefinitions_Dtos_SessionPermissionDefinitionDto_IczpNet_Chat_Application_Contracts_Version_0_1_1_0_Culture_neutral_PublicKeyToken_null_ } from '../models/IczpNet_Chat_SessionSections_SessionPermissionDefinitions_Dtos_SessionPermissionDefinitionDto_IczpNet_Chat_Application_Contracts_Version_0_1_1_0_Culture_neutral_PublicKeyToken_null_';
 import type { IczpNet_Chat_SessionSections_SessionPermissionDefinitions_Dtos_SessionPermissionDefinitionUpdateInput } from '../models/IczpNet_Chat_SessionSections_SessionPermissionDefinitions_Dtos_SessionPermissionDefinitionUpdateInput';
 import type { Volo_Abp_Application_Dtos_PagedResultDto_1 } from '../models/Volo_Abp_Application_Dtos_PagedResultDto_1';
 
@@ -50,12 +50,12 @@ id: string,
      * @throws ApiError
      */
     public static getApiChatSessionPermissionDefinition1({
-groupIdList = null,
+groupIdList,
 isImportChildGroup,
-keyword = null,
+keyword,
 maxResultCount,
 skipCount,
-sorting = null,
+sorting,
 }: {
 /**
  * 分组Id

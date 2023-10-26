@@ -5,7 +5,7 @@
 import type { IczpNet_Chat_SessionSections_SessionRoles_Dtos_SessionRoleDto } from '../models/IczpNet_Chat_SessionSections_SessionRoles_Dtos_SessionRoleDto';
 import type { IczpNet_Chat_SessionSections_Sessions_Dtos_SessionDetailDto } from '../models/IczpNet_Chat_SessionSections_Sessions_Dtos_SessionDetailDto';
 import type { IczpNet_Chat_SessionSections_Sessions_Dtos_SessionDto } from '../models/IczpNet_Chat_SessionSections_Sessions_Dtos_SessionDto';
-import type { IczpNet_Chat_SessionSections_Sessions_Dtos_SessionDto_IczpNet_Chat_Application_Contracts_Version_0_1_1_0_Culture_neutral_PublicKeyToken_null_ } from '../models/IczpNet_Chat_SessionSections_Sessions_Dtos_SessionDto_IczpNet_Chat_Application_Contracts_Version_0_1_1_0_Culture_neutral_PublicKeyToken_null_';
+// import type { IczpNet_Chat_SessionSections_Sessions_Dtos_SessionDto_IczpNet_Chat_Application_Contracts_Version_0_1_1_0_Culture_neutral_PublicKeyToken_null_ } from '../models/IczpNet_Chat_SessionSections_Sessions_Dtos_SessionDto_IczpNet_Chat_Application_Contracts_Version_0_1_1_0_Culture_neutral_PublicKeyToken_null_';
 import type { IczpNet_Chat_SessionSections_SessionTags_Dtos_SessionTagDto } from '../models/IczpNet_Chat_SessionSections_SessionTags_Dtos_SessionTagDto';
 import type { Volo_Abp_Application_Dtos_PagedResultDto_1 } from '../models/Volo_Abp_Application_Dtos_PagedResultDto_1';
 
@@ -246,10 +246,10 @@ id: string,
      */
     public static getApiChatSession1({
 ownerId,
-keyword = null,
+keyword,
 maxResultCount,
 skipCount,
-sorting = null,
+sorting,
 }: {
 /**
  * 聊天对象Id

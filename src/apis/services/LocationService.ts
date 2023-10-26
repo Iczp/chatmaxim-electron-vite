@@ -2,7 +2,7 @@
 /* istanbul ignore file */
 /* tslint:disable */
 /* eslint-disable */
-import type { IczpNet_Chat_Locations_Dto_UserLocationDto_IczpNet_Chat_Application_Contracts_Version_0_1_1_0_Culture_neutral_PublicKeyToken_null_ } from '../models/IczpNet_Chat_Locations_Dto_UserLocationDto_IczpNet_Chat_Application_Contracts_Version_0_1_1_0_Culture_neutral_PublicKeyToken_null_';
+// import type { IczpNet_Chat_Locations_Dto_UserLocationDto_IczpNet_Chat_Application_Contracts_Version_0_1_1_0_Culture_neutral_PublicKeyToken_null_ } from '../models/IczpNet_Chat_Locations_Dto_UserLocationDto_IczpNet_Chat_Application_Contracts_Version_0_1_1_0_Culture_neutral_PublicKeyToken_null_';
 import type { IczpNet_Chat_Locations_ShareLocationInput } from '../models/IczpNet_Chat_Locations_ShareLocationInput';
 import type { IczpNet_Chat_Locations_ShareLocationOutput } from '../models/IczpNet_Chat_Locations_ShareLocationOutput';
 import type { IczpNet_Chat_Locations_StopShareLocationInput } from '../models/IczpNet_Chat_Locations_StopShareLocationInput';

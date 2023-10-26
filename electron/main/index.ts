@@ -1,11 +1,11 @@
 import { app, BrowserWindow, shell, ipcMain } from 'electron';
 import { release } from 'node:os';
 import { join } from 'node:path';
-import { WinSize, WinEvents } from '../../src/ipc';
+// import { WinSize, WinEvents } from '../../ipc';
 import Store from 'electron-store';
 
-// 
-Store.initRenderer()
+//
+Store.initRenderer();
 
 // The built directory structure
 //
@@ -145,7 +145,7 @@ ipcMain.handle('win-info', (_, arg) => {
   };
 });
 
-ipcMain.handle('win-resize', (_, arg: WinSize) => {
+ipcMain.handle('win-resize', (_, arg) => {
   console.log('win-resize', arg);
   win.setSize(arg.width, arg.height);
 });
