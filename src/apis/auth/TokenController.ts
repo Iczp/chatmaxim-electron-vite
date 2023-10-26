@@ -152,7 +152,7 @@ export const postToken = async (): Promise<TokenDto | null> => {
  * @param {string} value
  */
 export const storageToken = (value: string): void => {
-  // localStorage.setItem(TOKEN_KEY, value);
+  localStorage.setItem(TOKEN_KEY, value);
 };
 
 /**

@@ -196,6 +196,7 @@ const isNavActive = (pattern: string | RegExp, flags?: string | undefined): bool
   align-items: center;
   color: #9feaf9;
   user-select: none;
+  z-index: 99;
 }
 .side-top {
   display: flex;

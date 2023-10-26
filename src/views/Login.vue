@@ -18,6 +18,7 @@ import { app, ipcRenderer } from 'electron';
 import { reactive } from 'vue';
 import { login, isLogined } from '../apis/auth/TokenController';
 import { router } from '../routes';
+import { setSize } from '../ipc';
 
 import { message } from 'ant-design-vue';
 import { ref } from 'vue';
@@ -55,6 +56,7 @@ const onFinish = (values: any) => {
     password: formState.password,
   }).then(res => {
     console.log('登录成功！', res);
+    setSize({ width: 1560, height: 800 });
     message.success({ content: '欢迎回来!', key, duration: 2 });
     router.push('/');
   });

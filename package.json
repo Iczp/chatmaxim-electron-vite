@@ -41,6 +41,7 @@
     "@ant-design-vue/pro-layout": "^3.2.4",
     "ant-design-vue": "^4.0.3",
     "axios": "^1.5.1",
+    "electron-store": "^8.1.0",
     "moment": "^2.29.4",
     "pinia": "^2.1.7",
     "qs": "^6.11.2",

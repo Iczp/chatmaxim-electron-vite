@@ -1,6 +1,11 @@
 import { app, BrowserWindow, shell, ipcMain } from 'electron';
 import { release } from 'node:os';
 import { join } from 'node:path';
+import { WinSize, WinEvents } from '../../src/ipc';
+import Store from 'electron-store';
+
+// 
+Store.initRenderer()
 
 // The built directory structure
 //
@@ -43,8 +48,8 @@ const indexHtml = join(process.env.DIST, 'index.html');
 async function createWindow() {
   win = new BrowserWindow({
     title: 'Main window',
-    minWidth: 1560,
-    minHeight: 800,
+    // minWidth: 1560,
+    // minHeight: 800,
 
     icon: join(process.env.VITE_PUBLIC, 'favicon.ico'),
     webPreferences: {
@@ -57,6 +62,7 @@ async function createWindow() {
     },
     autoHideMenuBar: false,
     frame: false,
+    transparent: true,
   });
   win.removeMenu();
   if (process.env.VITE_DEV_SERVER_URL) {
@@ -74,6 +80,14 @@ async function createWindow() {
   win.webContents.on('did-finish-load', () => {
     win?.webContents.send('main-process-message', new Date().toLocaleString());
   });
+  win.on('resized', e => {
+    const a: any = {
+      size: win.getSize(),
+      getMaximumSize: win.getMaximumSize(),
+      getMinimumSize: win.getMinimumSize(),
+    };
+    win?.webContents.send('resized', `resized:${JSON.stringify(a)}`);
+  });
 
   // Make all links open with the browser, not with the application
   win.webContents.setWindowOpenHandler(({ url }) => {
@@ -81,11 +95,6 @@ async function createWindow() {
     return { action: 'deny' };
   });
   // win.webContents.on('will-navigate', (event, url) => { }) #344
-
-  ipcMain.on('login', (_, arg) => {
-    console.log('login', arg);
-    win?.webContents.send('main-process-message', arg);
-  });
 }
 
 app.whenReady().then(createWindow);
@@ -134,4 +143,9 @@ ipcMain.handle('win-info', (_, arg) => {
   return {
     return: 5,
   };
+});
+
+ipcMain.handle('win-resize', (_, arg: WinSize) => {
+  console.log('win-resize', arg);
+  win.setSize(arg.width, arg.height);
 });
