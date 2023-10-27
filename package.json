@@ -25,28 +25,27 @@
     "generate": "openapi --input ./#swagger.json --output ./src/apis --client axios --useOptions"
   },
   "devDependencies": {
+    "@ant-design-vue/pro-layout": "^3.2.4",
+    "@types/websocket": "^1.0.8",
     "@vitejs/plugin-vue": "^4.3.3",
+    "ant-design-vue": "^4.0.3",
+    "axios": "^1.5.1",
     "electron": "^26.0.0",
     "electron-builder": "^24.6.3",
+    "electron-store": "^8.1.0",
+    "moment": "^2.29.4",
     "openapi-typescript-codegen": "^0.25.0",
+    "pinia": "^2.1.7",
+    "qs": "^6.11.2",
     "typescript": "^5.1.6",
     "unplugin-vue-components": "^0.25.2",
     "vite": "^4.4.9",
     "vite-plugin-electron": "^0.14.0",
     "vite-plugin-electron-renderer": "^0.14.5",
+    "vite-plugin-multiple": "^0.2.0",
     "vue": "^3.3.4",
-    "vue-tsc": "^1.8.8"
-  },
-  "dependencies": {
-    "@ant-design-vue/pro-layout": "^3.2.4",
-    "@types/websocket": "^1.0.8",
-    "ant-design-vue": "^4.0.3",
-    "axios": "^1.5.1",
-    "electron-store": "^8.1.0",
-    "moment": "^2.29.4",
-    "pinia": "^2.1.7",
-    "qs": "^6.11.2",
     "vue-router": "^4.2.5",
+    "vue-tsc": "^1.8.8",
     "vue3-perfect-scrollbar": "^1.6.1",
     "websocket": "^1.0.34"
   }

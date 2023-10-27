@@ -35,7 +35,7 @@ export const connect = (wsUrl: string): void => {
       } else {
         try {
           const data = JSON.parse(e.data) as ReceivedDto;
-          console.log(`data:`, data);
+          console.log(`WebSocket Received:`, data);
         } catch (error) {
           console.error(`data:${error}`);
         }

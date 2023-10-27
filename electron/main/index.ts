@@ -3,6 +3,7 @@ import { release } from 'node:os';
 import { join } from 'node:path';
 // import { WinSize, WinEvents } from '../../ipc';
 import Store from 'electron-store';
+import { Size } from './types';
 
 //
 Store.initRenderer();
@@ -95,6 +96,27 @@ async function createWindow() {
     return { action: 'deny' };
   });
   // win.webContents.on('will-navigate', (event, url) => { }) #344
+
+  // Renderer others
+  const nodeTrue = new BrowserWindow({
+    webPreferences: {
+      contextIsolation: false,
+      nodeIntegration: true,
+    },
+    width: 700,
+    height: 500,
+  });
+  if (process.env.VITE_DEV_SERVER_URL) {
+    console.log('process.env.VITE_DEV_SERVER_UR', process.env.VITE_DEV_SERVER_URL);
+
+    nodeTrue.loadURL(`${process.env.VITE_DEV_SERVER_URL}others/index.html`);
+    nodeTrue.webContents.openDevTools({
+      mode: 'right',
+    });
+  } else {
+    nodeTrue.loadFile(join(__dirname, '../dist/others/index.html'));
+  }
+  //end Renderer others
 }
 
 app.whenReady().then(createWindow);
@@ -155,7 +177,7 @@ ipcMain.handle('win-info', (_, arg) => {
   };
 });
 
-ipcMain.handle('win-resize', (_, arg) => {
+ipcMain.handle('win-resize', (_, arg: Size) => {
   console.log('win-resize', arg);
   win.setSize(arg.width, arg.height);
 });
