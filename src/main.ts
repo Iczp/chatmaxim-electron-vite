@@ -14,6 +14,7 @@ import PageTitle from './components/PageTitle.vue';
 import Icon from './components/Icon.vue';
 import { router } from './routes';
 import { createPinia } from 'pinia';
+// import './websocket'
 
 const pinia = createPinia();
 const app = createApp(App);

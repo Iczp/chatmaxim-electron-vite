@@ -39,6 +39,7 @@
   },
   "dependencies": {
     "@ant-design-vue/pro-layout": "^3.2.4",
+    "@types/websocket": "^1.0.8",
     "ant-design-vue": "^4.0.3",
     "axios": "^1.5.1",
     "electron-store": "^8.1.0",
@@ -46,6 +47,7 @@
     "pinia": "^2.1.7",
     "qs": "^6.11.2",
     "vue-router": "^4.2.5",
-    "vue3-perfect-scrollbar": "^1.6.1"
+    "vue3-perfect-scrollbar": "^1.6.1",
+    "websocket": "^1.0.34"
   }
 }
