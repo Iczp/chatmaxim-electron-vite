@@ -20,7 +20,9 @@ import {
   MoreOutlined,
   EllipsisOutlined,
 } from '@ant-design/icons-vue';
-import ChatSetting from './Settings.vue';
+import ChatSetting from './ChatSetting.vue';
+
+import MessageLayout from '../components/MessageLayout.vue';
 import { message } from 'ant-design-vue';
 // import { Mentions, Form } from 'ant-design-vue';
 
@@ -31,17 +33,16 @@ const store = useImStore();
 const props = defineProps<{
   sessionUnitId: string;
   title?: string;
-  aa?: string;
 }>();
 const route = useRoute();
 
-const entity = ref<IczpSessionUnitOwnerDetailDto>({});
+const detail = ref<IczpSessionUnitOwnerDetailDto>({});
 
-const info = computed(() =>
-  store.getSessionUnit(Number(route.params.chatObjectId), props.sessionUnitId!),
-);
+const info = computed(() => store.getItem(props.sessionUnitId!));
 
 const setting = computed(() => info.value?.setting);
+
+const isInputEnabled = computed(() => info.value?.setting?.isInputEnabled);
 
 const messages = ref<MessageOwnerDto[]>([]);
 
@@ -55,7 +56,7 @@ const fetchData = ({ sessionUnitId }: { sessionUnitId: string }) => {
 
   task1.then(res => {
     // console.log('SessionUnitService.getApiChatSessionUnitDetail', res);
-    entity.value = res;
+    detail.value = res;
   });
 
   MessageService.getApiChatMessage({
@@ -70,6 +71,12 @@ const fetchData = ({ sessionUnitId }: { sessionUnitId: string }) => {
 // const displayName = computed(
 //   () => route.query.title || props.title || entity.value?.displayName || entity.value?.destination?.name,
 // );
+
+const destinationName = computed(
+  () =>
+    info.value?.setting?.rename || info.value?.destination?.name || (route.query.title as string),
+);
+
 const pageTitle = ref('');
 
 const scroll = ref(null);
@@ -79,7 +86,7 @@ watch(
   sessionUnitId => {
     task1?.cancel();
     // console.log('watch scroll', sessionUnitId, scroll.value);
-    pageTitle.value = route.query.title as string;
+    pageTitle.value = destinationName.value || '';
     fetchData({ sessionUnitId });
   },
   { immediate: true },
@@ -148,27 +155,27 @@ const onSend = async () => {
     });
 };
 const onTitleClick = () => {
-  console.log('onTitleClick', entity.value);
+  console.log('onTitleClick', detail.value);
 };
 
 const entries = computed(() =>
-  Object.keys(entity.value).map(key => ({
+  Object.keys(detail.value).map(key => ({
     key,
-    value: (entity.value as Record<string, any>)[key],
+    value: (detail.value as Record<string, any>)[key],
   })),
 );
 const entryItems = computed(() => [
   {
     text: '名称',
-    value: entity.value.destination?.name,
+    value: detail.value.destination?.name,
   },
   {
     text: '类型',
-    value: entity.value.destination?.objectType,
+    value: detail.value.destination?.objectType,
   },
   {
     text: 'SessionId',
-    value: entity.value.sessionId,
+    value: detail.value.sessionId,
   },
   {
     text: '群内名称',
@@ -203,28 +210,36 @@ const siderStyle: CSSProperties = {
         placement="right"
         @after-open-change="afterOpenChange"
       >
-        <p>Some contents...</p>
-        <p>Some contents...</p>
-        <p>Some contents...</p>
+        <ChatSetting :entity="info" :chatObjectId="detail.ownerId" :sessionUnitId="sessionUnitId" />
       </a-drawer>
 
       <div class="page-container">
         <PageTitle
-          :title="pageTitle"
-          :description="`code${entity?.destination?.code},title: ${route.query.title}当前在心`"
+          :title="destinationName"
+          :description="`code${detail?.destination?.code},title: ${route.query.title}当前在心`"
           @more="showDrawer"
-          more />
-
+          more
+        >
+          <template v-if="setting?.isImmersed" v-slot:title>
+            <icon type="mute" size="16" color="gray" />
+          </template>
+        </PageTitle>
+        <!-- <div class="message-container"> -->
         <scroll-view class="message-container" ref="scroll">
-          <p>prop.id :{{ sessionUnitId }}.</p>
-          <div>entity id:{{ entity?.id }}</div>
-          <h3>setting:{{ setting }}</h3>
+          <h3>prop.id :{{ sessionUnitId }}</h3>
+          <div>entity id:{{ detail }}</div>
+          <div>setting:{{ setting }}</div>
+          <MessageLayout v-for="(item, index) in messages" :key="item.id">
+            <template v-slot:header>
+              {{ item?.creationTime }}
+            </template>
 
-          <div v-for="(item, index) in messages" class="message-item">
-            <h3>senderName:{{ item.senderName }}</h3>
+            <h3>{{ item.senderName }}</h3>
             <p>{{ item.content }}</p>
-          </div>
+          </MessageLayout>
         </scroll-view>
+        <!-- </div> -->
+
         <div class="chat-input">
           <div class="tool-bar">
             <a-space>
@@ -257,6 +272,7 @@ const siderStyle: CSSProperties = {
                 placeholder="说点什么..."
                 :options="options"
                 :autofocus="true"
+                :disabled="!isInputEnabled"
               ></a-mentions>
               <!-- <br /> <br /> <br /> <br /> <br /> -->
             </scroll-view>
@@ -264,7 +280,11 @@ const siderStyle: CSSProperties = {
           <div class="input-footer">
             <div class="footer-left">{{ textValue.length }} /1000</div>
             <div class="footer-right">
-              <a-button type="primary" @click="onSend" :disabled="!isSendBtnEnabled">
+              <a-button
+                type="primary"
+                @click="onSend"
+                :disabled="!isSendBtnEnabled || !isInputEnabled"
+              >
                 发送(
                 <u>S</u>
                 )
@@ -275,7 +295,7 @@ const siderStyle: CSSProperties = {
       </div>
     </a-layout-content>
     <a-layout-sider v-if="chatSettingDisplay" :style="siderStyle" class="layout-side">
-      <ChatSetting />
+      <ChatSetting :entity="info!" :sessionUnitId="sessionUnitId" />
     </a-layout-sider>
   </a-layout>
 </template>
@@ -360,7 +380,9 @@ const siderStyle: CSSProperties = {
   background-color: rgba(241, 241, 241, 0.485);
   flex: 1;
   padding: 20px;
-  /* width: 100%; */
+  /* flex-wrap: wrap; */
+  width: 100%;
+  box-sizing: border-box;
 }
 .message-item {
   display: flex;

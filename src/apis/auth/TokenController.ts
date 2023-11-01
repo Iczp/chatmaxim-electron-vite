@@ -1,8 +1,10 @@
 // import { CancelablePromise } from '../core/CancelablePromise';
 
+import { AxiosError } from 'axios';
 import { TokenService } from './TokenService';
 import { TokenDto, LoginResult, LoginInput } from './dto';
 import { GrantTypeEnum } from './dto/GrantTypeEnum';
+import { ApiError } from '../core/ApiError';
 
 export const TOKEN_KEY: string = 'TOKEN-V2023';
 
@@ -48,15 +50,16 @@ export const login = ({ username, password }: LoginInput): Promise<LoginResult> 
       .then(token => {
         token = handleToken(token);
         resolve({
-          message: '',
+          message: '登录成功',
           success: true,
           detail: token,
         });
       })
       .catch(err => {
-        console.error(err);
+        let message = err.body?.error_description || err.message;
+        console.error('err:', err, JSON.stringify(err));
         reject({
-          message: '登录失败',
+          message: '登录失败:' + message,
           success: false,
           detail: err,
         });

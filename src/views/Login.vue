@@ -21,6 +21,7 @@ import { router } from '../routes';
 import { setSize } from '../ipc';
 
 import { message } from 'ant-design-vue';
+import { UserOutlined, LockOutlined } from '@ant-design/icons-vue';
 import { ref } from 'vue';
 const key = 'updatable';
 
@@ -54,12 +55,16 @@ const onFinish = (values: any) => {
   login({
     username: formState.username,
     password: formState.password,
-  }).then(res => {
-    console.log('登录成功！', res);
-    setSize({ width: 1560, height: 800 });
-    message.success({ content: '欢迎回来!', key, duration: 2 });
-    router.push('/');
-  });
+  })
+    .then(res => {
+      console.log('登录成功！', res);
+      setSize({ width: 1560, height: 800 });
+      message.success({ content: '欢迎回来!', key, duration: 2 });
+      router.push('/');
+    })
+    .catch(err => {
+      message.error({ content: err.message, key, duration: 2 });
+    });
 };
 
 const onFinishFailed = (errorInfo: any) => {
@@ -87,7 +92,9 @@ const onFinishFailed = (errorInfo: any) => {
           name="username"
           :rules="[{ message: 'Please input your username!' }]"
         >
-          <a-input v-model:value="formState.username" />
+          <a-input v-model:value="formState.username">
+            <template #prefix><UserOutlined style="color: rgba(0, 0, 0, 0.25)" /></template>
+          </a-input>
         </a-form-item>
 
         <a-form-item
@@ -95,7 +102,9 @@ const onFinishFailed = (errorInfo: any) => {
           name="password"
           :rules="[{ message: 'Please input your password!' }]"
         >
-          <a-input-password v-model:value="formState.password" />
+          <a-input-password v-model:value="formState.password">
+            <template #prefix><LockOutlined style="color: rgba(0, 0, 0, 0.25)" /></template>
+          </a-input-password>
         </a-form-item>
 
         <a-form-item name="isAutoLogin" :wrapper-col="{ offset: 8, span: 16 }">

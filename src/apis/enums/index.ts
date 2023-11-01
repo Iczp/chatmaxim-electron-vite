@@ -1,6 +1,4 @@
-
-
-export { ChatObjectTypeEnums } from './ChatObjectTypeEnums';
+export { ChatObjectTypeEnums, ChatObjectTypeEnumText } from './ChatObjectTypeEnums';
 export { MessageTypeEnums } from './MessageTypeEnums';
 export { ReminderTypeEnums } from './ReminderTypeEnums';
 export { GenderEnums } from './GenderEnums';

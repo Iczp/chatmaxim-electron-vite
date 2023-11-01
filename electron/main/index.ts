@@ -45,6 +45,7 @@ let win: BrowserWindow | null = null;
 const preload = join(__dirname, '../preload/index.js');
 const url = process.env.VITE_DEV_SERVER_URL;
 const indexHtml = join(process.env.DIST, 'index.html');
+console.log('app.getPath', app.getAppPath(), app.getPath('userData'));
 
 async function createWindow() {
   win = new BrowserWindow({

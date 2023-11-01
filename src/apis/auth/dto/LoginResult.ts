@@ -1,3 +1,7 @@
+import { AxiosError } from "axios";
+import { TokenDto } from "./TokenDto";
+import { ApiError } from "../../core/ApiError";
+
 export type LoginResult = {
   /**
    *
@@ -18,5 +22,5 @@ export type LoginResult = {
    *
    * @type {*}
    */
-  detail?: any;
+  detail?: ApiError| TokenDto | any;
 };

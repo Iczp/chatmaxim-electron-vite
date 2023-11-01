@@ -32,14 +32,22 @@ export const routes = <RouteRecordRaw[]>[
           },
         ],
       },
+
       {
         path: 'user',
         name: 'user',
         component: () => import('../views/UserProfile.vue'),
         props: true,
       },
+
       { path: '/about', component: () => import('../views/About.vue'), props: true },
     ],
+  },
+  {
+    path: '/contacts/:chatObjectId(\\d+)',
+    name: 'contacts',
+    component: () => import('../views/Contacts.vue'),
+    props: true,
   },
   { path: '/login', component: () => import('../views/Login.vue') },
   { path: '/settings', component: () => import('../views/Settings.vue'), props: true },
@@ -90,7 +98,7 @@ router.beforeEach((to, from) => {
 
 router.afterEach((to, from) => {
   if (to.name == 'chat') {
-    console.log('router.afterEach', to);
+    // console.log('router.afterEach', to);
     const chatObjectId = to.params.chatObjectId as string;
     const sessionUnitId = to.params.sessionUnitId as string;
     const title = to.query.title as string;
@@ -99,6 +107,6 @@ router.afterEach((to, from) => {
       sessionUnitId,
       title,
     };
-    console.log('chatHistorys', chatHistorys);
+    // console.log('chatHistorys', chatHistorys);
   }
 });

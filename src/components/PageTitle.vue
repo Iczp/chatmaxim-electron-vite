@@ -16,11 +16,13 @@ const onTitleClick = () => {
       <div class="main-title">
         <text>{{ title }}</text>
         <!-- <icon type="play" /> -->
-        <icon type="mute" size="14" color="gray" />
+        <slot name="title"></slot>
       </div>
-      <div v-if="description" class="sub-title">
-        <text>{{ description }}</text>
-      </div>
+      <slot name="description">
+        <div v-if="description" class="sub-title">
+          <text>{{ description }}</text>
+        </div>
+      </slot>
     </div>
     <div class="page-title-right no-drag">
       <slot v-if="more">

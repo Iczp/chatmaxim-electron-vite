@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { Ref, computed, reactive, ref } from 'vue';
+import { Ref, computed, reactive, ref, watch } from 'vue';
 import {
   IczpNet_Chat_MessageSections_Messages_Dtos_MessageDto,
   SessionUnitOwnerDto,
@@ -7,46 +7,79 @@ import {
 import { formatMessageTime } from '../commons/utils';
 import Badge from '../components/Badge.vue';
 import Avatar from '../components/Avatar.vue';
-import { UserOutlined } from '@ant-design/icons-vue';
-import { MessageTypeEnums } from '../apis/enums';
+import {
+  UserOutlined,
+  SmileTwoTone,
+  HeartTwoTone,
+  CheckCircleTwoTone,
+} from '@ant-design/icons-vue';
+
+import { ChatObjectTypeEnums, MessageTypeEnums } from '../apis/enums';
+
 const props = defineProps<{
   title?: string;
   active?: boolean;
   entity: SessionUnitOwnerDto | undefined;
 }>();
 
+// const entity = props.entity;
+
+const setting = props.entity?.setting;
+
+watch(
+  () => props.entity,
+  v => {
+    console.log('watch:', v);
+  },
+);
+watch(
+  () => props.entity?.setting?.isImmersed,
+  v => {
+    console.log('watch isImmersed:', v);
+  },
+);
+const isTopping = computed(() => Number(props.entity?.sorting) > 0);
+const lastMessage = computed(() => props.entity?.lastMessage);
+
 const messageType = computed(
   () => props.entity?.lastMessage?.messageType as MessageTypeEnums | undefined,
 );
-
+const isImmersed = computed(() => props.entity?.setting?.isImmersed);
 const isRollback = computed(() => props.entity?.lastMessage?.rollbackTime != null);
 const destination = computed(() => props.entity?.destination);
-const lastMessage = computed(() => props.entity?.lastMessage);
+
 const objectType = computed(() => props.entity?.destination?.objectType);
 const content = computed(() => props.entity?.lastMessage?.content);
-const setting = computed(() => props.entity?.setting);
+
 const sendTime = computed(() =>
   formatMessageTime(new Date(props.entity?.lastMessage?.creationTime!)),
 );
 const badge = computed(() => props.entity?.publicBadge || 0);
 const senderName = computed(() => props.entity?.lastMessage?.senderName);
 const destinationName = computed(
-  () => props.entity?.destination?.name + '-' + props.entity?.ownerId,
+  () => props.entity?.setting?.rename || props.entity?.destination?.name,
 );
 </script>
 
 <template>
-  <div class="session-item" :class="{ active }">
+  <div class="session-item" :class="{ active }" :object-type="objectType?.toString()">
     <div class="active-bar"></div>
     <!-- <Avatar /> -->
-    <a-avatar :size="48" :alt="destination?.name">
+    <a-avatar :size="48" class="avatar" :alt="destination?.name">
       <template #icon><UserOutlined /></template>
     </a-avatar>
 
     <div class="session-description">
       <div class="session-title">
-        <div class="title-left">
-          <div class="text-ellipsis">{{ destinationName }}</div>
+        <div class="title-left object-name">
+          <div class="text-ellipsis">{{ destinationName }} - {{ entity?.ownerId }}</div>
+          <a-tag
+            v-if="objectType == ChatObjectTypeEnums.Robot"
+            color="blue"
+            class="object-type-tag"
+          >
+            机器人
+          </a-tag>
         </div>
         <div class="title-right">{{ sendTime }}</div>
       </div>
@@ -84,13 +117,9 @@ const destinationName = computed(
         </div>
         <div class="content-right">
           <a-space>
-            <a-badge
-              v-if="badge != 0"
-              :count="badge"
-              :overflow-count="99"
-              :dot="setting?.isImmersed"
-            />
-            <icon v-if="setting?.isImmersed" type="mute" size="14" />
+            <a-badge v-if="badge != 0" :count="badge" :overflow-count="99" :dot="isImmersed" />
+            <icon v-if="isImmersed" type="mute" size="14" />
+            <heart-two-tone v-if="isTopping" two-tone-color="#eb2f96" />
           </a-space>
         </div>
       </div>
@@ -116,6 +145,9 @@ const destinationName = computed(
   /* height: 100%; */
   background-color: rgba(24, 144, 255, 0.1);
   transition: all 0.3s;
+}
+.avatar {
+  flex-shrink: 0;
 }
 .session-item.active .active-bar {
   display: block;
@@ -191,7 +223,18 @@ const destinationName = computed(
   display: flex;
   max-width: 120px;
   font-weight: 500;
+  
 }
+.object-type-tag {
+  font-size: 10px;
+  margin: 0 2px;
+  padding: 2px;
+  line-height: 150%;
+  display: flex;
+  box-sizing: border-box;
+  border-radius: 4px;
+}
+
 .title-right {
   display: flex;
   max-width: 120px;

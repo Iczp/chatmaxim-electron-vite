@@ -70,16 +70,18 @@ onBeforeRouteUpdate((to, from) => {
 //   console.log('onBeforeRouteEnter', to, from);
 // });
 
-const maxMessageId = ref<number>();
 const record = reactive<{
   maxMessageId?: number;
   minMessageId?: number;
-}>({});
+}>({
+  // maxMessageId: 0,
+  // minMessageId: 0,
+});
 
 const getListInput = reactive<SessionUnitGetListInput>({
   ownerId: props.chatObjectId,
   maxResultCount: 40,
-  maxMessageId: maxMessageId.value,
+  maxMessageId: record.maxMessageId,
 });
 const ret = reactive({
   isPosting: false,
@@ -110,9 +112,10 @@ const fetchData = () => {
       ret.totalCount = res.totalCount!;
 
       ret.isEof = res.items!.length == 0;
+
       if (!ret.isEof) {
-        maxMessageId.value = res.items![res.items!.length - 1].lastMessageId!;
-        record.minMessageId = maxMessageId.value;
+        store.setMany(res.items!);
+        record.minMessageId = res.items![res.items!.length - 1].lastMessageId!;
         if (getListInput.maxMessageId) {
           sessionItems.value = sessionItems.value.concat(res.items!);
         } else {
@@ -120,7 +123,8 @@ const fetchData = () => {
         }
       }
       store.setSessionItems(props.chatObjectId!, sessionItems.value);
-      console.log('res SessionUnitService.getApiChatSessionUnit1', res, res.totalCount);
+
+      // console.log('res SessionUnitService.getApiChatSessionUnit1', res, res.totalCount);
     })
     .finally(() => {
       ret.isPosting = false;
@@ -158,18 +162,29 @@ if (sessionItems.value.length == 0) {
 //   { immediate: true },
 // );
 const onReachEnd = (event: CustomEvent) => {
-  console.log('onReachEnd', event, props.chatObjectId, JSON.stringify(getListInput));
-  if (!event.target) {
+  const el = event.target as HTMLElement;
+  console.error(
+    'onReachEnd',
+    el.clientHeight,
+    el.scrollHeight,
+    el.offsetHeight,
+    el.scrollTop,
+    record,
+  );
+  const isReachEnd = el.scrollTop > el.offsetHeight;
+  if (!isReachEnd) {
+    console.warn('onReachEnd', isReachEnd);
     return;
   }
+
   console.log('onReachEnd router.currentRoute', router.currentRoute.value);
   if (props.chatObjectId != Number(router.currentRoute.value.params.chatObjectId)) {
     console.warn('onReachEnd', props.chatObjectId, router.currentRoute.value);
     return;
   }
 
-  // getListInput.maxMessageId = maxMessageId.value! - 1;
-  // fetchData();
+  getListInput.maxMessageId = record.minMessageId ? record.minMessageId! - 1 : undefined;
+  fetchData();
 };
 </script>
 
@@ -205,7 +220,7 @@ const onReachEnd = (event: CustomEvent) => {
             :key="index"
             @click="navToChat(item)"
           >
-            <SessionItem :entity="item" :active="sessionUnitId == item.id" />
+            <SessionItem :entity="store.getItem(item.id!)" :active="sessionUnitId == item.id" />
           </div>
           <Loading v-if="ret.isPosting && !ret.isEof" :height="64" />
         </div>
@@ -253,6 +268,7 @@ const onReachEnd = (event: CustomEvent) => {
   width: 280px;
   /* background-color: rgba(139, 139, 139, 0.097); */
   border-right: 1px solid #ccc;
+  flex-shrink: 0;
 }
 .search-bar {
   display: flex;

@@ -1,12 +1,8 @@
 <script setup lang="ts">
 import { Ref, onMounted, reactive, ref } from 'vue';
 import { SettingOutlined, EditOutlined, EllipsisOutlined } from '@ant-design/icons-vue';
-import {
-  ChatObjectService,
-  IczpNet_Chat_ChatObjects_Dtos_ChatObjectDto as ChatObjectDto,
-  SessionUnitService,
-} from '../apis';
-import { ResultValue } from '../apis/dtos';
+import { ChatObjectService, SessionUnitService } from '../apis';
+import { ChatObjectDto, PagedResultDto, ResultValue } from '../apis/dtos';
 // defineProps<{ msg: string }>();
 
 const ret = reactive<ResultValue<ChatObjectDto>>({
@@ -22,35 +18,37 @@ onMounted(() => {
     ret.items = res.items!;
   });
 });
+
 </script>
 
 <template>
-  <PageTitle title="用户中心" more />
-  <div class="page">
-    <!-- <scroll-view> -->
-    <div class="object-list">
-      <div v-for="(item, index) in ret.items" :key="item.appUserId!" class="object-item">
-        <a-card hoverable style="width: 240px">
-          <template #cover>
-            <div class="div-image"></div>
-          </template>
-
-          <a-card-meta :title="item.name" :description="item.code">
-            <template #avatar>
-              <a-avatar />
+  <PageTitle title="用户中心" />
+  <scroll-view>
+    <div class="page">
+    
+      <div class="object-list">
+        <div v-for="(item, index) in ret.items" :key="item.appUserId!" class="object-item">
+          <a-card hoverable style="width: 240px">
+            <template #cover>
+              <div class="div-image"></div>
             </template>
-          </a-card-meta>
 
-          <template #actions>
-            <setting-outlined key="setting" />
-            <edit-outlined key="edit" />
-            <ellipsis-outlined key="ellipsis" />
-          </template>
-        </a-card>
+            <a-card-meta :title="item.name" :description="item.code">
+              <template #avatar>
+                <a-avatar />
+              </template>
+            </a-card-meta>
+
+            <template #actions>
+              <setting-outlined key="setting" />
+              <edit-outlined key="edit" />
+              <ellipsis-outlined key="ellipsis" />
+            </template>
+          </a-card>
+        </div>
       </div>
     </div>
-    <!-- </scroll-view> -->
-  </div>
+  </scroll-view>
 </template>
 
 <style scoped>
