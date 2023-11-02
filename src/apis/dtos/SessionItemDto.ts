@@ -4,7 +4,7 @@ export type SessionItemDto = {
    *
    * @type {string}
    */
-  uid: string;
+  id: string;
 
   /**
    * chatObjectId
@@ -19,4 +19,11 @@ export type SessionItemDto = {
    * @type {number}
    */
   sorting: number;
+
+  /**
+   * lastMessageId
+   *
+   * @type {number}
+   */
+  lastMessageId: number;
 };

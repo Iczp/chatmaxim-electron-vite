@@ -51,9 +51,10 @@ export const useImStore = defineStore('im', {
   actions: {
     setSessionItems(chatObjectId: number, items: SessionUnitOwnerDto[]) {
       this.sessionItemsMap[chatObjectId] = items.map<SessionItemDto>(x => ({
-        uid: x.id!,
+        id: x.id!,
         oid: x.ownerId!,
         sorting: x.sorting!,
+        lastMessageId: x.lastMessageId!,
       }));
       this.sessionItemsMap[chatObjectId].sort((a, b) => a.sorting - b.sorting);
       store.set(`session-items-${chatObjectId}`, this.sessionItemsMap[chatObjectId]);

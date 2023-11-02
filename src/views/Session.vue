@@ -5,7 +5,7 @@ import { router, chatHistorys } from '../routes';
 import { SessionUnitOwnerDto, SessionUnitService, PagedResultDto } from '../apis';
 import SessionItem from '../components/SessionItem.vue';
 import Loading from '../components/Loading.vue';
-import { ResultValue, SessionUnitGetListInput } from '../apis/dtos';
+import { ResultValue, SessionUnitGetListInput, SessionItemDto } from '../apis/dtos';
 import { useImStore } from '../stores/im';
 import { navToChat as navToChatX } from '../commons/utils';
 const route = useRoute();
@@ -18,13 +18,6 @@ const props = defineProps<{
 
 // console.log('ddd', store.getSessionItems(props.chatObjectId!));
 const sessionItems = ref<SessionUnitOwnerDto[]>(store.getSessionItems(props.chatObjectId!));
-
-const ret = reactive<ResultValue<SessionUnitOwnerDto>>({
-  isPosting: false,
-  isEof: false,
-  totalCount: undefined,
-  items: [], //store.getSessionItems(props.chatObjectId!),
-});
 
 const options = reactive({
   minScrollbarLength: 100,
@@ -67,10 +60,16 @@ const record = reactive<{
   // minMessageId: 0,
 });
 
-const getListInput = reactive<SessionUnitGetListInput>({
+const queryInput = reactive<SessionUnitGetListInput>({
   ownerId: props.chatObjectId,
   maxResultCount: 20,
   maxMessageId: record.maxMessageId,
+});
+const ret = reactive<ResultValue<SessionItemDto>>({
+  isPosting: false,
+  isEof: false,
+  totalCount: undefined,
+  items: store.getSessionItems(props.chatObjectId!),
 });
 
 const onScroll = (event: CustomEvent) => {
@@ -91,6 +90,15 @@ const setMinMessageId = (v: number) => {
   record.minMessageId = v;
   console.log('setMinMessageId', v);
 };
+
+const mapToItems = (items: SessionUnitOwnerDto[]): SessionItemDto[] => {
+  return items.map<SessionItemDto>(x => ({
+    id: x.id!,
+    oid: x.ownerId!,
+    sorting: x.sorting!,
+    lastMessageId: x.lastMessageId!,
+  }));
+};
 const fetchData = (query: SessionUnitGetListInput) => {
   if (ret.isEof || ret.isPosting) {
     console.warn('fetchData isFetchSession');
@@ -106,9 +114,9 @@ const fetchData = (query: SessionUnitGetListInput) => {
         store.setMany(res.items!);
         setMinMessageId(res.items![res.items!.length - 1].lastMessageId!);
         if (Number(query.maxMessageId) > 0) {
-          ret.items = ret.items!.concat(res.items!);
+          ret.items = ret.items!.concat(mapToItems(res.items!));
         } else {
-          ret.items = res.items!;
+          ret.items = mapToItems(res.items!);
         }
       }
       store.setSessionItems(props.chatObjectId!, ret.items);
@@ -120,7 +128,7 @@ const fetchData = (query: SessionUnitGetListInput) => {
     });
 };
 if (ret.items.length == 0) {
-  fetchData(getListInput);
+  fetchData(queryInput);
 }
 
 const onReachEnd = (event: CustomEvent) => {
@@ -151,8 +159,8 @@ const onReachEnd = (event: CustomEvent) => {
     return;
   }
 
-  getListInput.maxMessageId = Math.min(...ret.items.map(o => o.lastMessageId!));
-  fetchData(getListInput);
+  queryInput.maxMessageId = Math.min(...ret.items.map(o => o.lastMessageId!));
+  fetchData(queryInput);
 };
 </script>
 
