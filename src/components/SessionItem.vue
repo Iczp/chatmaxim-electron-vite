@@ -131,10 +131,25 @@ const destinationName = computed(
 <style scoped>
 .session-item {
   display: flex;
-  flex: 1;
+  /* flex: 1; */
   flex-direction: row;
   justify-content: space-between;
   height: var(--side-width);
+  position: relative;
+}
+.session-item::after {
+  content: '';
+  height: 1px;
+  left: 72px;
+  right: 0px;
+  bottom: 0;
+  position: absolute;
+  transform: scaleY(0.5);
+  overflow: hidden;
+  background-color: rgba(223, 223, 223, 0.41);
+}
+.session-item:last-child::after {
+  background-color: rgba(242, 20, 20, 0.41);
 }
 .active-bar {
   /* display: none; */

@@ -8,6 +8,13 @@ import Loading from '../components/Loading.vue';
 import { ResultValue, SessionUnitGetListInput, SessionItemDto } from '../apis/dtos';
 import { useImStore } from '../stores/im';
 import { navToChat as navToChatX } from '../commons/utils';
+// defaultDisplayCount
+const defaultDisplayCount = 20;
+// pageSize
+const pageSize = 20;
+// displayCount
+const displayCount = ref(20);
+
 const route = useRoute();
 // const router = useRouter();
 const store = useImStore();
@@ -16,15 +23,9 @@ const props = defineProps<{
   chatObjectId: number | undefined;
 }>();
 
-// console.log('ddd', store.getSessionItems(props.chatObjectId!));
-const sessionItems = ref<SessionUnitOwnerDto[]>(store.getSessionItems(props.chatObjectId!));
-
-const options = reactive({
-  minScrollbarLength: 100,
-});
 const acitveSessionUnitId = computed(() => route.params.sessionUnitId);
 
-const navToChat = (item: SessionUnitOwnerDto) => {
+const navToChat = (item: SessionItemDto) => {
   // console.log(item);
 
   if (item.id == acitveSessionUnitId.value) {
@@ -35,7 +36,6 @@ const navToChat = (item: SessionUnitOwnerDto) => {
   navToChatX({
     chatObjectId: props.chatObjectId!,
     sessionUnitId: item.id,
-    title: `${item.destination?.name}`,
   });
 };
 
@@ -62,15 +62,23 @@ const record = reactive<{
 
 const queryInput = reactive<SessionUnitGetListInput>({
   ownerId: props.chatObjectId,
-  maxResultCount: 20,
+  maxResultCount: pageSize * 2,
   maxMessageId: record.maxMessageId,
 });
 const ret = reactive<ResultValue<SessionItemDto>>({
   isPosting: false,
   isEof: false,
   totalCount: undefined,
-  items: store.getSessionItems(props.chatObjectId!),
+  items: [],
 });
+
+watch(
+  () => store.getSessionItems(props.chatObjectId!),
+  v => (ret.items = v),
+  {
+    immediate: true,
+  },
+);
 
 const onScroll = (event: CustomEvent) => {
   // console.log(typeof event.target, event.target);
@@ -130,22 +138,33 @@ const fetchData = (query: SessionUnitGetListInput) => {
 if (ret.items.length == 0) {
   fetchData(queryInput);
 }
-
+const onReachStart = (event: CustomEvent) => {
+  console.info('onReachStart');
+  displayCount.value = defaultDisplayCount;
+};
 const onReachEnd = (event: CustomEvent) => {
   const el = event.target as HTMLElement;
   console.info('onReachEnd');
   const isReachEnd = el.scrollTop != 0; //&& el.scrollTop > el.offsetHeight;
   if (!isReachEnd) {
-    console.warn('onReachEnd', isReachEnd);
     console.error(
       'onReachEnd',
+      isReachEnd,
       el.clientHeight,
       el.offsetHeight,
       el.scrollHeight,
       el.scrollTop,
       record,
     );
+    displayCount.value = defaultDisplayCount;
     return;
+  }
+
+  if (displayCount.value < ret.items.length - pageSize) {
+    displayCount.value += pageSize;
+    return;
+  } else {
+    displayCount.value = ret.items.length;
   }
 
   // console.log('onReachEnd router.currentRoute', router.currentRoute.value);
@@ -188,20 +207,25 @@ const onReachEnd = (event: CustomEvent) => {
         ref="scroll"
         @ps-scroll-y="onScroll"
         @ps-y-reach-end="onReachEnd"
+        @ps-y-reach-start="onReachStart"
       >
         <div class="session-list">
-          <div
+          <!-- <div
             ref="session"
             v-for="(item, index) in ret.items"
             :key="item.id"
             @click="navToChat(item)"
-          >
-            <SessionItem
-              :entity="store.getItem(item.id!)"
-              :index="index"
-              :active="acitveSessionUnitId == item.id"
-            />
-          </div>
+            class="session-item-wraper"
+          > -->
+          <SessionItem
+            v-for="(item, index) in ret.items.slice(0, displayCount)"
+            :key="item.id"
+            @click="navToChat(item)"
+            :entity="store.getItem(item.id!)"
+            :index="index"
+            :active="acitveSessionUnitId == item.id"
+          />
+          <!-- </div> -->
           <Loading v-if="ret.isPosting && !ret.isEof" :height="64" />
         </div>
       </scroll-view>
@@ -274,4 +298,17 @@ const onReachEnd = (event: CustomEvent) => {
   flex-direction: column;
   width: 100%;
 }
+/* .session-item-wraper {
+  position: relative;
+}
+.session-item-wraper::after {
+  content: '';
+  height: 1px;
+  left: 72px;
+  right: 0px;
+  position: absolute;
+  transform: scaleY(0.5);
+  overflow: hidden;
+  background-color:rgba(223, 223, 223, 0.41);
+} */
 </style>
