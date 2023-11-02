@@ -89,7 +89,7 @@ const gotoSetting = () => {
 const getKey = (route: RouteLocationNormalizedLoaded): string | string[] => {
   const m = route.path.match(/^\/(chat|object)\/\d+/gi);
   const key = m != null ? m[0] : route.path;
-  console.warn('key:', key);
+  // console.warn('key:', key);
   return key;
 };
 </script>

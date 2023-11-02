@@ -118,7 +118,7 @@ const onClose = () => {
 };
 
 const afterOpenChange = (bool: boolean) => {
-  console.log('open', bool);
+  // console.log('open', bool);
 };
 const isSendBtnEnabled = ref(true);
 const onSend = async () => {
@@ -192,9 +192,11 @@ const contentStyle: CSSProperties = {
   // backgroundColor: '#108ee9',
 };
 
-const siderStyle: CSSProperties = {
-  // display: 'flex',
-  // backgroundColor: '#108ee9',
+const bodyStyle: CSSProperties = {
+  display: 'flex',
+  backgroundColor: '#f6f6f6',
+  margin: 0,
+  padding: 0,
 };
 </script>
 
@@ -202,15 +204,17 @@ const siderStyle: CSSProperties = {
   <a-layout class="layout">
     <a-layout-content :style="contentStyle" class="layout-content">
       <a-drawer
+        width="320"
         v-model:open="open"
-        class="custom-class"
+        class="chat-setting"
+        :bodyStyle="bodyStyle"
         root-class-name="root-class-name"
         :root-style="{ color: 'blue' }"
         title="聊天设置"
         placement="right"
         @after-open-change="afterOpenChange"
       >
-        <ChatSetting :entity="info" :chatObjectId="detail.ownerId" :sessionUnitId="sessionUnitId" />
+        <ChatSetting :entity="info" :sessionUnitId="props.sessionUnitId" />
       </a-drawer>
 
       <div class="page-container">
@@ -218,6 +222,8 @@ const siderStyle: CSSProperties = {
           :title="destinationName"
           :description="`code${detail?.destination?.code},title: ${route.query.title}当前在心`"
           @more="showDrawer"
+          :search="true"
+          :top="true"
           more
         >
           <template v-if="setting?.isImmersed" v-slot:title>
@@ -235,7 +241,7 @@ const siderStyle: CSSProperties = {
             </template>
 
             <h3>{{ item.senderName }}</h3>
-            <p>{{ item.content }}</p>
+            <p>{{ item }}</p>
           </MessageLayout>
         </scroll-view>
         <!-- </div> -->
@@ -294,13 +300,15 @@ const siderStyle: CSSProperties = {
         </div>
       </div>
     </a-layout-content>
-    <a-layout-sider v-if="chatSettingDisplay" :style="siderStyle" class="layout-side">
-      <ChatSetting :entity="info!" :sessionUnitId="sessionUnitId" />
-    </a-layout-sider>
   </a-layout>
 </template>
 
 <style scoped>
+.chat-setting {
+  background-color: #d70c0c;
+  color: red;
+}
+
 .layout {
   background-color: unset;
 }

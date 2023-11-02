@@ -65,10 +65,31 @@ const objectTypes = ref(
     }),
 );
 const objectType = ref<ChatObjectTypeEnums>();
+
+const activeKey = ref('all');
 </script>
 
 <template>
   <page-title title="About" description="Electron + Vite + TypeScript" />
+
+  <a-tabs v-model:activeKey="activeKey">
+    <a-tab-pane key="all" tab="所有">所有</a-tab-pane>
+    <a-tab-pane v-for="(item, index) in objectTypes" :key="index" :tab="item.text">
+      {{ item.text }} ({{ item.key }} )
+    </a-tab-pane>
+    <template #leftExtra>
+      <a-button type="text" class="tabs-extra-demo-button">Left</a-button>
+    </template>
+    <template #rightExtra>
+      <a-input-search
+        v-model:value="keyword"
+        placeholder="搜索：公众号"
+        enter-button
+        @search="onSearch"
+      />
+    </template>
+  </a-tabs>
+
   <h2 @click="onClick">{{ count }}</h2>
   <a-space>
     <a-button @click="onClick">Connect to websocket</a-button>
@@ -99,7 +120,7 @@ const objectType = ref<ChatObjectTypeEnums>();
   <!-- <a-loading></a-loading> -->
   <h3 v-for="(item, index) in searchResult.items">
     {{ item.fullPathName }} - {{ item.id }}
-    <a-button @click="addFriend(item)">关注</a-button>
+    <a-button @click="addFriend(item)">添加/关注</a-button>
   </h3>
 
   <p>Lorem Ipsum is simply dummy text of the printing and typesetting industry.</p>

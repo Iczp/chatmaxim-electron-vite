@@ -1,6 +1,6 @@
-export interface ResultValue<T> {
+export type ResultValue<T> = {
   isPosting: boolean;
   isEof: boolean;
-  totalCount: number;
+  totalCount?: number;
   items: Array<T>;
-}
+};

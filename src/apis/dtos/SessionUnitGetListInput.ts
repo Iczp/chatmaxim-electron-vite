@@ -1,6 +1,6 @@
 import { GetListInput } from './GetListInput';
 
-export interface SessionUnitGetListInput extends GetListInput {
+export type SessionUnitGetListInput = GetListInput & {
   /**
    * 所属聊天对象Id
    */

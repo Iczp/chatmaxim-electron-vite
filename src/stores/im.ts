@@ -3,15 +3,23 @@ import Store from 'electron-store';
 
 const store = new Store<{}>();
 
-import {
-  IczpNet_Chat_MessageSections_Messages_Dtos_MessageOwnerDto as MessageOwnerDto,
-  SessionUnitOwnerDto,
-} from '../apis';
+import { MessageDto, SessionItemDto, SessionUnitOwnerDto } from '../apis/dtos';
 
 interface State {
+  /**
+   * 会话单元
+   * @type {Record<string, SessionUnitOwnerDto>}
+   * @memberof State
+   */
   sessionUnitMap: Record<string, SessionUnitOwnerDto>;
   sessionMap: Record<number, SessionUnitOwnerDto[]>;
-  messageMap: Record<string, MessageOwnerDto[]>;
+  messageMap: Record<string, MessageDto[]>;
+  /**
+   * 会话列表
+   * @type {Record<number, SessionItemDto[]>}
+   * @memberof State
+   */
+  sessionItemsMap: Record<number, SessionItemDto[]>;
 }
 
 export const useImStore = defineStore('im', {
@@ -20,13 +28,14 @@ export const useImStore = defineStore('im', {
       sessionUnitMap: {},
       sessionMap: {},
       messageMap: {},
+      sessionItemsMap: {},
     };
   },
   getters: {
     getSessionItems:
       state =>
-      (chatObjectId: number): SessionUnitOwnerDto[] =>
-        state.sessionMap[chatObjectId] || [],
+      (chatObjectId: number): SessionItemDto[] =>
+        state.sessionItemsMap[chatObjectId] || store.get(`session-items-${chatObjectId}`) || [],
     getSessionUnit:
       state =>
       (chatObjectId: number, sessionUnitId: string): SessionUnitOwnerDto | undefined =>
@@ -41,10 +50,16 @@ export const useImStore = defineStore('im', {
   // state: () => ({ count: 0 })
   actions: {
     setSessionItems(chatObjectId: number, items: SessionUnitOwnerDto[]) {
-      this.sessionMap[chatObjectId] = items;
+      this.sessionItemsMap[chatObjectId] = items.map<SessionItemDto>(x => ({
+        uid: x.id!,
+        oid: x.ownerId!,
+        sorting: x.sorting!,
+      }));
+      this.sessionItemsMap[chatObjectId].sort((a, b) => a.sorting - b.sorting);
+      store.set(`session-items-${chatObjectId}`, this.sessionItemsMap[chatObjectId]);
     },
     setMany(items: Array<SessionUnitOwnerDto>) {
-      console.log('setMany', items);
+      // console.log('setMany', items);
       items.map(x => {
         this.sessionUnitMap[x.id!] = x;
         store.set(x.id!, x);

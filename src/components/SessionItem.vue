@@ -20,6 +20,7 @@ const props = defineProps<{
   title?: string;
   active?: boolean;
   entity: SessionUnitOwnerDto | undefined;
+  index?: number;
 }>();
 
 // const entity = props.entity;
@@ -29,13 +30,13 @@ const setting = props.entity?.setting;
 watch(
   () => props.entity,
   v => {
-    console.log('watch:', v);
+    // console.log('watch:', v);
   },
 );
 watch(
   () => props.entity?.setting?.isImmersed,
   v => {
-    console.log('watch isImmersed:', v);
+    console.log('watch isImmersed:', v, props.entity?.id, props.index);
   },
 );
 const isTopping = computed(() => Number(props.entity?.sorting) > 0);
@@ -72,7 +73,7 @@ const destinationName = computed(
     <div class="session-description">
       <div class="session-title">
         <div class="title-left object-name">
-          <div class="text-ellipsis">{{ destinationName }} - {{ entity?.ownerId }}</div>
+          <div class="text-ellipsis">{{ index }} {{ destinationName }} - {{ entity?.ownerId }}</div>
           <a-tag
             v-if="objectType == ChatObjectTypeEnums.Robot"
             color="blue"
@@ -204,7 +205,7 @@ const destinationName = computed(
   display: flex;
   flex: 1;
   /* max-width: calc(100% - 30px); */
-  max-width: 150px;
+  max-width: 136px;
 }
 .content-right {
   display: flex;
@@ -223,13 +224,14 @@ const destinationName = computed(
   display: flex;
   max-width: 120px;
   font-weight: 500;
-  
+  align-items: center;
 }
 .object-type-tag {
   font-size: 10px;
   margin: 0 2px;
   padding: 2px;
-  line-height: 150%;
+  line-height: 100%;
+  height: 16px;
   display: flex;
   box-sizing: border-box;
   border-radius: 4px;

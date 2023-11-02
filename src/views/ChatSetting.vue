@@ -25,7 +25,7 @@ const setting = props.entity.setting;
 watch(
   () => props.entity,
   v => {
-    console.log('watch:', v);
+    // console.log('watch:', v);
   },
 );
 
@@ -102,7 +102,6 @@ const setRename = () => {
   });
 };
 
-
 const iconStyle: CSSProperties = {
   color: 'rgba(100,100,100,0.5)',
   fontSize: '12px',
@@ -110,19 +109,38 @@ const iconStyle: CSSProperties = {
 </script>
 
 <template>
-  <div class="page">
-    <!-- <div class="page-container">
-    <h1>ChatSetting</h1>
-  </div> -->
+  <scroll-view>
+    <main>
+      <section class="section">
+        <a-space wrap>
+          <a-avatar v-for="(item, index) in 10" :key="index"></a-avatar>
+          <a-button type="dashed" class="btn-item" :icon="h(PlusOutlined)"></a-button>
+          <a-button
+            type="dashed"
+            class="btn-item"
+            :icon="h(MinusOutlined)"
+            :disabled="true"
+          ></a-button>
+        </a-space>
+      </section>
 
-    <a-space wrap>
-      <a-avatar v-for="(item, index) in 10" :key="index"></a-avatar>
-      <a-button type="dashed" class="btn-item" :icon="h(PlusOutlined)"></a-button>
-      <a-button type="dashed" class="btn-item" :icon="h(MinusOutlined)" :disabled="true"></a-button>
-    </a-space>
+      <section class="section">
+        <a-form-item label="名称">
+          {{ entity.destination?.name }}
+        </a-form-item>
+        <a-divider></a-divider>
+        <a-form-item v-if="objectType == ChatObjectTypeEnums.Personal" label="备注名称">
+          <a-input v-model:value="rename" :bordered="false" placeholder="-" @blur="setRename" />
+        </a-form-item>
+        <a-divider></a-divider>
 
-    <a-form labelAlign="left" layout="horizontal">
-      <div v-if="objectType == ChatObjectTypeEnums.Room">
+        <a-form-item label="类型">
+          {{ ChatObjectTypeEnumText[entity.destination?.objectType!] }}
+        </a-form-item>
+        <a-divider></a-divider>
+      </section>
+
+      <section v-if="objectType == ChatObjectTypeEnums.Room" class="section">
         <a-form-item label="群名称">
           <a-input v-model:value="rename" :bordered="false" placeholder="-" />
         </a-form-item>
@@ -149,65 +167,71 @@ const iconStyle: CSSProperties = {
         <a-form-item label="显示成员名称">
           <a-switch v-model:checked="isShowMemberName" @change="setIsShowMenberName" />
         </a-form-item>
-      </div>
+      </section>
 
-      <a-form-item label="名称">
-        {{ entity.destination?.name }}
-      </a-form-item>
-      <a-divider></a-divider>
-      <a-form-item label="类型">
-        {{ ChatObjectTypeEnumText[entity.destination?.objectType!] }}
-      </a-form-item>
-      <a-divider></a-divider>
-      <a-form-item v-if="objectType == ChatObjectTypeEnums.Personal" label="备注名称">
-        <a-input v-model:value="rename" :bordered="false" placeholder="-" @blur="setRename" />
-      </a-form-item>
-      <a-divider></a-divider>
+      <section class="section">
+        <a-form-item label="设置为免打扰">
+          <a-switch v-model:checked="isImmersed" @change="setImmersed" />
+        </a-form-item>
+        <a-divider></a-divider>
 
-      <a-form-item label="设置为免打扰">
-        <a-switch v-model:checked="isImmersed" @change="setImmersed" />
-      </a-form-item>
-      <a-divider></a-divider>
+        <a-form-item label="保存到通讯录">
+          {{ isContacts }}
+          <a-switch v-model:checked="isContacts" @change="setIsContacts" />
+        </a-form-item>
 
-      <a-form-item label="保存到通讯录">
-        {{ isContacts }}
-        <a-switch v-model:checked="isContacts" @change="setIsContacts" />
-      </a-form-item>
+        <a-divider />
 
-      <a-divider />
+        <a-form-item label="消息置顶">
+          <a-switch v-model:checked="isTopping" @change="setTopping" />
+        </a-form-item>
+      </section>
 
-      <a-form-item label="消息置顶">
-        <a-switch v-model:checked="isTopping" @change="setTopping" />
-      </a-form-item>
+      <section class="section">
+        <a-form-item label="查找聊天记录">
+          <RightOutlined :style="iconStyle" />
+        </a-form-item>
+
+        <a-form-item label="设置聊天背景">
+          <RightOutlined :style="iconStyle" />
+        </a-form-item>
+
+        <a-form-item label="清空聊天记录">
+          <RightOutlined :style="iconStyle" />
+        </a-form-item>
+      </section>
+
+      <section class="section">
+        <a-form-item label="投诉">
+          <RightOutlined :style="iconStyle" />
+        </a-form-item>
+      </section>
+
+      <section class="section">
+        <a-button type="primary" html-type="submit" danger>删除会话</a-button>
+      </section>
+    </main>
+
+    <a-form labelAlign="left" layout="horizontal">
+      <div v-if="objectType == ChatObjectTypeEnums.Room"></div>
 
       <a-divider orientation="left">session</a-divider>
 
-      <a-form-item label="查找聊天记录">
-        <RightOutlined :style="iconStyle" />
-      </a-form-item>
-
-      <a-form-item label="设置聊天背景">
-        <RightOutlined :style="iconStyle" />
-      </a-form-item>
-
-      <a-form-item label="清空聊天记录">
-        <RightOutlined :style="iconStyle" />
-      </a-form-item>
-
-      <a-form-item label="投诉">
-        <RightOutlined :style="iconStyle" />
-      </a-form-item>
-
       <!-- <a-form-item :wrapper-col="{ offset: 8, span: 16 }"> -->
-      <a-button type="primary" html-type="submit" danger>删除会话</a-button>
+
       <!-- </a-form-item> -->
     </a-form>
-  </div>
+  </scroll-view>
 </template>
 
 <style scoped>
 .page {
   user-select: none;
+}
+.section {
+  padding: 8px  16px;
+  margin: 16px 0;
+  background-color: white;
 }
 .btn-item {
   height: 48px;

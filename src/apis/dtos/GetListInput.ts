@@ -1,4 +1,4 @@
-export interface GetListInput{
+export type GetListInput = {
       /**
    * 关键字(支持拼音)
    */

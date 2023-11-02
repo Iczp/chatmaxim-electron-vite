@@ -5,32 +5,36 @@ import { router, chatHistorys } from '../routes';
 import { SessionUnitOwnerDto, SessionUnitService, PagedResultDto } from '../apis';
 import SessionItem from '../components/SessionItem.vue';
 import Loading from '../components/Loading.vue';
-import { SessionUnitGetListInput } from '../apis/dtos';
+import { ResultValue, SessionUnitGetListInput } from '../apis/dtos';
 import { useImStore } from '../stores/im';
 import { navToChat as navToChatX } from '../commons/utils';
 const route = useRoute();
 // const router = useRouter();
 const store = useImStore();
 
-const props = defineProps<{ chatObjectId: number | undefined }>();
-
-const sessionUnitRet = ref<PagedResultDto<SessionUnitOwnerDto>>({
-  totalCount: 0,
-  items: [],
-});
+const props = defineProps<{
+  chatObjectId: number | undefined;
+}>();
 
 // console.log('ddd', store.getSessionItems(props.chatObjectId!));
 const sessionItems = ref<SessionUnitOwnerDto[]>(store.getSessionItems(props.chatObjectId!));
 
+const ret = reactive<ResultValue<SessionUnitOwnerDto>>({
+  isPosting: false,
+  isEof: false,
+  totalCount: undefined,
+  items: [], //store.getSessionItems(props.chatObjectId!),
+});
+
 const options = reactive({
   minScrollbarLength: 100,
 });
-const sessionUnitId = computed(() => route.params.sessionUnitId);
+const acitveSessionUnitId = computed(() => route.params.sessionUnitId);
 
 const navToChat = (item: SessionUnitOwnerDto) => {
-  console.log(item);
+  // console.log(item);
 
-  if (item.id == sessionUnitId.value) {
+  if (item.id == acitveSessionUnitId.value) {
     delete chatHistorys[props.chatObjectId!];
     router.push(`/chat/${props.chatObjectId}`);
     return;
@@ -40,21 +44,6 @@ const navToChat = (item: SessionUnitOwnerDto) => {
     sessionUnitId: item.id,
     title: `${item.destination?.name}`,
   });
-  return;
-  router.push({
-    // path: `/message/1/${item.id}`,
-    name: 'chat',
-    params: {
-      chatObjectId: props.chatObjectId,
-      sessionUnitId: item.id,
-    },
-    query: {
-      title: `${item.destination?.name}`,
-    },
-  });
-  // sessionUnitId.value = item.id!;
-  // console.log(router.currentRoute.value);
-  // console.log('ref:session', session.value[0].getBoundingClientRect());
 };
 
 // 与 beforeRouteLeave 相同，无法访问 `this`
@@ -80,19 +69,14 @@ const record = reactive<{
 
 const getListInput = reactive<SessionUnitGetListInput>({
   ownerId: props.chatObjectId,
-  maxResultCount: 40,
+  maxResultCount: 20,
   maxMessageId: record.maxMessageId,
 });
-const ret = reactive({
-  isPosting: false,
-  isEof: false,
-  totalCount: 0,
-});
+
 const onScroll = (event: CustomEvent) => {
   // console.log(typeof event.target, event.target);
 };
 
-const session = ref<HTMLImageElement[]>([]);
 // onMounted(() => console.log(session.value));
 
 const keyword = ref<string>('');
@@ -100,29 +84,34 @@ const onSearch = (e: any) => {
   console.log('onSearch', e);
 };
 
-const fetchData = () => {
+const setMinMessageId = (v: number) => {
+  if (Number(record.minMessageId) > v) {
+    return;
+  }
+  record.minMessageId = v;
+  console.log('setMinMessageId', v);
+};
+const fetchData = (query: SessionUnitGetListInput) => {
   if (ret.isEof || ret.isPosting) {
     console.warn('fetchData isFetchSession');
     return;
   }
   ret.isPosting = true;
-  SessionUnitService.getApiChatSessionUnit1(getListInput)
+  SessionUnitService.getApiChatSessionUnit1(query)
     .then(res => {
-      sessionUnitRet.value = res;
       ret.totalCount = res.totalCount!;
-
       ret.isEof = res.items!.length == 0;
 
       if (!ret.isEof) {
         store.setMany(res.items!);
-        record.minMessageId = res.items![res.items!.length - 1].lastMessageId!;
-        if (getListInput.maxMessageId) {
-          sessionItems.value = sessionItems.value.concat(res.items!);
+        setMinMessageId(res.items![res.items!.length - 1].lastMessageId!);
+        if (Number(query.maxMessageId) > 0) {
+          ret.items = ret.items!.concat(res.items!);
         } else {
-          sessionItems.value = res.items!;
+          ret.items = res.items!;
         }
       }
-      store.setSessionItems(props.chatObjectId!, sessionItems.value);
+      store.setSessionItems(props.chatObjectId!, ret.items);
 
       // console.log('res SessionUnitService.getApiChatSessionUnit1', res, res.totalCount);
     })
@@ -130,61 +119,40 @@ const fetchData = () => {
       ret.isPosting = false;
     });
 };
-if (sessionItems.value.length == 0) {
-  fetchData();
+if (ret.items.length == 0) {
+  fetchData(getListInput);
 }
 
-// watch(
-//   () => props.chatObjectId,
-//   chatObjectId => {
-//     console.log('watch scroll', chatObjectId);
-//     maxMessageId.value = undefined;
-//     Object.assign(
-//       ret,
-//       reactive({
-//         isPosting: false,
-//         isEof: false,
-//         totalCount: 0,
-//       }),
-//     );
-//     Object.assign(
-//       getListInput,
-//       reactive<SessionUnitGetListInput>({
-//         ownerId: props.chatObjectId,
-//         maxResultCount: 40,
-//         maxMessageId: maxMessageId.value,
-//       }),
-//     );
-//     sessionItems.value = [];
-
-//     fetchData();
-//   },
-//   { immediate: true },
-// );
 const onReachEnd = (event: CustomEvent) => {
   const el = event.target as HTMLElement;
-  console.error(
-    'onReachEnd',
-    el.clientHeight,
-    el.scrollHeight,
-    el.offsetHeight,
-    el.scrollTop,
-    record,
-  );
-  const isReachEnd = el.scrollTop > el.offsetHeight;
+  console.info('onReachEnd');
+  const isReachEnd = el.scrollTop != 0; //&& el.scrollTop > el.offsetHeight;
   if (!isReachEnd) {
     console.warn('onReachEnd', isReachEnd);
+    console.error(
+      'onReachEnd',
+      el.clientHeight,
+      el.offsetHeight,
+      el.scrollHeight,
+      el.scrollTop,
+      record,
+    );
     return;
   }
 
-  console.log('onReachEnd router.currentRoute', router.currentRoute.value);
+  // console.log('onReachEnd router.currentRoute', router.currentRoute.value);
   if (props.chatObjectId != Number(router.currentRoute.value.params.chatObjectId)) {
     console.warn('onReachEnd', props.chatObjectId, router.currentRoute.value);
     return;
   }
 
-  getListInput.maxMessageId = record.minMessageId ? record.minMessageId! - 1 : undefined;
-  fetchData();
+  if (ret.isEof || ret.isPosting) {
+    console.warn('fetchData isFetchSession');
+    return;
+  }
+
+  getListInput.maxMessageId = Math.min(...ret.items.map(o => o.lastMessageId!));
+  fetchData(getListInput);
 };
 </script>
 
@@ -216,11 +184,15 @@ const onReachEnd = (event: CustomEvent) => {
         <div class="session-list">
           <div
             ref="session"
-            v-for="(item, index) in sessionItems"
-            :key="index"
+            v-for="(item, index) in ret.items"
+            :key="item.id"
             @click="navToChat(item)"
           >
-            <SessionItem :entity="store.getItem(item.id!)" :active="sessionUnitId == item.id" />
+            <SessionItem
+              :entity="store.getItem(item.id!)"
+              :index="index"
+              :active="acitveSessionUnitId == item.id"
+            />
           </div>
           <Loading v-if="ret.isPosting && !ret.isEof" :height="64" />
         </div>
@@ -295,4 +267,3 @@ const onReachEnd = (event: CustomEvent) => {
   width: 100%;
 }
 </style>
-../apis/dtos/SessionUnitGetListInput
