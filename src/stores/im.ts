@@ -19,7 +19,7 @@ interface State {
    * @type {Record<number, SessionItemDto[]>}
    * @memberof State
    */
-  sessionItemsMap: Record<number, Record<string, SessionItemDto>>;
+  sessionItemsMap: Record<string, Record<string, SessionItemDto>>;
 }
 const sortFunc = (a: SessionItemDto, b: SessionItemDto): number => {
   if (a.sorting > b.sorting) {
@@ -34,6 +34,7 @@ const sortFunc = (a: SessionItemDto, b: SessionItemDto): number => {
   }
   return 0;
 };
+const key = (chatObjectId: number, keyword?: string) => `${chatObjectId}-${keyword || ''}`;
 export const useImStore = defineStore('im', {
   state: (): State => {
     return {
@@ -46,8 +47,10 @@ export const useImStore = defineStore('im', {
   getters: {
     getSessionItems:
       state =>
-      (chatObjectId: number): SessionItemDto[] => {
-        const items: SessionItemDto[] = Object.values(state.sessionItemsMap[chatObjectId] || []);
+      (chatObjectId: number, keyword?: string): SessionItemDto[] => {
+        const items: SessionItemDto[] = Object.values(
+          state.sessionItemsMap[key(chatObjectId, keyword)] || [],
+        );
         items.sort(sortFunc);
         return items;
         // state.sessionItemsMap[chatObjectId] ||
@@ -83,10 +86,10 @@ export const useImStore = defineStore('im', {
     // sortSessionItems(chatObjectId: number) {
     //   this.sessionItemsMap[chatObjectId].sort(this.sortFunc);
     // },
-    storeSessionItems(chatObjectId: number) {
+    storeSessionItems(chatObjectId: number): void {
       store.set(`session-items-${chatObjectId}`, this.sessionItemsMap[chatObjectId]);
     },
-    setSessionItems(chatObjectId: number, items: SessionUnitOwnerDto[]) {
+    setSessionItems(chatObjectId: number, items: SessionUnitOwnerDto[], keyword?: string): void {
       // console.log('setSessionItems', chatObjectId, items);
       items.map(x => {
         const item: SessionItemDto = {
@@ -95,22 +98,46 @@ export const useImStore = defineStore('im', {
           sorting: x.sorting!,
           lastMessageId: x.lastMessageId!,
         };
-        this.sessionItemsMap[chatObjectId] = this.sessionItemsMap[chatObjectId] || {};
-        this.sessionItemsMap[chatObjectId][item.id] = item;
+        const keyName = key(chatObjectId, keyword);
+        this.sessionItemsMap[keyName] = this.sessionItemsMap[keyName] || {};
+        this.sessionItemsMap[keyName][item.id] = item;
       });
     },
-    setItem(item: SessionUnitOwnerDto) {
+    setItem(item: SessionUnitOwnerDto): void {
       this.sessionUnitMap[item.id!] = item;
       store.set(item.id!, item);
     },
-    setMany(items: Array<SessionUnitOwnerDto>) {
+    setMany(items: Array<SessionUnitOwnerDto>, keyword?: string): void {
       // console.log('setMany', items);
       items.map(x => {
         this.sessionUnitMap[x.id!] = x;
         store.set(x.id!, x);
       });
-      this.setSessionItems(items[0].ownerId!, items);
+      this.setSessionItems(items[0].ownerId!, items, keyword);
       // this.sessionUnitMap = {...this.sessionUnitMap};
+    },
+
+    /**
+     * 搜索会话
+     * 搜索备注名/账号
+     * @param {number} chatObjectId
+     * @param {string} keyword
+     * @return {*}  {SessionUnitOwnerDto[]}
+     */
+    searchSessionItems(chatObjectId: number, keyword: string): SessionItemDto[] {
+      const regex = new RegExp(keyword, 'ig');
+      const test = (str?: string | null) => str && regex.test(str);
+      return this.getSessionItems(chatObjectId)
+        .map<SessionUnitOwnerDto>(x => this.getItem(x.id))
+        .filter(
+          x => test(x.setting?.rename) || test(x.destination?.name) || test(x.destination?.code),
+        )
+        .map<SessionItemDto>(x => ({
+          id: x.id!,
+          oid: x.ownerId!,
+          sorting: x.sorting!,
+          lastMessageId: x.lastMessageId!,
+        }));
     },
   },
 });

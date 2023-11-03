@@ -72,7 +72,7 @@ const destinationName = computed(
 
     <div class="session-description">
       <div class="session-title">
-        <div class="title-left object-name">
+        <div class="title-left object-name" :title="destinationName!">
           <div class="text-ellipsis">{{ index }} {{ destinationName }} - {{ entity?.ownerId }}</div>
           <a-tag
             v-if="objectType == ChatObjectTypeEnums.Robot"

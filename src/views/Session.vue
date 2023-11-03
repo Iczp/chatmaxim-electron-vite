@@ -41,7 +41,7 @@ const navToChat = (item: SessionItemDto) => {
 
 // 与 beforeRouteLeave 相同，无法访问 `this`
 onBeforeRouteLeave((to, from) => {
-  // console.log('onBeforeRouteLeave', to, from);
+  console.log('onBeforeRouteLeave', to, from);
 });
 
 // 与 onBeforeRouteUpdate 相同，无法访问 `this`
@@ -72,8 +72,18 @@ const ret = reactive<ResultValue<SessionItemDto>>({
   items: [],
 });
 
+// const displayItems = computed<SessionItemDto[]>(() =>
+//   (keyword.value.length != 0
+//     ? store.searchSessionItems(props.chatObjectId!, keyword.value)
+//     : ret.items
+//   ).slice(0, displayCount.value),
+// );
+const displayItems = computed<SessionItemDto[]>(() => ret.items.slice(0, displayCount.value));
+// const displayItems = computed<SessionItemDto[]>(() =>
+//   store.getSessionItems(props.chatObjectId!, queryInput.keyword).slice(0, displayCount.value),
+// );
 watch(
-  () => store.getSessionItems(props.chatObjectId!),
+  () => store.getSessionItems(props.chatObjectId!, queryInput.keyword),
   v => (ret.items = v),
   {
     immediate: true,
@@ -89,6 +99,13 @@ const onScroll = (event: CustomEvent) => {
 const keyword = ref<string>('');
 const onSearch = (e: any) => {
   console.log('onSearch', e);
+  ret.isEof = false;
+  displayCount.value = defaultDisplayCount;
+  ret.items = store.searchSessionItems(props.chatObjectId!, keyword.value);
+  queryInput.maxMessageId = undefined;
+  queryInput.keyword = keyword.value;
+  queryInput.skipCount = ret.items.length;
+  fetchData(queryInput);
 };
 
 const setMinMessageId = (v: number) => {
@@ -107,6 +124,7 @@ const mapToItems = (items: SessionUnitOwnerDto[]): SessionItemDto[] => {
     lastMessageId: x.lastMessageId!,
   }));
 };
+
 const fetchData = (query: SessionUnitGetListInput) => {
   if (ret.isEof || ret.isPosting) {
     console.warn('fetchData isFetchSession');
@@ -127,13 +145,11 @@ const fetchData = (query: SessionUnitGetListInput) => {
           ret.items = mapToItems(res.items!);
         }
       }
-      store.setSessionItems(props.chatObjectId!, ret.items);
+      store.setSessionItems(props.chatObjectId!, ret.items, query.keyword);
 
       // console.log('res SessionUnitService.getApiChatSessionUnit1', res, res.totalCount);
     })
-    .finally(() => {
-      ret.isPosting = false;
-    });
+    .finally(() => (ret.isPosting = false));
 };
 if (ret.items.length == 0) {
   fetchData(queryInput);
@@ -178,8 +194,16 @@ const onReachEnd = (event: CustomEvent) => {
     return;
   }
 
-  queryInput.maxMessageId = Math.min(...ret.items.map(o => o.lastMessageId!));
-  fetchData(queryInput);
+  if (keyword.value.length != 0) {
+    queryInput.maxMessageId = undefined;
+    queryInput.keyword = keyword.value;
+    queryInput.skipCount = ret.items.length;
+    fetchData(queryInput);
+  } else {
+    queryInput.keyword = '';
+    queryInput.maxMessageId = Math.min(...ret.items.map(o => o.lastMessageId!));
+    fetchData(queryInput);
+  }
 };
 </script>
 
@@ -198,11 +222,10 @@ const onReachEnd = (event: CustomEvent) => {
           />
         </a-space>
       </div>
-      <scroll-view v-if="keyword.length != 0">
+      <!-- <scroll-view v-if="keyword.length != 0">
         <div>搜索：{{ keyword }}</div>
-      </scroll-view>
+      </scroll-view> -->
       <scroll-view
-        v-else
         class="session-scroll-view"
         ref="scroll"
         @ps-scroll-y="onScroll"
@@ -218,7 +241,7 @@ const onReachEnd = (event: CustomEvent) => {
             class="session-item-wraper"
           > -->
           <SessionItem
-            v-for="(item, index) in ret.items.slice(0, displayCount)"
+            v-for="(item, index) in displayItems"
             :key="item.id"
             @click="navToChat(item)"
             :entity="store.getItem(item.id!)"
