@@ -1,8 +1,6 @@
-import { MessageTypeEnums, ReminderTypeEnums } from '../enums';
-
+import { MessageStateEnums } from '../enums';
 import { ChatObjectDto } from './ChatObjectDto';
 import { MessageOwnerDto } from './MessageOwnerDto';
-import { MessageSimpleDto } from './MessageSimpleDto';
 
 export type MessageDto = MessageOwnerDto & {
   /**
@@ -23,7 +21,7 @@ export type MessageDto = MessageOwnerDto & {
    *
    * @type {('ok' | 'fail' | 'pending')}
    */
-  state?: 'ok' | 'fail' | 'pending';
+  state?: MessageStateEnums;
 
   /**
    * 朋友Id

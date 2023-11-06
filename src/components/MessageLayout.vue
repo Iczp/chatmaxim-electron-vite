@@ -17,36 +17,33 @@ import MsgRedEnvelope from './MsgText.vue';
 import MsgUnsupported from './MsgUnsupported.vue';
 import MsgState from './MsgState.vue';
 import MsgQuote from './MsgQuote.vue';
-
+import MsgRollback from './MsgRollback.vue';
 const props = defineProps<{
   item: MessageDto;
   isPlay?: boolean;
 }>();
 
 const messageType = computed(() => props.item.messageType);
-
 const isRollback = computed(() => props.item?.rollbackTime != null);
-const sender = computed(() => props.item?.sender);
-const content = computed(() => props.item?.content);
 const sendTime = computed(() => formatMessageTime(new Date(props.item.creationTime!)));
-
+const senderName = computed(
+  () => props.item.senderName || props.item.senderDisplayName || props.item.sender?.name || '-',
+);
 const isShowMemberName = ref(true);
 </script>
 
 <template>
   <section class="message-item msg-layout">
-    <header class="msg-header">
-      <slot name="header">
-        <div class="send-time">{{ formatMessageTime(item.creationTime!) }}</div>
-      </slot>
-    </header>
-    <section class="msg-body" :class="{ reverse: item.isSelf }">
-      <aside v-if="isShowMemberName" class="msg-aside">
-        <Avatar :item="item.sender" :size="40" :name="item.senderDisplayName" />
+    <header class="msg-header send-time">{{ sendTime }}</header>
+    <MsgRollback v-if="isRollback" :name="senderName" />
+    <MsgCmd v-else-if="messageType == MessageTypeEnums.Cmd" :item="item" />
+    <section v-else class="msg-body" :class="{ reverse: item.isSelf }">
+      <aside class="msg-aside">
+        <Avatar :item="item.sender" :size="40" :name="senderName" />
       </aside>
       <main class="msg-main">
-        <header class="msg-main-header">
-          {{ item.senderName || item.senderDisplayName || '-' }}
+        <header v-if="isShowMemberName" class="msg-main-header">
+          {{ senderName }}
         </header>
         <main class="msg-content">
           <!-- <p>{{ item }}</p> -->
@@ -59,13 +56,13 @@ const isShowMemberName = ref(true);
           <MsgVideo v-else-if="messageType == MessageTypeEnums.Video" :item="item" />
           <MsgRedEnvelope v-else-if="messageType == MessageTypeEnums.RedEnvelope" :item="item" />
           <MsgText v-else-if="messageType == MessageTypeEnums.Text" :item="item" />
-          <MsgCmd v-else-if="messageType == MessageTypeEnums.Cmd" :item="item" />
+
           <MsgUnsupported v-else :r="item.isSelf" />
           <!-- 消息 End -->
           <MsgState />
         </main>
         <footer class="msg-main-footer">
-          <MsgQuote :item="item.quoteMessageId?.toString()" />
+          <MsgQuote :item="item.quoteMessageId?.toString()" :r="item.isSelf"/>
         </footer>
       </main>
     </section>
@@ -88,6 +85,7 @@ const isShowMemberName = ref(true);
 .msg-header {
   display: flex;
 }
+
 .msg-body {
   display: flex;
   flex-direction: row;
@@ -112,6 +110,10 @@ const isShowMemberName = ref(true);
   flex: 1;
   flex-basis: 0;
   flex-direction: column;
+  align-items: flex-start;
+}
+.reverse .msg-main {
+  align-items: flex-end;
 }
 .msg-main-header {
   display: flex;
@@ -122,6 +124,9 @@ const isShowMemberName = ref(true);
   color: #666;
   font-size: 12px;
   height: 20px;
+}
+.msg-main-footer {
+  display: flex;
 }
 .msg-content {
   display: flex;

@@ -69,9 +69,9 @@ const fetchData = ({ sessionUnitId }: { sessionUnitId: string }) => {
 
   MessageService.getApiChatMessage({
     sessionUnitId: props.sessionUnitId,
-    maxResultCount: 50,
+    maxResultCount: 10,
   }).then(res => {
-    ret.items = res.items!.map((x, i) => ({ ...x, isSelf: i % 2 == 0 }));
+    ret.items = res.items!.map((x, i) => ({ ...x, state: 1, isSelf: i % 2 == 0 }));
     // console.log('MessageService.getApiChatMessage', res);
   });
 };
@@ -271,9 +271,9 @@ const mouseleave = (e: MouseEvent) => {
           </PageTitle>
           <!-- <div class="message-container"> -->
           <scroll-view class="message-container" ref="scroll">
-            <h3>prop.id :{{ sessionUnitId }}</h3>
+            <!-- <h3>prop.id :{{ sessionUnitId }}</h3>
             <div>entity id:{{ detail }}</div>
-            <div>setting:{{ setting }}</div>
+            <div>setting:{{ setting }}</div> -->
             <MessageLayout v-for="(item, index) in ret.items" :key="item.id" :item="item">
               <h3>{{ item.senderDisplayName }}</h3>
               <p>{{ item }}</p>

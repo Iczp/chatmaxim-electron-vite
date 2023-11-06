@@ -17,12 +17,23 @@ const content = computed(() => props.item.content as CmdDto);
 
 <style scoped>
 .msg-cmd {
+  display: flex;
+  justify-content: center;
+  align-items: center;
   padding: 8px;
-  min-height: 40px;
-  min-width: calc(44px + 12px);
-  line-height: 24px;
-  max-width: var(--message-max-width);
+  line-height: 150%;
   color: #ccc;
   font-size: 12px;
+  max-width: 360px;
+  margin: auto;
+  text-align: center;
+}
+:deep(.uid),
+:deep(.oid) {
+  color: #999;
+}
+:deep(.oid:hover),
+:deep(.uid:hover) {
+  color: #333;
 }
 </style>

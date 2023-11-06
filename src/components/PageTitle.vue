@@ -27,7 +27,10 @@ const onTitleClick = () => {
     <div class="page-title-left" @click="onTitleClick">
       <div class="main-title" :title="title">
         <a-space>
-          <text class="main-title-text no-drag" @click="$emit('more', $event)">{{ title }}</text>
+          <div class="main-title-text">
+            <text class="text-ellipsis no-drag" @click="$emit('more', $event)">{{ title }}</text>
+          </div>
+
           <VerifiedOutlined v-if="search" style="color: rgb(0, 207, 0); font-size: 16px" />
           <slot name="title"></slot>
         </a-space>
@@ -117,11 +120,13 @@ const onTitleClick = () => {
   height: 32px;
 }
 .main-title-text {
+  display: flex;
   font-size: 18px;
   font-weight: bold;
   margin: 0;
   padding: 0;
   -webkit-user-drag: none;
+  max-width: 240px;
 }
 .sub-title {
   display: flex;
