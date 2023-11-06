@@ -28,7 +28,7 @@ export const toQueryString = <T>(obj: T): string => {
  * @param {*} datetime
  * @return {*}
  */
-export function formatMessageTime(datetime: Date): any {
+export function formatMessageTime(datetime: Date | string): any {
   if (typeof datetime == 'string') {
     datetime = new Date(datetime);
   }
@@ -98,5 +98,6 @@ export const navToChat = ({
     },
   });
 };
+
 
 

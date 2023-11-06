@@ -1,12 +1,14 @@
 <script setup lang="ts">
 import { Ref, computed, reactive, ref, watch } from 'vue';
+import Avatar from './Avatar.vue';
 import {
   IczpNet_Chat_MessageSections_Messages_Dtos_MessageDto,
   SessionUnitOwnerDto,
 } from '../apis';
 import { formatMessageTime } from '../commons/utils';
 import Badge from '../components/Badge.vue';
-import Avatar from '../components/Avatar.vue';
+import Text from '../components/Text.vue';
+
 import {
   UserOutlined,
   SmileTwoTone,
@@ -56,19 +58,22 @@ const sendTime = computed(() =>
   formatMessageTime(new Date(props.entity?.lastMessage?.creationTime!)),
 );
 const badge = computed(() => props.entity?.publicBadge || 0);
-const senderName = computed(() => props.entity?.lastMessage?.senderName);
+const senderName = computed(() => props.entity?.lastMessage?.senderDisplayName);
 const destinationName = computed(
   () => props.entity?.setting?.rename || props.entity?.destination?.name,
 );
 </script>
 
 <template>
-  <div class="session-item" :class="{ active }" :object-type="objectType?.toString()">
+  <div
+    class="session-item"
+    draggable="true"
+    :class="{ active }"
+    :object-type="objectType?.toString()"
+  >
     <div class="active-bar"></div>
-    <!-- <Avatar /> -->
-    <a-avatar :size="48" class="avatar" :alt="destination?.name">
-      <template #icon><UserOutlined /></template>
-    </a-avatar>
+
+    <Avatar :entity="destination" :name="destination?.name" />
 
     <div class="session-description">
       <div class="session-title">
@@ -98,7 +103,13 @@ const destinationName = computed(
             </span>
             <!-- 消息内容 -->
             <span v-if="isRollback">消息被撤回</span>
-            <span v-else-if="messageType == MessageTypeEnums.Text">{{ content.text }}</span>
+            <span v-else-if="messageType == MessageTypeEnums.Cmd">
+              <Text :value="content.text" />
+            </span>
+            <span v-else-if="messageType == MessageTypeEnums.Text">
+              <Text :value="content.text" />
+            </span>
+
             <span v-else-if="messageType == MessageTypeEnums.Image">[图片]</span>
             <span v-else-if="messageType == MessageTypeEnums.Video">[视频]</span>
             <span v-else-if="messageType == MessageTypeEnums.Location">
@@ -108,7 +119,7 @@ const destinationName = computed(
               [名片]{{ content.title }}
             </span>
             <span v-else-if="messageType == MessageTypeEnums.Sound">[语音]</span>
-            <span v-else-if="messageType == MessageTypeEnums.Cmd">{{ content.text }}</span>
+
             <span v-else-if="messageType == MessageTypeEnums.RedEnvelope">[红包]</span>
             <span v-else-if="messageType == MessageTypeEnums.Html">
               {{ content.title }} {{ content.content }}
@@ -162,9 +173,7 @@ const destinationName = computed(
   background-color: rgba(24, 144, 255, 0.1);
   transition: all 0.3s;
 }
-.avatar {
-  flex-shrink: 0;
-}
+
 .session-item.active .active-bar {
   display: block;
   height: 100%;
@@ -184,7 +193,8 @@ const destinationName = computed(
   transition: all 0.3s;
 }
 .session-item.active {
-  background-color: rgba(255, 255, 255, 1);
+  /* background-color: rgba(255, 255, 255, 1); */
+  background: linear-gradient(135deg, #79b4eb, #97d79c) border-box;
 }
 .session-item.active:hover {
   background-color: rgba(255, 255, 255, 1);

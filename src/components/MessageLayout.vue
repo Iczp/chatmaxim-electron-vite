@@ -1,20 +1,72 @@
 <script setup lang="ts">
+import { computed, ref } from 'vue';
+import { MessageDto } from '../apis/dtos';
+import { MessageTypeEnums } from '../apis/enums';
+import { formatMessageTime } from '../commons/utils';
+import Avatar from './Avatar.vue';
+
+import MsgText from './MsgText.vue';
+import MsgCmd from './MsgCmd.vue';
+import MsgImage from './MsgText.vue';
+import MsgLocation from './MsgText.vue';
+import MsgContacts from './MsgText.vue';
+import MsgLink from './MsgText.vue';
+import MsgSound from './MsgText.vue';
+import MsgVideo from './MsgText.vue';
+import MsgRedEnvelope from './MsgText.vue';
+import MsgUnsupported from './MsgUnsupported.vue';
+import MsgState from './MsgState.vue';
+import MsgQuote from './MsgQuote.vue';
+
 const props = defineProps<{
-  dir?: boolean;
+  item: MessageDto;
+  isPlay?: boolean;
 }>();
+
+const messageType = computed(() => props.item.messageType);
+
+const isRollback = computed(() => props.item?.rollbackTime != null);
+const sender = computed(() => props.item?.sender);
+const content = computed(() => props.item?.content);
+const sendTime = computed(() => formatMessageTime(new Date(props.item.creationTime!)));
+
+const isShowMemberName = ref(true);
 </script>
 
 <template>
-  <section class="msg-layout">
+  <section class="message-item msg-layout">
     <header class="msg-header">
-      <slot name="header"></slot>
+      <slot name="header">
+        <div class="send-time">{{ formatMessageTime(item.creationTime!) }}</div>
+      </slot>
     </header>
-    <section class="msg-body">
-      <aside class="msg-aside">
-        <slot name="aside"></slot>
+    <section class="msg-body" :class="{ reverse: item.isSelf }">
+      <aside v-if="isShowMemberName" class="msg-aside">
+        <Avatar :item="item.sender" :size="40" :name="item.senderDisplayName" />
       </aside>
-      <main class="msg-content">
-        <slot></slot>
+      <main class="msg-main">
+        <header class="msg-main-header">
+          {{ item.senderName || item.senderDisplayName || '-' }}
+        </header>
+        <main class="msg-content">
+          <!-- <p>{{ item }}</p> -->
+          <!-- 消息 Start -->
+          <MsgImage v-if="messageType == MessageTypeEnums.Image" :item="item" />
+          <MsgSound v-else-if="messageType == MessageTypeEnums.Sound" :item="item" :play="isPlay" />
+          <MsgLocation v-else-if="messageType == MessageTypeEnums.Location" :item="item" />
+          <MsgContacts v-else-if="messageType == MessageTypeEnums.Contacts" :item="item" />
+          <MsgLink v-else-if="messageType == MessageTypeEnums.Link" :item="item" />
+          <MsgVideo v-else-if="messageType == MessageTypeEnums.Video" :item="item" />
+          <MsgRedEnvelope v-else-if="messageType == MessageTypeEnums.RedEnvelope" :item="item" />
+          <MsgText v-else-if="messageType == MessageTypeEnums.Text" :item="item" />
+          <MsgCmd v-else-if="messageType == MessageTypeEnums.Cmd" :item="item" />
+          <MsgUnsupported v-else :r="item.isSelf" />
+          <!-- 消息 End -->
+          <MsgState />
+        </main>
+        <footer class="msg-main-footer">
+          <MsgQuote :item="item.quoteMessageId?.toString()" />
+        </footer>
       </main>
     </section>
     <footer class="msg-footer">
@@ -24,11 +76,13 @@ const props = defineProps<{
 </template>
 
 <style scoped>
+.message-item {
+  margin: 12px 0;
+}
 .msg-layout {
   display: flex;
   flex-direction: column;
   width: 100%;
-  padding: 20px 0;
   box-sizing: border-box;
 }
 .msg-header {
@@ -37,18 +91,61 @@ const props = defineProps<{
 .msg-body {
   display: flex;
   flex-direction: row;
+  justify-content: space-between;
+}
+.msg-body.reverse {
+  flex-direction: row-reverse;
+}
+
+.msg-body .msg-aside {
+  /* margin-right: 12px; */
+}
+.msg-body.reverse .msg-aside {
+  /* margin-left: 12px; */
 }
 .msg-aside {
   display: flex;
+  flex-direction: row;
+}
+.msg-main {
+  display: flex;
+  flex: 1;
+  flex-basis: 0;
   flex-direction: column;
+}
+.msg-main-header {
+  display: flex;
+  /* min-height: 20px; */
+  /* align-items: center; */
+  margin: 0 12px;
+  margin-bottom: 2px;
+  color: #666;
+  font-size: 12px;
+  height: 20px;
 }
 .msg-content {
   display: flex;
+  flex-direction: row;
+  align-items: flex-end;
   flex: 1;
-  flex-direction: column;
 }
+.reverse .msg-content {
+  flex-direction: row-reverse;
+}
+.reverse .msg-main-header {
+  justify-content: flex-end;
+}
+
 .msg-footer {
   display: flex;
   flex-direction: column;
+}
+
+.send-time {
+  display: flex;
+  justify-content: center;
+  color: gray;
+  font-size: 12px;
+  width: 100%;
 }
 </style>

@@ -12,6 +12,7 @@ import { OpenAPI } from '../core/OpenAPI';
 import { request as __request } from '../core/request';
 import { PagedResultDto } from '../dtos/PagedResultDto';
 import { IczpNet_Chat_MessageSections_Messages_Dtos_MessageOwnerDto } from '../models/IczpNet_Chat_MessageSections_Messages_Dtos_MessageOwnerDto';
+import { MessageOwnerDto } from '../dtos';
 
 export class MessageService {
 
@@ -143,7 +144,7 @@ skipCount?: number,
  * 排序
  */
 sorting?: string,
-}): CancelablePromise<PagedResultDto<IczpNet_Chat_MessageSections_Messages_Dtos_MessageOwnerDto>> {
+}): CancelablePromise<PagedResultDto<MessageOwnerDto>> {
         return __request(OpenAPI, {
             method: 'GET',
             url: '/api/chat/message',

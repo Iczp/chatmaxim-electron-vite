@@ -1,12 +1,19 @@
 import { MessageTypeEnums, ReminderTypeEnums } from '../enums';
 
 export type MessageSimpleDto = {
-  /**
-   * 发送人
+    /**
+   * 发送人 senderName
    *
    * @type {(string | null)}
    */
-  senderName?: string | null;
+    senderName?: string | null;
+
+  /**
+   * 发送人 senderDisplayName
+   *
+   * @type {(string | null)}
+   */
+  senderDisplayName?: string | null;
 
   /**
    * 消息Id

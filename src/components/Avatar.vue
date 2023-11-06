@@ -1,13 +1,15 @@
 <script setup lang="ts">
 const props = defineProps<{
-  value?: string | number;
+  name?: string | null;
+  entity?: ChatObjectDto;
+  size?: number | string;
 }>();
 import { UserOutlined } from '@ant-design/icons-vue';
+import { ChatObjectDto } from '../apis/dtos';
 </script>
 
 <template>
-  <!-- <div class="avatar">img</div> -->
-  <a-avatar :size="48">
+  <a-avatar :size="size || 48" class="avatar" :alt="name">
     <template #icon><UserOutlined /></template>
   </a-avatar>
 </template>

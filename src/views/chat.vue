@@ -23,10 +23,12 @@ import {
 import ChatSetting from './ChatSetting.vue';
 
 import MessageLayout from '../components/MessageLayout.vue';
+import ChatInput from '../components/ChatInput.vue';
 import { message } from 'ant-design-vue';
 // import { Mentions, Form } from 'ant-design-vue';
 
 import { useImStore } from '../stores/im';
+import { MessageDto, ResultValue } from '../apis/dtos';
 
 const store = useImStore();
 
@@ -44,7 +46,13 @@ const setting = computed(() => info.value?.setting);
 
 const isInputEnabled = computed(() => info.value?.setting?.isInputEnabled);
 
-const messages = ref<MessageOwnerDto[]>([]);
+const messages = reactive<MessageDto[]>([]);
+
+const ret = reactive<ResultValue<MessageDto>>({
+  isPosting: false,
+  isEof: false,
+  items: [],
+});
 
 let task1: CancelablePromise<IczpSessionUnitOwnerDetailDto> | null;
 
@@ -63,7 +71,7 @@ const fetchData = ({ sessionUnitId }: { sessionUnitId: string }) => {
     sessionUnitId: props.sessionUnitId,
     maxResultCount: 50,
   }).then(res => {
-    messages.value = res.items!;
+    ret.items = res.items!.map((x, i) => ({ ...x, isSelf: i % 2 == 0 }));
     // console.log('MessageService.getApiChatMessage', res);
   });
 };
@@ -91,21 +99,8 @@ watch(
   },
   { immediate: true },
 );
-const options = [
-  {
-    value: 'afc163',
-    label: 'afc163',
-  },
-  {
-    value: 'zombieJ',
-    label: 'zombieJ',
-  },
-  {
-    value: 'yesmeck',
-    label: 'yesmeck',
-  },
-];
-const textValue = ref('');
+
+const textValue = ref('669+++');
 
 const chatSettingDisplay = ref(false);
 const open = ref<boolean>(false);
@@ -198,109 +193,99 @@ const bodyStyle: CSSProperties = {
   margin: 0,
   padding: 0,
 };
+
+// onMounted(() => {
+//   document.addEventListener('drop', (e: any) => {
+//     e.preventDefault();
+//     e.stopPropagation();
+
+//     for (const f of e.dataTransfer.files) {
+//       console.log('File(s) you dragged here: ', f.path);
+//     }
+//   });
+//   document.addEventListener('dragover', e => {
+//     e.preventDefault();
+//     e.stopPropagation();
+//   });
+// });
+const isDrag = ref(false);
+const dragenter = (e: DragEvent) => {
+  console.log('dragenter', e);
+  isDrag.value = true;
+};
+const dragleave = (e: DragEvent) => {
+  console.log('dragleave', e);
+};
+const dragover = (e: DragEvent) => {
+  // console.log('dragover', e);
+};
+const drop = (e: DragEvent) => {
+  console.log('drop', e);
+  isDrag.value = false;
+};
+
+const mouseleave = (e: MouseEvent) => {
+  // console.log('mouseleave', e);
+  isDrag.value = false;
+};
 </script>
 
 <template>
-  <a-layout class="layout">
-    <a-layout-content :style="contentStyle" class="layout-content">
-      <a-drawer
-        width="320"
-        v-model:open="open"
-        class="chat-setting"
-        :bodyStyle="bodyStyle"
-        root-class-name="root-class-name"
-        :root-style="{ color: 'blue' }"
-        title="聊天设置"
-        placement="right"
-        @after-open-change="afterOpenChange"
-      >
-        <ChatSetting :entity="info" :sessionUnitId="props.sessionUnitId" />
-      </a-drawer>
-
-      <div class="page-container">
-        <PageTitle
-          :title="destinationName"
-          :description="`code${detail?.destination?.code},title: ${route.query.title}当前在心`"
-          @more="showDrawer"
-          :search="true"
-          :top="true"
-          more
+  <div
+    class="chat"
+    :class="{ dragenter: isDrag }"
+    @dragenter="dragenter"
+    @dragleave="dragleave"
+    @dragover="dragover"
+    @drop="drop"
+    @mouseleave="mouseleave"
+  >
+    <a-layout class="layout">
+      <a-layout-content :style="contentStyle" class="layout-content">
+        <a-drawer
+          width="320"
+          v-model:open="open"
+          class="chat-setting"
+          :bodyStyle="bodyStyle"
+          root-class-name="root-class-name"
+          :root-style="{ color: 'blue' }"
+          title="聊天设置"
+          placement="right"
+          @after-open-change="afterOpenChange"
         >
-          <template v-if="setting?.isImmersed" v-slot:title>
-            <icon type="mute" size="16" color="gray" />
-          </template>
-        </PageTitle>
-        <!-- <div class="message-container"> -->
-        <scroll-view class="message-container" ref="scroll">
-          <h3>prop.id :{{ sessionUnitId }}</h3>
-          <div>entity id:{{ detail }}</div>
-          <div>setting:{{ setting }}</div>
-          <MessageLayout v-for="(item, index) in messages" :key="item.id">
-            <template v-slot:header>
-              {{ item?.creationTime }}
+          <ChatSetting :entity="info" :sessionUnitId="props.sessionUnitId" />
+        </a-drawer>
+
+        <div class="page-container">
+          <PageTitle
+            :title="destinationName"
+            :description="`code${detail?.destination?.code},title: ${route.query.title}当前在心`"
+            @more="showDrawer"
+            :search="true"
+            :top="true"
+            more
+          >
+            <template v-if="setting?.isImmersed" v-slot:title>
+              <icon type="mute" size="16" color="gray" />
             </template>
-
-            <h3>{{ item.senderName }}</h3>
-            <p>{{ item }}</p>
-          </MessageLayout>
-        </scroll-view>
-        <!-- </div> -->
-
-        <div class="chat-input">
-          <div class="tool-bar">
-            <a-space>
-              <a-button type="text"><MehOutlined /></a-button>
-              <a-button type="text"><FolderOpenOutlined /></a-button>
-              <a-button type="text"><VideoCameraOutlined /></a-button>
-              <a-button type="text"><ScissorOutlined /></a-button>
-
-              <a-button type="text">
-                <UploadOutlined />
-              </a-button>
-
-              <a-popconfirm title="Are you sure delete this task?" ok-text="Yes" cancel-text="No">
-                <a-button type="text">Confirm</a-button>
-              </a-popconfirm>
-            </a-space>
-          </div>
-          <div class="input-area">
-            <scroll-view>
-              <!-- <a-textarea
-            v-model:value="textValue"
-            class="textarea"
-            placeholder="说点什么..."
-            :rows="4"
-          /> -->
-              <a-mentions
-                class="textarea"
-                v-model:value="textValue"
-                rows="5"
-                placeholder="说点什么..."
-                :options="options"
-                :autofocus="true"
-                :disabled="!isInputEnabled"
-              ></a-mentions>
-              <!-- <br /> <br /> <br /> <br /> <br /> -->
-            </scroll-view>
-          </div>
-          <div class="input-footer">
-            <div class="footer-left">{{ textValue.length }} /1000</div>
-            <div class="footer-right">
-              <a-button
-                type="primary"
-                @click="onSend"
-                :disabled="!isSendBtnEnabled || !isInputEnabled"
-              >
-                发送(
-                <u>S</u>
-                )
-              </a-button>
-            </div>
-          </div>
+          </PageTitle>
+          <!-- <div class="message-container"> -->
+          <scroll-view class="message-container" ref="scroll">
+            <h3>prop.id :{{ sessionUnitId }}</h3>
+            <div>entity id:{{ detail }}</div>
+            <div>setting:{{ setting }}</div>
+            <MessageLayout v-for="(item, index) in ret.items" :key="item.id" :item="item">
+              <h3>{{ item.senderDisplayName }}</h3>
+              <p>{{ item }}</p>
+            </MessageLayout>
+          </scroll-view>
+          <!-- </div> -->
+          {{ textValue }}
+          <ChatInput v-model:value="textValue" @send="onSend" />
         </div>
-      </div>
-    </a-layout-content>
-  </a-layout>
+      </a-layout-content>
+    </a-layout>
+  </div>
 </template>
 
 <style scoped>
@@ -308,7 +293,16 @@ const bodyStyle: CSSProperties = {
   background-color: #d70c0c;
   color: red;
 }
-
+.chat {
+  width: 100%;
+  height: 100%;
+  overflow: hidden;
+  display: flex;
+  flex: 1;
+}
+.dragenter {
+  background-color: #15e53b2a;
+}
 .layout {
   background-color: unset;
 }

@@ -1,11 +1,7 @@
 <script setup lang="ts">
 import { Ref, computed, reactive, ref } from 'vue';
-import {
-  IczpNet_Chat_MessageSections_Messages_Dtos_MessageDto,
-  IczpNet_Chat_SessionUnits_Dtos_SessionUnitSettingDto,
-  SessionUnitOwnerDto,
-} from '../apis';
-import { MessageDto } from '../apis/dtos';
+import { SessionUnitOwnerDto } from '../apis';
+import { MessageDto, SessionUnitSettingDto } from '../apis/dtos';
 import { formatMessageTime } from '../commons/utils';
 
 import { UserOutlined } from '@ant-design/icons-vue';
@@ -15,7 +11,7 @@ const props = defineProps<{
   active?: boolean;
   entity: SessionUnitOwnerDto | undefined;
   item: MessageDto;
-  settings?: IczpNet_Chat_SessionUnits_Dtos_SessionUnitSettingDto;
+  settings?: SessionUnitSettingDto;
   isPlay?: boolean;
 }>();
 
@@ -32,7 +28,7 @@ const sendTime = computed(() =>
   formatMessageTime(new Date(props.entity?.lastMessage?.creationTime!)),
 );
 const settings = computed(() => props.entity?.publicBadge || 0);
-const senderName = computed(() => props.entity?.lastMessage?.senderName);
+const senderName = computed(() => props.entity?.lastMessage?.senderDisplayName);
 const destinationName = computed(
   () => props.entity?.destination?.name + '-' + props.entity?.ownerId,
 );
@@ -45,7 +41,7 @@ const onMsgLongpress = (event: CustomEvent) => {};
 </script>
 
 <template>
-  <div class="chat-item">
+  <div class="message-item">
     <div v-if="item.isShowTime" class="msg-sendtime"><span v-text="sendTime"></span></div>
     <!-- 消息-->
     <!-- item.senderType:{{item.senderType}} -->

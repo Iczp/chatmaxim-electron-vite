@@ -1,9 +1,10 @@
 import { MessageTypeEnums, ReminderTypeEnums } from '../enums';
 
 import { ChatObjectDto } from './ChatObjectDto';
+import { MessageOwnerDto } from './MessageOwnerDto';
 import { MessageSimpleDto } from './MessageSimpleDto';
 
-export type MessageDto = MessageSimpleDto & {
+export type MessageDto = MessageOwnerDto & {
   /**
    * 是否显示发送时间
    * @type {boolean}
@@ -22,14 +23,7 @@ export type MessageDto = MessageSimpleDto & {
    *
    * @type {('ok' | 'fail' | 'pending')}
    */
-  state: 'ok' | 'fail' | 'pending';
-
-  /**
-   * 发送人显示名称
-   *
-   * @type {(string | null)}
-   */
-  senderDisplayName?: string | null;
+  state?: 'ok' | 'fail' | 'pending';
 
   /**
    * 朋友Id
