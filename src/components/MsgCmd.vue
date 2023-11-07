@@ -20,17 +20,26 @@ const content = computed(() => props.item.content as CmdDto);
   display: flex;
   justify-content: center;
   align-items: center;
-  padding: 8px;
+  padding: 8px 8px;
   line-height: 150%;
-  color: #ccc;
   font-size: 12px;
   max-width: 360px;
   margin: auto;
   text-align: center;
+  border-radius: 4px;
+  color: #a1a1a1;
+  background-color: #e3e3e3bf;
+  margin-top: 8px;
+  border: 1px solid #e3e3e3bf;
+  box-sizing: border-box;
+  /* user-select: none; */
+}
+.msg-cmd:hover {
+  border: 1px solid #cecece;
 }
 :deep(.uid),
 :deep(.oid) {
-  color: #999;
+  color: #7f7f7f;
 }
 :deep(.oid:hover),
 :deep(.uid:hover) {

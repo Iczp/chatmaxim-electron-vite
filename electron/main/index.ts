@@ -52,7 +52,8 @@ async function createWindow() {
     title: 'Main window',
     // minWidth: 1560,
     // minHeight: 800,
-
+    width: 1080,
+    height: 750,
     icon: join(process.env.VITE_PUBLIC, 'favicon.ico'),
     webPreferences: {
       preload,
@@ -72,7 +73,7 @@ async function createWindow() {
     win.loadURL(url);
     // Open devTool if the app is not packaged
     win.webContents.openDevTools({
-      mode: 'right',
+      mode: 'detach',
     });
   } else {
     win.loadFile(indexHtml);

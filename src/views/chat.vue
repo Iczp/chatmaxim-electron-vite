@@ -381,7 +381,7 @@ const mouseleave = (e: MouseEvent) => {
   flex-direction: column;
   background-color: rgba(241, 241, 241, 0.485);
   flex: 1;
-  padding: 20px;
+  /* padding: 20px; */
   /* flex-wrap: wrap; */
   width: 100%;
   box-sizing: border-box;

@@ -37,7 +37,7 @@ export function formatMessageTime(datetime: Date | string): any {
   var weekday = ['日', '一', '二', '三', '四', '五', '六'];
   // 同年
   if (now.getFullYear() == datetime.getFullYear()) {
-    fmt = 'MM月dd日hh:mm';
+    fmt = 'MM月DD日 hh:mm';
     // 同月
     if (now.getMonth() == datetime.getMonth()) {
       fmt = 'M月dd日 hh时';
@@ -60,8 +60,9 @@ export function formatMessageTime(datetime: Date | string): any {
       }
     }
   }
-  //fmt = "yyyy年MM月dd日"
-  return moment(datetime).format('YYYY-MM-DD');
+  // moment.locale();
+  //fmt = "yyyy年MM月dd日"'YYYY-MM-DD'
+  return moment(datetime).format(fmt);
 }
 /**
  *

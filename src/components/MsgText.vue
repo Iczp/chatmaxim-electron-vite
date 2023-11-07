@@ -19,7 +19,7 @@ const content = computed(() => props.item.content as TextDto);
 .msg-text {
   padding: 8px;
   min-height: 40px;
-  min-width: calc(44px + 12px);
+  min-width: 24px;
   line-height: 24px;
   max-width: var(--message-max-width);
 }

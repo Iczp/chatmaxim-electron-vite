@@ -1,16 +1,17 @@
 <script setup lang="ts">
 import { computed, ref } from 'vue';
 import { MessageDto } from '../apis/dtos';
-
+import ContextMenu from '@imengyu/vue3-context-menu';
 import { formatMessageTime } from '../commons/utils';
 import Avatar from './Avatar.vue';
-import MsgQuote from './MsgQuote.vue';
 
 const props = defineProps<{
   item: MessageDto;
   avatar?: boolean;
   isPlay?: boolean;
 }>();
+
+
 
 const messageType = computed(() => props.item.messageType);
 

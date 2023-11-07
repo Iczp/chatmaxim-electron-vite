@@ -11,6 +11,14 @@
 	-moz-osx-font-smoothing: grayscale;
 }
 
+.icon-quote-left:before {
+  content: "\e7f5";
+}
+
+.icon-quote-right:before {
+  content: "\e663";
+}
+
 .icon-mark:before {
   content: "\e63d";
 }

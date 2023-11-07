@@ -3,6 +3,7 @@ import { computed, ref } from 'vue';
 import { MessageDto } from '../apis/dtos';
 import { MessageTypeEnums } from '../apis/enums';
 import { formatMessageTime } from '../commons/utils';
+import ContextMenu from '@imengyu/vue3-context-menu'
 import Avatar from './Avatar.vue';
 
 import MsgText from './MsgText.vue';
@@ -16,7 +17,7 @@ import MsgVideo from './MsgText.vue';
 import MsgRedEnvelope from './MsgText.vue';
 import MsgUnsupported from './MsgUnsupported.vue';
 import MsgState from './MsgState.vue';
-import MsgQuote from './MsgQuote.vue';
+import QuoteMessage from './QuoteMessage.vue';
 import MsgRollback from './MsgRollback.vue';
 const props = defineProps<{
   item: MessageDto;
@@ -30,6 +31,32 @@ const senderName = computed(
   () => props.item.senderName || props.item.senderDisplayName || props.item.sender?.name || '-',
 );
 const isShowMemberName = ref(true);
+// const onRightClick = (e: Event) => {
+//   const el = e.currentTarget as HTMLElement;
+//   console.log('onRightClick', el.offsetTop, el.offsetLeft);
+// };
+
+const onRightClick = (e: MouseEvent) => {
+  //prevent the browser's default menu
+  e.preventDefault();
+  //show your menu
+  ContextMenu.showContextMenu({
+    x: e.x,
+    y: e.y,
+    items: [
+      {
+        label: 'A menu item',
+        onClick: () => {
+          alert('You click a menu item');
+        },
+      },
+      {
+        label: 'A submenu',
+        children: [{ label: 'Item1' }, { label: 'Item2' }, { label: 'Item3' }],
+      },
+    ],
+  });
+};
 </script>
 
 <template>
@@ -45,7 +72,7 @@ const isShowMemberName = ref(true);
         <header v-if="isShowMemberName" class="msg-main-header">
           {{ senderName }}
         </header>
-        <main class="msg-content">
+        <main class="msg-content" @click.right.native="onRightClick">
           <!-- <p>{{ item }}</p> -->
           <!-- 消息 Start -->
           <MsgImage v-if="messageType == MessageTypeEnums.Image" :item="item" />
@@ -59,10 +86,10 @@ const isShowMemberName = ref(true);
 
           <MsgUnsupported v-else :r="item.isSelf" />
           <!-- 消息 End -->
-          <MsgState />
+          <MsgState :state="item.state" />
         </main>
         <footer class="msg-main-footer">
-          <MsgQuote :item="item.quoteMessageId?.toString()" :r="item.isSelf"/>
+          <QuoteMessage :item="item.quoteMessageId?.toString()" :r="item.isSelf" />
         </footer>
       </main>
     </section>
@@ -73,13 +100,14 @@ const isShowMemberName = ref(true);
 </template>
 
 <style scoped>
+/* @import url(../style/message.css); */
 .message-item {
-  margin: 12px 0;
+  margin: 8px 20px;
 }
 .msg-layout {
   display: flex;
   flex-direction: column;
-  width: 100%;
+  /* width: 100%; */
   box-sizing: border-box;
 }
 .msg-header {
@@ -149,7 +177,7 @@ const isShowMemberName = ref(true);
 .send-time {
   display: flex;
   justify-content: center;
-  color: gray;
+  color: #acacac;
   font-size: 12px;
   width: 100%;
 }

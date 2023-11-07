@@ -1,10 +1,13 @@
 import { createApp } from 'vue';
-import './style.css';
+import './style/style.css';
 import App from './App.vue';
 import './samples/node-api';
 import { createRouter, createWebHistory, createWebHashHistory } from 'vue-router';
 import PerfectScrollbar, { PerfectScrollbarOptions } from 'vue3-perfect-scrollbar';
 import 'vue3-perfect-scrollbar/dist/vue3-perfect-scrollbar.css';
+
+import '@imengyu/vue3-context-menu/lib/vue3-context-menu.css'
+import ContextMenu from '@imengyu/vue3-context-menu'
 
 import '@ant-design-vue/pro-layout/dist/style.css';
 import Antd from 'ant-design-vue';
@@ -29,6 +32,7 @@ app
   // .use(PageContainer)
   .use(router)
   .use(pinia)
+  .use(ContextMenu)
 
   .mount('#app')
   .$nextTick(() => {

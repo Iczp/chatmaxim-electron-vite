@@ -140,6 +140,7 @@ const destinationName = computed(
 </template>
 
 <style scoped>
+/* @import url(../style/message.css); */
 .session-item {
   display: flex;
   /* flex: 1; */
@@ -194,7 +195,8 @@ const destinationName = computed(
 }
 .session-item.active {
   /* background-color: rgba(255, 255, 255, 1); */
-  background: linear-gradient(135deg, #79b4eb, #97d79c) border-box;
+  /* background: linear-gradient(135deg, #79b4eb, #97d79c) border-box; */
+  background: linear-gradient(135deg, #ddefff, #e9ffeb) border-box;
 }
 .session-item.active:hover {
   background-color: rgba(255, 255, 255, 1);
@@ -247,7 +249,7 @@ const destinationName = computed(
 }
 .title-left {
   display: flex;
-  max-width: 120px;
+  max-width: 112px;
   font-weight: 500;
   align-items: center;
 }
