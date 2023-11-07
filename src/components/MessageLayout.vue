@@ -1,9 +1,9 @@
 <script setup lang="ts">
-import { computed, ref } from 'vue';
+import { computed, h, ref } from 'vue';
 import { MessageDto } from '../apis/dtos';
 import { MessageTypeEnums } from '../apis/enums';
 import { formatMessageTime } from '../commons/utils';
-import ContextMenu from '@imengyu/vue3-context-menu'
+import ContextMenu from '@imengyu/vue3-context-menu';
 import Avatar from './Avatar.vue';
 
 import MsgText from './MsgText.vue';
@@ -19,6 +19,14 @@ import MsgUnsupported from './MsgUnsupported.vue';
 import MsgState from './MsgState.vue';
 import QuoteMessage from './QuoteMessage.vue';
 import MsgRollback from './MsgRollback.vue';
+import Copy from '../icons/Copy.vue';
+import {
+  UserOutlined,
+  SmileTwoTone,
+  HeartTwoTone,
+  CheckCircleTwoTone,
+} from '@ant-design/icons-vue';
+
 const props = defineProps<{
   item: MessageDto;
   isPlay?: boolean;
@@ -43,16 +51,37 @@ const onRightClick = (e: MouseEvent) => {
   ContextMenu.showContextMenu({
     x: e.x,
     y: e.y,
+    customClass: 'message-context-menu',
     items: [
       {
-        label: 'A menu item',
-        onClick: () => {
-          alert('You click a menu item');
-        },
+        label: '复制',
+        icon: h(UserOutlined),
+        onClick: () => {},
       },
       {
-        label: 'A submenu',
-        children: [{ label: 'Item1' }, { label: 'Item2' }, { label: 'Item3' }],
+        label: '引用',
+        icon: h(UserOutlined),
+        onClick: () => {},
+      },
+      {
+        label: '收藏',
+        icon: h(UserOutlined),
+        onClick: () => {},
+      },
+      {
+        label: '提醒',
+        icon: h(UserOutlined),
+        onClick: () => {},
+      },
+      {
+        label: '多选',
+        icon: h(UserOutlined),
+        onClick: () => {},
+      },
+      {
+        label: '撤回',
+        icon: h(UserOutlined),
+        onClick: () => {},
       },
     ],
   });
@@ -71,6 +100,7 @@ const onRightClick = (e: MouseEvent) => {
       <main class="msg-main">
         <header v-if="isShowMemberName" class="msg-main-header">
           {{ senderName }}
+          <Copy />---
         </header>
         <main class="msg-content" @click.right.native="onRightClick">
           <!-- <p>{{ item }}</p> -->
@@ -101,6 +131,7 @@ const onRightClick = (e: MouseEvent) => {
 
 <style scoped>
 /* @import url(../style/message.css); */
+@import url(../style/message-context-menu.css);
 .message-item {
   margin: 8px 20px;
 }
