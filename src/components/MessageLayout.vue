@@ -34,7 +34,12 @@ const props = defineProps<{
   selectable?: boolean;
   isPlay?: boolean;
 }>();
-const emits = defineEmits(['contextmenu', 'update:selectable']);
+
+// const emits = defineEmits(['contextmenu', 'update:selectable']);
+const emits = defineEmits<{
+  contextmenu: [];
+  'update:selectable': [selectable: boolean];
+}>();
 
 const messageType = computed(() => props.item.messageType);
 const isRollback = computed(() => props.item?.rollbackTime != null);
@@ -48,7 +53,7 @@ const isShowMemberName = ref(true);
 //   console.log('onRightClick', el.offsetTop, el.offsetLeft);
 // };
 
-const onRightClick = (e: MouseEvent) => {
+const onMessageRightClick = (e: MouseEvent) => {
   //prevent the browser's default menu
   e.preventDefault();
   // emits('contextmenu', e)
@@ -65,8 +70,17 @@ const onRightClick = (e: MouseEvent) => {
         divided: 'down',
         disabled: false,
         onClick: e => {
-          console.log('contextmenu item click', e, this);
+          console.log('contextmenu item click', item);
           message.success({ content: '复制成功!', duration: 2 });
+        },
+      },
+      {
+        label: '转发',
+        icon: h(UserOutlined),
+        disabled: false,
+        onClick: e => {
+          console.log('contextmenu item click', item);
+          message.success({ content: '转发成功!', duration: 2 });
         },
       },
       {
@@ -105,7 +119,10 @@ const onRightClick = (e: MouseEvent) => {
 </script>
 
 <template>
-  <section class="message-item msg-layout" :class="{ selectable: selectable }">
+  <section
+    class="message-item msg-layout"
+    :class="{ selectable: selectable, checked: item.checked }"
+  >
     <header class="msg-header send-time">{{ sendTime }}</header>
     <MsgRollback v-if="isRollback" :name="senderName" />
     <MsgCmd v-else-if="messageType == MessageTypeEnums.Cmd" :item="item" />
@@ -126,7 +143,7 @@ const onRightClick = (e: MouseEvent) => {
             ---
           </header>
 
-          <main class="msg-content" @click.right.native="onRightClick">
+          <main class="msg-content" @click.right.native="onMessageRightClick">
             <!-- <p>{{ item }}</p> -->
             <!-- 消息 Start -->
             <MsgImage v-if="messageType == MessageTypeEnums.Image" :item="item" />
@@ -164,7 +181,7 @@ const onRightClick = (e: MouseEvent) => {
 /* @import url(../style/message.css); */
 @import url(../style/message-context-menu.css);
 .message-item {
-  margin: 8px 0;
+  margin: 0;
 }
 .msg-layout {
   display: flex;
@@ -178,19 +195,23 @@ const onRightClick = (e: MouseEvent) => {
 .msg-body-wraper {
   display: flex;
   flex-direction: row;
-  padding: 12px 20px;
+  padding: 12px;
+  margin: 0 12px;
+  border-radius: 4px;
 }
 .selectable .msg-body-wraper:hover {
-  background-color: #e7e7e7;
+  background-color: #efefef;
+  box-shadow: 0 0 6px 0 #bbbbbbc9;
 }
-.checked .msg-body-wraper {
-  background-color: #666;
+.selectable.checked .msg-body-wraper {
+  background-color: #e7e7e7;
 }
 .checkbox-container {
   display: flex;
-  margin-right: 20px;
+  margin-right: 12px;
   align-items: flex-start;
   box-sizing: border-box;
+  
   /* padding: 12px 0; */
 }
 
