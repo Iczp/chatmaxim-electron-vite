@@ -1,5 +1,7 @@
 <script setup lang="ts">
 import { computed, h, ref } from 'vue';
+import { message } from 'ant-design-vue';
+
 import { MessageDto } from '../apis/dtos';
 import { MessageTypeEnums } from '../apis/enums';
 import { formatMessageTime } from '../commons/utils';
@@ -29,8 +31,10 @@ import {
 
 const props = defineProps<{
   item: MessageDto;
+  selectable?: boolean;
   isPlay?: boolean;
 }>();
+const emits = defineEmits(['contextmenu', 'update:selectable']);
 
 const messageType = computed(() => props.item.messageType);
 const isRollback = computed(() => props.item?.rollbackTime != null);
@@ -47,6 +51,8 @@ const isShowMemberName = ref(true);
 const onRightClick = (e: MouseEvent) => {
   //prevent the browser's default menu
   e.preventDefault();
+  // emits('contextmenu', e)
+  const item = props.item;
   //show your menu
   ContextMenu.showContextMenu({
     x: e.x,
@@ -57,8 +63,11 @@ const onRightClick = (e: MouseEvent) => {
         label: '复制',
         icon: h(UserOutlined),
         divided: 'down',
-        disabled: true,
-        onClick: () => {},
+        disabled: false,
+        onClick: e => {
+          console.log('contextmenu item click', e, this);
+          message.success({ content: '复制成功!', duration: 2 });
+        },
       },
       {
         label: '引用',
@@ -79,7 +88,11 @@ const onRightClick = (e: MouseEvent) => {
       {
         label: '多选',
         icon: h(UserOutlined),
-        onClick: () => {},
+        onClick: () => {
+          console.log('emits update:selectable', !props.selectable);
+
+          emits('update:selectable', !props.selectable);
+        },
       },
       {
         label: '撤回',
@@ -92,44 +105,58 @@ const onRightClick = (e: MouseEvent) => {
 </script>
 
 <template>
-  <section class="message-item msg-layout">
+  <section class="message-item msg-layout" :class="{ selectable: selectable }">
     <header class="msg-header send-time">{{ sendTime }}</header>
     <MsgRollback v-if="isRollback" :name="senderName" />
     <MsgCmd v-else-if="messageType == MessageTypeEnums.Cmd" :item="item" />
-    <section v-else class="msg-body" :class="{ reverse: item.isSelf }">
-      <aside class="msg-aside">
-        <Avatar :item="item.sender" :size="40" :name="senderName" />
-      </aside>
-      <main class="msg-main">
-        <header v-if="isShowMemberName" class="msg-main-header">
-          {{ senderName }}
-          <Copy />
-          ---
-        </header>
-        <main class="msg-content" @click.right.native="onRightClick">
-          <!-- <p>{{ item }}</p> -->
-          <!-- 消息 Start -->
-          <MsgImage v-if="messageType == MessageTypeEnums.Image" :item="item" />
-          <MsgSound v-else-if="messageType == MessageTypeEnums.Sound" :item="item" :play="isPlay" />
-          <MsgLocation v-else-if="messageType == MessageTypeEnums.Location" :item="item" />
-          <MsgContacts v-else-if="messageType == MessageTypeEnums.Contacts" :item="item" />
-          <MsgLink v-else-if="messageType == MessageTypeEnums.Link" :item="item" />
-          <MsgVideo v-else-if="messageType == MessageTypeEnums.Video" :item="item" />
-          <MsgRedEnvelope v-else-if="messageType == MessageTypeEnums.RedEnvelope" :item="item" />
-          <MsgText v-else-if="messageType == MessageTypeEnums.Text" :item="item" />
+    <div v-else class="msg-body-wraper">
+      <div v-if="selectable" class="checkbox-container">
+        <a-checkbox v-model:checked="item.checked" />
+      </div>
 
-          <MsgUnsupported v-else :r="item.isSelf" />
-          <!-- 消息 End -->
-          <MsgState :state="item.state" />
+      <section class="msg-body" :class="{ reverse: item.isSelf }">
+        <aside class="msg-aside">
+          <Avatar :item="item.sender" :size="40" :name="senderName" />
+        </aside>
+
+        <main class="msg-main">
+          <header v-if="isShowMemberName" class="msg-main-header">
+            {{ senderName }}
+            <!-- <Copy /> -->
+            ---
+          </header>
+
+          <main class="msg-content" @click.right.native="onRightClick">
+            <!-- <p>{{ item }}</p> -->
+            <!-- 消息 Start -->
+            <MsgImage v-if="messageType == MessageTypeEnums.Image" :item="item" />
+            <MsgSound
+              v-else-if="messageType == MessageTypeEnums.Sound"
+              :item="item"
+              :play="isPlay"
+            />
+            <MsgLocation v-else-if="messageType == MessageTypeEnums.Location" :item="item" />
+            <MsgContacts v-else-if="messageType == MessageTypeEnums.Contacts" :item="item" />
+            <MsgLink v-else-if="messageType == MessageTypeEnums.Link" :item="item" />
+            <MsgVideo v-else-if="messageType == MessageTypeEnums.Video" :item="item" />
+            <MsgRedEnvelope v-else-if="messageType == MessageTypeEnums.RedEnvelope" :item="item" />
+            <MsgText v-else-if="messageType == MessageTypeEnums.Text" :item="item" />
+
+            <MsgUnsupported v-else :r="item.isSelf" />
+            <!-- 消息 End -->
+            <MsgState :state="item.state" />
+          </main>
+
+          <footer class="msg-main-footer">
+            <QuoteMessage :item="item.quoteMessageId?.toString()" :r="item.isSelf" />
+          </footer>
         </main>
-        <footer class="msg-main-footer">
-          <QuoteMessage :item="item.quoteMessageId?.toString()" :r="item.isSelf" />
-        </footer>
-      </main>
-    </section>
-    <footer class="msg-footer">
-      <slot name="footer"></slot>
-    </footer>
+      </section>
+
+      <footer class="msg-footer">
+        <slot name="footer"></slot>
+      </footer>
+    </div>
   </section>
 </template>
 
@@ -137,7 +164,7 @@ const onRightClick = (e: MouseEvent) => {
 /* @import url(../style/message.css); */
 @import url(../style/message-context-menu.css);
 .message-item {
-  margin: 8px 20px;
+  margin: 8px 0;
 }
 .msg-layout {
   display: flex;
@@ -148,11 +175,30 @@ const onRightClick = (e: MouseEvent) => {
 .msg-header {
   display: flex;
 }
+.msg-body-wraper {
+  display: flex;
+  flex-direction: row;
+  padding: 12px 20px;
+}
+.selectable .msg-body-wraper:hover {
+  background-color: #e7e7e7;
+}
+.checked .msg-body-wraper {
+  background-color: #666;
+}
+.checkbox-container {
+  display: flex;
+  margin-right: 20px;
+  align-items: flex-start;
+  box-sizing: border-box;
+  /* padding: 12px 0; */
+}
 
 .msg-body {
   display: flex;
   flex-direction: row;
   justify-content: space-between;
+  flex: 1;
 }
 .msg-body.reverse {
   flex-direction: row-reverse;
@@ -168,6 +214,7 @@ const onRightClick = (e: MouseEvent) => {
   display: flex;
   flex-direction: row;
 }
+
 .msg-main {
   display: flex;
   flex: 1;

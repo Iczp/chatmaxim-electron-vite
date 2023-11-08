@@ -45,7 +45,14 @@ const info = computed(() => store.getItem(props.sessionUnitId!));
 const setting = computed(() => info.value?.setting);
 
 const isInputEnabled = computed(() => info.value?.setting?.isInputEnabled);
+const isSelectable = ref(false);
 
+watch(
+  () => isSelectable.value,
+  v => {
+    console.log('isSelectable', v);
+  },
+);
 const messages = reactive<MessageDto[]>([]);
 
 const ret = reactive<ResultValue<MessageDto>>({
@@ -274,7 +281,12 @@ const mouseleave = (e: MouseEvent) => {
             <!-- <h3>prop.id :{{ sessionUnitId }}</h3>
             <div>entity id:{{ detail }}</div>
             <div>setting:{{ setting }}</div> -->
-            <MessageLayout v-for="(item, index) in ret.items" :key="item.id" :item="item">
+            <MessageLayout
+              v-for="(item, index) in ret.items"
+              :key="item.id"
+              :item="item"
+              v-model:selectable="isSelectable"
+            >
               <h3>{{ item.senderDisplayName }}</h3>
               <p>{{ item }}</p>
             </MessageLayout>

@@ -10,6 +10,13 @@ export type MessageDto = MessageOwnerDto & {
   isShowTime?: boolean;
 
   /**
+   * 是否选择中
+   *
+   * @type {boolean}
+   */
+  checked?: boolean;
+
+  /**
    *
    *
    * @type {boolean}
