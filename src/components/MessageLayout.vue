@@ -56,6 +56,8 @@ const onRightClick = (e: MouseEvent) => {
       {
         label: '复制',
         icon: h(UserOutlined),
+        divided: 'down',
+        disabled: true,
         onClick: () => {},
       },
       {
@@ -66,6 +68,7 @@ const onRightClick = (e: MouseEvent) => {
       {
         label: '收藏',
         icon: h(UserOutlined),
+
         onClick: () => {},
       },
       {
@@ -100,7 +103,8 @@ const onRightClick = (e: MouseEvent) => {
       <main class="msg-main">
         <header v-if="isShowMemberName" class="msg-main-header">
           {{ senderName }}
-          <Copy />---
+          <Copy />
+          ---
         </header>
         <main class="msg-content" @click.right.native="onRightClick">
           <!-- <p>{{ item }}</p> -->

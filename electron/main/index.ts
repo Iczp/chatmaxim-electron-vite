@@ -99,26 +99,26 @@ async function createWindow() {
   });
   // win.webContents.on('will-navigate', (event, url) => { }) #344
 
-  // Renderer others
-  const nodeTrue = new BrowserWindow({
-    webPreferences: {
-      contextIsolation: false,
-      nodeIntegration: true,
-    },
-    width: 700,
-    height: 500,
-  });
-  if (process.env.VITE_DEV_SERVER_URL) {
-    console.log('process.env.VITE_DEV_SERVER_UR', process.env.VITE_DEV_SERVER_URL);
+  // // Renderer others
+  // const nodeTrue = new BrowserWindow({
+  //   webPreferences: {
+  //     contextIsolation: false,
+  //     nodeIntegration: true,
+  //   },
+  //   width: 700,
+  //   height: 500,
+  // });
+  // if (process.env.VITE_DEV_SERVER_URL) {
+  //   console.log('process.env.VITE_DEV_SERVER_UR', process.env.VITE_DEV_SERVER_URL);
 
-    nodeTrue.loadURL(`${process.env.VITE_DEV_SERVER_URL}others/index.html`);
-    nodeTrue.webContents.openDevTools({
-      mode: 'right',
-    });
-  } else {
-    nodeTrue.loadFile(join(__dirname, '../dist/others/index.html'));
-  }
-  //end Renderer others
+  //   nodeTrue.loadURL(`${process.env.VITE_DEV_SERVER_URL}others/index.html`);
+  //   nodeTrue.webContents.openDevTools({
+  //     mode: 'right',
+  //   });
+  // } else {
+  //   nodeTrue.loadFile(join(__dirname, '../dist/others/index.html'));
+  // }
+  // //end Renderer others
 }
 
 app.whenReady().then(createWindow);
