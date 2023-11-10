@@ -9,6 +9,7 @@ import Components from 'unplugin-vue-components/vite';
 import { AntDesignVueResolver } from 'unplugin-vue-components/resolvers';
 import multiple from 'vite-plugin-multiple';
 import { resolve, join } from 'node:path';
+import svgLoader from 'vite-svg-loader';
 
 // https://vitejs.dev/config/
 export default defineConfig(({ command }) => {
@@ -21,6 +22,9 @@ export default defineConfig(({ command }) => {
   return {
     plugins: [
       vue(),
+      svgLoader({
+        defaultImport: 'component',
+      }),
       Components({
         resolvers: [
           AntDesignVueResolver({

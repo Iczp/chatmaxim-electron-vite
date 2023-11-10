@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { computed, h, ref } from 'vue';
+import { HtmlHTMLAttributes, computed, h, ref } from 'vue';
 import { message } from 'ant-design-vue';
 
 import { MessageDto } from '../apis/dtos';
@@ -21,15 +21,35 @@ import MsgUnsupported from './MsgUnsupported.vue';
 import MsgState from './MsgState.vue';
 import QuoteMessage from './QuoteMessage.vue';
 import MsgRollback from './MsgRollback.vue';
-import Copy from '../icons/Copy.vue';
+
 import {
   UserOutlined,
+  CopyOutlined,
   SmileTwoTone,
   HeartTwoTone,
+  StarFilled,
+  StarOutlined,
   CheckCircleTwoTone,
 } from '@ant-design/icons-vue';
+import { CSSProperties } from 'ant-design-vue/es/_util/cssinjs/hooks/useStyleRegister';
+import {
+  Bookmarks,
+  CheckList,
+  ContentCopy,
+  Forward,
+  NotificationsActive,
+  Rollback,
+  Quote,
+  BookmarkAdd,
+  BookmarkRemove,
+  Remind,
+  Alarm,
+} from '../icons';
+import Notification from 'ant-design-vue/es/vc-notification/Notification';
+import { setFavorite } from '../commons/messageContextMenuHandle';
 
 const props = defineProps<{
+  sessionUnitId: string;
   item: MessageDto;
   selectable?: boolean;
   isPlay?: boolean;
@@ -38,12 +58,14 @@ const props = defineProps<{
 // const emits = defineEmits(['contextmenu', 'update:selectable']);
 const emits = defineEmits<{
   contextmenu: [];
+  remind: [string];
   'update:selectable': [selectable: boolean];
 }>();
 
 const messageType = computed(() => props.item.messageType);
 const isRollback = computed(() => props.item?.rollbackTime != null);
 const sendTime = computed(() => formatMessageTime(new Date(props.item.creationTime!)));
+const sendTimeTitle = computed(() => props.item.creationTime);
 const senderName = computed(
   () => props.item.senderName || props.item.senderDisplayName || props.item.sender?.name || '-',
 );
@@ -53,20 +75,90 @@ const isShowMemberName = ref(true);
 //   console.log('onRightClick', el.offsetTop, el.offsetLeft);
 // };
 
+const iconClass: HtmlHTMLAttributes = { class: 'svg-icon s16' };
+
+const onAvatarRightClick = (e: MouseEvent) => {
+  //prevent the browser's default menu
+  e.preventDefault();
+  // emits('contextmenu', e)
+  const item = props.item;
+
+  //show your menu
+  ContextMenu.showContextMenu({
+    x: e.x,
+    y: e.y,
+    minWidth: 80,
+    customClass: 'avatar-context-menu',
+    items: [
+      {
+        label: `设置名称`,
+        // icon: h(ContentCopy, iconClass),
+        hidden: !item.isSelf,
+        customClass: 'first-child last-child',
+        disabled: false,
+        onClick: () => {},
+      },
+      {
+        label: `@${senderName.value}`,
+        icon: h(Remind, iconClass),
+        hidden: item.isSelf,
+        customClass: 'first-child',
+        disabled: false,
+        onClick: () => {
+          emits('remind', `@${senderName.value}`);
+        },
+      },
+      {
+        label: `禁言`,
+        // icon: h(ContentCopy, iconClass),
+
+        hidden: item.isSelf,
+        disabled: false,
+        onClick: () => {
+          console.log(`@${senderName.value}`, item);
+        },
+      },
+      {
+        label: `拍一拍`,
+        // icon: h(ContentCopy, iconClass),
+
+        hidden: item.isSelf,
+        disabled: false,
+        onClick: () => {
+          console.log(`@${senderName.value}`, item);
+        },
+      },
+      {
+        label: `特别关注`,
+        // icon: h(ContentCopy, iconClass),
+
+        hidden: item.isSelf,
+        disabled: false,
+        customClass: 'last-child',
+        onClick: () => {
+          console.log(`@${senderName.value}`, item);
+        },
+      },
+    ],
+  });
+};
 const onMessageRightClick = (e: MouseEvent) => {
   //prevent the browser's default menu
   e.preventDefault();
   // emits('contextmenu', e)
   const item = props.item;
+  console.log('message', item);
+
   //show your menu
   ContextMenu.showContextMenu({
     x: e.x,
     y: e.y,
+    minWidth: 80,
     customClass: 'message-context-menu',
     items: [
       {
         label: '复制',
-        icon: h(UserOutlined),
+        icon: h(ContentCopy, iconClass),
         divided: 'down',
         disabled: false,
         onClick: e => {
@@ -76,7 +168,7 @@ const onMessageRightClick = (e: MouseEvent) => {
       },
       {
         label: '转发',
-        icon: h(UserOutlined),
+        icon: h(Forward, iconClass),
         disabled: false,
         onClick: e => {
           console.log('contextmenu item click', item);
@@ -85,23 +177,29 @@ const onMessageRightClick = (e: MouseEvent) => {
       },
       {
         label: '引用',
-        icon: h(UserOutlined),
+        icon: h(Quote, iconClass),
         onClick: () => {},
       },
       {
-        label: '收藏',
-        icon: h(UserOutlined),
-
-        onClick: () => {},
+        label: item.isFavorited ? '取消收藏' : '收藏',
+        icon: h(item.isFavorited ? BookmarkRemove : BookmarkAdd, iconClass),
+        onClick: async () => {
+          item.isFavorited = await setFavorite({
+            sessionUnitId: props.sessionUnitId,
+            messageId: item.id!,
+            isFavorite: !item.isFavorited,
+          });
+        },
       },
       {
         label: '提醒',
-        icon: h(UserOutlined),
+        disabled: true,
+        icon: h(Alarm, iconClass),
         onClick: () => {},
       },
       {
         label: '多选',
-        icon: h(UserOutlined),
+        icon: h(CheckList, iconClass),
         onClick: () => {
           console.log('emits update:selectable', !props.selectable);
 
@@ -110,7 +208,7 @@ const onMessageRightClick = (e: MouseEvent) => {
       },
       {
         label: '撤回',
-        icon: h(UserOutlined),
+        icon: h(Rollback, iconClass),
         onClick: () => {},
       },
     ],
@@ -123,7 +221,9 @@ const onMessageRightClick = (e: MouseEvent) => {
     class="message-item msg-layout"
     :class="{ selectable: selectable, checked: item.checked }"
   >
-    <header class="msg-header send-time">{{ sendTime }}</header>
+    <header v-if="!item.isShowTime" class="msg-header send-time" :title="sendTimeTitle">
+      {{ sendTime }}
+    </header>
     <MsgRollback v-if="isRollback" :name="senderName" />
     <MsgCmd v-else-if="messageType == MessageTypeEnums.Cmd" :item="item" />
     <div v-else class="msg-body-wraper">
@@ -133,14 +233,19 @@ const onMessageRightClick = (e: MouseEvent) => {
 
       <section class="msg-body" :class="{ reverse: item.isSelf }">
         <aside class="msg-aside">
-          <Avatar :item="item.sender" :size="40" :name="senderName" />
+          <Avatar
+            :item="item.sender"
+            :size="40"
+            :name="senderName"
+            @click.right.native="onAvatarRightClick"
+          />
         </aside>
 
         <main class="msg-main">
           <header v-if="isShowMemberName" class="msg-main-header">
             {{ senderName }}
-            <!-- <Copy /> -->
-            ---
+            <Forward class="svg-icon s12" />
+            <ContentCopy class="svg-icon s16" />
           </header>
 
           <main class="msg-content" @click.right.native="onMessageRightClick">
@@ -179,7 +284,8 @@ const onMessageRightClick = (e: MouseEvent) => {
 
 <style scoped>
 /* @import url(../style/message.css); */
-@import url(../style/message-context-menu.css);
+/* @import url(../style/context-menu.css); */
+
 .message-item {
   margin: 0;
 }
@@ -211,7 +317,7 @@ const onMessageRightClick = (e: MouseEvent) => {
   margin-right: 12px;
   align-items: flex-start;
   box-sizing: border-box;
-  
+
   /* padding: 12px 0; */
 }
 

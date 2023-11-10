@@ -1,13 +1,21 @@
 <script setup lang="ts">
-import { Ref, computed, onMounted, reactive, ref, watch } from 'vue';
-import { onBeforeRouteLeave, onBeforeRouteUpdate, useRoute, useRouter } from 'vue-router';
+import { computed, reactive, ref, watch } from 'vue';
+import { onBeforeRouteLeave, onBeforeRouteUpdate, useRoute } from 'vue-router';
 import { router, chatHistorys } from '../routes';
-import { SessionUnitOwnerDto, SessionUnitService, PagedResultDto } from '../apis';
+import { SessionUnitOwnerDto, SessionUnitService } from '../apis';
 import SessionItem from '../components/SessionItem.vue';
 import Loading from '../components/Loading.vue';
 import { ResultValue, SessionUnitGetListInput, SessionItemDto } from '../apis/dtos';
 import { useImStore } from '../stores/im';
 import { navToChat as navToChatX } from '../commons/utils';
+
+const props = defineProps<{
+  chatObjectId: number | undefined;
+}>();
+const emits = defineEmits<{
+  // contextmenu: [item: SessionItemDto, e: any];
+}>();
+
 // defaultDisplayCount
 const defaultDisplayCount = 20;
 // pageSize
@@ -18,10 +26,6 @@ const displayCount = ref(20);
 const route = useRoute();
 // const router = useRouter();
 const store = useImStore();
-
-const props = defineProps<{
-  chatObjectId: number | undefined;
-}>();
 
 const acitveSessionUnitId = computed(() => route.params.sessionUnitId);
 
@@ -205,6 +209,8 @@ const onReachEnd = (event: CustomEvent) => {
     fetchData(queryInput);
   }
 };
+
+
 </script>
 
 <template>
@@ -244,9 +250,10 @@ const onReachEnd = (event: CustomEvent) => {
             v-for="(item, index) in displayItems"
             :key="item.id"
             @click="navToChat(item)"
-            :entity="store.getItem(item.id!)"
+            :item="store.getItem(item.id!)"
             :index="index"
             :active="acitveSessionUnitId == item.id"
+
           />
           <!-- </div> -->
           <Loading v-if="ret.isPosting && !ret.isEof" :height="64" />

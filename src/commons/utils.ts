@@ -32,15 +32,15 @@ export function formatMessageTime(datetime: Date | string): any {
   if (typeof datetime == 'string') {
     datetime = new Date(datetime);
   }
-  let fmt = 'yyyy年MM月dd日';
+  let fmt = 'yyyy年MM月DD日';
   let now = new Date();
   var weekday = ['日', '一', '二', '三', '四', '五', '六'];
   // 同年
   if (now.getFullYear() == datetime.getFullYear()) {
-    fmt = 'MM月DD日 hh:mm';
+    fmt = 'M月DD日 hh:mm';
     // 同月
     if (now.getMonth() == datetime.getMonth()) {
-      fmt = 'M月dd日 hh时';
+      fmt = 'M月DD日 hh时';
       let spanTime = now.getTime() - datetime.getTime();
       // 同一天
       if (now.getDate() == datetime.getDate()) {

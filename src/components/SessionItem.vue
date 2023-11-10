@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { Ref, computed, reactive, ref, watch } from 'vue';
+import { HtmlHTMLAttributes, Ref, computed, h, reactive, ref, watch } from 'vue';
 import Avatar from './Avatar.vue';
 import {
   IczpNet_Chat_MessageSections_Messages_Dtos_MessageDto,
@@ -17,51 +17,100 @@ import {
 } from '@ant-design/icons-vue';
 
 import { ChatObjectTypeEnums, MessageTypeEnums } from '../apis/enums';
+import ContextMenu from '@imengyu/vue3-context-menu';
+import { AlignBottom, AlignTop, NotificationsActive, NotificationsOff } from '../icons';
+import { setImmersed, setTopping } from '../commons/setting';
 
 const props = defineProps<{
   title?: string;
   active?: boolean;
-  entity: SessionUnitOwnerDto | undefined;
+  item: SessionUnitOwnerDto | undefined;
   index?: number;
+}>();
+const emits = defineEmits<{
+  contextmenu: [SessionUnitOwnerDto, MouseEvent | PointerEvent];
 }>();
 
 // const entity = props.entity;
 
-const setting = props.entity?.setting;
+const setting = props.item?.setting;
 
 watch(
-  () => props.entity,
+  () => props.item,
   v => {
     // console.log('watch:', v);
   },
 );
 watch(
-  () => props.entity?.setting?.isImmersed,
+  () => props.item?.setting?.isImmersed,
   v => {
-    console.log('watch isImmersed:', v, props.entity?.id, props.index);
+    console.log('watch isImmersed:', v, props.item?.id, props.index);
   },
 );
-const isTopping = computed(() => Number(props.entity?.sorting) > 0);
-const lastMessage = computed(() => props.entity?.lastMessage);
+const isTopping = computed(() => Number(props.item?.sorting) > 0);
+const lastMessage = computed(() => props.item?.lastMessage);
 
 const messageType = computed(
-  () => props.entity?.lastMessage?.messageType as MessageTypeEnums | undefined,
+  () => props.item?.lastMessage?.messageType as MessageTypeEnums | undefined,
 );
-const isImmersed = computed(() => props.entity?.setting?.isImmersed);
-const isRollback = computed(() => props.entity?.lastMessage?.rollbackTime != null);
-const destination = computed(() => props.entity?.destination);
+const isImmersed = computed(() => props.item?.setting?.isImmersed);
+const isRollback = computed(() => props.item?.lastMessage?.rollbackTime != null);
+const destination = computed(() => props.item?.destination);
 
-const objectType = computed(() => props.entity?.destination?.objectType);
-const content = computed(() => props.entity?.lastMessage?.content);
+const objectType = computed(() => props.item?.destination?.objectType);
+const content = computed(() => props.item?.lastMessage?.content);
 
 const sendTime = computed(() =>
-  formatMessageTime(new Date(props.entity?.lastMessage?.creationTime!)),
+  formatMessageTime(new Date(props.item?.lastMessage?.creationTime!)),
 );
-const badge = computed(() => props.entity?.publicBadge || 0);
-const senderName = computed(() => props.entity?.lastMessage?.senderDisplayName);
+const badge = computed(() => props.item?.publicBadge || 0);
+const senderName = computed(() => props.item?.lastMessage?.senderDisplayName);
 const destinationName = computed(
-  () => props.entity?.setting?.rename || props.entity?.destination?.name,
+  () => props.item?.setting?.rename || props.item?.destination?.name,
 );
+
+const onRightClick = (e: MouseEvent | PointerEvent) => {
+  //prevent the browser's default menu
+
+  const item: SessionUnitOwnerDto = props.item!;
+
+  console.log('onRightClick', item, e);
+
+  e.preventDefault();
+
+  const iconClass: HtmlHTMLAttributes = { class: 'svg-icon s16' };
+  const isTopping = Number(item.sorting) > 0;
+  const isImmersed = item.setting?.isImmersed;
+  //show your menu
+  ContextMenu.showContextMenu({
+    x: e.x,
+    y: e.y,
+    minWidth: 80,
+    customClass: 'session-context-menu',
+    items: [
+      {
+        label: isTopping ? '取消置顶' : '消息置顶',
+        icon: h(isTopping ? AlignBottom : AlignTop, iconClass),
+        // divided: 'down',
+        disabled: false,
+        customClass: 'first-child',
+        onClick: () => {
+          setTopping({ sessionUnitId: item.id!, isTopping: !isTopping });
+        },
+      },
+      {
+        label: isImmersed ? '开启通知' : '免打扰',
+        icon: h(isImmersed ? NotificationsActive : NotificationsOff, iconClass),
+        divided: 'down',
+        disabled: false,
+        customClass: 'last-child',
+        onClick: () => {
+          setImmersed({ sessionUnitId: item.id!, isImmersed: !isImmersed });
+        },
+      },
+    ],
+  });
+};
 </script>
 
 <template>
@@ -70,6 +119,7 @@ const destinationName = computed(
     draggable="true"
     :class="{ active }"
     :object-type="objectType?.toString()"
+    @click.right.native="onRightClick"
   >
     <div class="active-bar"></div>
 
@@ -78,7 +128,7 @@ const destinationName = computed(
     <div class="session-description">
       <div class="session-title">
         <div class="title-left object-name" :title="destinationName!">
-          <div class="text-ellipsis">{{ index }} {{ destinationName }} - {{ entity?.ownerId }}</div>
+          <div class="text-ellipsis">{{ index }} {{ destinationName }} - {{ item?.ownerId }}</div>
           <a-tag
             v-if="objectType == ChatObjectTypeEnums.Robot"
             color="blue"
@@ -94,8 +144,8 @@ const destinationName = computed(
           <div class="text-ellipsis">
             <!-- <span>不支持的类型=========================</span> -->
             <!-- @我 -->
-            <span v-if="entity!.remindMeCount!>0" class="remind">
-              {{ Number(entity?.remindMeCount) > 99 ? '99+' : entity?.remindMeCount }}@我
+            <span v-if="item!.remindMeCount!>0" class="remind">
+              {{ Number(item?.remindMeCount) > 99 ? '99+' : item?.remindMeCount }}@我
             </span>
             <!-- 发送人信息 -->
             <span v-if="senderName && messageType != MessageTypeEnums.Cmd" class="sender">

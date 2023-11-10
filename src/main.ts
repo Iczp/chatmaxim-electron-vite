@@ -7,7 +7,7 @@ import PerfectScrollbar, { PerfectScrollbarOptions } from 'vue3-perfect-scrollba
 import 'vue3-perfect-scrollbar/dist/vue3-perfect-scrollbar.css';
 
 import '@imengyu/vue3-context-menu/lib/vue3-context-menu.css'
-import './style/message-context-menu.css'
+import './style/context-menu.css'
 import ContextMenu from '@imengyu/vue3-context-menu'
 
 import '@ant-design-vue/pro-layout/dist/style.css';

@@ -285,6 +285,7 @@ const mouseleave = (e: MouseEvent) => {
               v-for="(item, index) in ret.items"
               :key="item.id"
               :item="item"
+              :sessionUnitId="props.sessionUnitId"
               v-model:selectable="isSelectable"
             >
               <h3>{{ item.senderDisplayName }}</h3>
