@@ -49,14 +49,7 @@ destinactionId: number,
                 'ownerId': ownerId,
                 'destinactionId': destinactionId,
             },
-            errors: {
-                400: `Bad Request`,
-                401: `Unauthorized`,
-                403: `Forbidden`,
-                404: `Not Found`,
-                500: `Server Error`,
-                501: `Server Error`,
-            },
+            
         });
     }
 
@@ -79,14 +72,7 @@ id: string,
             path: {
                 'id': id,
             },
-            errors: {
-                400: `Bad Request`,
-                401: `Unauthorized`,
-                403: `Forbidden`,
-                404: `Not Found`,
-                500: `Server Error`,
-                501: `Server Error`,
-            },
+            
         });
     }
 
@@ -109,14 +95,7 @@ isImmersed?: boolean,
             query: {
                 'isImmersed': isImmersed,
             },
-            errors: {
-                400: `Bad Request`,
-                401: `Unauthorized`,
-                403: `Forbidden`,
-                404: `Not Found`,
-                500: `Server Error`,
-                501: `Server Error`,
-            },
+            
         });
     }
 
@@ -147,14 +126,7 @@ isImmersed?: boolean,
             query: {
                 'isImmersed': isImmersed,
             },
-            errors: {
-                400: `Bad Request`,
-                401: `Unauthorized`,
-                403: `Forbidden`,
-                404: `Not Found`,
-                500: `Server Error`,
-                501: `Server Error`,
-            },
+            
         });
     }
 
@@ -185,14 +157,7 @@ isImmersed?: boolean,
             query: {
                 'isImmersed': isImmersed,
             },
-            errors: {
-                400: `Bad Request`,
-                401: `Unauthorized`,
-                403: `Forbidden`,
-                404: `Not Found`,
-                500: `Server Error`,
-                501: `Server Error`,
-            },
+            
         });
     }
 
@@ -223,14 +188,7 @@ isImmersed?: boolean,
             query: {
                 'isImmersed': isImmersed,
             },
-            errors: {
-                400: `Bad Request`,
-                401: `Unauthorized`,
-                403: `Forbidden`,
-                404: `Not Found`,
-                500: `Server Error`,
-                501: `Server Error`,
-            },
+            
         });
     }
 
@@ -253,14 +211,7 @@ sessionUnitId: string,
             path: {
                 'sessionUnitId': sessionUnitId,
             },
-            errors: {
-                400: `Bad Request`,
-                401: `Unauthorized`,
-                403: `Forbidden`,
-                404: `Not Found`,
-                500: `Server Error`,
-                501: `Server Error`,
-            },
+            
         });
     }
 
@@ -295,14 +246,7 @@ isImmersed?: boolean,
                 'MinMessageId': minMessageId,
                 'IsImmersed': isImmersed,
             },
-            errors: {
-                400: `Bad Request`,
-                401: `Unauthorized`,
-                403: `Forbidden`,
-                404: `Not Found`,
-                500: `Server Error`,
-                501: `Server Error`,
-            },
+            
         });
     }
 
@@ -331,14 +275,7 @@ destinationId: string,
                 'id': id,
                 'destinationId': destinationId,
             },
-            errors: {
-                400: `Bad Request`,
-                401: `Unauthorized`,
-                403: `Forbidden`,
-                404: `Not Found`,
-                500: `Server Error`,
-                501: `Server Error`,
-            },
+            
         });
     }
 
@@ -361,14 +298,7 @@ id: string,
             path: {
                 'id': id,
             },
-            errors: {
-                400: `Bad Request`,
-                401: `Unauthorized`,
-                403: `Forbidden`,
-                404: `Not Found`,
-                500: `Server Error`,
-                501: `Server Error`,
-            },
+            
         });
     }
 
@@ -418,14 +348,7 @@ sorting,
                 'SkipCount': skipCount,
                 'Sorting': sorting,
             },
-            errors: {
-                400: `Bad Request`,
-                401: `Unauthorized`,
-                403: `Forbidden`,
-                404: `Not Found`,
-                500: `Server Error`,
-                501: `Server Error`,
-            },
+            
         });
     }
 
@@ -478,14 +401,7 @@ sorting?: string,
                 'SkipCount': skipCount,
                 'Sorting': sorting,
             },
-            errors: {
-                400: `Bad Request`,
-                401: `Unauthorized`,
-                403: `Forbidden`,
-                404: `Not Found`,
-                500: `Server Error`,
-                501: `Server Error`,
-            },
+            
         });
     }
 
@@ -594,14 +510,7 @@ sorting?: string,
                 'SkipCount': skipCount,
                 'Sorting': sorting,
             },
-            errors: {
-                400: `Bad Request`,
-                401: `Unauthorized`,
-                403: `Forbidden`,
-                404: `Not Found`,
-                500: `Server Error`,
-                501: `Server Error`,
-            },
+            
         });
     }
 
@@ -650,14 +559,7 @@ sorting?: string,
                 'SkipCount': skipCount,
                 'Sorting': sorting,
             },
-            errors: {
-                400: `Bad Request`,
-                401: `Unauthorized`,
-                403: `Forbidden`,
-                404: `Not Found`,
-                500: `Server Error`,
-                501: `Server Error`,
-            },
+            
         });
     }
 
@@ -677,14 +579,7 @@ id: string,
             path: {
                 'id': id,
             },
-            errors: {
-                400: `Bad Request`,
-                401: `Unauthorized`,
-                403: `Forbidden`,
-                404: `Not Found`,
-                500: `Server Error`,
-                501: `Server Error`,
-            },
+            
         });
     }
 
@@ -743,14 +638,7 @@ sorting?: string,
                 'SkipCount': skipCount,
                 'Sorting': sorting,
             },
-            errors: {
-                400: `Bad Request`,
-                401: `Unauthorized`,
-                403: `Forbidden`,
-                404: `Not Found`,
-                500: `Server Error`,
-                501: `Server Error`,
-            },
+            
         });
     }
 
@@ -809,14 +697,7 @@ sorting?: string,
                 'SkipCount': skipCount,
                 'Sorting': sorting,
             },
-            errors: {
-                400: `Bad Request`,
-                401: `Unauthorized`,
-                403: `Forbidden`,
-                404: `Not Found`,
-                500: `Server Error`,
-                501: `Server Error`,
-            },
+            
         });
     }
 
@@ -851,14 +732,7 @@ objectTypeList?: Array<0 | 1 | 2 | 3 | 4 | 5 | 6 | 7 | 8 | 9>,
                 'targetId': targetId,
                 'objectTypeList': objectTypeList,
             },
-            errors: {
-                400: `Bad Request`,
-                401: `Unauthorized`,
-                403: `Forbidden`,
-                404: `Not Found`,
-                500: `Server Error`,
-                501: `Server Error`,
-            },
+            
         });
     }
 
@@ -893,14 +767,7 @@ objectTypeList?: Array<0 | 1 | 2 | 3 | 4 | 5 | 6 | 7 | 8 | 9>,
                 'targetId': targetId,
                 'objectTypeList': objectTypeList,
             },
-            errors: {
-                400: `Bad Request`,
-                401: `Unauthorized`,
-                403: `Forbidden`,
-                404: `Not Found`,
-                500: `Server Error`,
-                501: `Server Error`,
-            },
+            
         });
     }
 
@@ -931,14 +798,7 @@ idList?: Array<string>,
             query: {
                 'idList': idList,
             },
-            errors: {
-                400: `Bad Request`,
-                401: `Unauthorized`,
-                403: `Forbidden`,
-                404: `Not Found`,
-                500: `Server Error`,
-                501: `Server Error`,
-            },
+            
         });
     }
 
@@ -969,14 +829,7 @@ isImmersed?: boolean,
             query: {
                 'isImmersed': isImmersed,
             },
-            errors: {
-                400: `Bad Request`,
-                401: `Unauthorized`,
-                403: `Forbidden`,
-                404: `Not Found`,
-                500: `Server Error`,
-                501: `Server Error`,
-            },
+            
         });
     }
 

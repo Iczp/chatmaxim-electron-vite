@@ -33,14 +33,7 @@ id: string,
             path: {
                 'id': id,
             },
-            errors: {
-                400: `Bad Request`,
-                401: `Unauthorized`,
-                403: `Forbidden`,
-                404: `Not Found`,
-                500: `Server Error`,
-                501: `Server Error`,
-            },
+            
         });
     }
 
@@ -93,14 +86,7 @@ sorting?: string,
                 'SkipCount': skipCount,
                 'Sorting': sorting,
             },
-            errors: {
-                400: `Bad Request`,
-                401: `Unauthorized`,
-                403: `Forbidden`,
-                404: `Not Found`,
-                500: `Server Error`,
-                501: `Server Error`,
-            },
+            
         });
     }
 
@@ -123,14 +109,7 @@ idList?: Array<string>,
             query: {
                 'idList': idList,
             },
-            errors: {
-                400: `Bad Request`,
-                401: `Unauthorized`,
-                403: `Forbidden`,
-                404: `Not Found`,
-                500: `Server Error`,
-                501: `Server Error`,
-            },
+            
         });
     }
 
@@ -153,14 +132,7 @@ isEnabled?: boolean,
             query: {
                 'isEnabled': isEnabled,
             },
-            errors: {
-                400: `Bad Request`,
-                401: `Unauthorized`,
-                403: `Forbidden`,
-                404: `Not Found`,
-                500: `Server Error`,
-                501: `Server Error`,
-            },
+            
         });
     }
 
@@ -191,14 +163,7 @@ isEnabled?: boolean,
             query: {
                 'isEnabled': isEnabled,
             },
-            errors: {
-                400: `Bad Request`,
-                401: `Unauthorized`,
-                403: `Forbidden`,
-                404: `Not Found`,
-                500: `Server Error`,
-                501: `Server Error`,
-            },
+            
         });
     }
 
@@ -225,14 +190,7 @@ requestBody?: IczpNet_Chat_SessionSections_SessionPermissionDefinitions_Dtos_Ses
             },
             body: requestBody,
             mediaType: 'application/json',
-            errors: {
-                400: `Bad Request`,
-                401: `Unauthorized`,
-                403: `Forbidden`,
-                404: `Not Found`,
-                500: `Server Error`,
-                501: `Server Error`,
-            },
+            
         });
     }
 

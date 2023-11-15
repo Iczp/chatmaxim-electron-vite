@@ -32,14 +32,7 @@ sessionRoleId: string,
             path: {
                 'sessionRoleId': sessionRoleId,
             },
-            errors: {
-                400: `Bad Request`,
-                401: `Unauthorized`,
-                403: `Forbidden`,
-                404: `Not Found`,
-                500: `Server Error`,
-                501: `Server Error`,
-            },
+            
         });
     }
 
@@ -68,14 +61,7 @@ sessionUnitId?: string,
                 'permissionDefinitionId': permissionDefinitionId,
                 'sessionUnitId': sessionUnitId,
             },
-            errors: {
-                400: `Bad Request`,
-                401: `Unauthorized`,
-                403: `Forbidden`,
-                404: `Not Found`,
-                500: `Server Error`,
-                501: `Server Error`,
-            },
+            
         });
     }
 
@@ -111,14 +97,7 @@ requestBody?: IczpNet_Chat_SessionSections_SessionPermissions_PermissionGrantVal
             },
             body: requestBody,
             mediaType: 'application/json',
-            errors: {
-                400: `Bad Request`,
-                401: `Unauthorized`,
-                403: `Forbidden`,
-                404: `Not Found`,
-                500: `Server Error`,
-                501: `Server Error`,
-            },
+            
         });
     }
 
@@ -154,14 +133,7 @@ requestBody?: IczpNet_Chat_SessionSections_SessionPermissions_PermissionGrantVal
             },
             body: requestBody,
             mediaType: 'application/json',
-            errors: {
-                400: `Bad Request`,
-                401: `Unauthorized`,
-                403: `Forbidden`,
-                404: `Not Found`,
-                500: `Server Error`,
-                501: `Server Error`,
-            },
+            
         });
     }
 

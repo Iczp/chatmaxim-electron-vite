@@ -34,14 +34,7 @@ ticks?: string,
             query: {
                 'ticks': ticks,
             },
-            errors: {
-                400: `Bad Request`,
-                401: `Unauthorized`,
-                403: `Forbidden`,
-                404: `Not Found`,
-                500: `Server Error`,
-                501: `Server Error`,
-            },
+            
         });
     }
 
@@ -59,14 +52,7 @@ requestBody?: IczpNet_Chat_Connections_Dtos_ConnectionCreateInput,
             url: '/api/chat/connection',
             body: requestBody,
             mediaType: 'application/json',
-            errors: {
-                400: `Bad Request`,
-                401: `Unauthorized`,
-                403: `Forbidden`,
-                404: `Not Found`,
-                500: `Server Error`,
-                501: `Server Error`,
-            },
+            
         });
     }
 
@@ -106,14 +92,7 @@ sorting?: string,
                 'SkipCount': skipCount,
                 'Sorting': sorting,
             },
-            errors: {
-                400: `Bad Request`,
-                401: `Unauthorized`,
-                403: `Forbidden`,
-                404: `Not Found`,
-                500: `Server Error`,
-                501: `Server Error`,
-            },
+            
         });
     }
 
@@ -132,14 +111,7 @@ id: string,
             path: {
                 'id': id,
             },
-            errors: {
-                400: `Bad Request`,
-                401: `Unauthorized`,
-                403: `Forbidden`,
-                404: `Not Found`,
-                500: `Server Error`,
-                501: `Server Error`,
-            },
+            
         });
     }
 
@@ -151,14 +123,7 @@ id: string,
         return __request(OpenAPI, {
             method: 'GET',
             url: '/api/chat/connection/online-count',
-            errors: {
-                400: `Bad Request`,
-                401: `Unauthorized`,
-                403: `Forbidden`,
-                404: `Not Found`,
-                500: `Server Error`,
-                501: `Server Error`,
-            },
+            
         });
     }
 

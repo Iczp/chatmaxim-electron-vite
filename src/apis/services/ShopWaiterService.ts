@@ -39,14 +39,7 @@ userId: string,
                 'id': id,
                 'userId': userId,
             },
-            errors: {
-                400: `Bad Request`,
-                401: `Unauthorized`,
-                403: `Forbidden`,
-                404: `Not Found`,
-                500: `Server Error`,
-                501: `Server Error`,
-            },
+            
         });
     }
 
@@ -65,14 +58,7 @@ requestBody?: IczpNet_Chat_ShopWaiters_Dtos_ShopWaiterCreateInput,
             url: '/api/chat/shop-waiter',
             body: requestBody,
             mediaType: 'application/json',
-            errors: {
-                400: `Bad Request`,
-                401: `Unauthorized`,
-                403: `Forbidden`,
-                404: `Not Found`,
-                500: `Server Error`,
-                501: `Server Error`,
-            },
+            
         });
     }
 
@@ -119,14 +105,7 @@ sorting?: string,
                 'SkipCount': skipCount,
                 'Sorting': sorting,
             },
-            errors: {
-                400: `Bad Request`,
-                401: `Unauthorized`,
-                403: `Forbidden`,
-                404: `Not Found`,
-                500: `Server Error`,
-                501: `Server Error`,
-            },
+            
         });
     }
 
@@ -153,14 +132,7 @@ requestBody?: IczpNet_Chat_ShopWaiters_Dtos_ShopWaiterUpdateInput,
             },
             body: requestBody,
             mediaType: 'application/json',
-            errors: {
-                400: `Bad Request`,
-                401: `Unauthorized`,
-                403: `Forbidden`,
-                404: `Not Found`,
-                500: `Server Error`,
-                501: `Server Error`,
-            },
+            
         });
     }
 

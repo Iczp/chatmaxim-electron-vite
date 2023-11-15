@@ -25,14 +25,7 @@ export class MessageService {
         return __request(OpenAPI, {
             method: 'GET',
             url: '/api/chat/message/disabled-forward-list',
-            errors: {
-                400: `Bad Request`,
-                401: `Unauthorized`,
-                403: `Forbidden`,
-                404: `Not Found`,
-                500: `Server Error`,
-                501: `Server Error`,
-            },
+            
         });
     }
 
@@ -61,14 +54,7 @@ messageId: number,
                 'SessionUnitId': sessionUnitId,
                 'MessageId': messageId,
             },
-            errors: {
-                400: `Bad Request`,
-                401: `Unauthorized`,
-                403: `Forbidden`,
-                404: `Not Found`,
-                500: `Server Error`,
-                501: `Server Error`,
-            },
+            
         });
     }
 
@@ -163,14 +149,7 @@ sorting?: string,
                 'SkipCount': skipCount,
                 'Sorting': sorting,
             },
-            errors: {
-                400: `Bad Request`,
-                401: `Unauthorized`,
-                403: `Forbidden`,
-                404: `Not Found`,
-                500: `Server Error`,
-                501: `Server Error`,
-            },
+            
         });
     }
 

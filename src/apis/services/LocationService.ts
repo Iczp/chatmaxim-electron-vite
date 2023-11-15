@@ -33,14 +33,7 @@ sessionUnitId: string,
             query: {
                 'sessionUnitId': sessionUnitId,
             },
-            errors: {
-                400: `Bad Request`,
-                401: `Unauthorized`,
-                403: `Forbidden`,
-                404: `Not Found`,
-                500: `Server Error`,
-                501: `Server Error`,
-            },
+            
         });
     }
 
@@ -59,14 +52,7 @@ requestBody?: IczpNet_Chat_Locations_ShareLocationInput,
             url: '/api/chat/location/sharing',
             body: requestBody,
             mediaType: 'application/json',
-            errors: {
-                400: `Bad Request`,
-                401: `Unauthorized`,
-                403: `Forbidden`,
-                404: `Not Found`,
-                500: `Server Error`,
-                501: `Server Error`,
-            },
+            
         });
     }
 
@@ -85,14 +71,7 @@ requestBody: IczpNet_Chat_Locations_StopShareLocationInput,
             url: '/api/chat/location/stop-sharing',
             body: requestBody,
             mediaType: 'application/json',
-            errors: {
-                400: `Bad Request`,
-                401: `Unauthorized`,
-                403: `Forbidden`,
-                404: `Not Found`,
-                500: `Server Error`,
-                501: `Server Error`,
-            },
+            
         });
     }
 

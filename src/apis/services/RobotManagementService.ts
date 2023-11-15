@@ -26,14 +26,7 @@ requestBody?: IczpNet_Chat_Robots_Dtos_RobotCreateInput,
             url: '/api/chat/robot-management',
             body: requestBody,
             mediaType: 'application/json',
-            errors: {
-                400: `Bad Request`,
-                401: `Unauthorized`,
-                403: `Forbidden`,
-                404: `Not Found`,
-                500: `Server Error`,
-                501: `Server Error`,
-            },
+            
         });
     }
 
@@ -56,14 +49,7 @@ requestBody?: IczpNet_Chat_Robots_Dtos_RobotUpdateInput,
             },
             body: requestBody,
             mediaType: 'application/json',
-            errors: {
-                400: `Bad Request`,
-                401: `Unauthorized`,
-                403: `Forbidden`,
-                404: `Not Found`,
-                500: `Server Error`,
-                501: `Server Error`,
-            },
+            
         });
     }
 

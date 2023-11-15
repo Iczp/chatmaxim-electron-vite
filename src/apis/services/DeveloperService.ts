@@ -30,14 +30,7 @@ base64String?: string,
             query: {
                 'base64String': base64String,
             },
-            errors: {
-                400: `Bad Request`,
-                401: `Unauthorized`,
-                403: `Forbidden`,
-                404: `Not Found`,
-                500: `Server Error`,
-                501: `Server Error`,
-            },
+            
         });
     }
 
@@ -78,14 +71,7 @@ token?: string,
                 'EncodingAesKey': encodingAesKey,
                 'Token': token,
             },
-            errors: {
-                400: `Bad Request`,
-                401: `Unauthorized`,
-                403: `Forbidden`,
-                404: `Not Found`,
-                500: `Server Error`,
-                501: `Server Error`,
-            },
+            
         });
     }
 
@@ -104,14 +90,7 @@ requestBody?: IczpNet_Chat_Developers_Dtos_EncryptInput,
             url: '/api/chat/developer/encrypt',
             body: requestBody,
             mediaType: 'application/json',
-            errors: {
-                400: `Bad Request`,
-                401: `Unauthorized`,
-                403: `Forbidden`,
-                404: `Not Found`,
-                500: `Server Error`,
-                501: `Server Error`,
-            },
+            
         });
     }
 
@@ -124,14 +103,7 @@ requestBody?: IczpNet_Chat_Developers_Dtos_EncryptInput,
         return __request(OpenAPI, {
             method: 'POST',
             url: '/api/chat/developer/generate-encoding-aes-key',
-            errors: {
-                400: `Bad Request`,
-                401: `Unauthorized`,
-                403: `Forbidden`,
-                404: `Not Found`,
-                500: `Server Error`,
-                501: `Server Error`,
-            },
+            
         });
     }
 
@@ -172,14 +144,7 @@ echo?: string,
                 'TimeStamp': timeStamp,
                 'Echo': echo,
             },
-            errors: {
-                400: `Bad Request`,
-                401: `Unauthorized`,
-                403: `Forbidden`,
-                404: `Not Found`,
-                500: `Server Error`,
-                501: `Server Error`,
-            },
+            
         });
     }
 
@@ -198,14 +163,7 @@ id: number,
             path: {
                 'id': id,
             },
-            errors: {
-                400: `Bad Request`,
-                401: `Unauthorized`,
-                403: `Forbidden`,
-                404: `Not Found`,
-                500: `Server Error`,
-                501: `Server Error`,
-            },
+            
         });
     }
 
@@ -248,14 +206,7 @@ postUrl?: string,
                 'EncodingAesKey': encodingAesKey,
                 'PostUrl': postUrl,
             },
-            errors: {
-                400: `Bad Request`,
-                401: `Unauthorized`,
-                403: `Forbidden`,
-                404: `Not Found`,
-                500: `Server Error`,
-                501: `Server Error`,
-            },
+            
         });
     }
 
@@ -283,14 +234,7 @@ isEnabled?: boolean,
             query: {
                 'isEnabled': isEnabled,
             },
-            errors: {
-                400: `Bad Request`,
-                401: `Unauthorized`,
-                403: `Forbidden`,
-                404: `Not Found`,
-                500: `Server Error`,
-                501: `Server Error`,
-            },
+            
         });
     }
 
@@ -310,14 +254,7 @@ input?: string,
             query: {
                 'input': input,
             },
-            errors: {
-                400: `Bad Request`,
-                401: `Unauthorized`,
-                403: `Forbidden`,
-                404: `Not Found`,
-                500: `Server Error`,
-                501: `Server Error`,
-            },
+            
         });
     }
 
@@ -364,14 +301,7 @@ cipherText?: string,
                 'Nonce': nonce,
                 'CipherText': cipherText,
             },
-            errors: {
-                400: `Bad Request`,
-                401: `Unauthorized`,
-                403: `Forbidden`,
-                404: `Not Found`,
-                500: `Server Error`,
-                501: `Server Error`,
-            },
+            
         });
     }
 
