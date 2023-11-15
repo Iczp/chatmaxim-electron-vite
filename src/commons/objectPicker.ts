@@ -4,9 +4,18 @@ import { app, ipcRenderer } from 'electron';
 export type ObjectPickerResult = {
   success?: boolean;
   message?: string;
-  selectedItems?: Array<any>;
+  /**
+   * sessionUnitId List
+   *
+   * @type {Array<{
+   *     id: string;
+   *   }>}
+   */
+  selectedItems?: Array<{
+    id: string;
+  }>;
 };
-export const objectPicker = (payload: { chatObjectId: number }) =>
+export const objectPicker = (payload: { chatObjectId: number; selectedItems?: Array<any> }) =>
   new Promise((resolve: (value: ObjectPickerResult) => void, reject: (reason?: any) => void) => {
     const event = `${payload.chatObjectId}-${new Date().getTime()}`;
     // console.warn('once', event);

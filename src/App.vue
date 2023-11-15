@@ -25,41 +25,15 @@ const chatObjectItems: Ref<BadgeDto[]> = ref([]);
 </script>
 
 <template>
-  <!-- <router-link to="/">
-    <HomeOutlined two-tone-color="#ff0000" />
-  </router-link> -->
-  <!-- <scroll-view> -->
-  <!-- <div id="app"> -->
-    <!-- <router-view v-slot="{ Component }">
-        <keep-alive>
-          <component :is="Component" />
-        </keep-alive>
-      </router-view> -->
-    <div class="top-bar drag"></div>
-    <router-view></router-view>
-  <!-- </div> -->
+  <div class="top-bar drag"></div>
+  <router-view />
 
-  <!-- </scroll-view> -->
-
-  <!-- <div>
-    <a href="https://www.electronjs.org/" target="_blank">
-      <img src="./assets/electron.svg" class="logo electron" alt="Electron logo" />
-    </a>
-    <a href="https://vitejs.dev/" target="_blank">
-      <img src="./assets/vite.svg" class="logo" alt="Vite logo" />
-    </a>
-    <a href="https://vuejs.org/" target="_blank">
-      <img src="./assets/vue.svg" class="logo vue" alt="Vue logo" />
-    </a>
-  </div>
-  <HelloWorld msg="Electron + Vite + Vue" />
-
-  <div class="flex-center">
-    Place static files into the
-    <code>/public</code>
-    folder
-    <img style="width: 2.4em; margin-left: 0.4em" src="/logo.svg" alt="Logo" />
-  </div> -->
+  <!-- <router-view v-slot="{ Component, route }">
+    <keep-alive v-if="!!route.meta.keepAlive">
+      <component :is="Component" :key="route.params.chatObjectId" />
+    </keep-alive>
+    <component v-else :is="Component" :key="route.path" />
+  </router-view> -->
 </template>
 
 <style scoped>

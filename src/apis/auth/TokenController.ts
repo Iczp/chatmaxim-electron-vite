@@ -4,7 +4,6 @@ import { AxiosError } from 'axios';
 import { TokenService } from './TokenService';
 import { TokenDto, LoginResult, LoginInput } from './dto';
 import { GrantTypeEnum } from './dto/GrantTypeEnum';
-import { ApiError } from '../core/ApiError';
 
 export const TOKEN_KEY: string = 'TOKEN-V2023';
 
@@ -56,7 +55,7 @@ export const login = ({ username, password }: LoginInput): Promise<LoginResult> 
         });
       })
       .catch(err => {
-        let message = err.body?.error_description || err.message;
+        let message = err?.body?.error_description || err.message;
         console.error('err:', err, JSON.stringify(err));
         reject({
           message: '登录失败:' + message,

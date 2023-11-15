@@ -54,6 +54,7 @@ export const routes = <RouteRecordRaw[]>[
   {
     path: '/object-picker/:chatObjectId(\\d+)-:ticks(\\d+)',
     name: 'object-picker',
+    meta: { keep: true },
     component: () => import('../views/ObjectPicker.vue'),
     props: true,
   },

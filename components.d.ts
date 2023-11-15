@@ -42,6 +42,7 @@ declare module 'vue' {
     Bubble: typeof import('./src/components/Bubble.vue')['default']
     ChatInput: typeof import('./src/components/ChatInput.vue')['default']
     copy: typeof import('./src/components/Icon copy.vue')['default']
+    DragBar: typeof import('./src/components/DragBar.vue')['default']
     HighLight: typeof import('./src/components/HighLight.vue')['default']
     Icon: typeof import('./src/components/Icon.vue')['default']
     Icons: typeof import('./src/components/Icons.vue')['default']

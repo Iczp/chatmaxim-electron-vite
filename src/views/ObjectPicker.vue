@@ -105,7 +105,7 @@ const onConfirm = (): void => {
   sendResult(event, {
     success: true,
     message: 'ok',
-    selectedItems: [],
+    selectedItems: [{ id: 'abc123' }],
   });
 };
 </script>

@@ -46,7 +46,7 @@ import {
   Alarm,
 } from '../icons';
 import Notification from 'ant-design-vue/es/vc-notification/Notification';
-import { setFavorite } from '../commons/messageContextMenuHandle';
+import { forwardMessage, rollbackMessage, setFavorite } from '../commons/messageContextMenuHandle';
 import { objectPicker } from '../commons/objectPicker';
 
 const props = defineProps<{
@@ -173,23 +173,11 @@ const onMessageRightClick = (e: MouseEvent) => {
         disabled: false,
         onClick: e => {
           console.log('contextmenu item click', item);
-          objectPicker({
-            messageId: item.id,
+          forwardMessage({
             chatObjectId: 13,
             sessionUnitId: props.sessionUnitId,
-            selectedItems: [],
-          })
-            .then(v => {
-              console.log('forward', v);
-              const key = new Date().toString();
-              message.loading({ content: '转发中...', key });
-              setTimeout(() => {
-                message.success({ content: '转发成功!', key });
-              }, 1000);
-            })
-            .catch(err => {
-              message.error({ content: '转发失败' });
-            });
+            messageId: item.id!,
+          });
         },
       },
       {
@@ -226,7 +214,12 @@ const onMessageRightClick = (e: MouseEvent) => {
       {
         label: '撤回',
         icon: h(Rollback, iconClass),
-        onClick: () => {},
+        onClick: () => {
+          rollbackMessage({ messageId: item.id! }).then(v => {
+            item.isRollback = true;
+            item.content = null;
+          });
+        },
       },
     ],
   });

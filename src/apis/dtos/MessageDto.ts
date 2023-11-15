@@ -24,11 +24,16 @@ export type MessageDto = MessageOwnerDto & {
   isSelf?: boolean;
 
   /**
+   * 是否撤回
+   *
+   * @type {boolean}
+   */
+  isRollback?: boolean;
+
+  /**
    *
    *
    * @type {('ok' | 'fail' | 'pending')}
    */
   state?: MessageStateEnums;
-
-  
 };

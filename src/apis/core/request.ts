@@ -30,7 +30,7 @@ const getTokenValue = () => {
 };
 // Add a request interceptor
 axios.interceptors.request.use(
-  async (config) => {
+  async config => {
     // Do something before request is sent
     // console.log('axios.interceptors.request', config);
     // const v = await getTokenValue();
@@ -45,29 +45,29 @@ axios.interceptors.request.use(
 
     return config;
   },
-  (err) => {
+  err => {
     // Do something with request error
     return Promise.reject(err);
-  }
+  },
 );
 
 // Add a response interceptor
 axios.interceptors.response.use(
-  (response) => {
+  response => {
     // Any status code that lie within the range of 2xx cause this function to trigger
     // Do something with response data
     // console.log('axios.interceptors.response', response);
     return response;
   },
-  (err) => {
+  err => {
     // Any status codes that falls outside the range of 2xx cause this function to trigger
     // Do something with response error
     return Promise.reject(err);
-  }
+  },
 );
 
 export const isDefined = <T>(
-  value: T | null | undefined
+  value: T | null | undefined,
 ): value is Exclude<T, null | undefined> => {
   return value !== undefined && value !== null;
 };
@@ -120,7 +120,7 @@ export const getQueryString = (params: Record<string, any>): string => {
   const process = (key: string, value: any) => {
     if (isDefined(value)) {
       if (Array.isArray(value)) {
-        value.forEach((v) => {
+        value.forEach(v => {
           process(key, v);
         });
       } else if (typeof value === 'object') {
@@ -166,9 +166,7 @@ const getUrl = (config: OpenAPIConfig, options: ApiRequestOptions): string => {
   return url;
 };
 
-export const getFormData = (
-  options: ApiRequestOptions
-): FormData | undefined => {
+export const getFormData = (options: ApiRequestOptions): FormData | undefined => {
   if (options.formData) {
     const formData = new FormData();
 
@@ -184,7 +182,7 @@ export const getFormData = (
       .filter(([_, value]) => isDefined(value))
       .forEach(([key, value]) => {
         if (Array.isArray(value)) {
-          value.forEach((v) => process(key, v));
+          value.forEach(v => process(key, v));
         } else {
           process(key, value);
         }
@@ -199,7 +197,7 @@ type Resolver<T> = (options: ApiRequestOptions) => Promise<T>;
 
 export const resolve = async <T>(
   options: ApiRequestOptions,
-  resolver?: T | Resolver<T>
+  resolver?: T | Resolver<T>,
 ): Promise<T | undefined> => {
   if (typeof resolver === 'function') {
     return (resolver as Resolver<T>)(options);
@@ -210,15 +208,13 @@ export const resolve = async <T>(
 export const getHeaders = async (
   config: OpenAPIConfig,
   options: ApiRequestOptions,
-  formData?: FormData
+  formData?: FormData,
 ): Promise<Record<string, string>> => {
   const token = await resolve(options, config.TOKEN);
   const username = await resolve(options, config.USERNAME);
   const password = await resolve(options, config.PASSWORD);
   const additionalHeaders = await resolve(options, config.HEADERS);
-  const formHeaders =
-    (typeof formData?.getHeaders === 'function' && formData?.getHeaders()) ||
-    {};
+  const formHeaders = (typeof formData?.getHeaders === 'function' && formData?.getHeaders()) || {};
 
   const headers = Object.entries({
     // Accept: 'application/json',
@@ -232,7 +228,7 @@ export const getHeaders = async (
         ...headers,
         [key]: String(value),
       }),
-      {} as Record<string, string>
+      {} as Record<string, string>,
     );
 
   if (isStringWithValue(token)) {
@@ -274,7 +270,7 @@ export const sendRequest = async <T>(
   formData: FormData | undefined,
   headers: Record<string, string>,
   onCancel: OnCancel,
-  axiosClient: AxiosInstance
+  axiosClient: AxiosInstance,
 ): Promise<AxiosResponse<T>> => {
   const source = axios.CancelToken.source();
 
@@ -304,7 +300,7 @@ export const sendRequest = async <T>(
 
 export const getResponseHeader = (
   response: AxiosResponse<any>,
-  responseHeader?: string
+  responseHeader?: string,
 ): string | undefined => {
   if (responseHeader) {
     const content = response.headers[responseHeader];
@@ -322,10 +318,7 @@ export const getResponseBody = (response: AxiosResponse<any>): any => {
   return undefined;
 };
 
-export const catchErrorCodes = (
-  options: ApiRequestOptions,
-  result: ApiResult
-): void => {
+export const catchErrorCodes = (options: ApiRequestOptions, result: ApiResult): void => {
   const errors: Record<number, string> = {
     // 200: '服务器成功返回请求的数据。',
     // 201: '新建或修改数据成功。',
@@ -342,7 +335,7 @@ export const catchErrorCodes = (
     502: '网关错误。',
     503: '服务不可用，服务器暂时过载或维护。',
     504: '网关超时。',
-    400: 'Bad Request',
+    // 400: 'Bad Request',
     // 401: 'Unauthorized',
     // 403: 'Forbidden',
     // 404: 'Not Found',
@@ -362,7 +355,8 @@ export const catchErrorCodes = (
     const errorStatusText = result.statusText ?? 'unknown';
     const errorBody = (() => {
       try {
-        return JSON.stringify(result.body, null, 2);
+        let message = result.body?.error?.message || JSON.stringify(result.body, null, 2);
+        return message;
       } catch (e) {
         return undefined;
       }
@@ -371,7 +365,7 @@ export const catchErrorCodes = (
     throw new ApiError(
       options,
       result,
-      `Generic Error: status: ${errorStatus}; status text: ${errorStatusText}; body: ${errorBody}`
+      `Generic Error: status: ${errorStatus}; status text: ${errorStatusText}; body: ${errorBody}`,
     );
   }
 };
@@ -387,7 +381,7 @@ export const catchErrorCodes = (
 export const request = <T>(
   config: OpenAPIConfig,
   options: ApiRequestOptions,
-  axiosClient: AxiosInstance = axios
+  axiosClient: AxiosInstance = axios,
 ): CancelablePromise<T> => {
   return new CancelablePromise(async (resolve, reject, onCancel) => {
     try {
@@ -405,13 +399,10 @@ export const request = <T>(
           formData,
           headers,
           onCancel,
-          axiosClient
+          axiosClient,
         );
         const responseBody = getResponseBody(response);
-        const responseHeader = getResponseHeader(
-          response,
-          options.responseHeader
-        );
+        const responseHeader = getResponseHeader(response, options.responseHeader);
 
         const result: ApiResult = {
           url,
