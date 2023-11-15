@@ -3,7 +3,7 @@ import { HtmlHTMLAttributes, computed, h, ref } from 'vue';
 import { message } from 'ant-design-vue';
 
 import { MessageDto } from '../apis/dtos';
-import { MessageTypeEnums } from '../apis/enums';
+import { ChatObjectTypeEnums, MessageTypeEnums } from '../apis/enums';
 import { formatMessageTime } from '../commons/utils';
 import ContextMenu from '@imengyu/vue3-context-menu';
 import Avatar from './Avatar.vue';
@@ -44,6 +44,11 @@ import {
   BookmarkRemove,
   Remind,
   Alarm,
+  VideoStop,
+  VideoPlay,
+  MusicNote,
+  FileDownload,
+  GroupRemove,
 } from '../icons';
 import Notification from 'ant-design-vue/es/vc-notification/Notification';
 import { forwardMessage, rollbackMessage, setFavorite } from '../commons/messageContextMenuHandle';
@@ -119,6 +124,7 @@ const onAvatarRightClick = (e: MouseEvent) => {
           console.log(`@${senderName.value}`, item);
         },
       },
+
       {
         label: `拍一拍`,
         // icon: h(ContentCopy, iconClass),
@@ -130,12 +136,20 @@ const onAvatarRightClick = (e: MouseEvent) => {
         },
       },
       {
-        label: `特别关注`,
+        label: item.isFollowing ? `取消关注` : `特别关注`,
         // icon: h(ContentCopy, iconClass),
-
         hidden: item.isSelf,
         disabled: false,
         customClass: 'last-child',
+        onClick: () => {
+          console.log(`@${senderName.value}`, item);
+        },
+      },
+      {
+        label: `移出群聊`,
+        icon: h(GroupRemove, iconClass),
+        hidden: item.isSelf || [ChatObjectTypeEnums.Room].some(x => x == 0),
+        disabled: false,
         onClick: () => {
           console.log(`@${senderName.value}`, item);
         },
@@ -162,10 +176,19 @@ const onMessageRightClick = (e: MouseEvent) => {
         icon: h(ContentCopy, iconClass),
         divided: 'down',
         disabled: false,
+        hidden: ![MessageTypeEnums.Text].some(x => x == item.messageType),
         onClick: e => {
           console.log('contextmenu item click', item);
           message.success({ content: '复制成功!', duration: 2 });
         },
+      },
+      {
+        label: props.isPlay ? '停止播放' : '播放',
+        icon: h(props.isPlay ? VideoStop : VideoPlay, iconClass),
+        divided: 'down',
+        disabled: false,
+        hidden: ![MessageTypeEnums.Sound, MessageTypeEnums.Video].some(x => x == item.messageType),
+        onClick: e => {},
       },
       {
         label: '转发',
@@ -194,6 +217,16 @@ const onMessageRightClick = (e: MouseEvent) => {
             messageId: item.id!,
             isFavorite: !item.isFavorited,
           });
+        },
+      },
+      {
+        label: '另存为…',
+        icon: h(FileDownload, iconClass),
+        disabled: false,
+        // hidden: ![MessageTypeEnums.File, MessageTypeEnums.Image].some(x => x == item.messageType),
+        onClick: e => {
+          console.log('contextmenu item click', item);
+          message.success({ content: '复制成功!', duration: 2 });
         },
       },
       {

@@ -113,10 +113,22 @@ const onRightClick = (e: MouseEvent | PointerEvent) => {
         icon: h(isImmersed ? NotificationsActive : NotificationsOff, iconClass),
         divided: 'down',
         disabled: false,
-        customClass: 'last-child',
         onClick: () => {
           setImmersed({ sessionUnitId: item.id!, isImmersed: !isImmersed });
         },
+      },
+      {
+        label: '清空消息',
+        // icon: h(isImmersed ? NotificationsActive : NotificationsOff, iconClass),
+        disabled: false,
+        onClick: () => {},
+      },
+      {
+        label: '删除会话',
+        // icon: h(isImmersed ? NotificationsActive : NotificationsOff, iconClass),
+        disabled: false,
+        customClass: 'last-child',
+        onClick: () => {},
       },
     ],
   });

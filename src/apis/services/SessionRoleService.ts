@@ -169,7 +169,6 @@ idList?: Array<string>,
             query: {
                 'idList': idList,
             },
-            
         });
     }
 

@@ -48,6 +48,13 @@ import GroupRemove from '../svgs/group_remove_black_24dp.svg';
 import GroupAdd from '../svgs/group_add_black_24dp.svg';
 import Remind from '../svgs/alternate_email_black_24dp.svg';
 
+import VideoPlay from '../svgs/play_circle_black_24dp.svg';
+import VideoPause from '../svgs/pause_circle_black_24dp.svg';
+import VideoStop from '../svgs/stop_circle_black_24dp.svg';
+
+import FileDownload from '../svgs/file_download_black_24dp.svg';
+import FileUpload from '../svgs/file_upload_black_24dp.svg';
+
 export {
   Alarm,
   AlarmOff,
@@ -96,4 +103,9 @@ export {
   GroupRemove,
   GroupAdd,
   Remind,
+  VideoPlay,
+  VideoPause,
+  VideoStop,
+  FileDownload,
+  FileUpload,
 };
