@@ -1,9 +1,10 @@
-import { app, BrowserWindow, shell, ipcMain } from 'electron';
+import { app, BrowserWindow, shell, ipcMain, webContents } from 'electron';
 import { release } from 'node:os';
 import { join } from 'node:path';
 // import { WinSize, WinEvents } from '../../ipc';
 import Store from 'electron-store';
 import { Size } from './types';
+import { send } from 'vite';
 
 //
 Store.initRenderer();
@@ -40,7 +41,13 @@ if (!app.requestSingleInstanceLock()) {
 // Read more on https://www.electronjs.org/docs/latest/tutorial/security
 // process.env['ELECTRON_DISABLE_SECURITY_WARNINGS'] = 'true'
 
+type Windows = {
+  [key: string | 'main' | 'child']: BrowserWindow;
+};
+const windows: Windows = {};
+
 let win: BrowserWindow | null = null;
+let childWindow: BrowserWindow | null = null;
 // Here, you can also use other preload
 const preload = join(__dirname, '../preload/index.js');
 const url = process.env.VITE_DEV_SERVER_URL;
@@ -48,13 +55,14 @@ const indexHtml = join(process.env.DIST, 'index.html');
 console.log('app.getPath', app.getAppPath(), app.getPath('userData'));
 
 async function createWindow() {
-  win = new BrowserWindow({
+  win = windows.main = new BrowserWindow({
     title: 'Main window',
     // minWidth: 1560,
     // minHeight: 800,
     width: 1080,
     height: 750,
     icon: join(process.env.VITE_PUBLIC, 'favicon.ico'),
+    hasShadow: true,
     webPreferences: {
       preload,
       // Warning: Enable nodeIntegration and disable contextIsolation is not secure in production
@@ -63,9 +71,9 @@ async function createWindow() {
       nodeIntegration: true,
       contextIsolation: false,
     },
-    autoHideMenuBar: false,
+    autoHideMenuBar: true,
     frame: false,
-    transparent: true,
+    // transparent: true,
   });
   win.removeMenu();
   if (process.env.VITE_DEV_SERVER_URL) {
@@ -81,7 +89,8 @@ async function createWindow() {
 
   // Test actively push message to the Electron-Renderer
   win.webContents.on('did-finish-load', () => {
-    win?.webContents.send('main-process-message', new Date().toLocaleString());
+    win?.webContents.send('main-process-message', `frameId:${win.id}`);
+    createChildWindow({ path: '/settings' });
   });
   win.on('resized', e => {
     const a: any = {
@@ -97,6 +106,7 @@ async function createWindow() {
     if (url.startsWith('https:')) shell.openExternal(url);
     return { action: 'deny' };
   });
+
   // win.webContents.on('will-navigate', (event, url) => { }) #344
 
   // // Renderer others
@@ -145,32 +155,93 @@ app.on('activate', () => {
   }
 });
 
-// New window example arg: new windows url
-ipcMain.handle('open-win', (_, arg) => {
-  const childWindow = new BrowserWindow({
+const createChildWindow = ({ path }): BrowserWindow => {
+  if (childWindow) {
+    return childWindow;
+  }
+  childWindow = new BrowserWindow({
     parent: win,
     modal: true,
     maximizable: false,
     minimizable: false,
+    // show: true,
     webPreferences: {
       preload,
       nodeIntegration: true,
       contextIsolation: false,
     },
+    autoHideMenuBar: false,
+    frame: true,
+  });
+
+  childWindow.webContents.on('did-finish-load', () => {
+    childWindow?.webContents.send('main-process-message', `childWindowId:${childWindow.id}`);
+  });
+
+  childWindow.on('close', e => {
+    e.preventDefault();
+    console.log('childWindow will close stoped:hide');
+    childWindow.hide();
   });
 
   childWindow.removeMenu();
 
   if (process.env.VITE_DEV_SERVER_URL) {
-    childWindow.loadURL(`${url}#${arg}`);
+    childWindow.loadURL(`${url}#${path}`);
     // Open devTool if the app is not packaged
     childWindow.webContents.openDevTools({
       mode: 'detach',
     });
   } else {
-    childWindow.loadFile(indexHtml, { hash: arg });
+    childWindow.loadFile(indexHtml, { hash: path });
   }
-});
+
+  return childWindow;
+};
+
+ipcMain.handle('open-win', (_, arg) => {});
+
+// New window example arg: new windows url
+ipcMain.handle(
+  'open-child',
+  (
+    _,
+    arg: {
+      target: string;
+      callerId?: number;
+      event: string;
+      url: string;
+      payload: any;
+    },
+  ) => {
+    return new Promise((resolve, reject) => {
+      console.log('open-child', _, arg);
+
+      arg.callerId = _.sender.id;
+      let isSuccess = false;
+
+      const resolveFunc = (_: Electron.IpcMainEvent, arg: any) => {
+        console.log('ipc main once aaa', _, arg);
+        isSuccess = true;
+        childWindow.close();
+        resolve(arg);
+      };
+      const rejectFunc = (e: any) => {
+        console.log('childWindow will close ==============', e);
+        if (!isSuccess) {
+          resolve({ success: false, message: 'window close' });
+        }
+        ipcMain.off(arg.event, resolveFunc);
+      };
+      childWindow.once('close', rejectFunc);
+      ipcMain.once(arg.event, resolveFunc);
+      childWindow?.webContents.send('navigate', arg);
+
+      childWindow.setContentSize(500, 300);
+      childWindow.show();
+    });
+  },
+);
 
 ipcMain.handle('win-info', (_, arg) => {
   console.log('win-info', arg);
@@ -182,4 +253,20 @@ ipcMain.handle('win-info', (_, arg) => {
 ipcMain.handle('win-resize', (_, arg: Size) => {
   console.log('win-resize', arg);
   win.setSize(arg.width, arg.height);
+});
+
+ipcMain.handle('send', (_, arg) => {
+  console.log('send', _.sender.id, _, arg);
+  const from = webContents.fromId(1);
+  from.send(arg.data.event, arg);
+  // _.sender.close();
+  var b = webContents.fromId(_.sender.id);
+  console.log('sender.id b', b?.id);
+
+  childWindow.close();
+  // webContents
+  //   .getAllWebContents()
+  //   .find(x => x.id == _.sender.id)
+  //   ?.close();
+  return 'aaa';
 });

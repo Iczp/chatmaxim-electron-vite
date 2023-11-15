@@ -18,6 +18,10 @@ import PageTitle from './components/PageTitle.vue';
 import Icon from './components/Icon.vue';
 import { router } from './routes';
 import { createPinia } from 'pinia';
+
+// import VueVirtualScroller from 'vue-virtual-scroller'
+import 'vue-virtual-scroller/dist/vue-virtual-scroller.css'
+
 // import './websocket'
 
 const pinia = createPinia();

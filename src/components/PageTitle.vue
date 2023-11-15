@@ -91,12 +91,11 @@ const onTitleClick = () => {
   display: flex;
   flex-direction: row;
   justify-content: space-between;
-  /*  */
   height: 64px;
   background-color: #f5f5f5ac;
   font-size: 16px;
   flex-shrink: 0;
-  border-bottom: 1px solid rgba(2, 19, 81, 0.596);
+  border-bottom: 1px solid rgba(185, 185, 185, 0.596);
   box-sizing: border-box;
   /* background: linear-gradient(135deg,#f5f5f5ac, rgba(1, 156, 148, 0.2)) border-box; */
   background: linear-gradient(135deg,#f5f5f5ac, rgba(1, 156, 148, 0.2)) border-box;

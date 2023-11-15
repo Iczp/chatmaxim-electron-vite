@@ -20,6 +20,9 @@ export default defineConfig(({ command }) => {
   const sourcemap = isServe || !!process.env.VSCODE_DEBUG;
 
   return {
+    define: {
+      'process.env.ROOT': JSON.stringify(__dirname),
+    },
     plugins: [
       vue(),
       svgLoader({

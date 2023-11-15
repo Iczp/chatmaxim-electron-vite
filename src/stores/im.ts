@@ -65,7 +65,7 @@ export const useImStore = defineStore('im', {
     getItem:
       state =>
       (sessionUnitId: string): SessionUnitOwnerDto =>
-        state.sessionUnitMap[sessionUnitId] || store.get(sessionUnitId),
+        state.sessionUnitMap[sessionUnitId], //|| store.get(sessionUnitId),
   },
   // 也可以这样定义
   // state: () => ({ count: 0 })
@@ -87,7 +87,7 @@ export const useImStore = defineStore('im', {
     //   this.sessionItemsMap[chatObjectId].sort(this.sortFunc);
     // },
     storeSessionItems(chatObjectId: number): void {
-      store.set(`session-items-${chatObjectId}`, this.sessionItemsMap[chatObjectId]);
+      // store.set(`session-items-${chatObjectId}`, this.sessionItemsMap[chatObjectId]);
     },
     setSessionItems(chatObjectId: number, items: SessionUnitOwnerDto[], keyword?: string): void {
       // console.log('setSessionItems', chatObjectId, items);
@@ -105,13 +105,13 @@ export const useImStore = defineStore('im', {
     },
     setItem(item: SessionUnitOwnerDto): void {
       this.sessionUnitMap[item.id!] = item;
-      store.set(item.id!, item);
+      // store.set(item.id!, item);
     },
     setMany(items: Array<SessionUnitOwnerDto>, keyword?: string): void {
       // console.log('setMany', items);
       items.map(x => {
         this.sessionUnitMap[x.id!] = x;
-        store.set(x.id!, x);
+        // store.set(x.id!, x);
       });
       this.setSessionItems(items[0].ownerId!, items, keyword);
       // this.sessionUnitMap = {...this.sessionUnitMap};

@@ -51,6 +51,12 @@ export const routes = <RouteRecordRaw[]>[
   },
   { path: '/login', component: () => import('../views/Login.vue') },
   { path: '/settings', component: () => import('../views/Settings.vue'), props: true },
+  {
+    path: '/object-picker/:chatObjectId(\\d+)-:ticks(\\d+)',
+    name: 'object-picker',
+    component: () => import('../views/ObjectPicker.vue'),
+    props: true,
+  },
 ];
 
 // 3、创建一个路由的对象

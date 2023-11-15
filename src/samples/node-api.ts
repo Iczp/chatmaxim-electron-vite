@@ -2,7 +2,7 @@ import { lstat } from 'node:fs/promises';
 import { cwd } from 'node:process';
 import { ipcRenderer } from 'electron';
 import Store from 'electron-store';
-
+import { router } from '../routes';
 import { WinEvents } from '../ipc';
 
 const store = new Store();
@@ -33,4 +33,11 @@ lstat(cwd())
 
 ipcRenderer.on(WinEvents.resized, (_event, ...args) => {
   console.log(WinEvents.resized, ...args);
+});
+
+ipcRenderer.on('navigate', (_event, args) => {
+  console.log('[navigate]:', args);
+  const url = `${args.url}`;
+  router.replace(url);
+  console.log('url', url);
 });

@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { computed, reactive, ref, watch } from 'vue';
+import { computed, onMounted, reactive, ref, watch } from 'vue';
 import { onBeforeRouteLeave, onBeforeRouteUpdate, useRoute } from 'vue-router';
 import { router, chatHistorys } from '../routes';
 import { SessionUnitOwnerDto, SessionUnitService } from '../apis';
@@ -209,8 +209,16 @@ const onReachEnd = (event: CustomEvent) => {
     fetchData(queryInput);
   }
 };
+const footerObserver = ref<HTMLElement | null>();
 
-
+var intersectionObserver = new IntersectionObserver(function (entries) {
+  console.log('Loaded new items', entries[0]);
+  // 如果不可见，就返回
+  if (entries[0].intersectionRatio <= 0) return;
+});
+onMounted(() => {
+  intersectionObserver.observe(footerObserver.value!);
+});
 </script>
 
 <template>
@@ -253,11 +261,11 @@ const onReachEnd = (event: CustomEvent) => {
             :item="store.getItem(item.id!)"
             :index="index"
             :active="acitveSessionUnitId == item.id"
-
           />
           <!-- </div> -->
           <Loading v-if="ret.isPosting && !ret.isEof" :height="64" />
         </div>
+        <div ref="footerObserver"></div>
       </scroll-view>
     </div>
 

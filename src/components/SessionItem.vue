@@ -1,5 +1,15 @@
 <script setup lang="ts">
-import { HtmlHTMLAttributes, Ref, computed, h, reactive, ref, watch } from 'vue';
+import {
+  HtmlHTMLAttributes,
+  Ref,
+  computed,
+  h,
+  onMounted,
+  onUnmounted,
+  reactive,
+  ref,
+  watch,
+} from 'vue';
 import Avatar from './Avatar.vue';
 import {
   IczpNet_Chat_MessageSections_Messages_Dtos_MessageDto,
@@ -111,18 +121,37 @@ const onRightClick = (e: MouseEvent | PointerEvent) => {
     ],
   });
 };
+
+// var intersectionObserver = new IntersectionObserver((entries: IntersectionObserverEntry[]) => {
+//   console.log('sessionItemRef', entries[0]);
+//   visibility.value = entries[0].intersectionRatio > 0;
+//   // 如果不可见，就返回
+//   if (entries[0].intersectionRatio <= 0) return;
+// });
+
+// const visibility = ref(false);
+// const sessionItemRef = ref<HTMLElement | null>();
+// onMounted(() => {
+//   intersectionObserver.observe(sessionItemRef.value!);
+// });
+// onUnmounted(() => {
+//   if (sessionItemRef.value) {
+//     intersectionObserver.unobserve(sessionItemRef.value);
+//   }
+// });
 </script>
 
 <template>
   <div
+    ref="sessionItemRef"
     class="session-item"
     draggable="true"
     :class="{ active }"
     :object-type="objectType?.toString()"
     @click.right.native="onRightClick"
   >
-    <div class="active-bar"></div>
-
+    <!-- <div class="active-bar"></div> -->
+    <!-- <template v-if="visibility"> -->
     <Avatar :entity="destination" :name="destination?.name" />
 
     <div class="session-description">
@@ -186,6 +215,7 @@ const onRightClick = (e: MouseEvent | PointerEvent) => {
         </div>
       </div>
     </div>
+    <!-- </template> -->
   </div>
 </template>
 
@@ -199,6 +229,7 @@ const onRightClick = (e: MouseEvent | PointerEvent) => {
   height: var(--side-width);
   position: relative;
 }
+
 .session-item::after {
   content: '';
   height: 1px;
@@ -213,8 +244,10 @@ const onRightClick = (e: MouseEvent | PointerEvent) => {
 .session-item:last-child::after {
   background-color: rgba(242, 20, 20, 0.41);
 }
+.session-item::before,
 .active-bar {
   /* display: none; */
+  content: '';
   left: 0;
   height: 0;
   position: absolute;
@@ -223,12 +256,14 @@ const onRightClick = (e: MouseEvent | PointerEvent) => {
   /* height: 100%; */
   background-color: rgba(24, 144, 255, 0.1);
   transition: all 0.3s;
+  pointer-events: none;
 }
-
+.session-item.active::before,
 .session-item.active .active-bar {
   display: block;
   height: 100%;
   background-color: rgba(24, 144, 255, 1);
+  z-index: 1;
 }
 .session-item {
   display: flex;

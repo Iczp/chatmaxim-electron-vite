@@ -29,7 +29,7 @@ const chatObjectItems: Ref<BadgeDto[]> = ref([]);
     <HomeOutlined two-tone-color="#ff0000" />
   </router-link> -->
   <!-- <scroll-view> -->
-  <div id="app">
+  <!-- <div id="app"> -->
     <!-- <router-view v-slot="{ Component }">
         <keep-alive>
           <component :is="Component" />
@@ -37,7 +37,7 @@ const chatObjectItems: Ref<BadgeDto[]> = ref([]);
       </router-view> -->
     <div class="top-bar drag"></div>
     <router-view></router-view>
-  </div>
+  <!-- </div> -->
 
   <!-- </scroll-view> -->
 
