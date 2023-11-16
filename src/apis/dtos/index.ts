@@ -4,6 +4,9 @@ export type { ResultValue } from './ResultValue';
 export type { SessionUnitGetListInput } from './SessionUnitGetListInput';
 export type { SessionItemDto } from './SessionItemDto';
 export type { SessionUnitOwnerDto } from './SessionUnitOwnerDto';
+export type { SessionUnitSenderDto } from './SessionUnitSenderDto';
+export type { SessionUnitDestinationDto } from './SessionUnitDestinationDto';
+
 export type { SessionUnitSettingDto } from './SessionUnitSettingDto';
 export type { ChatObjectDto } from './ChatObjectDto';
 export type { MessageDto } from './MessageDto';

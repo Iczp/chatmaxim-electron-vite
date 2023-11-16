@@ -1,7 +1,6 @@
-import { MessageTypeEnums, ReminderTypeEnums } from '../enums';
 
-import { ChatObjectDto } from './ChatObjectDto';
 import { MessageSimpleDto } from './MessageSimpleDto';
+import { SessionUnitSenderDto } from './SessionUnitSenderDto';
 
 export type MessageOwnerDto = MessageSimpleDto & {
   /**
@@ -30,11 +29,17 @@ export type MessageOwnerDto = MessageSimpleDto & {
    */
   isFavorited?: boolean;
 
+  // /**
+  //  * 发送人
+  //  * @type {ChatObjectDto}
+  //  */
+  // sender?: ChatObjectDto;
+
   /**
    * 发送人
    * @type {ChatObjectDto}
    */
-  sender?: ChatObjectDto;
+  senderSessionUnit?: SessionUnitSenderDto;
 
   /**
    * 转发来源Id(转发才有)

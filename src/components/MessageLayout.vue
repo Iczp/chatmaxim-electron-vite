@@ -49,6 +49,9 @@ import {
   MusicNote,
   FileDownload,
   GroupRemove,
+  PersonAdd,
+  WavingHand,
+  ChatOff,
 } from '../icons';
 import Notification from 'ant-design-vue/es/vc-notification/Notification';
 import { forwardMessage, rollbackMessage, setFavorite } from '../commons/messageContextMenuHandle';
@@ -73,7 +76,11 @@ const isRollback = computed(() => props.item?.rollbackTime != null);
 const sendTime = computed(() => formatMessageTime(new Date(props.item.creationTime!)));
 const sendTimeTitle = computed(() => props.item.creationTime);
 const senderName = computed(
-  () => props.item.senderName || props.item.senderDisplayName || props.item.sender?.name || '-',
+  () =>
+    props.item.senderName ||
+    props.item.senderDisplayName ||
+    props.item.senderSessionUnit?.displayName ||
+    '-',
 );
 const isShowMemberName = ref(true);
 // const onRightClick = (e: Event) => {
@@ -100,13 +107,13 @@ const onAvatarRightClick = (e: MouseEvent) => {
         label: `设置名称`,
         // icon: h(ContentCopy, iconClass),
         hidden: !item.isSelf,
-        customClass: 'first-child last-child',
+        customClass: 'first-child',
         disabled: false,
         onClick: () => {},
       },
       {
         label: `@${senderName.value}`,
-        icon: h(Remind, iconClass),
+        // icon: h(Remind, iconClass),
         hidden: item.isSelf,
         customClass: 'first-child',
         disabled: false,
@@ -116,8 +123,7 @@ const onAvatarRightClick = (e: MouseEvent) => {
       },
       {
         label: `禁言`,
-        // icon: h(ContentCopy, iconClass),
-
+        icon: h(ChatOff, iconClass),
         hidden: item.isSelf,
         disabled: false,
         onClick: () => {
@@ -127,7 +133,7 @@ const onAvatarRightClick = (e: MouseEvent) => {
 
       {
         label: `拍一拍`,
-        // icon: h(ContentCopy, iconClass),
+        icon: h(WavingHand, iconClass),
 
         hidden: item.isSelf,
         disabled: false,
@@ -137,10 +143,19 @@ const onAvatarRightClick = (e: MouseEvent) => {
       },
       {
         label: item.isFollowing ? `取消关注` : `特别关注`,
-        // icon: h(ContentCopy, iconClass),
+        icon: h(Remind, iconClass),
         hidden: item.isSelf,
         disabled: false,
         customClass: 'last-child',
+        onClick: () => {
+          console.log(`@${senderName.value}`, item);
+        },
+      },
+      {
+        label: `加为好友`,
+        icon: h(PersonAdd, iconClass),
+        hidden: item.isSelf || item.senderSessionUnit?.isFriendship,
+        disabled: false,
         onClick: () => {
           console.log(`@${senderName.value}`, item);
         },
@@ -236,7 +251,7 @@ const onMessageRightClick = (e: MouseEvent) => {
         onClick: () => {},
       },
       {
-        label: '多选',
+        label: props.selectable ? '取消多选' : '多选',
         icon: h(CheckList, iconClass),
         onClick: () => {
           console.log('emits update:selectable', !props.selectable);
@@ -277,7 +292,7 @@ const onMessageRightClick = (e: MouseEvent) => {
       <section class="msg-body" :class="{ reverse: item.isSelf }">
         <aside class="msg-aside">
           <Avatar
-            :item="item.sender"
+            :item="item.senderSessionUnit?.owner"
             :size="40"
             :name="senderName"
             @click.right.native="onAvatarRightClick"

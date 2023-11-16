@@ -1,6 +1,11 @@
 import { message } from 'ant-design-vue';
 import { FavoriteService, MessageSenderService } from '../apis';
 import { objectPicker } from './objectPicker';
+
+import { ExclamationCircleOutlined } from '@ant-design/icons-vue';
+import { createVNode } from 'vue';
+import { Modal } from 'ant-design-vue';
+
 /**
  * 收藏与取消
  */
@@ -115,17 +120,35 @@ export const rollbackMessage = ({
   messageId: number;
 }): Promise<boolean> =>
   new Promise((resolve, reject) => {
-    const key = new Date().toString();
-    MessageSenderService.postApiChatMessageSenderRollback({
-      messageId,
-    })
-      .then(res => {
-        message.success({ content: '撤回成功!', key });
-        resolve(true);
-      })
-      .catch(err => {
-        console.error('MessageSenderService.postApiChatMessageSenderRollback', err);
-        message.error({ content: err.body?.error?.message || 'Api Error', key });
-        reject(false);
-      });
+    Modal.confirm({
+      title: '撤回',
+      content: '撤回有局限性，确定要撤回消息?',
+      icon: createVNode(ExclamationCircleOutlined),
+      cancelText: '取消',
+      okText: '确定撤回',
+      maskClosable: true,
+      wrapClassName: 'chat-models',
+      onOk() {
+        // return new Promise((resolve, reject) => {
+        //   setTimeout(Math.random() > 0.5 ? resolve : reject, 1000);
+        // }).catch(() => console.log('Oops errors!'));
+
+        const key = new Date().toString();
+        MessageSenderService.postApiChatMessageSenderRollback({
+          messageId,
+        })
+          .then(res => {
+            message.success({ content: '撤回成功!', key });
+            resolve(true);
+          })
+          .catch(err => {
+            console.error('MessageSenderService.postApiChatMessageSenderRollback', err);
+            message.error({ content: err.body?.error?.message || 'Api Error', key });
+            reject(false);
+          });
+      },
+      onCancel() {
+        Modal.destroyAll();
+      },
+    });
   });

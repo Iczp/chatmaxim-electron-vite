@@ -27,18 +27,19 @@ import MenuClose from '../svgs/menu_black_24dp.svg';
 import MenuOpen from '../svgs/menu_open_black_24dp.svg';
 import AlignTop from '../svgs/vertical_align_top_black_24dp.svg';
 import AlignBottom from '../svgs/vertical_align_bottom_black_24dp.svg';
+import Keyboard from '../svgs/keyboard_black_24dp.svg';
 import KeyboardHide from '../svgs/keyboard_hide_black_24dp.svg';
 import PushPin from '../svgs/push_pin_black_24dp.svg';
 import Send from '../svgs/send_black_24dp.svg';
 import FavoriteOutline from '../svgs/favorite_black_24dp.svg';
 import FavoriteFilled from '../svgs/favorite_border_black_24dp.svg';
-import ChatOn from '../svgs/speaker_notes_off_black_24dp.svg';
-import ChatOff from '../svgs/chat_black_24dp.svg';
+import ChatOff from '../svgs/speaker_notes_off_black_24dp.svg';
+import ChatOn from '../svgs/chat_black_24dp.svg';
 import ChatWran from '../svgs/announcement_black_24dp.svg';
 import ChatOk from '../svgs/mark_chat_read_black_24dp.svg';
 import ChatMessage from '../svgs/textsms_black_24dp.svg';
 import Person from '../svgs/person_black_24dp.svg';
-import PersonAdd from '../svgs/person_add_black_24dp.svg';
+import PersonAdd from '../svgs/person_add_alt_black_24dp.svg';
 import PersonOff from '../svgs/person_off_black_24dp.svg';
 import PersonRemove from '../svgs/person_remove_black_24dp.svg';
 
@@ -55,6 +56,9 @@ import VideoStop from '../svgs/stop_circle_black_24dp.svg';
 import FileDownload from '../svgs/file_download_black_24dp.svg';
 import FileUpload from '../svgs/file_upload_black_24dp.svg';
 
+import WavingHand from '../svgs/waving_hand_black_24dp.svg';
+
+import Tag from '../svgs/tag_black_24dp.svg';
 export {
   Alarm,
   AlarmOff,
@@ -84,6 +88,7 @@ export {
   MenuOpen,
   AlignTop,
   AlignBottom,
+  Keyboard,
   KeyboardHide,
   PushPin,
   Send,
@@ -108,4 +113,6 @@ export {
   VideoStop,
   FileDownload,
   FileUpload,
+  WavingHand,
+  Tag,
 };
