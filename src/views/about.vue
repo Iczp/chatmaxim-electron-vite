@@ -70,81 +70,89 @@ const activeKey = ref('all');
 </script>
 
 <template>
-  <page-title title="About" description="Electron + Vite + TypeScript" />
+  <page>
+    <page-title title="About" description="Electron + Vite + TypeScript" />
 
-  <a-tabs v-model:activeKey="activeKey">
-    <a-tab-pane key="all" tab="所有">所有</a-tab-pane>
-    <a-tab-pane v-for="(item, index) in objectTypes" :key="index" :tab="item.text">
-      {{ item.text }} ({{ item.key }} )
-    </a-tab-pane>
-    <template #leftExtra>
-      <a-button type="text" class="tabs-extra-demo-button">Left</a-button>
-    </template>
-    <template #rightExtra>
-      <a-input-search
-        v-model:value="keyword"
-        placeholder="搜索：公众号"
-        enter-button
-        @search="onSearch"
-      />
-    </template>
-  </a-tabs>
+    <page-content>
+      <a-tabs v-model:activeKey="activeKey">
+        <a-tab-pane key="all" tab="所有">所有</a-tab-pane>
+        <a-tab-pane v-for="(item, index) in objectTypes" :key="index" :tab="item.text">
+          {{ item.text }} ({{ item.key }} )
+        </a-tab-pane>
+        <template #leftExtra>
+          <a-button type="text" class="tabs-extra-demo-button">Left</a-button>
+        </template>
+        <template #rightExtra>
+          <a-input-search
+            v-model:value="keyword"
+            placeholder="搜索：公众号"
+            enter-button
+            @search="onSearch"
+          />
+        </template>
+      </a-tabs>
 
-  <h2 @click="onClick">{{ count }}</h2>
-  <a-space>
-    <a-button @click="onClick">Connect to websocket</a-button>
-    <RouterLink to="/contacts/13?id=321">Contacts:13</RouterLink>
-    <RouterLink to="/contacts/14?id=321">Contacts:14</RouterLink>
-  </a-space>
+      <h2 @click="onClick">{{ count }}</h2>
+      <a-space>
+        <a-button @click="onClick">Connect to websocket</a-button>
+        <RouterLink to="/contacts/13?id=321">Contacts:13</RouterLink>
+        <RouterLink to="/contacts/14?id=321">Contacts:14</RouterLink>
+      </a-space>
 
-  <div>
-    {{ ChatObjectTypeEnumText }}
-    <a-space direction="vertical">
-      <a-input-group compact>
-        <a-select v-model:value="objectType" style="width: 160px">
-          <a-select-option v-for="(item, index) in objectTypes" :value="item.value" :key="index">
-            {{ item.text }} ({{ item.key }} )
-          </a-select-option>
-        </a-select>
-        <!-- </a-input-group>
+      <div>
+        {{ ChatObjectTypeEnumText }}
+        <a-space direction="vertical">
+          <a-input-group compact>
+            <a-select v-model:value="objectType" style="width: 160px">
+              <a-select-option
+                v-for="(item, index) in objectTypes"
+                :value="item.value"
+                :key="index"
+              >
+                {{ item.text }} ({{ item.key }} )
+              </a-select-option>
+            </a-select>
+            <!-- </a-input-group>
       <a-input-group compact> -->
-        <a-input-search
-          v-model:value="keyword"
-          placeholder="搜索：公众号"
-          enter-button
-          @search="onSearch"
-        />
-      </a-input-group>
-    </a-space>
-  </div>
-  <!-- <a-loading></a-loading> -->
-  <h3 v-for="(item, index) in searchResult.items">
-    {{ item.fullPathName }} - {{ item.id }}
-    <a-button @click="addFriend(item)">添加/关注</a-button>
-  </h3>
+            <a-input-search
+              v-model:value="keyword"
+              placeholder="搜索：公众号"
+              enter-button
+              @search="onSearch"
+            />
+          </a-input-group>
+        </a-space>
+      </div>
+      <!-- <a-loading></a-loading> -->
+      <h3 v-for="(item, index) in searchResult.items">
+        {{ item.fullPathName }} - {{ item.id }}
+        <a-button @click="addFriend(item)">添加/关注</a-button>
+      </h3>
 
-  <p>Lorem Ipsum is simply dummy text of the printing and typesetting industry.</p>
+      <p>Lorem Ipsum is simply dummy text of the printing and typesetting industry.</p>
 
-  <a-space wrap>
-    <a-button type="primary">Primary Button</a-button>
-    <a-button>Default Button</a-button>
-    <a-button type="dashed">Dashed Button</a-button>
-    <a-button type="text">Text Button</a-button>
-    <a-button type="link">Link Button</a-button>
-  </a-space>
+      <a-space wrap>
+        <a-button type="primary">Primary Button</a-button>
+        <a-button>Default Button</a-button>
+        <a-button type="dashed">Dashed Button</a-button>
+        <a-button type="text">Text Button</a-button>
+        <a-button type="link">Link Button</a-button>
+      </a-space>
 
-  <a-menu>
-    <a-menu-item>
-      <a target="_blank" rel="noopener noreferrer" href="#1">General</a>
-    </a-menu-item>
-    <a-menu-item>
-      <a target="_blank" rel="noopener noreferrer" href="#2">Layout</a>
-    </a-menu-item>
-    <a-menu-item>
-      <a target="_blank" rel="noopener noreferrer" href="#3">Navigation</a>
-    </a-menu-item>
-  </a-menu>
+      <a-menu>
+        <a-menu-item>
+          <a target="_blank" rel="noopener noreferrer" href="#1">General</a>
+        </a-menu-item>
+        <a-menu-item>
+          <a target="_blank" rel="noopener noreferrer" href="#2">Layout</a>
+        </a-menu-item>
+        <a-menu-item>
+          <a target="_blank" rel="noopener noreferrer" href="#3">Navigation</a>
+        </a-menu-item>
+      </a-menu>
+    </page-content>
+    <page-footer>footer</page-footer>
+  </page>
 </template>
 
 <style scoped></style>
-../apis/websockets

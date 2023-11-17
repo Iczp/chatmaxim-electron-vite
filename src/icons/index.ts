@@ -34,12 +34,14 @@ import Send from '../svgs/send_black_24dp.svg';
 import FavoriteOutline from '../svgs/favorite_black_24dp.svg';
 import FavoriteFilled from '../svgs/favorite_border_black_24dp.svg';
 import ChatOff from '../svgs/speaker_notes_off_black_24dp.svg';
-import ChatOn from '../svgs/chat_black_24dp.svg';
+import ChatOn from '../svgs/speaker_notes_black_24dp.svg';
+import Chating from '../svgs/chat_black_24dp.svg';
 import ChatWran from '../svgs/announcement_black_24dp.svg';
 import ChatOk from '../svgs/mark_chat_read_black_24dp.svg';
 import ChatMessage from '../svgs/textsms_black_24dp.svg';
 import Person from '../svgs/person_black_24dp.svg';
 import PersonAdd from '../svgs/person_add_alt_black_24dp.svg';
+import PersonPin from '../svgs/person_pin_black_24dp.svg';
 import PersonOff from '../svgs/person_off_black_24dp.svg';
 import PersonRemove from '../svgs/person_remove_black_24dp.svg';
 
@@ -59,6 +61,8 @@ import FileUpload from '../svgs/file_upload_black_24dp.svg';
 import WavingHand from '../svgs/waving_hand_black_24dp.svg';
 
 import Tag from '../svgs/tag_black_24dp.svg';
+import SelfImprovement from '../svgs/self_improvement_black_24dp.svg';
+
 export {
   Alarm,
   AlarmOff,
@@ -98,8 +102,10 @@ export {
   ChatOff,
   ChatWran,
   ChatOk,
+  Chating,
   ChatMessage,
   Person,
+  PersonPin,
   PersonAdd,
   PersonOff,
   PersonRemove,
@@ -115,4 +121,5 @@ export {
   FileUpload,
   WavingHand,
   Tag,
+  SelfImprovement,
 };

@@ -222,9 +222,9 @@ onMounted(() => {
 </script>
 
 <template>
-  <div class="page">
-    <div class="nav-side">
-      <div class="search-bar">
+  <main class="page-session">
+    <aside class="nav-side">
+      <search class="search-bar">
         <a-space direction="vertical">
           <a-input-search
             :bordered="true"
@@ -235,7 +235,7 @@ onMounted(() => {
             @search="onSearch"
           />
         </a-space>
-      </div>
+      </search>
       <!-- <scroll-view v-if="keyword.length != 0">
         <div>搜索：{{ keyword }}</div>
       </scroll-view> -->
@@ -267,18 +267,18 @@ onMounted(() => {
         </div>
         <div ref="footerObserver"></div>
       </scroll-view>
-    </div>
+    </aside>
 
     <!-- <p>{{ router }}</p> -->
-    <div class="content">
+    <main class="content">
       <!-- <router-view></router-view> -->
       <router-view v-slot="{ Component, route }">
         <keep-alive>
           <component :is="Component" :key="route.path" />
         </keep-alive>
       </router-view>
-    </div>
-  </div>
+    </main>
+  </main>
 </template>
 
 <style scoped>
@@ -295,7 +295,7 @@ onMounted(() => {
   border: none;
 }
 
-.page {
+.page-session {
   display: flex;
   position: absolute;
   top: 0;

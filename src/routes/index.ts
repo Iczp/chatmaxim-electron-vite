@@ -58,6 +58,13 @@ export const routes = <RouteRecordRaw[]>[
     component: () => import('../views/ObjectPicker.vue'),
     props: true,
   },
+  {
+    path: '/session-request/:chatObjectId(\\d+)',
+    name: 'session-request',
+    meta: { keep: true },
+    component: () => import('../views/SessionRequest.vue'),
+    props: true,
+  },
 ];
 
 // 3、创建一个路由的对象

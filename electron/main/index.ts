@@ -5,6 +5,7 @@ import { join } from 'node:path';
 import Store from 'electron-store';
 import { Size } from './types';
 import { send } from 'vite';
+import { addParamsToUrl } from './commons/addParamsToUrl';
 
 //
 Store.initRenderer();
@@ -177,6 +178,9 @@ const createChildWindow = ({ path }): BrowserWindow => {
   childWindow.webContents.on('did-finish-load', () => {
     childWindow?.webContents.send('main-process-message', `childWindowId:${childWindow.id}`);
   });
+  win.webContents.on('did-navigate-in-page', (_, ...args) => {
+    console.log('did-navigate-in-page', _, ...args);
+  });
 
   childWindow.on('close', e => {
     e.preventDefault();
@@ -186,19 +190,34 @@ const createChildWindow = ({ path }): BrowserWindow => {
 
   childWindow.removeMenu();
 
-  if (process.env.VITE_DEV_SERVER_URL) {
-    childWindow.loadURL(`${url}#${path}`);
-    // Open devTool if the app is not packaged
-    childWindow.webContents.openDevTools({
-      mode: 'detach',
-    });
-  } else {
-    childWindow.loadFile(indexHtml, { hash: path });
-  }
+  navTo(childWindow, path);
 
   return childWindow;
 };
 
+type Listener = (
+  event: {
+    preventDefault: () => void;
+    readonly defaultPrevented: boolean;
+  },
+  url: string,
+  isMainFrame: boolean,
+  frameProcessId: number,
+  frameRoutingId: number,
+) => void;
+
+const navTo = (win: BrowserWindow, path: string, listener?: Listener): void => {
+  if (process.env.VITE_DEV_SERVER_URL) {
+    win.loadURL(`${url}#${path}`);
+    // Open devTool if the app is not packaged
+
+    win.webContents.openDevTools({
+      mode: 'detach',
+    });
+  } else {
+    win.loadFile(indexHtml, { hash: path });
+  }
+};
 ipcMain.handle('open-win', (_, arg) => {});
 
 // New window example arg: new windows url
@@ -206,7 +225,7 @@ ipcMain.handle(
   'open-child',
   (
     _,
-    arg: {
+    args: {
       target: string;
       callerId?: number;
       event: string;
@@ -215,9 +234,9 @@ ipcMain.handle(
     },
   ) => {
     return new Promise((resolve, reject) => {
-      console.log('open-child', _, arg);
+      console.log('open-child', args);
 
-      arg.callerId = _.sender.id;
+      args.callerId = _.sender.id;
       let isSuccess = false;
 
       const resolveFunc = (_: Electron.IpcMainEvent, arg: any) => {
@@ -231,13 +250,16 @@ ipcMain.handle(
         if (!isSuccess) {
           resolve({ success: false, message: 'window close' });
         }
-        ipcMain.off(arg.event, resolveFunc);
+        ipcMain.off(args.event, resolveFunc);
       };
       childWindow.once('close', rejectFunc);
-      ipcMain.once(arg.event, resolveFunc);
-      childWindow?.webContents.send('navigate', arg);
-
-      childWindow.setContentSize(500, 300);
+      ipcMain.once(args.event, resolveFunc);
+      // childWindow?.webContents.send('navigate', arg);
+      const { event, callerId } = args;
+      const url = addParamsToUrl(args.url, { event, callerId });
+      console.warn('url', url);
+      navTo(childWindow, url);
+      childWindow.setContentSize(500, 800);
       childWindow.show();
     });
   },

@@ -38,6 +38,7 @@ import {
   ContentCopy,
   Forward,
   NotificationsActive,
+  SelfImprovement,
   Rollback,
   Quote,
   BookmarkAdd,
@@ -50,12 +51,15 @@ import {
   FileDownload,
   GroupRemove,
   PersonAdd,
+  PersonPin,
   WavingHand,
   ChatOff,
+  ChatOn,
 } from '../icons';
 import Notification from 'ant-design-vue/es/vc-notification/Notification';
 import { forwardMessage, rollbackMessage, setFavorite } from '../commons/messageContextMenuHandle';
 import { objectPicker } from '../commons/objectPicker';
+import { sessionRequest } from '../commons/sessionRequest';
 
 const props = defineProps<{
   sessionUnitId: string;
@@ -155,6 +159,18 @@ const onAvatarRightClick = (e: MouseEvent) => {
         label: `加为好友`,
         icon: h(PersonAdd, iconClass),
         hidden: item.isSelf || item.senderSessionUnit?.isFriendship,
+        disabled: false,
+        onClick: () => {
+          sessionRequest({
+            ownerId: 13,
+            destinationId: item.senderSessionUnit?.ownerId!,
+          });
+        },
+      },
+      {
+        label: `私信`,
+        icon: h(ChatOn, iconClass),
+        // hidden: item.isSelf && item.senderSessionUnit?.isFriendship,
         disabled: false,
         onClick: () => {
           console.log(`@${senderName.value}`, item);
@@ -301,9 +317,10 @@ const onMessageRightClick = (e: MouseEvent) => {
 
         <main class="msg-main">
           <header v-if="isShowMemberName" class="msg-main-header">
-            {{ senderName }}
-            <Forward class="svg-icon s12" />
-            <ContentCopy class="svg-icon s16" />
+            <PersonPin v-if="item.senderSessionUnit?.isCreator" class="svg-icon s16 color" />
+            <SelfImprovement class="svg-icon-16" />
+            <text>{{ senderName }}</text>
+            <!-- <a-tag color="green">群主</a-tag> -->
           </header>
 
           <main class="msg-content" @click.right.native="onMessageRightClick">
@@ -413,7 +430,7 @@ const onMessageRightClick = (e: MouseEvent) => {
 .msg-main-header {
   display: flex;
   /* min-height: 20px; */
-  /* align-items: center; */
+  align-items: center;
   margin: 0 12px;
   margin-bottom: 2px;
   color: #666;

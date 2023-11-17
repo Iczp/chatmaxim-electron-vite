@@ -195,3 +195,25 @@ code {
 .border-top::after {
   top: 0;
 }
+
+:where(.page) {
+  display: flex;
+  height: 100%;
+  width: 100%;
+  flex-direction: column;
+}
+
+:where(.page-footer) {
+  display: flex;
+  height: 64px;
+  border-top: 1px solid #cccccc;
+  align-items: center;
+  justify-content: center;
+  color: #999;
+}
+
+:where(.page-content) {
+  display: flex;
+  flex: 1;
+  flex-direction: column;
+}
