@@ -1,6 +1,6 @@
 <script setup lang="ts">
-import { computed, onMounted, reactive, toRaw, UnwrapRef, watch } from 'vue';
-import { ChatObjectDto } from '../apis/dtos';
+import { computed, onMounted, reactive, ref, toRaw, UnwrapRef, watch } from 'vue';
+import { ChatObjectDto, SessionRequestInput } from '../apis/dtos';
 import { OfficialService, SessionRequestService } from '../apis';
 import { ChatObjectTypeEnums } from '../apis/enums';
 import { useTitle } from '@vueuse/core';
@@ -11,28 +11,39 @@ import { getStoreValue } from '../commons/openChildWindow';
 
 const title = useTitle();
 
+const route = useRoute();
+
 const props = defineProps<{
   title?: string;
   chatObjectId: Number;
 }>();
+
+const formState = ref<SessionRequestInput>({
+  ownerId: 0,
+  destinationId: 0,
+  requestMessage: `你好，我是 xxx${JSON.stringify(route.query)}`,
+});
+
+const fetchValue = (): void => {
+  const event = route.query.event as string;
+  var storeValue = getStoreValue<SessionRequestInput>(event);
+  formState.value = storeValue!;
+  console.log('fetchValue', event, storeValue);
+};
 onMounted(() => {
   console.log('onMounted route', route);
-  const event = route.query.event as string;
-  var params = getStoreValue<{}>(event);
-  console.log('onMounted', event, params);
+  fetchValue();
 });
 // 与 beforeRouteLeave 相同，无法访问 `this`
 onBeforeRouteLeave((to, from) => {
   // console.log('onBeforeRouteLeave', to, from);
 });
-const route = useRoute();
+
 // 与 onBeforeRouteUpdate 相同，无法访问 `this`
 onBeforeRouteUpdate((to, from) => {
   title.value = route.fullPath;
-  formState.questMessage = route.fullPath;
-  const event = to.query.event as string;
-  var params = getStoreValue<{}>(event);
-  console.log('onBeforeRouteUpdate', event, params, to, from);
+  fetchValue();
+  // console.log('onBeforeRouteUpdate', to, from);
 });
 watch(route, v => {
   console.log('route', v.fullPath);
@@ -76,14 +87,6 @@ const onConfirm = (): void => {
   });
 };
 
-const formState: UnwrapRef<{
-  name: string;
-  questMessage: string;
-}> = reactive({
-  name: '',
-  questMessage: `你好，我是 xxx${JSON.stringify(route.query)}`,
-});
-
 const labelCol = { style: { width: '150px' } };
 const wrapperCol = { span: 12 };
 </script>
@@ -98,11 +101,11 @@ const wrapperCol = { span: 12 };
             <template #label>
               <Avatar />
             </template>
-            <a-input v-model:value="formState.name" />
+            <a-input v-model:value="formState.destinationId" />
           </a-form-item>
 
           <a-form-item label="Activity form">
-            <a-textarea v-model:value="formState.questMessage" />
+            <a-textarea v-model:value="formState.requestMessage" />
           </a-form-item>
         </a-form>
       </scroll-view>

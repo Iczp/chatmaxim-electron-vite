@@ -164,6 +164,7 @@ const onAvatarRightClick = (e: MouseEvent) => {
           sessionRequest({
             ownerId: 13,
             destinationId: item.senderSessionUnit?.ownerId!,
+            requestMessage: `你好:${item.senderSessionUnit?.displayName || ''}`,
           });
         },
       },

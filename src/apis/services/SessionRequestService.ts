@@ -9,6 +9,7 @@ import type { Volo_Abp_Application_Dtos_PagedResultDto_1 } from '../models/Volo_
 import type { CancelablePromise } from '../core/CancelablePromise';
 import { OpenAPI } from '../core/OpenAPI';
 import { request as __request } from '../core/request';
+import { SessionRequestInput } from '../dtos';
 
 export class SessionRequestService {
 
@@ -21,20 +22,7 @@ export class SessionRequestService {
 ownerId,
 destinationId,
 requestMessage,
-}: {
-/**
- * 所属聊天对象Id[发起者]
- */
-ownerId: number,
-/**
- * 目标聊天对象Id[被请求者]
- */
-destinationId: number,
-/**
- * 请求消息
- */
-requestMessage?: string,
-}): CancelablePromise<IczpNet_Chat_SessionSections_SessionRequests_Dtos_SessionRequestDetailDto> {
+}: SessionRequestInput): CancelablePromise<IczpNet_Chat_SessionSections_SessionRequests_Dtos_SessionRequestDetailDto> {
         return __request(OpenAPI, {
             method: 'POST',
             url: '/api/chat/session-request',

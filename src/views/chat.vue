@@ -22,7 +22,7 @@ import {
 } from '@ant-design/icons-vue';
 import ChatSetting from './ChatSetting.vue';
 
-import MessageLayout from '../components/MessageLayout.vue';
+import MessageItem from '../components/MessageItem.vue';
 import ChatInput from '../components/ChatInput.vue';
 import { message } from 'ant-design-vue';
 // import { Mentions, Form } from 'ant-design-vue';
@@ -281,7 +281,7 @@ const mouseleave = (e: MouseEvent) => {
             <!-- <h3>prop.id :{{ sessionUnitId }}</h3>
             <div>entity id:{{ detail }}</div>
             <div>setting:{{ setting }}</div> -->
-            <MessageLayout
+            <MessageItem
               v-for="(item, index) in ret.items"
               :key="item.id"
               :item="item"
@@ -290,7 +290,7 @@ const mouseleave = (e: MouseEvent) => {
             >
               <h3>{{ item.senderDisplayName }}</h3>
               <p>{{ item }}</p>
-            </MessageLayout>
+            </MessageItem>
           </scroll-view>
           <!-- </div> -->
           {{ textValue }}

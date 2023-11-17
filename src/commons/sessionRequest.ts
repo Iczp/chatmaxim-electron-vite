@@ -1,30 +1,17 @@
+import { SessionRequestInput } from '../apis/dtos';
 import { PickerResult, openChildWindow, sendPickerResult } from './openChildWindow';
 
-export type ObjectPickerResult = PickerResult & {
-  /**
-   * sessionUnitId List
-   *
-   * @type {Array<{
-   *     id: string;
-   *   }>}
-   */
-  selectedItems?: Array<{
-    id: string;
-  }>;
-};
-export /**
+
+/**
  * 添加好友
  *
  * @param {{
  *   ownerId: number;
  *   destinationId: number;
  * }} payload
- * @return {*}  {Promise<ObjectPickerResult>}
+ * @return {*}  {Promise<PickerResult>}
  */
-const sessionRequest = (payload: {
-  ownerId: number;
-  destinationId: number;
-}): Promise<ObjectPickerResult> =>
+export const sessionRequest = (payload: SessionRequestInput): Promise<PickerResult> =>
   openChildWindow({
     url: `/session-request/${payload.ownerId}`,
     payload,
@@ -37,5 +24,5 @@ const sessionRequest = (payload: {
 //   });
 // });
 
-export const sendResult = (event: string, result: ObjectPickerResult) =>
+export const sendResult = (event: string, result: PickerResult) =>
   sendPickerResult({ event, result });

@@ -7,6 +7,8 @@ export type { SessionUnitOwnerDto } from './SessionUnitOwnerDto';
 export type { SessionUnitSenderDto } from './SessionUnitSenderDto';
 export type { SessionUnitDestinationDto } from './SessionUnitDestinationDto';
 
+export type { SessionRequestInput } from './SessionRequestInput';
+
 export type { SessionUnitSettingDto } from './SessionUnitSettingDto';
 export type { ChatObjectDto } from './ChatObjectDto';
 export type { MessageDto } from './MessageDto';
