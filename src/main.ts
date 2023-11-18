@@ -16,6 +16,7 @@ import ProLayout, { PageContainer } from '@ant-design-vue/pro-layout';
 
 import PageTitle from './components/PageTitle.vue';
 import Page from './components/Page.vue';
+import LayoutItem from './components/LayoutItem.vue';
 import PageFooter from './components/PageFooter.vue';
 import PageContent from './components/PageContent.vue';
 import Icon from './components/Icon.vue';
@@ -33,6 +34,7 @@ app.component('PageTitle', PageTitle);
 app.component('Page', Page);
 app.component('PageFooter', PageFooter);
 app.component('PageContent', PageContent);
+app.component('LayoutItem', LayoutItem);
 app.component('Icon', Icon);
 app
   .use(PerfectScrollbar, <PerfectScrollbarOptions>{

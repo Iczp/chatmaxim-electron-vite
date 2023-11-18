@@ -62,6 +62,16 @@ import WavingHand from '../svgs/waving_hand_black_24dp.svg';
 
 import Tag from '../svgs/tag_black_24dp.svg';
 import SelfImprovement from '../svgs/self_improvement_black_24dp.svg';
+//arrow
+import ExpandMore from '../svgs/expand_more_black_24dp.svg';
+import ExpandLess from '../svgs/expand_less_black_24dp.svg';
+import ChevronRight from '../svgs/chevron_right_black_24dp.svg';
+import ChevronLeft from '../svgs/chevron_left_black_24dp.svg';
+import ArrowRight from '../svgs/arrow_forward_ios_black_24dp.svg';
+import ArrowLeft from '../svgs/arrow_back_ios_new_black_24dp.svg';
+
+import MoreVert from '../svgs/more_vert_black_24dp.svg';
+import MoreHoriz from '../svgs/more_horiz_black_24dp.svg';
 
 export {
   Alarm,
@@ -122,4 +132,12 @@ export {
   WavingHand,
   Tag,
   SelfImprovement,
+  ExpandMore,
+  ExpandLess,
+  ChevronRight,
+  ChevronLeft,
+  ArrowRight,
+  ArrowLeft,
+  MoreVert,
+  MoreHoriz,
 };

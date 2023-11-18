@@ -1,29 +1,19 @@
 <script setup lang="ts">
 import {
   HtmlHTMLAttributes,
-  Ref,
   computed,
   h,
-  onMounted,
-  onUnmounted,
-  reactive,
-  ref,
   watch,
 } from 'vue';
 import Avatar from './Avatar.vue';
 import {
-  IczpNet_Chat_MessageSections_Messages_Dtos_MessageDto,
   SessionUnitOwnerDto,
 } from '../apis';
 import { formatMessageTime } from '../commons/utils';
-import Badge from '../components/Badge.vue';
 import Text from '../components/Text.vue';
 
 import {
-  UserOutlined,
-  SmileTwoTone,
   HeartTwoTone,
-  CheckCircleTwoTone,
 } from '@ant-design/icons-vue';
 
 import { ChatObjectTypeEnums, MessageTypeEnums } from '../apis/enums';
@@ -166,10 +156,10 @@ const onRightClick = (e: MouseEvent | PointerEvent) => {
     <!-- <template v-if="visibility"> -->
     <Avatar :entity="destination" :name="destination?.name" />
 
-    <div class="session-description">
-      <div class="session-title">
+    <main class="session-main">
+      <div class="title-container">
         <div class="title-left object-name" :title="destinationName!">
-          <div class="text-ellipsis">{{ index }} {{ destinationName }} - {{ item?.ownerId }}</div>
+          <span class="text-ellipsis">{{ index }} {{ destinationName }} - {{ item?.ownerId }}</span>
           <a-tag
             v-if="objectType == ChatObjectTypeEnums.Robot"
             color="blue"
@@ -178,10 +168,10 @@ const onRightClick = (e: MouseEvent | PointerEvent) => {
             机器人
           </a-tag>
         </div>
-        <div class="title-right">{{ sendTime }}</div>
+        <div class="title-right"><span class="text-ellipsis">{{ sendTime }}</span></div>
       </div>
-      <div class="message-content">
-        <div class="content-left">
+      <div class="description-container">
+        <div class="description-left">
           <div class="text-ellipsis">
             <!-- <span>不支持的类型=========================</span> -->
             <!-- @我 -->
@@ -218,7 +208,7 @@ const onRightClick = (e: MouseEvent | PointerEvent) => {
             <span v-else>[不支持的类型]</span>
           </div>
         </div>
-        <div class="content-right">
+        <div class="description-right">
           <a-space>
             <a-badge v-if="badge != 0" :count="badge" :overflow-count="99" :dot="isImmersed" />
             <icon v-if="isImmersed" type="mute" size="14" />
@@ -226,7 +216,7 @@ const onRightClick = (e: MouseEvent | PointerEvent) => {
           </a-space>
         </div>
       </div>
-    </div>
+    </main>
     <!-- </template> -->
   </div>
 </template>
@@ -305,12 +295,12 @@ const onRightClick = (e: MouseEvent | PointerEvent) => {
   background-color: rgba(230, 230, 230, 0.813);
 }
 
-.session-description {
+.session-main {
   display: flex;
   flex: 1;
 }
 
-.session-description {
+.session-main {
   display: flex;
   flex-direction: column;
   margin-left: 10px;
@@ -318,25 +308,25 @@ const onRightClick = (e: MouseEvent | PointerEvent) => {
 }
 
 .message-title,
-.message-content {
+.description-container {
   display: flex;
   justify-content: space-between;
   box-sizing: border-box;
   align-items: center;
 }
 
-.content-left {
+.description-left {
   display: flex;
   flex: 1;
   /* max-width: calc(100% - 30px); */
   max-width: 136px;
 }
-.content-right {
+.description-right {
   display: flex;
   flex-direction: row;
   align-items: center;
 }
-.session-title {
+.title-container {
   display: flex;
   justify-content: space-between;
   color: rgba(0, 0, 0, 1);
@@ -349,6 +339,7 @@ const onRightClick = (e: MouseEvent | PointerEvent) => {
   max-width: 112px;
   font-weight: 500;
   align-items: center;
+  flex: 1;
 }
 .object-type-tag {
   font-size: 10px;
@@ -368,7 +359,7 @@ const onRightClick = (e: MouseEvent | PointerEvent) => {
   font-size: 12px;
 }
 
-.message-content {
+.description-container {
   position: relative;
   color: rgb(150, 150, 150);
   font-size: 12px;

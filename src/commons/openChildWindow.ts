@@ -1,3 +1,4 @@
+import { message } from 'ant-design-vue';
 import { ipcRenderer } from 'electron';
 import queryString from 'query-string';
 export type PickerResult = {
@@ -18,6 +19,7 @@ export const openChildWindow = (args: {
     if (args.payload) {
       localStorage.setItem(args.event, JSON.stringify(args.payload));
     }
+    args = JSON.parse(JSON.stringify(args));
     ipcRenderer
       .invoke('open-child', args)
       .then((res: PickerResult) => {
@@ -29,7 +31,8 @@ export const openChildWindow = (args: {
         }
       })
       .catch(err => {
-        console.error(err?.message, JSON.stringify(err));
+        console.error(err?.message, args, JSON.stringify(err));
+        message.error({ content: err?.message || 'ERROR' });
         reject({
           message: err?.message || '取消',
         });
@@ -37,8 +40,11 @@ export const openChildWindow = (args: {
       .finally(() => args.payload && localStorage.removeItem(args.event!));
   });
 
-export const sendPickerResult = ({ event, result }: { event: string; result: PickerResult }) =>
-  ipcRenderer.send(event, result);
+// export const sendPickerResult = ({ event, result }: { event: string; result: PickerResult }) =>
+//   ipcRenderer.send(event, result);
+
+export const sendPickerResult = (args: PickerResult & { event: string }) =>
+  ipcRenderer.send(args.event, args);
 
 export function getStoreValue<T>(event: string): T | null {
   try {

@@ -1,13 +1,14 @@
 <script setup lang="ts">
 import { computed, onMounted, reactive, ref, toRaw, UnwrapRef, watch } from 'vue';
-import { ChatObjectDto, SessionRequestInput } from '../apis/dtos';
+import { ChatObjectDto, SessionRequestInput, SessionUnitDestinationDto } from '../apis/dtos';
 import { OfficialService, SessionRequestService } from '../apis';
 import { ChatObjectTypeEnums } from '../apis/enums';
 import { useTitle } from '@vueuse/core';
 import { sendResult } from '../commons/objectPicker';
 import { onBeforeRouteLeave, onBeforeRouteUpdate, useRoute } from 'vue-router';
 import Avatar from '../components/Avatar.vue';
-import { getStoreValue } from '../commons/openChildWindow';
+import { getStoreValue, sendPickerResult } from '../commons/openChildWindow';
+import { message } from 'ant-design-vue';
 
 const title = useTitle();
 
@@ -24,10 +25,18 @@ const formState = ref<SessionRequestInput>({
   requestMessage: `你好，我是 xxx${JSON.stringify(route.query)}`,
 });
 
+const destination = ref<SessionUnitDestinationDto>({});
+
 const fetchValue = (): void => {
   const event = route.query.event as string;
-  var storeValue = getStoreValue<SessionRequestInput>(event);
-  formState.value = storeValue!;
+  var storeValue = getStoreValue<{
+    params: SessionRequestInput;
+    destination?: SessionUnitDestinationDto;
+  }>(event);
+  if (storeValue) {
+    formState.value = storeValue!.params;
+    destination.value = storeValue.destination!;
+  }
   console.log('fetchValue', event, storeValue);
 };
 onMounted(() => {
@@ -42,11 +51,12 @@ onBeforeRouteLeave((to, from) => {
 // 与 onBeforeRouteUpdate 相同，无法访问 `this`
 onBeforeRouteUpdate((to, from) => {
   title.value = route.fullPath;
-  fetchValue();
+
   // console.log('onBeforeRouteUpdate', to, from);
 });
 watch(route, v => {
   console.log('route', v.fullPath);
+  fetchValue();
 });
 const addFriend = (item: ChatObjectDto) => {
   if (item.objectType == ChatObjectTypeEnums.Official) {
@@ -71,7 +81,8 @@ const addFriend = (item: ChatObjectDto) => {
 const onCancle = (): void => {
   const event = route.query.event as string;
   console.log('event', event);
-  sendResult(event as string, {
+  sendPickerResult({
+    event,
     success: false,
     message: 'User canceled!',
   });
@@ -80,11 +91,20 @@ const onCancle = (): void => {
 const onConfirm = (): void => {
   const event = route.query.event as string;
   console.log('route', route);
-  console.log('submit!', toRaw(formState));
-  sendResult(event, {
-    success: true,
-    message: 'ok',
-  });
+  console.log('submit!', toRaw(formState.value));
+
+  SessionRequestService.postApiChatSessionRequest(toRaw<SessionRequestInput>(formState.value))
+    .then(res => {
+      console.log(res);
+      sendPickerResult({
+        event,
+        success: true,
+        message: 'ok',
+      });
+    })
+    .catch(err => {
+      message.error({ content: err.body?.error?.message || '555' });
+    });
 };
 
 const labelCol = { style: { width: '150px' } };
@@ -96,10 +116,16 @@ const wrapperCol = { span: 12 };
     <!-- <page-title :title="title || chatObjectId" description="Electron + Vite + TypeScript" /> -->
     <page-content>
       <scroll-view class="scroll-view">
+
+        
         <a-form :model="formState" :label-col="labelCol" :wrapper-col="wrapperCol">
+          <div>
+            <Avatar />
+            {{ destination.owner?.name }}
+          </div>
           <a-form-item>
             <template #label>
-              <Avatar />
+              <!-- <Avatar /> -->
             </template>
             <a-input v-model:value="formState.destinationId" />
           </a-form-item>

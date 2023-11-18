@@ -224,7 +224,7 @@ onMounted(() => {
 <template>
   <main class="page-session">
     <aside class="nav-side">
-      <search class="search-bar">
+      <div class="search-bar">
         <a-space direction="vertical">
           <a-input-search
             :bordered="true"
@@ -235,7 +235,7 @@ onMounted(() => {
             @search="onSearch"
           />
         </a-space>
-      </search>
+      </div>
       <!-- <scroll-view v-if="keyword.length != 0">
         <div>搜索：{{ keyword }}</div>
       </scroll-view> -->

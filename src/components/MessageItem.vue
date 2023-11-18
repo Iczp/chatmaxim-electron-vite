@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { HtmlHTMLAttributes, computed, h, ref } from 'vue';
+import { HtmlHTMLAttributes, computed, h, ref, toRaw } from 'vue';
 import { message } from 'ant-design-vue';
 
 import { MessageDto } from '../apis/dtos';
@@ -162,9 +162,12 @@ const onAvatarRightClick = (e: MouseEvent) => {
         disabled: false,
         onClick: () => {
           sessionRequest({
-            ownerId: 13,
-            destinationId: item.senderSessionUnit?.ownerId!,
-            requestMessage: `你好:${item.senderSessionUnit?.displayName || ''}`,
+            params: {
+              ownerId: 13,
+              destinationId: item.senderSessionUnit?.ownerId!,
+              requestMessage: `你好:${item.senderSessionUnit?.displayName || ''}`,
+            },
+            destination: toRaw(item.senderSessionUnit),
           });
         },
       },

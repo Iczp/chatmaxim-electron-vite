@@ -256,6 +256,7 @@ ipcMain.handle(
       ipcMain.once(args.event, resolveFunc);
       // childWindow?.webContents.send('navigate', arg);
       const { event, callerId } = args;
+      console.warn('args.url', args.url);
       const url = addParamsToUrl(args.url, { event, callerId });
       console.warn('url', url);
       navTo(childWindow, url);

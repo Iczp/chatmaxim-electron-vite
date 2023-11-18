@@ -36,7 +36,7 @@ export type SessionUnitDestinationDto = {
    *
    * @type {ChatObjectTypeEnums}
    */
-  ownerObjectType: ChatObjectTypeEnums;
+  ownerObjectType?: ChatObjectTypeEnums;
 
   /**
    * 显示名称

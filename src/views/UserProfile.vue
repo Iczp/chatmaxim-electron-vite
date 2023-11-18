@@ -18,52 +18,51 @@ onMounted(() => {
     ret.items = res.items!;
   });
 });
-
 </script>
 
 <template>
-  <PageTitle title="用户中心" />
-  <scroll-view>
-    <div class="page">
-    
-      <div class="object-list">
-        <div v-for="(item, index) in ret.items" :key="item.appUserId!" class="object-item">
-          <a-card hoverable style="width: 240px">
-            <template #cover>
-              <div class="div-image"></div>
-            </template>
-
-            <a-card-meta :title="item.name" :description="item.code">
-              <template #avatar>
-                <a-avatar />
+  <page>
+    <page-title title="用户中心" />
+    <page-content>
+      <scroll-view>
+        <layout-item sub="555" header footer arrow titleRight="dddd">
+          <template #header>
+            <avatar />
+          </template>
+          <template #title-left>title-left</template>
+          <!-- <template #title-right>title-right</template> -->
+          <template #sub>sub-left555</template>
+          <template #footer>
+            footer
+          </template>
+        </layout-item>
+        <div class="object-list">
+          <div v-for="(item, index) in ret.items" :key="item.appUserId!" class="object-item">
+            <a-card hoverable style="width: 240px">
+              <template #cover>
+                <div class="div-image"></div>
               </template>
-            </a-card-meta>
 
-            <template #actions>
-              <setting-outlined key="setting" />
-              <edit-outlined key="edit" />
-              <ellipsis-outlined key="ellipsis" />
-            </template>
-          </a-card>
+              <a-card-meta :title="item.name" :description="item.code">
+                <template #avatar>
+                  <a-avatar />
+                </template>
+              </a-card-meta>
+
+              <template #actions>
+                <setting-outlined key="setting" />
+                <edit-outlined key="edit" />
+                <ellipsis-outlined key="ellipsis" />
+              </template>
+            </a-card>
+          </div>
         </div>
-      </div>
-    </div>
-  </scroll-view>
+      </scroll-view>
+    </page-content>
+  </page>
 </template>
 
 <style scoped>
-.page {
-  display: flex;
-  flex: 1;
-  height: calc(100% - 64px);
-  width: 100%;
-  /* align-items: center; */
-  justify-content: center;
-}
-.ps {
-  width: 100%;
-  height: 100%;
-}
 .object-list {
   /* margin: 30px; */
   display: flex;

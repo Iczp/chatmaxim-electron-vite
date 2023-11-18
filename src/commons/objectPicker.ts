@@ -25,5 +25,5 @@ export const objectPicker = (payload: {
   });
 };
 
-export const sendResult = (event: string, result: ObjectPickerResult) =>
-  sendPickerResult({ event, result });
+export const sendResult = (event: string, args: ObjectPickerResult) =>
+  sendPickerResult({ event, ...args });
