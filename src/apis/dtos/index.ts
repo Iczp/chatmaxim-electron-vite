@@ -13,12 +13,9 @@ export type { SessionUnitSettingDto } from './SessionUnitSettingDto';
 export type { ChatObjectDto } from './ChatObjectDto';
 export type { MessageDto } from './MessageDto';
 export type { MessageOwnerDto } from './MessageOwnerDto';
+export type { MessageSimpleDto } from './MessageSimpleDto';
 
 export type { ContactsDto } from './ContactsDto';
 
 export type { TextDto } from './TextDto';
 export type { CmdDto } from './CmdDto';
-
-
-
-

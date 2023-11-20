@@ -56,6 +56,7 @@ declare module 'vue' {
     Loading: typeof import('./src/components/Loading.vue')['default']
     MessageItem: typeof import('./src/components/MessageItem.vue')['default']
     MessageLayout: typeof import('./src/components/MessageLayout.vue')['default']
+    MessageProview: typeof import('./src/components/MessageProview.vue')['default']
     MsgCmd: typeof import('./src/components/MsgCmd.vue')['default']
     MsgLayout: typeof import('./src/components/MsgLayout.vue')['default']
     MsgRollback: typeof import('./src/components/MsgRollback.vue')['default']
@@ -71,6 +72,7 @@ declare module 'vue' {
     RouterLink: typeof import('vue-router')['RouterLink']
     RouterView: typeof import('vue-router')['RouterView']
     SessionItem: typeof import('./src/components/SessionItem.vue')['default']
+    'SessionItem copy': typeof import('./src/components/SessionItem copy.vue')['default']
     Text: typeof import('./src/components/Text.vue')['default']
     TextViewer: typeof import('./src/components/TextViewer.vue')['default']
   }
