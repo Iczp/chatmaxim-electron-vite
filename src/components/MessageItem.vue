@@ -21,7 +21,7 @@ import QuoteMessage from './QuoteMessage.vue';
 import MsgRollback from './MsgRollback.vue';
 
 import { SelfImprovement, PersonPin } from '../icons';
-import { ContextmenuInput, ContextmenuTypeEnums } from '../commons/contextmenu';
+import { ContextmenuInput, LabelType as LabelType, MouseButton } from '../commons/contextmenu';
 
 const props = defineProps<{
   sessionUnitId: string;
@@ -50,15 +50,30 @@ const senderName = computed(() => getSenderNameForMessage(props.entity));
 const isShowMemberName = ref(true);
 
 const onAvatarRightClick = (event: MouseEvent) => {
-  emits('contextmenu', { entity: props.entity, event, type: ContextmenuTypeEnums.Avatar });
+  emits('contextmenu', {
+    entity: props.entity,
+    event,
+    labelType: LabelType.Avatar,
+    mouseButton: MouseButton.Right,
+  });
 };
 
-const onContentRightClick = (event: MouseEvent) => {
-  emits('contextmenu', { entity: props.entity, event, type: ContextmenuTypeEnums.Content });
+const onContentClick = (event: MouseEvent, mouseButton: MouseButton) => {
+  emits('contextmenu', {
+    entity: props.entity,
+    event,
+    labelType: LabelType.Content,
+    mouseButton,
+  });
 };
 
-const onMessageRightClick = (event: MouseEvent) => {
-  emits('contextmenu', { entity: props.entity, event, type: ContextmenuTypeEnums.All });
+const onMessageClick = (event: MouseEvent, mouseButton: MouseButton) => {
+  emits('contextmenu', {
+    entity: props.entity,
+    event,
+    labelType: LabelType.All,
+    mouseButton,
+  });
 };
 </script>
 
@@ -66,7 +81,8 @@ const onMessageRightClick = (event: MouseEvent) => {
   <section
     class="message-item msg-layout"
     :class="{ selectable: selectable, checked: entity.checked }"
-    @click.right.stop.native="onMessageRightClick"
+    @click.stop="onMessageClick($event, MouseButton.Click)"
+    @click.right.stop.native="onMessageClick($event, MouseButton.Right)"
   >
     <header v-if="!entity.isShowTime" class="msg-header send-time" :title="sendTimeTitle">
       {{ sendTime }}
@@ -96,7 +112,11 @@ const onMessageRightClick = (event: MouseEvent) => {
             <!-- <a-tag color="green">群主</a-tag> -->
           </header>
 
-          <main class="msg-content" @click.right.stop.native="onContentRightClick">
+          <main
+            class="msg-content"
+            @click.stop="onContentClick($event, MouseButton.Click)"
+            @click.right.stop.native="onContentClick($event, MouseButton.Right)"
+          >
             <!-- <p>{{ item }}</p> -->
             <!-- 消息 Start -->
             <MsgImage v-if="messageType == MessageTypeEnums.Image" :item="entity" />

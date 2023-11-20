@@ -21,7 +21,6 @@ import { useImStore } from '../stores/im';
 import { MessageDto, ResultValue } from '../apis/dtos';
 import {
   ContextmenuInput,
-  ContextmenuParams,
   showContextMenuForMessage,
 } from '../commons/contextmenu';
 
@@ -181,14 +180,15 @@ const entryItems = computed(() => [
   },
 ]);
 
-const showContextMenu = ({ type, event, entity }: ContextmenuInput) =>
+const showContextMenu = ({ labelType, mouseButton, event, entity }: ContextmenuInput) =>
   showContextMenuForMessage({
-    type,
+    labelType,
     event,
     entity,
     sessionUnitId: props.sessionUnitId,
     selectable: selectable,
     playMessageId: playMessageId,
+    mouseButton,
   });
 
 const contentStyle: CSSProperties = {

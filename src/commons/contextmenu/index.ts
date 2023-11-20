@@ -8,10 +8,16 @@ export { showContextMenuForSession } from './showContextMenuForSession';
 export { showContextMenuForMessageContent } from './showContextMenuForMessageContent';
 export { showContextMenuForMessageAvatar } from './showContextMenuForMessageAvatar';
 
-export enum ContextmenuTypeEnums {
+export enum LabelType {
   'All' = 0,
   'Content' = 2,
   'Avatar' = 1,
+}
+
+export enum MouseButton {
+  'Click' = 0,
+  'Right' = 1,
+  'Middel' = 2,
 }
 
 export type ContextmenuParams = {
@@ -19,11 +25,12 @@ export type ContextmenuParams = {
   entity: MessageDto;
 };
 
-export type ContextmenuTypeInput = {
-  type: ContextmenuTypeEnums;
+export type ContextmenuLabel = {
+  labelType: LabelType;
+  mouseButton: MouseButton;
 };
 
-export type ContextmenuInput = ContextmenuParams & ContextmenuTypeInput;
+export type ContextmenuInput = ContextmenuParams & ContextmenuLabel;
 
 export type MessageContextMenuInput = ContextmenuParams & {
   sessionUnitId: string;
@@ -34,7 +41,8 @@ export type MessageContextMenuInput = ContextmenuParams & {
 export const iconClass: HtmlHTMLAttributes = { class: 'svg-icon s16' };
 
 export const showContextMenuForMessage = ({
-  type,
+  labelType,
+  mouseButton,
   event,
   entity,
   sessionUnitId,
@@ -49,14 +57,22 @@ export const showContextMenuForMessage = ({
     playMessageId: playMessageId,
   };
 
-  if (selectable.value) {
-    showContextMenuForMessageSelect(args);
-    return;
-  }
+  if (mouseButton == MouseButton.Click) {
+    console.log('click', entity);
+    if (selectable.value) {
+      entity.checked = !entity.checked;
+      return;
+    }
+  } else if (mouseButton == MouseButton.Right) {
+    if (selectable.value) {
+      showContextMenuForMessageSelect(args);
+      return;
+    }
 
-  if (type == ContextmenuTypeEnums.Avatar) {
-    showContextMenuForMessageAvatar(args);
-  } else if (type == ContextmenuTypeEnums.Content) {
-    showContextMenuForMessageContent(args);
+    if (labelType == LabelType.Avatar) {
+      showContextMenuForMessageAvatar(args);
+    } else if (labelType == LabelType.Content) {
+      showContextMenuForMessageContent(args);
+    }
   }
 };
