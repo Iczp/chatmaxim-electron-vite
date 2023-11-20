@@ -1,25 +1,15 @@
 <script setup lang="ts">
-import { CSSProperties, Ref, computed, onMounted, reactive, ref, watch } from 'vue';
-import { onBeforeRouteLeave, onBeforeRouteUpdate, useRoute, useRouter } from 'vue-router';
+import { CSSProperties, computed, reactive, ref, watch } from 'vue';
+import { useRoute } from 'vue-router';
 import {
-  IczpNet_Chat_MessageSections_Messages_Dtos_MessageOwnerDto as MessageOwnerDto,
   IczpNet_Chat_SessionUnits_Dtos_SessionUnitOwnerDetailDto as IczpSessionUnitOwnerDetailDto,
   MessageService,
-  PagedResultDto,
   SessionUnitService,
   MessageSenderService,
   ApiError,
 } from '../apis';
+
 import type { CancelablePromise } from '../apis/core/CancelablePromise';
-import {
-  UploadOutlined,
-  MehOutlined,
-  VideoCameraOutlined,
-  FolderOpenOutlined,
-  ScissorOutlined,
-  MoreOutlined,
-  EllipsisOutlined,
-} from '@ant-design/icons-vue';
 import ChatSetting from './ChatSetting.vue';
 
 import MessageItem from '../components/MessageItem.vue';
@@ -29,6 +19,11 @@ import { message } from 'ant-design-vue';
 
 import { useImStore } from '../stores/im';
 import { MessageDto, ResultValue } from '../apis/dtos';
+import {
+  ContextmenuInput,
+  ContextmenuParams,
+  showContextMenuForMessage,
+} from '../commons/contextmenu';
 
 const store = useImStore();
 
@@ -45,10 +40,10 @@ const info = computed(() => store.getItem(props.sessionUnitId!));
 const setting = computed(() => info.value?.setting);
 
 const isInputEnabled = computed(() => info.value?.setting?.isInputEnabled);
-const isSelectable = ref(false);
+const selectable = ref(false);
 
 watch(
-  () => isSelectable.value,
+  () => selectable.value,
   v => {
     console.log('isSelectable', v);
   },
@@ -123,6 +118,7 @@ const afterOpenChange = (bool: boolean) => {
   // console.log('open', bool);
 };
 const isSendBtnEnabled = ref(true);
+const playMessageId = ref<number | undefined>();
 const onSend = async () => {
   console.log('send', textValue.value);
   isSendBtnEnabled.value = false;
@@ -184,6 +180,16 @@ const entryItems = computed(() => [
     value: setting.value?.memberName,
   },
 ]);
+
+const showContextMenu = ({ type, event, entity }: ContextmenuInput) =>
+  showContextMenuForMessage({
+    type,
+    event,
+    entity,
+    sessionUnitId: props.sessionUnitId,
+    selectable: selectable,
+    playMessageId: playMessageId,
+  });
 
 const contentStyle: CSSProperties = {
   // display: 'flex',
@@ -284,9 +290,10 @@ const mouseleave = (e: MouseEvent) => {
             <MessageItem
               v-for="(item, index) in ret.items"
               :key="item.id"
-              :item="item"
+              :entity="item"
               :sessionUnitId="props.sessionUnitId"
-              v-model:selectable="isSelectable"
+              v-model:selectable="selectable"
+              @contextmenu="showContextMenu"
             >
               <h3>{{ item.senderDisplayName }}</h3>
               <p>{{ item }}</p>

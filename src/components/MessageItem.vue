@@ -1,11 +1,9 @@
 <script setup lang="ts">
-import { HtmlHTMLAttributes, computed, h, ref, toRaw } from 'vue';
-import { message } from 'ant-design-vue';
+import { computed, ref } from 'vue';
 
 import { MessageDto } from '../apis/dtos';
-import { ChatObjectTypeEnums, MessageTypeEnums } from '../apis/enums';
-import { formatMessageTime } from '../commons/utils';
-import ContextMenu from '@imengyu/vue3-context-menu';
+import { MessageTypeEnums } from '../apis/enums';
+import { formatMessageTime, getSenderNameForMessage } from '../commons/utils';
 import Avatar from './Avatar.vue';
 
 import MsgText from './MsgText.vue';
@@ -22,334 +20,108 @@ import MsgState from './MsgState.vue';
 import QuoteMessage from './QuoteMessage.vue';
 import MsgRollback from './MsgRollback.vue';
 
-import {
-  UserOutlined,
-  CopyOutlined,
-  SmileTwoTone,
-  HeartTwoTone,
-  StarFilled,
-  StarOutlined,
-  CheckCircleTwoTone,
-} from '@ant-design/icons-vue';
-import { CSSProperties } from 'ant-design-vue/es/_util/cssinjs/hooks/useStyleRegister';
-import {
-  Bookmarks,
-  CheckList,
-  ContentCopy,
-  Forward,
-  NotificationsActive,
-  SelfImprovement,
-  Rollback,
-  Quote,
-  BookmarkAdd,
-  BookmarkRemove,
-  Remind,
-  Alarm,
-  VideoStop,
-  VideoPlay,
-  MusicNote,
-  FileDownload,
-  GroupRemove,
-  PersonAdd,
-  PersonPin,
-  WavingHand,
-  ChatOff,
-  ChatOn,
-} from '../icons';
-import Notification from 'ant-design-vue/es/vc-notification/Notification';
-import { forwardMessage, rollbackMessage, setFavorite } from '../commons/messageContextMenuHandle';
-import { objectPicker } from '../commons/objectPicker';
-import { sessionRequest } from '../commons/sessionRequest';
+import { SelfImprovement, PersonPin } from '../icons';
+import { ContextmenuInput, ContextmenuTypeEnums } from '../commons/contextmenu';
 
 const props = defineProps<{
   sessionUnitId: string;
-  item: MessageDto;
+  entity: MessageDto;
   selectable?: boolean;
   isPlay?: boolean;
 }>();
 
 // const emits = defineEmits(['contextmenu', 'update:selectable']);
 const emits = defineEmits<{
-  contextmenu: [];
+  contextmenu: [ContextmenuInput];
   remind: [string];
   'update:selectable': [selectable: boolean];
 }>();
 
-const messageType = computed(() => props.item.messageType);
-const isRollback = computed(() => props.item?.rollbackTime != null);
-const sendTime = computed(() => formatMessageTime(new Date(props.item.creationTime!)));
-const sendTimeTitle = computed(() => props.item.creationTime);
-const senderName = computed(
-  () =>
-    props.item.senderName ||
-    props.item.senderDisplayName ||
-    props.item.senderSessionUnit?.displayName ||
-    '-',
-);
+const messageType = computed(() => props.entity.messageType);
+
+const isRollback = computed(() => props.entity?.rollbackTime != null);
+
+const sendTime = computed(() => formatMessageTime(new Date(props.entity.creationTime!)));
+
+const sendTimeTitle = computed(() => props.entity.creationTime);
+
+const senderName = computed(() => getSenderNameForMessage(props.entity));
+
 const isShowMemberName = ref(true);
-// const onRightClick = (e: Event) => {
-//   const el = e.currentTarget as HTMLElement;
-//   console.log('onRightClick', el.offsetTop, el.offsetLeft);
-// };
 
-const iconClass: HtmlHTMLAttributes = { class: 'svg-icon s16' };
-
-const onAvatarRightClick = (e: MouseEvent) => {
-  //prevent the browser's default menu
-  e.preventDefault();
-  // emits('contextmenu', e)
-  const item = props.item;
-
-  //show your menu
-  ContextMenu.showContextMenu({
-    x: e.x,
-    y: e.y,
-    minWidth: 80,
-    customClass: 'avatar-context-menu',
-    items: [
-      {
-        label: `设置名称`,
-        // icon: h(ContentCopy, iconClass),
-        hidden: !item.isSelf,
-        customClass: 'first-child',
-        disabled: false,
-        onClick: () => {},
-      },
-      {
-        label: `@${senderName.value}`,
-        // icon: h(Remind, iconClass),
-        hidden: item.isSelf,
-        customClass: 'first-child',
-        disabled: false,
-        onClick: () => {
-          emits('remind', `@${senderName.value}`);
-        },
-      },
-      {
-        label: `禁言`,
-        icon: h(ChatOff, iconClass),
-        hidden: item.isSelf,
-        disabled: false,
-        onClick: () => {
-          console.log(`@${senderName.value}`, item);
-        },
-      },
-
-      {
-        label: `拍一拍`,
-        icon: h(WavingHand, iconClass),
-
-        hidden: item.isSelf,
-        disabled: false,
-        onClick: () => {
-          console.log(`@${senderName.value}`, item);
-        },
-      },
-      {
-        label: item.isFollowing ? `取消关注` : `特别关注`,
-        icon: h(Remind, iconClass),
-        hidden: item.isSelf,
-        disabled: false,
-        customClass: 'last-child',
-        onClick: () => {
-          console.log(`@${senderName.value}`, item);
-        },
-      },
-      {
-        label: `加为好友`,
-        icon: h(PersonAdd, iconClass),
-        hidden: item.isSelf || item.senderSessionUnit?.isFriendship,
-        disabled: false,
-        onClick: () => {
-          sessionRequest({
-            params: {
-              ownerId: 13,
-              destinationId: item.senderSessionUnit?.ownerId!,
-              requestMessage: `你好:${item.senderSessionUnit?.displayName || ''}`,
-            },
-            destination: toRaw(item.senderSessionUnit),
-          });
-        },
-      },
-      {
-        label: `私信`,
-        icon: h(ChatOn, iconClass),
-        // hidden: item.isSelf && item.senderSessionUnit?.isFriendship,
-        disabled: false,
-        onClick: () => {
-          console.log(`@${senderName.value}`, item);
-        },
-      },
-      {
-        label: `移出群聊`,
-        icon: h(GroupRemove, iconClass),
-        hidden: item.isSelf || [ChatObjectTypeEnums.Room].some(x => x == 0),
-        disabled: false,
-        onClick: () => {
-          console.log(`@${senderName.value}`, item);
-        },
-      },
-    ],
-  });
+const onAvatarRightClick = (event: MouseEvent) => {
+  emits('contextmenu', { entity: props.entity, event, type: ContextmenuTypeEnums.Avatar });
 };
-const onMessageRightClick = (e: MouseEvent) => {
-  //prevent the browser's default menu
-  e.preventDefault();
-  // emits('contextmenu', e)
-  const item = props.item;
-  console.log('message', item);
 
-  //show your menu
-  ContextMenu.showContextMenu({
-    x: e.x,
-    y: e.y,
-    minWidth: 80,
-    customClass: 'message-context-menu',
-    items: [
-      {
-        label: '复制',
-        icon: h(ContentCopy, iconClass),
-        divided: 'down',
-        disabled: false,
-        hidden: ![MessageTypeEnums.Text].some(x => x == item.messageType),
-        onClick: e => {
-          console.log('contextmenu item click', item);
-          message.success({ content: '复制成功!', duration: 2 });
-        },
-      },
-      {
-        label: props.isPlay ? '停止播放' : '播放',
-        icon: h(props.isPlay ? VideoStop : VideoPlay, iconClass),
-        divided: 'down',
-        disabled: false,
-        hidden: ![MessageTypeEnums.Sound, MessageTypeEnums.Video].some(x => x == item.messageType),
-        onClick: e => {},
-      },
-      {
-        label: '转发',
-        icon: h(Forward, iconClass),
-        disabled: false,
-        onClick: e => {
-          console.log('contextmenu item click', item);
-          forwardMessage({
-            chatObjectId: 13,
-            sessionUnitId: props.sessionUnitId,
-            messageId: item.id!,
-          });
-        },
-      },
-      {
-        label: '引用',
-        icon: h(Quote, iconClass),
-        onClick: () => {},
-      },
-      {
-        label: item.isFavorited ? '取消收藏' : '收藏',
-        icon: h(item.isFavorited ? BookmarkRemove : BookmarkAdd, iconClass),
-        onClick: async () => {
-          item.isFavorited = await setFavorite({
-            sessionUnitId: props.sessionUnitId,
-            messageId: item.id!,
-            isFavorite: !item.isFavorited,
-          });
-        },
-      },
-      {
-        label: '另存为…',
-        icon: h(FileDownload, iconClass),
-        disabled: false,
-        // hidden: ![MessageTypeEnums.File, MessageTypeEnums.Image].some(x => x == item.messageType),
-        onClick: e => {
-          console.log('contextmenu item click', item);
-          message.success({ content: '复制成功!', duration: 2 });
-        },
-      },
-      {
-        label: '提醒',
-        disabled: true,
-        icon: h(Alarm, iconClass),
-        onClick: () => {},
-      },
-      {
-        label: props.selectable ? '取消多选' : '多选',
-        icon: h(CheckList, iconClass),
-        onClick: () => {
-          console.log('emits update:selectable', !props.selectable);
+const onContentRightClick = (event: MouseEvent) => {
+  emits('contextmenu', { entity: props.entity, event, type: ContextmenuTypeEnums.Content });
+};
 
-          emits('update:selectable', !props.selectable);
-        },
-      },
-      {
-        label: '撤回',
-        icon: h(Rollback, iconClass),
-        onClick: () => {
-          rollbackMessage({ messageId: item.id! }).then(v => {
-            item.isRollback = true;
-            item.content = null;
-          });
-        },
-      },
-    ],
-  });
+const onMessageRightClick = (event: MouseEvent) => {
+  emits('contextmenu', { entity: props.entity, event, type: ContextmenuTypeEnums.All });
 };
 </script>
 
 <template>
   <section
     class="message-item msg-layout"
-    :class="{ selectable: selectable, checked: item.checked }"
+    :class="{ selectable: selectable, checked: entity.checked }"
+    @click.right.stop.native="onMessageRightClick"
   >
-    <header v-if="!item.isShowTime" class="msg-header send-time" :title="sendTimeTitle">
+    <header v-if="!entity.isShowTime" class="msg-header send-time" :title="sendTimeTitle">
       {{ sendTime }}
     </header>
     <MsgRollback v-if="isRollback" :name="senderName" />
-    <MsgCmd v-else-if="messageType == MessageTypeEnums.Cmd" :item="item" />
+    <MsgCmd v-else-if="messageType == MessageTypeEnums.Cmd" :item="entity" />
     <div v-else class="msg-body-wraper">
       <div v-if="selectable" class="checkbox-container">
-        <a-checkbox v-model:checked="item.checked" />
+        <a-checkbox v-model:checked="entity.checked" />
       </div>
 
-      <section class="msg-body" :class="{ reverse: item.isSelf }">
+      <section class="msg-body" :class="{ reverse: entity.isSelf }">
         <aside class="msg-aside">
           <Avatar
-            :item="item.senderSessionUnit?.owner"
+            :item="entity.senderSessionUnit?.owner"
             :size="40"
             :name="senderName"
-            @click.right.native="onAvatarRightClick"
+            @click.right.stop.native="onAvatarRightClick"
           />
         </aside>
 
         <main class="msg-main">
           <header v-if="isShowMemberName" class="msg-main-header">
-            <PersonPin v-if="item.senderSessionUnit?.isCreator" class="svg-icon s16 color" />
+            <PersonPin v-if="entity.senderSessionUnit?.isCreator" class="svg-icon s16 color" />
             <SelfImprovement class="svg-icon-16" />
             <text>{{ senderName }}</text>
             <!-- <a-tag color="green">群主</a-tag> -->
           </header>
 
-          <main class="msg-content" @click.right.native="onMessageRightClick">
+          <main class="msg-content" @click.right.stop.native="onContentRightClick">
             <!-- <p>{{ item }}</p> -->
             <!-- 消息 Start -->
-            <MsgImage v-if="messageType == MessageTypeEnums.Image" :item="item" />
+            <MsgImage v-if="messageType == MessageTypeEnums.Image" :item="entity" />
             <MsgSound
               v-else-if="messageType == MessageTypeEnums.Sound"
-              :item="item"
+              :item="entity"
               :play="isPlay"
             />
-            <MsgLocation v-else-if="messageType == MessageTypeEnums.Location" :item="item" />
-            <MsgContacts v-else-if="messageType == MessageTypeEnums.Contacts" :item="item" />
-            <MsgLink v-else-if="messageType == MessageTypeEnums.Link" :item="item" />
-            <MsgVideo v-else-if="messageType == MessageTypeEnums.Video" :item="item" />
-            <MsgRedEnvelope v-else-if="messageType == MessageTypeEnums.RedEnvelope" :item="item" />
-            <MsgText v-else-if="messageType == MessageTypeEnums.Text" :item="item" />
+            <MsgLocation v-else-if="messageType == MessageTypeEnums.Location" :item="entity" />
+            <MsgContacts v-else-if="messageType == MessageTypeEnums.Contacts" :item="entity" />
+            <MsgLink v-else-if="messageType == MessageTypeEnums.Link" :item="entity" />
+            <MsgVideo v-else-if="messageType == MessageTypeEnums.Video" :item="entity" />
+            <MsgRedEnvelope
+              v-else-if="messageType == MessageTypeEnums.RedEnvelope"
+              :item="entity"
+            />
+            <MsgText v-else-if="messageType == MessageTypeEnums.Text" :item="entity" />
 
-            <MsgUnsupported v-else :r="item.isSelf" />
+            <MsgUnsupported v-else :r="entity.isSelf" />
             <!-- 消息 End -->
-            <MsgState :state="item.state" />
+            <MsgState :state="entity.state" />
           </main>
 
           <footer class="msg-main-footer">
-            <QuoteMessage :item="item.quoteMessageId?.toString()" :r="item.isSelf" />
+            <QuoteMessage :item="entity.quoteMessageId?.toString()" :r="entity.isSelf" />
           </footer>
         </main>
       </section>

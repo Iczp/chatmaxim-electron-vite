@@ -56,28 +56,9 @@ onBeforeRouteUpdate((to, from) => {
   // console.log('onBeforeRouteUpdate', to, from);
 });
 watch(route, v => {
-  console.log('route', v.fullPath);
+  console.log('route', toRaw(v));
   fetchValue();
 });
-const addFriend = (item: ChatObjectDto) => {
-  if (item.objectType == ChatObjectTypeEnums.Official) {
-    OfficialService.postApiChatOfficialSubscribe({
-      ownerId: 13,
-      destinationId: item.id!,
-    }).then(res => {
-      console.log(res);
-    });
-    return;
-  }
-
-  SessionRequestService.postApiChatSessionRequest({
-    ownerId: 13,
-    destinationId: item.id!,
-    requestMessage: 'add from Election App.',
-  }).then(res => {
-    console.log(res);
-  });
-};
 
 const onCancle = (): void => {
   const event = route.query.event as string;

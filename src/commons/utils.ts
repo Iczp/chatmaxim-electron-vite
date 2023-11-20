@@ -1,6 +1,7 @@
 import moment from 'moment';
 import { useRouter } from 'vue-router';
 import { router, chatHistorys } from '../routes';
+import { MessageDto, SessionUnitOwnerDto } from '../apis/dtos';
 /**
  * toQueryString
  *
@@ -100,5 +101,15 @@ export const navToChat = ({
   });
 };
 
+export const getSenderNameForMessage = (entity?: MessageDto): string | undefined => {
+  if (!entity) {
+    return undefined;
+  }
+  return entity.senderName || entity.senderDisplayName || entity.senderSessionUnit?.displayName;
+};
 
-
+export const getDestinationNameForSessionUnit = (
+  entity?: SessionUnitOwnerDto,
+): string | undefined | null => {
+  return entity?.setting?.rename || entity?.destination?.name;
+};

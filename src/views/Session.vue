@@ -8,6 +8,7 @@ import Loading from '../components/Loading.vue';
 import { ResultValue, SessionUnitGetListInput, SessionItemDto } from '../apis/dtos';
 import { useImStore } from '../stores/im';
 import { navToChat as navToChatX } from '../commons/utils';
+import { showContextMenuForSession } from '../commons/contextmenu';
 
 const props = defineProps<{
   chatObjectId: number | undefined;
@@ -258,9 +259,10 @@ onMounted(() => {
             v-for="(item, index) in displayItems"
             :key="item.id"
             @click="navToChat(item)"
-            :item="store.getItem(item.id!)"
+            :entity="store.getItem(item.id!)"
             :index="index"
             :active="acitveSessionUnitId == item.id"
+            @contextmenu="showContextMenuForSession"
           />
           <!-- </div> -->
           <Loading v-if="ret.isPosting && !ret.isEof" :height="64" />
