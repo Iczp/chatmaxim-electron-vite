@@ -1,17 +1,18 @@
 <script setup lang="ts">
+import { UserOutlined } from '@ant-design/icons-vue';
+import { ChatObjectDto } from '../apis/dtos';
+import { Person} from '../icons'
 const props = defineProps<{
   name?: string | null;
   entity?: ChatObjectDto;
   size?: number | string;
 }>();
-import { UserOutlined } from '@ant-design/icons-vue';
-import { ChatObjectDto } from '../apis/dtos';
+
 </script>
 
 <template>
   <a-avatar shape="circle" :size="size || 48" class="avatar" :alt="name">
-    <template #icon><UserOutlined /></template>
-    1
+    <template #icon><Person class="svg-icon" /></template>
   </a-avatar>
 </template>
 

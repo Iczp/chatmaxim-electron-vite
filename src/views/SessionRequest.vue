@@ -6,9 +6,10 @@ import { ChatObjectTypeEnums } from '../apis/enums';
 import { useTitle } from '@vueuse/core';
 import { sendResult } from '../commons/objectPicker';
 import { onBeforeRouteLeave, onBeforeRouteUpdate, useRoute } from 'vue-router';
-import Avatar from '../components/Avatar.vue';
 import { getStoreValue, sendPickerResult } from '../commons/openChildWindow';
 import { message } from 'ant-design-vue';
+import Avatar from '../components/Avatar.vue';
+import ChatObject from '../components/ChatObject.vue';
 
 const title = useTitle();
 
@@ -116,27 +117,19 @@ const wrapperCol = { span: 12 };
     <!-- <page-title :title="title || chatObjectId" description="Electron + Vite + TypeScript" /> -->
     <page-content>
       <scroll-view class="scroll-view">
-
-        
         <a-form :model="formState" :label-col="labelCol" :wrapper-col="wrapperCol">
           <div>
-            <Avatar />
-            {{ destination.owner?.name }}
+            <chat-object :entity="destination.owner" :size="24" />
           </div>
-          <a-form-item>
-            <template #label>
-              <!-- <Avatar /> -->
-            </template>
-            <a-input v-model:value="formState.destinationId" />
-          </a-form-item>
 
-          <a-form-item label="Activity form">
+          <div>
             <a-textarea v-model:value="formState.requestMessage" />
-          </a-form-item>
+          </div>
         </a-form>
       </scroll-view>
     </page-content>
-    <page-footer class="flex-end">
+    <page-footer class="footer">
+      <chat-object :entity="destination.owner" :size="24" icon="arrow-drop-down" />
       <a-space size="large">
         <a-button type="default" @click="onCancle">取消</a-button>
         <a-button type="primary" @click="onConfirm">添加好友</a-button>
@@ -158,5 +151,12 @@ const wrapperCol = { span: 12 };
   width: 100%;
   box-sizing: border-box;
   padding: 0 24px;
+}
+
+.footer {
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  padding: 0 12px;
 }
 </style>

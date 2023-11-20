@@ -46,6 +46,7 @@ declare module 'vue' {
     Badge: typeof import('./src/components/Badge.vue')['default']
     Bubble: typeof import('./src/components/Bubble.vue')['default']
     ChatInput: typeof import('./src/components/ChatInput.vue')['default']
+    ChatObject: typeof import('./src/components/ChatObject.vue')['default']
     copy: typeof import('./src/components/SessionItem copy.vue')['default']
     DragBar: typeof import('./src/components/DragBar.vue')['default']
     HighLight: typeof import('./src/components/HighLight.vue')['default']

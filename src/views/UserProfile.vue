@@ -3,6 +3,8 @@ import { Ref, onMounted, reactive, ref } from 'vue';
 import { SettingOutlined, EditOutlined, EllipsisOutlined } from '@ant-design/icons-vue';
 import { ChatObjectService, SessionUnitService } from '../apis';
 import { ChatObjectDto, PagedResultDto, ResultValue } from '../apis/dtos';
+import LayoutItem from '../components/LayoutItem.vue';
+import ChatObject from '../components/ChatObject.vue';
 // defineProps<{ msg: string }>();
 
 const ret = reactive<ResultValue<ChatObjectDto>>({
@@ -25,17 +27,12 @@ onMounted(() => {
     <page-title title="用户中心" />
     <page-content>
       <scroll-view>
-        <layout-item sub="555" header footer arrow titleRight="dddd">
-          <template #header>
-            <avatar />
-          </template>
-          <template #title-left>title-left</template>
-          <!-- <template #title-right>title-right</template> -->
-          <template #sub>sub-left555</template>
-          <template #footer>
-            footer
-          </template>
-        </layout-item>
+        <chat-object class="atavar-layout" sub="555" icon="arrow">
+          <template #title>title-left</template>
+          <!-- <template #title-right>title-right555</template> -->
+          <!-- <template #sub>sub-left555</template> -->
+          <!-- <template #footer>footer</template> -->
+        </chat-object>
         <div class="object-list">
           <div v-for="(item, index) in ret.items" :key="item.appUserId!" class="object-item">
             <a-card hoverable style="width: 240px">

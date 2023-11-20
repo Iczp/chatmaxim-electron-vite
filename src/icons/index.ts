@@ -70,6 +70,9 @@ import ChevronLeft from '../svgs/chevron_left_black_24dp.svg';
 import ArrowRight from '../svgs/arrow_forward_ios_black_24dp.svg';
 import ArrowLeft from '../svgs/arrow_back_ios_new_black_24dp.svg';
 
+import ArrowDropUp from '../svgs/arrow_drop_up_black_24dp.svg';
+import ArrowDropDown from '../svgs/arrow_drop_down_black_24dp.svg';
+
 import MoreVert from '../svgs/more_vert_black_24dp.svg';
 import MoreHoriz from '../svgs/more_horiz_black_24dp.svg';
 
@@ -138,6 +141,8 @@ export {
   ChevronLeft,
   ArrowRight,
   ArrowLeft,
+  ArrowDropUp,
+  ArrowDropDown,
   MoreVert,
   MoreHoriz,
 };
