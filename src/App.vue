@@ -26,14 +26,14 @@ const chatObjectItems: Ref<BadgeDto[]> = ref([]);
 
 <template>
   <div class="top-bar drag"></div>
-  <router-view />
+  <!-- <router-view /> -->
 
-  <!-- <router-view v-slot="{ Component, route }">
-    <keep-alive v-if="!!route.meta.keepAlive">
-      <component :is="Component" :key="route.params.chatObjectId" />
+  <router-view v-slot="{ Component, route }">
+    <keep-alive>
+      <component :is="Component" :key="route.fullPath" />
     </keep-alive>
-    <component v-else :is="Component" :key="route.path" />
-  </router-view> -->
+    <!-- <component v-else :is="Component" :key="route.path" /> -->
+  </router-view>
 </template>
 
 <style scoped>

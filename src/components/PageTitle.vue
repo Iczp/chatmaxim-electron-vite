@@ -10,6 +10,7 @@ import {
   SearchOutlined,
   VerifiedOutlined,
 } from '@ant-design/icons-vue';
+import ToolBar from './TooBar.vue';
 const props = defineProps<{
   title?: string;
   description?: string;
@@ -44,24 +45,14 @@ const onTitleClick = () => {
       </slot>
     </div>
     <div class="page-title-right no-drag">
-      <a-space class="tool-bar">
+      <tool-bar>
         <a-button v-if="top" type="text" class="btn" title="置顶">
           <PushpinOutlined />
         </a-button>
         <a-button v-if="search" type="text" class="btn" title="搜索">
           <SearchOutlined />
         </a-button>
-        <a-button type="text" class="btn" title="最小化">
-          <MinusOutlined />
-        </a-button>
-        <a-button type="text" class="btn" title="最大化">
-          <BorderOutlined />
-        </a-button>
-
-        <a-button type="text" class="btn btn-close" title="关闭">
-          <CloseOutlined />
-        </a-button>
-      </a-space>
+      </tool-bar>
       <slot v-if="more">
         <a-button type="text" class="btn" @click="$emit('more', $event)">
           <!-- <EllipsisOutlined /> -->
@@ -98,7 +89,7 @@ const onTitleClick = () => {
   border-bottom: 1px solid rgba(185, 185, 185, 0.596);
   box-sizing: border-box;
   /* background: linear-gradient(135deg,#f5f5f5ac, rgba(1, 156, 148, 0.2)) border-box; */
-  background: linear-gradient(135deg,#f5f5f5ac, rgba(1, 156, 148, 0.2)) border-box;
+  background: linear-gradient(135deg, #f5f5f5ac, rgba(1, 156, 148, 0.2)) border-box;
 }
 .page-title-left {
   display: flex;
@@ -113,6 +104,7 @@ const onTitleClick = () => {
   display: flex;
   flex-direction: column;
   align-items: flex-end;
+  padding-top: 32px;
 }
 .main-title {
   display: flex;

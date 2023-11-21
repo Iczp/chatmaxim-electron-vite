@@ -75,5 +75,6 @@ declare module 'vue' {
     'SessionItem copy': typeof import('./src/components/SessionItem copy.vue')['default']
     Text: typeof import('./src/components/Text.vue')['default']
     TextViewer: typeof import('./src/components/TextViewer.vue')['default']
+    TooBar: typeof import('./src/components/TooBar.vue')['default']
   }
 }

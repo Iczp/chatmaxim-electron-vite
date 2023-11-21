@@ -259,9 +259,11 @@ ipcMain.handle(
       console.warn('args.url', args.url);
       const url = addParamsToUrl(args.url, { event, callerId });
       console.warn('url', url);
-      navTo(childWindow, url);
-      childWindow.setContentSize(500, 800);
-      childWindow.show();
+      // navTo(childWindow, url);
+      childWindow.webContents.send('navigate', args);
+      // childWindow.setContentSize(500, 800);
+      // childWindow.center();
+      // childWindow.show();
     });
   },
 );
@@ -293,3 +295,48 @@ ipcMain.handle('send', (_, arg) => {
   //   ?.close();
   return 'aaa';
 });
+
+ipcMain.handle(
+  'win-setting',
+  (
+    _,
+    {
+      size,
+      show,
+    }: {
+      targetId: number;
+      show: boolean;
+      size?: {
+        width: number;
+        height: number;
+      };
+    },
+  ) => {
+    const window = BrowserWindow.fromId(_.sender.id);
+    var senderWindow: BrowserWindow = BrowserWindow.fromWebContents(
+      webContents.fromId(_.sender.id),
+    );
+    console.log('win-setting', _.sender.id, window?.id, senderWindow?.id);
+    console.log('childWindow', childWindow.isDestroyed());
+    console.log('win2', senderWindow?.id, senderWindow?.webContents.getURL());
+
+    console.log('args size', size);
+
+    senderWindow.webContents.once('did-navigate-in-page', (...args) => {
+      console.log('senderWindow did-finish-load', senderWindow?.webContents.getURL(), ...args);
+    });
+    if (size) {
+      const parentBounds = senderWindow.getParentWindow().getBounds();
+      const bounds = {
+        x: parentBounds.x + Math.floor((parentBounds.width - size.width) / 2),
+        y: parentBounds.y + Math.floor((parentBounds.height - size.height) / 2),
+        ...size,
+      };
+      console.log('bounds', bounds);
+      senderWindow.setBounds(bounds);
+    }
+    if (show) {
+      senderWindow?.show();
+    }
+  },
+);

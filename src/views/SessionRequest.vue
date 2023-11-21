@@ -1,19 +1,17 @@
 <script setup lang="ts">
-import { computed, onMounted, reactive, ref, toRaw, UnwrapRef, watch } from 'vue';
-import { ChatObjectDto, SessionRequestInput, SessionUnitDestinationDto } from '../apis/dtos';
-import { OfficialService, SessionRequestService } from '../apis';
-import { ChatObjectTypeEnums } from '../apis/enums';
+import { ref, toRaw } from 'vue';
+import { SessionRequestInput, SessionUnitDestinationDto } from '../apis/dtos';
+import { SessionRequestService } from '../apis';
 import { useTitle } from '@vueuse/core';
-import { sendResult } from '../commons/objectPicker';
 import { onBeforeRouteLeave, onBeforeRouteUpdate, useRoute } from 'vue-router';
-import { getStoreValue, sendPickerResult } from '../commons/openChildWindow';
+import { sendPickerResult } from '../commons/openChildWindow';
 import { message } from 'ant-design-vue';
-import Avatar from '../components/Avatar.vue';
 import ChatObject from '../components/ChatObject.vue';
-
-const title = useTitle();
+import { useFetchValue } from '../commons/useFetchValue';
 
 const route = useRoute();
+
+const title = useTitle((route.query.title as string) ?? '添加好友');
 
 const props = defineProps<{
   title?: string;
@@ -23,27 +21,31 @@ const props = defineProps<{
 const formState = ref<SessionRequestInput>({
   ownerId: 0,
   destinationId: 0,
-  requestMessage: `你好，我是 xxx${JSON.stringify(route.query)}`,
+  requestMessage: `你好，我是 xxx`,
 });
 
-const destination = ref<SessionUnitDestinationDto>({});
+const isLoading = ref(true);
 
-const fetchValue = (): void => {
-  const event = route.query.event as string;
-  var storeValue = getStoreValue<{
-    params: SessionRequestInput;
-    destination?: SessionUnitDestinationDto;
-  }>(event);
-  if (storeValue) {
-    formState.value = storeValue!.params;
-    destination.value = storeValue.destination!;
+const destination = ref<SessionUnitDestinationDto | undefined>({});
+
+useFetchValue<{
+  params: SessionRequestInput;
+  destination?: SessionUnitDestinationDto;
+}>({
+  show: true,
+  size: {
+    width: 500,
+    height: 300,
+  },
+}).then(res => {
+  console.log('useFetchValue', res);
+  if (res) {
+    formState.value = res.params;
+    destination.value = res.destination;
   }
-  console.log('fetchValue', event, storeValue);
-};
-onMounted(() => {
-  console.log('onMounted route', route);
-  fetchValue();
+  isLoading.value = false;
 });
+
 // 与 beforeRouteLeave 相同，无法访问 `this`
 onBeforeRouteLeave((to, from) => {
   // console.log('onBeforeRouteLeave', to, from);
@@ -53,40 +55,33 @@ onBeforeRouteLeave((to, from) => {
 onBeforeRouteUpdate((to, from) => {
   title.value = route.fullPath;
 
-  // console.log('onBeforeRouteUpdate', to, from);
-});
-watch(route, v => {
-  console.log('route', toRaw(v));
-  fetchValue();
+  console.log('onBeforeRouteUpdate', to, from);
 });
 
 const onCancle = (): void => {
-  const event = route.query.event as string;
-  console.log('event', event);
   sendPickerResult({
-    event,
+    event: route.query.event as string,
     success: false,
     message: 'User canceled!',
   });
 };
 
 const onConfirm = (): void => {
-  const event = route.query.event as string;
-  console.log('route', route);
   console.log('submit!', toRaw(formState.value));
-
+  isLoading.value = true;
   SessionRequestService.postApiChatSessionRequest(toRaw<SessionRequestInput>(formState.value))
     .then(res => {
       console.log(res);
       sendPickerResult({
-        event,
+        event: route.query.event as string,
         success: true,
         message: 'ok',
       });
     })
     .catch(err => {
-      message.error({ content: err.body?.error?.message || '555' });
-    });
+      message.error({ content: err.body?.error?.message || '555', key: 'session-request' });
+    })
+    .finally(() => (isLoading.value = false));
 };
 
 const labelCol = { style: { width: '150px' } };
@@ -94,24 +89,28 @@ const wrapperCol = { span: 12 };
 </script>
 
 <template>
-  <page>
+  <page :loading="isLoading">
     <!-- <page-title :title="title || chatObjectId" description="Electron + Vite + TypeScript" /> -->
     <page-content>
       <scroll-view class="scroll-view">
         <a-form :model="formState" :label-col="labelCol" :wrapper-col="wrapperCol">
           <div>
-            <chat-object :entity="destination.owner" :size="24" />
+            <chat-object :entity="destination?.owner" :size="24" />
           </div>
 
           <div>
-            <a-textarea v-model:value="formState.requestMessage" />
+            <a-textarea
+              class="input-textarea"
+              max-length="10"
+              v-model:value="formState.requestMessage"
+            />
           </div>
         </a-form>
       </scroll-view>
     </page-content>
-    <page-footer class="footer">
-      <chat-object :entity="destination.owner" :size="24" icon="arrow-drop-down" />
-      <a-space size="large">
+    <page-footer>
+      <chat-object :entity="destination?.owner" :size="24" icon="arrow-drop-down" />
+      <a-space>
         <a-button type="default" @click="onCancle">取消</a-button>
         <a-button type="primary" @click="onConfirm">添加好友</a-button>
       </a-space>
@@ -134,10 +133,9 @@ const wrapperCol = { span: 12 };
   padding: 0 24px;
 }
 
-.footer {
-  display: flex;
-  flex-direction: row;
-  justify-content: space-between;
-  padding: 0 12px;
+.input-textarea {
+  resize: unset;
+  height: 120px;
+  overflow: hidden;
 }
 </style>
