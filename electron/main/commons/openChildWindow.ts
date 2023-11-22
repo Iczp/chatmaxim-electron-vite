@@ -1,10 +1,10 @@
 import { BrowserWindow, ipcMain } from 'electron';
-import { WindowParams } from '../types/WindowParams';
+import { WindowParams } from '../ipc-types';
 import { join } from 'node:path';
 import { addParamsToUrl } from './addParamsToUrl';
-import { ifBoolean } from './ifBoolean';
 import * as windowManager from './windowManager';
 import { subscribeWindowEvent } from './subscribeWindowEvent';
+import { setWindow } from './windowSetting';
 
 // process.env.DIST_ELECTRON = join(__dirname, '..');
 // process.env.DIST = join(process.env.DIST_ELECTRON, '../dist');
@@ -66,10 +66,8 @@ export const openChildWindow = (
     childWindow.once('close', rejectFunc);
     ipcMain.once(event, resolveFunc);
 
+    setWindow(childWindow, window);
     // navTo(childWindow, url);
-    setWindowProperties(childWindow, window);
-
-    setWindowBounds(childWindow, window?.size);
 
     // childWindow.setContentSize(500, 800);
     // childWindow.center();
@@ -77,34 +75,6 @@ export const openChildWindow = (
   });
 };
 
-export const setWindowProperties = (win: BrowserWindow, params: WindowParams) => {
-  ifBoolean(params?.maximizable, x => (win.maximizable = x));
-  ifBoolean(params?.minimizable, x => (win.minimizable = x));
-  ifBoolean(params?.closable, x => (win.closable = x));
-  ifBoolean(params?.movable, x => (win.movable = x));
-  ifBoolean(params?.resizable, x => (win.resizable = x));
-  ifBoolean(params?.focusable, x => (win.focusable = x));
-};
-
-export const setWindowBounds = (
-  win: BrowserWindow,
-  size: {
-    width: number;
-    height: number;
-  },
-) => {
-  if (!size) {
-    return;
-  }
-  const parentBounds = win.getParentWindow().getBounds();
-  const bounds = {
-    x: parentBounds.x + Math.floor((parentBounds.width - size.width) / 2),
-    y: parentBounds.y + Math.floor((parentBounds.height - size.height) / 2),
-    ...size,
-  };
-  console.log('bounds', bounds);
-  win.setBounds(bounds);
-};
 
 export const createChildWindow = ({ path }, parent?: BrowserWindow): BrowserWindow => {
   console.log('createChildWindow', path);

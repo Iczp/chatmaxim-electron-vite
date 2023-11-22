@@ -21,6 +21,7 @@ ipcRenderer.on('main-process-message', (_event, ...args) => {
   winStore.setId(1);
   console.log('[Receive Main-process message]:', _event, ...args);
 });
+
 ipcRenderer.on('websocket', (...args) => {
   console.log('[websocket]:', ...args);
 });
@@ -38,7 +39,7 @@ ipcRenderer.on(WinEvents.resized, (_event, ...args) => {
 });
 
 ipcRenderer.on('navigate', (_event, url) => {
-  // console.log('[navigate]:', args);
+  console.log('[navigate]:', url);
   // const { event, callerId } = args;
   // const url = addParamsToUrl(args.url, { event, callerId });
   // console.log('url', url);

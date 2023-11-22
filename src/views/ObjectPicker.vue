@@ -7,7 +7,7 @@ import { ChatObjectTypeEnumText, ChatObjectTypeEnums } from '../apis/enums';
 import { useTitle } from '@vueuse/core';
 import { sendResult } from '../commons/objectPicker';
 import { onBeforeRouteLeave, onBeforeRouteUpdate, useRoute } from 'vue-router';
-import { useFetchValue } from '../commons/useFetchValue';
+import { useRemoteStore } from '../commons/useRemoteStore';
 
 const route = useRoute();
 
@@ -19,7 +19,9 @@ const props = defineProps<{
   ticks?: Number;
 }>();
 
-const isLoading = ref(true);
+const remoteStore = useRemoteStore<{}>();
+
+const isLoading = ref(false);
 
 const searchResult = reactive<ResultValue<ChatObjectDto>>({
   isPosting: false,
@@ -28,18 +30,12 @@ const searchResult = reactive<ResultValue<ChatObjectDto>>({
   items: [],
 });
 
-useFetchValue<{}>({
-  visiblity: true,
-  size: {
-    width: 500,
-    height: 750,
-  },
-}).then(res => {
-  console.log('useFetchValue', res);
-  if (res) {
-  }
-  isLoading.value = false;
-});
+// .then(res => {
+//   console.log('useFetchValue', res);
+//   if (res) {
+//   }
+//   isLoading.value = false;
+// });
 
 // 与 beforeRouteLeave 相同，无法访问 `this`
 onBeforeRouteLeave((to, from) => {

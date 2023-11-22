@@ -1,6 +1,6 @@
 import { SessionRequestInput, SessionUnitDestinationDto } from '../apis/dtos';
+import { WindowParams } from '../ipc-types';
 import { PickerResult, openChildWindow, sendPickerResult } from './openChildWindow';
-import { WindowParams } from './setWindow';
 
 /**
  * 添加好友
@@ -19,17 +19,11 @@ export const sessionRequest = ({
   window?: WindowParams;
 }): Promise<PickerResult> =>
   openChildWindow({
+    target: 'session-request',
     url: `/session-request/${payload.params.ownerId}`,
     payload,
     window,
   });
-// new Promise((resolve, reject) => {
-//   openChildWindow({
-//     url: `/session-request/${payload.ownerId}`,
-
-//     payload,
-//   });
-// });
 
 export const sendResult = (event: string, args: PickerResult) =>
   sendPickerResult({ event, ...args });

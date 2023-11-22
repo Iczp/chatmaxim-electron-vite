@@ -23,7 +23,7 @@ const props = defineProps<{
 const store = useWindowStore();
 const toggleMaximize = () => setWindow({ maximize: true });
 const setMinimize = () => setWindow({ minimize: true });
-const setShow = () => setWindow({ minimize: true });
+const setClose = () => setWindow({ close: true });
 </script>
 
 <template>
@@ -41,7 +41,7 @@ const setShow = () => setWindow({ minimize: true });
       <BorderOutlined />
     </a-button>
 
-    <a-button type="text" class="btn btn-close" @click="setShow" title="关闭">
+    <a-button type="text" class="btn btn-close" @click="setClose" title="关闭">
       <CloseOutlined />
     </a-button>
   </a-space>

@@ -1,12 +1,11 @@
+import { Size } from './Size';
+
 export type WindowParams = {
   name?: string;
   targetId?: number;
   show?: boolean;
   visiblity?: boolean;
-  size?: {
-    width: number;
-    height: number;
-  };
+  size?: Size;
   maximize?: boolean;
   minimize?: boolean;
   sizeType?: 'maximize' | 'minimize' | 'restore';
@@ -17,4 +16,5 @@ export type WindowParams = {
   closable?: boolean;
   movable?: boolean;
   focusable?: boolean;
+  close?: boolean;
 };

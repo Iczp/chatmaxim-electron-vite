@@ -2,10 +2,11 @@ import { app, BrowserWindow, ipcMain, webContents } from 'electron';
 import { release } from 'node:os';
 import { join } from 'node:path';
 import Store from 'electron-store';
-import { Size } from './types';
-import { WindowParams } from './types/WindowParams';
+import { Size } from './ipc-types';
+import { WindowParams } from './ipc-types';
 import { openChildWindow } from './commons/openChildWindow';
 import { createMainWindow } from './commons/createMainWindow';
+import { windowSetting } from './commons/windowSetting';
 //
 Store.initRenderer();
 
@@ -96,9 +97,10 @@ const navTo = (win: BrowserWindow, path: string, listener?: Listener): void => {
     win.loadFile(indexHtml, { hash: path });
   }
 };
-ipcMain.handle('open-win', (_, arg) => {});
+
 
 ipcMain.handle('open-child', openChildWindow);
+ipcMain.handle('win-setting', windowSetting);
 
 ipcMain.handle('win-info', (_, arg) => {
   console.log('win-info', arg);
@@ -107,6 +109,9 @@ ipcMain.handle('win-info', (_, arg) => {
   };
 });
 
+
+
+ipcMain.handle('open-win', (_, arg) => {});
 ipcMain.handle('win-resize', (_, arg: Size) => {
   console.log('win-resize', arg);
   win.setSize(arg.width, arg.height);
@@ -127,37 +132,4 @@ ipcMain.handle('send', (_, arg) => {
   return 'aaa';
 });
 
-ipcMain.handle(
-  'win-setting',
-  (_, { size, show, visiblity, sizeType, maximize, minimize }: WindowParams) => {
-    const window = BrowserWindow.fromId(_.sender.id);
-    var senderWindow: BrowserWindow = BrowserWindow.fromWebContents(
-      webContents.fromId(_.sender.id),
-    );
-    console.log('win-setting', _.sender.id, window?.id, senderWindow?.id);
 
-    if (maximize) {
-      senderWindow.isMaximized() ? senderWindow.restore() : senderWindow.maximize();
-    }
-
-    minimize && senderWindow.minimize();
-
-    if (size) {
-      const parentBounds = senderWindow.getParentWindow().getBounds();
-      const bounds = {
-        x: parentBounds.x + Math.floor((parentBounds.width - size.width) / 2),
-        y: parentBounds.y + Math.floor((parentBounds.height - size.height) / 2),
-        ...size,
-      };
-      console.log('bounds', bounds);
-      senderWindow.setBounds(bounds);
-    }
-    if (visiblity === false) {
-      senderWindow?.hide();
-    } else if (visiblity === true) {
-      senderWindow?.show();
-    }
-    // senderWindow?.show();
-    // ifBoolean(visiblity, visiblity ? senderWindow.show : senderWindow.hide);
-  },
-);

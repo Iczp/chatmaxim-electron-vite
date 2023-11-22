@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { ref, toRaw } from 'vue';
+import { computed, ref, toRaw, watch } from 'vue';
 import { SessionRequestInput, SessionUnitDestinationDto } from '../apis/dtos';
 import { SessionRequestService } from '../apis';
 import { useTitle } from '@vueuse/core';
@@ -7,8 +7,7 @@ import { onBeforeRouteLeave, onBeforeRouteUpdate, useRoute } from 'vue-router';
 import { sendPickerResult } from '../commons/openChildWindow';
 import { message } from 'ant-design-vue';
 import ChatObject from '../components/ChatObject.vue';
-import { useFetchValue } from '../commons/useFetchValue';
-import { WindowParams } from '../commons/setWindow';
+import { useRemoteStore } from '../commons/useRemoteStore';
 
 const route = useRoute();
 
@@ -25,27 +24,21 @@ const formState = ref<SessionRequestInput>({
   requestMessage: `你好，我是 xxx`,
 });
 
-const isLoading = ref(true);
+const isLoading = ref(false);
 
-const destination = ref<SessionUnitDestinationDto | undefined>({});
+const destination = computed(() => remoteStore.value?.destination);
 
-useFetchValue<{
+const remoteStore = useRemoteStore<{
   params: SessionRequestInput;
   destination?: SessionUnitDestinationDto;
-}>({
-  visiblity: true,
-  size: {
-    width: 500,
-    height: 300,
+}>();
+
+watch(
+  () => remoteStore.value?.params,
+  v => {
+    formState.value = v!;
   },
-}).then(res => {
-  console.log('useFetchValue', res);
-  if (res) {
-    formState.value = res.params;
-    destination.value = res.destination;
-  }
-  isLoading.value = false;
-});
+);
 
 // 与 beforeRouteLeave 相同，无法访问 `this`
 onBeforeRouteLeave((to, from) => {
@@ -58,7 +51,9 @@ onBeforeRouteUpdate((to, from) => {
 
   console.log('onBeforeRouteUpdate', to, from);
 });
-
+watch(route, v => {
+  console.log('watch route', v);
+});
 const onCancle = (): void => {
   sendPickerResult({
     event: route.query.event as string,
@@ -98,6 +93,7 @@ const wrapperCol = { span: 12 };
           <div>
             <chat-object :entity="destination?.owner" :size="24" />
           </div>
+          {{ remoteStore?.params }}
 
           <div>
             <a-textarea

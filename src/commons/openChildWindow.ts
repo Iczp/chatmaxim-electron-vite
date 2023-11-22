@@ -1,7 +1,7 @@
 import { message } from 'ant-design-vue';
 import { ipcRenderer } from 'electron';
-import queryString from 'query-string';
-import { WindowParams } from './setWindow';
+import { WindowParams } from '../ipc-types';
+
 export type PickerResult = {
   success?: boolean;
   message?: string;
@@ -9,7 +9,7 @@ export type PickerResult = {
 
 export const openChildWindow = (args: {
   url: string;
-  target: string | 'child' | 'object-picker';
+  target: string | 'session-request' | 'object-picker';
   event?: string;
   payload?: any;
   window?: WindowParams;
@@ -47,15 +47,15 @@ export const openChildWindow = (args: {
 export const sendPickerResult = (args: PickerResult & { event: string }) =>
   ipcRenderer.send(args.event, args);
 
-export function getStoreValue<T>(event: string): T | null {
+export function getStoreValue<T>(event: string): T | undefined {
   try {
     const value = localStorage.getItem(event);
     console.log('getStoreValue', event, value);
     if (!value) {
-      return null;
+      return undefined;
     }
     return JSON.parse(value) as T;
   } catch (error) {
-    return null;
+    return undefined;
   }
 }
