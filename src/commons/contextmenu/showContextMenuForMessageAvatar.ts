@@ -88,13 +88,28 @@ export const showContextMenuForMessageAvatar = ({
         disabled: false,
         onClick: () => {
           sessionRequest({
-            params: {
-              ownerId: 13,
-              destinationId: entity.senderSessionUnit?.ownerId!,
-              requestMessage: `你好:${entity.senderSessionUnit?.displayName || ''}`,
+            window: {
+              // closable: false,
+              size: {
+                width: 500,
+                height: 500,
+              },
             },
-            destination: toRaw(entity.senderSessionUnit),
-          });
+            payload: {
+              params: {
+                ownerId: 13,
+                destinationId: entity.senderSessionUnit?.ownerId!,
+                requestMessage: `你好:${entity.senderSessionUnit?.displayName || ''}`,
+              },
+              destination: toRaw(entity.senderSessionUnit),
+            },
+          })
+            .then(res => {
+              console.log(`sessionRequest`, res);
+            })
+            .catch(err => {
+              console.error(`sessionRequest`, err);
+            });
         },
       },
       {

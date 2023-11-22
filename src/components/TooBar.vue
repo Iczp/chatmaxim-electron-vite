@@ -10,6 +10,9 @@ import {
   SearchOutlined,
   VerifiedOutlined,
 } from '@ant-design/icons-vue';
+import { setWindow } from '../commons/setWindow';
+import { useWindowStore } from '../stores/window';
+import { ref } from 'vue';
 const props = defineProps<{
   title?: string;
   description?: string;
@@ -17,22 +20,28 @@ const props = defineProps<{
   top?: boolean;
   search?: boolean;
 }>();
-const onTitleClick = () => {
-  console.log('onTitleClick');
-};
+const store = useWindowStore();
+const toggleMaximize = () => setWindow({ maximize: true });
+const setMinimize = () => setWindow({ minimize: true });
+const setShow = () => setWindow({ minimize: true });
 </script>
 
 <template>
   <a-space class="tool-bar no-drag">
     <slot></slot>
-    <a-button type="text" class="btn" title="最小化">
+    <a-button type="text" class="btn" title="最小化" @click="setMinimize">
       <MinusOutlined />
     </a-button>
-    <a-button type="text" class="btn" title="最大化">
+    <a-button
+      type="text"
+      class="btn"
+      :title="store.isMaximized ? '还原' : '最大化'"
+      @click="toggleMaximize"
+    >
       <BorderOutlined />
     </a-button>
 
-    <a-button type="text" class="btn btn-close" title="关闭">
+    <a-button type="text" class="btn btn-close" @click="setShow" title="关闭">
       <CloseOutlined />
     </a-button>
   </a-space>

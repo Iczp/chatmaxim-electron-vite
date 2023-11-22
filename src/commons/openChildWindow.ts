@@ -1,6 +1,7 @@
 import { message } from 'ant-design-vue';
 import { ipcRenderer } from 'electron';
 import queryString from 'query-string';
+import { WindowParams } from './setWindow';
 export type PickerResult = {
   success?: boolean;
   message?: string;
@@ -8,13 +9,13 @@ export type PickerResult = {
 
 export const openChildWindow = (args: {
   url: string;
-  target?: string | 'child';
+  target: string | 'child' | 'object-picker';
   event?: string;
   payload?: any;
+  window?: WindowParams;
 }) =>
   new Promise((resolve: (value: PickerResult) => void, reject: (reason?: any) => void) => {
     args.event = args.event || `e-${new Date().getTime()}`;
-    args.target = args.target || `child`;
     // args.payload = args.payload || {};
     if (args.payload) {
       localStorage.setItem(args.event, JSON.stringify(args.payload));
@@ -58,4 +59,3 @@ export function getStoreValue<T>(event: string): T | null {
     return null;
   }
 }
-

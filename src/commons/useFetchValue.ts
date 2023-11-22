@@ -1,9 +1,9 @@
 import { onMounted, watch } from 'vue';
 import { useRoute } from 'vue-router';
 import { getStoreValue } from './openChildWindow';
-import { setWindow, SetWindowParams } from './setWindow';
+import { setWindow, WindowParams } from './setWindow';
 
-export const useFetchValue = <T>(args: SetWindowParams): Promise<T> => {
+export const useFetchValue = <T>(args: WindowParams): Promise<T> => {
   return new Promise((resolve, reject) => {
     const route = useRoute();
     const _fn = () => {
@@ -19,7 +19,7 @@ export const useFetchValue = <T>(args: SetWindowParams): Promise<T> => {
         return;
       }
       resolve(storeValue as T);
-      setWindow(args);
+      // setWindow(args);
     };
     onMounted(_fn);
     watch(route, _fn);

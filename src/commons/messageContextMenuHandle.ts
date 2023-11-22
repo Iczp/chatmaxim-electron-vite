@@ -78,8 +78,10 @@ export const forwardMessage = ({
 }) => {
   const key = new Date().toString();
   objectPicker({
-    chatObjectId,
-    // selectedItems: [],
+    payload: {
+      chatObjectId,
+      // selectedItems: [],
+    },
   })
     .then(v => {
       console.log('forward', v);

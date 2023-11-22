@@ -1,5 +1,6 @@
 import { SessionRequestInput, SessionUnitDestinationDto } from '../apis/dtos';
 import { PickerResult, openChildWindow, sendPickerResult } from './openChildWindow';
+import { WindowParams } from './setWindow';
 
 /**
  * 添加好友
@@ -10,13 +11,17 @@ import { PickerResult, openChildWindow, sendPickerResult } from './openChildWind
  * }} payload
  * @return {*}  {Promise<PickerResult>}
  */
-export const sessionRequest = (payload: {
-  params: SessionRequestInput;
-  destination?: SessionUnitDestinationDto;
+export const sessionRequest = ({
+  payload,
+  window,
+}: {
+  payload: { params: SessionRequestInput; destination?: SessionUnitDestinationDto };
+  window?: WindowParams;
 }): Promise<PickerResult> =>
   openChildWindow({
     url: `/session-request/${payload.params.ownerId}`,
     payload,
+    window,
   });
 // new Promise((resolve, reject) => {
 //   openChildWindow({

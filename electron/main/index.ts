@@ -1,12 +1,11 @@
-import { app, BrowserWindow, shell, ipcMain, webContents } from 'electron';
+import { app, BrowserWindow, ipcMain, webContents } from 'electron';
 import { release } from 'node:os';
 import { join } from 'node:path';
-// import { WinSize, WinEvents } from '../../ipc';
 import Store from 'electron-store';
 import { Size } from './types';
-import { send } from 'vite';
-import { addParamsToUrl } from './commons/addParamsToUrl';
-
+import { WindowParams } from './types/WindowParams';
+import { openChildWindow } from './commons/openChildWindow';
+import { createMainWindow } from './commons/createMainWindow';
 //
 Store.initRenderer();
 
@@ -42,11 +41,6 @@ if (!app.requestSingleInstanceLock()) {
 // Read more on https://www.electronjs.org/docs/latest/tutorial/security
 // process.env['ELECTRON_DISABLE_SECURITY_WARNINGS'] = 'true'
 
-type Windows = {
-  [key: string | 'main' | 'child']: BrowserWindow;
-};
-const windows: Windows = {};
-
 let win: BrowserWindow | null = null;
 let childWindow: BrowserWindow | null = null;
 // Here, you can also use other preload
@@ -55,85 +49,17 @@ const url = process.env.VITE_DEV_SERVER_URL;
 const indexHtml = join(process.env.DIST, 'index.html');
 console.log('app.getPath', app.getAppPath(), app.getPath('userData'));
 
-async function createWindow() {
-  win = windows.main = new BrowserWindow({
-    title: 'Main window',
-    // minWidth: 1560,
-    // minHeight: 800,
-    width: 1080,
-    height: 750,
-    icon: join(process.env.VITE_PUBLIC, 'favicon.ico'),
-    hasShadow: true,
-    webPreferences: {
-      preload,
-      // Warning: Enable nodeIntegration and disable contextIsolation is not secure in production
-      // Consider using contextBridge.exposeInMainWorld
-      // Read more on https://www.electronjs.org/docs/latest/tutorial/context-isolation
-      nodeIntegration: true,
-      contextIsolation: false,
-    },
-    autoHideMenuBar: true,
-    frame: false,
-    // transparent: true,
-  });
-  win.removeMenu();
-  if (process.env.VITE_DEV_SERVER_URL) {
-    // electron-vite-vue#298
-    win.loadURL(url);
-    // Open devTool if the app is not packaged
-    win.webContents.openDevTools({
-      mode: 'detach',
-    });
+app.whenReady().then(() => {
+  win = createMainWindow();
+});
+app.on('activate', () => {
+  const allWindows = BrowserWindow.getAllWindows();
+  if (allWindows.length) {
+    allWindows[0].focus();
   } else {
-    win.loadFile(indexHtml);
+    win = createMainWindow();
   }
-
-  // Test actively push message to the Electron-Renderer
-  win.webContents.on('did-finish-load', () => {
-    win?.webContents.send('main-process-message', `frameId:${win.id}`);
-    createChildWindow({ path: '/settings' });
-  });
-  win.on('resized', e => {
-    const a: any = {
-      size: win.getSize(),
-      getMaximumSize: win.getMaximumSize(),
-      getMinimumSize: win.getMinimumSize(),
-    };
-    win?.webContents.send('resized', `resized:${JSON.stringify(a)}`);
-  });
-
-  // Make all links open with the browser, not with the application
-  win.webContents.setWindowOpenHandler(({ url }) => {
-    if (url.startsWith('https:')) shell.openExternal(url);
-    return { action: 'deny' };
-  });
-
-  // win.webContents.on('will-navigate', (event, url) => { }) #344
-
-  // // Renderer others
-  // const nodeTrue = new BrowserWindow({
-  //   webPreferences: {
-  //     contextIsolation: false,
-  //     nodeIntegration: true,
-  //   },
-  //   width: 700,
-  //   height: 500,
-  // });
-  // if (process.env.VITE_DEV_SERVER_URL) {
-  //   console.log('process.env.VITE_DEV_SERVER_UR', process.env.VITE_DEV_SERVER_URL);
-
-  //   nodeTrue.loadURL(`${process.env.VITE_DEV_SERVER_URL}others/index.html`);
-  //   nodeTrue.webContents.openDevTools({
-  //     mode: 'right',
-  //   });
-  // } else {
-  //   nodeTrue.loadFile(join(__dirname, '../dist/others/index.html'));
-  // }
-  // //end Renderer others
-}
-
-app.whenReady().then(createWindow);
-
+});
 app.on('window-all-closed', () => {
   win = null;
   if (process.platform !== 'darwin') app.quit();
@@ -146,54 +72,6 @@ app.on('second-instance', () => {
     win.focus();
   }
 });
-
-app.on('activate', () => {
-  const allWindows = BrowserWindow.getAllWindows();
-  if (allWindows.length) {
-    allWindows[0].focus();
-  } else {
-    createWindow();
-  }
-});
-
-const createChildWindow = ({ path }): BrowserWindow => {
-  if (childWindow) {
-    return childWindow;
-  }
-  childWindow = new BrowserWindow({
-    parent: win,
-    modal: true,
-    maximizable: false,
-    minimizable: false,
-    // show: true,
-    webPreferences: {
-      preload,
-      nodeIntegration: true,
-      contextIsolation: false,
-    },
-    autoHideMenuBar: false,
-    frame: true,
-  });
-
-  childWindow.webContents.on('did-finish-load', () => {
-    childWindow?.webContents.send('main-process-message', `childWindowId:${childWindow.id}`);
-  });
-  win.webContents.on('did-navigate-in-page', (_, ...args) => {
-    console.log('did-navigate-in-page', _, ...args);
-  });
-
-  childWindow.on('close', e => {
-    e.preventDefault();
-    console.log('childWindow will close stoped:hide');
-    childWindow.hide();
-  });
-
-  childWindow.removeMenu();
-
-  navTo(childWindow, path);
-
-  return childWindow;
-};
 
 type Listener = (
   event: {
@@ -220,53 +98,7 @@ const navTo = (win: BrowserWindow, path: string, listener?: Listener): void => {
 };
 ipcMain.handle('open-win', (_, arg) => {});
 
-// New window example arg: new windows url
-ipcMain.handle(
-  'open-child',
-  (
-    _,
-    args: {
-      target: string;
-      callerId?: number;
-      event: string;
-      url: string;
-      payload: any;
-    },
-  ) => {
-    return new Promise((resolve, reject) => {
-      console.log('open-child', args);
-
-      args.callerId = _.sender.id;
-      let isSuccess = false;
-
-      const resolveFunc = (_: Electron.IpcMainEvent, arg: any) => {
-        console.log('ipc main once aaa', _, arg);
-        isSuccess = true;
-        childWindow.close();
-        resolve(arg);
-      };
-      const rejectFunc = (e: any) => {
-        console.log('childWindow will close ==============', e);
-        if (!isSuccess) {
-          resolve({ success: false, message: 'window close' });
-        }
-        ipcMain.off(args.event, resolveFunc);
-      };
-      childWindow.once('close', rejectFunc);
-      ipcMain.once(args.event, resolveFunc);
-      // childWindow?.webContents.send('navigate', arg);
-      const { event, callerId } = args;
-      console.warn('args.url', args.url);
-      const url = addParamsToUrl(args.url, { event, callerId });
-      console.warn('url', url);
-      // navTo(childWindow, url);
-      childWindow.webContents.send('navigate', args);
-      // childWindow.setContentSize(500, 800);
-      // childWindow.center();
-      // childWindow.show();
-    });
-  },
-);
+ipcMain.handle('open-child', openChildWindow);
 
 ipcMain.handle('win-info', (_, arg) => {
   console.log('win-info', arg);
@@ -288,7 +120,6 @@ ipcMain.handle('send', (_, arg) => {
   var b = webContents.fromId(_.sender.id);
   console.log('sender.id b', b?.id);
 
-  childWindow.close();
   // webContents
   //   .getAllWebContents()
   //   .find(x => x.id == _.sender.id)
@@ -298,33 +129,19 @@ ipcMain.handle('send', (_, arg) => {
 
 ipcMain.handle(
   'win-setting',
-  (
-    _,
-    {
-      size,
-      show,
-    }: {
-      targetId: number;
-      show: boolean;
-      size?: {
-        width: number;
-        height: number;
-      };
-    },
-  ) => {
+  (_, { size, show, visiblity, sizeType, maximize, minimize }: WindowParams) => {
     const window = BrowserWindow.fromId(_.sender.id);
     var senderWindow: BrowserWindow = BrowserWindow.fromWebContents(
       webContents.fromId(_.sender.id),
     );
     console.log('win-setting', _.sender.id, window?.id, senderWindow?.id);
-    console.log('childWindow', childWindow.isDestroyed());
-    console.log('win2', senderWindow?.id, senderWindow?.webContents.getURL());
 
-    console.log('args size', size);
+    if (maximize) {
+      senderWindow.isMaximized() ? senderWindow.restore() : senderWindow.maximize();
+    }
 
-    senderWindow.webContents.once('did-navigate-in-page', (...args) => {
-      console.log('senderWindow did-finish-load', senderWindow?.webContents.getURL(), ...args);
-    });
+    minimize && senderWindow.minimize();
+
     if (size) {
       const parentBounds = senderWindow.getParentWindow().getBounds();
       const bounds = {
@@ -335,8 +152,12 @@ ipcMain.handle(
       console.log('bounds', bounds);
       senderWindow.setBounds(bounds);
     }
-    if (show) {
+    if (visiblity === false) {
+      senderWindow?.hide();
+    } else if (visiblity === true) {
       senderWindow?.show();
     }
+    // senderWindow?.show();
+    // ifBoolean(visiblity, visiblity ? senderWindow.show : senderWindow.hide);
   },
 );

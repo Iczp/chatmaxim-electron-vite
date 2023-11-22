@@ -29,7 +29,7 @@ const searchResult = reactive<ResultValue<ChatObjectDto>>({
 });
 
 useFetchValue<{}>({
-  show: true,
+  visiblity: true,
   size: {
     width: 500,
     height: 750,

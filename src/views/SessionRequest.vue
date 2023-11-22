@@ -8,6 +8,7 @@ import { sendPickerResult } from '../commons/openChildWindow';
 import { message } from 'ant-design-vue';
 import ChatObject from '../components/ChatObject.vue';
 import { useFetchValue } from '../commons/useFetchValue';
+import { WindowParams } from '../commons/setWindow';
 
 const route = useRoute();
 
@@ -32,7 +33,7 @@ useFetchValue<{
   params: SessionRequestInput;
   destination?: SessionUnitDestinationDto;
 }>({
-  show: true,
+  visiblity: true,
   size: {
     width: 500,
     height: 300,
