@@ -3,12 +3,14 @@ import { release } from 'node:os';
 import { join } from 'node:path';
 import Store from 'electron-store';
 import { Size } from './ipc-types';
-import { WindowParams } from './ipc-types';
 import { openChildWindow } from './commons/openChildWindow';
 import { createMainWindow } from './commons/createMainWindow';
 import { windowSetting } from './commons/windowSetting';
+import { initMachine } from './commons/machine';
 //
 Store.initRenderer();
+
+initMachine();
 
 // The built directory structure
 //
@@ -98,7 +100,6 @@ const navTo = (win: BrowserWindow, path: string, listener?: Listener): void => {
   }
 };
 
-
 ipcMain.handle('open-child', openChildWindow);
 ipcMain.handle('win-setting', windowSetting);
 
@@ -108,8 +109,6 @@ ipcMain.handle('win-info', (_, arg) => {
     return: 5,
   };
 });
-
-
 
 ipcMain.handle('open-win', (_, arg) => {});
 ipcMain.handle('win-resize', (_, arg: Size) => {
@@ -131,5 +130,3 @@ ipcMain.handle('send', (_, arg) => {
   //   ?.close();
   return 'aaa';
 });
-
-

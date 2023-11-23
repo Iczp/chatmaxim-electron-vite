@@ -1,7 +1,7 @@
 import { BrowserWindow } from 'electron';
 import { join } from 'node:path';
-import * as windowManager from './windowManager';
-import { subscribeWindowEvent } from './subscribeWindowEvent';
+import { windowManager } from './windowManager';
+import { initWindowEvent, sendWindowInfo } from './initWindowEvent';
 
 const preload = join(__dirname, '../preload/index.js');
 
@@ -43,7 +43,7 @@ export const createMainWindow = () => {
 
   // Test actively push message to the Electron-Renderer
   win.webContents.on('did-finish-load', () => {
-    win?.webContents.send('main-process-message', `frameId:${win.id}`);
+    sendWindowInfo(win);
     // createChildWindow({ path: '/settings' });
   });
   win.on('resized', (e: any) => {
@@ -55,7 +55,7 @@ export const createMainWindow = () => {
     win?.webContents.send('resized', `resized:${JSON.stringify(a)}`);
   });
 
-  subscribeWindowEvent(win);
+  initWindowEvent(win);
 
   return win;
   // win.webContents.on('will-navigate', (event, url) => { }) #344

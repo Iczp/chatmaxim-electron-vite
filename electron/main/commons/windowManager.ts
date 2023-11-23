@@ -8,29 +8,35 @@ export type WindowsMap = {
   [key: number]: string;
 };
 
-const windows: Windows = {};
-const windowsMap: WindowsMap = {};
+class WindowManger {
+  
+  public windows: Windows = {};
+  public windowsMap: WindowsMap = {};
+  constructor() {}
+  set(name: string, win: BrowserWindow): BrowserWindow {
+    this.windowsMap[win.id] = name;
+    this.windows[name] = win;
+    return win;
+  }
+  get(name: string): BrowserWindow | undefined {
+    return this.windows[name];
+  }
+  getName(win: BrowserWindow): string {
+    return this.windowsMap[win.id] ;
+  }
+  getMain(): BrowserWindow | undefined {
+    return this.windows['main'];
+  }
+  getWindows() {
+    return this.windows;
+  }
+  getMap() {
+    return this.windowsMap;
+  }
+  remove(name: string): void {
+    delete this.windowsMap[this.windows[name].id];
+    delete this.windows[name];
+  }
+}
 
-export const remove = (name: string): void => {
-  delete windowsMap[windows[name].id];
-  delete windows[name];
-};
-
-export const set = (name: string, win: BrowserWindow): BrowserWindow => {
-  windowsMap[win.id] = name;
-  windows[name] = win;
-  return win;
-};
-
-export const setIfNotContains = (name: string, win: BrowserWindow): BrowserWindow => {
-  return get(name) || set(name, win);
-};
-export const get = (name: string): BrowserWindow | undefined => {
-  return windows[name];
-};
-
-export const getMain = (): BrowserWindow | undefined => windows['main'];
-
-export const getWindows = (): Windows => windows;
-
-export const getWindowsMap = (): WindowsMap => windowsMap;
+export const windowManager = new WindowManger();

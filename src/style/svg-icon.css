@@ -28,6 +28,11 @@
   scale: calc(20 / 24);
 }
 
+.svg-icon-24,
+.svg-icon.s24 {
+  scale: calc(24 / 24);
+}
+
 
 .svg-icon-\[var\(--size\)\] {
   scale: calc(var(--size) / 24);

@@ -16,12 +16,6 @@ store.set('unicorn', '🦄');
 
 console.log(store.get('unicorn'));
 
-ipcRenderer.on('main-process-message', (_event, ...args) => {
-  const winStore = useWindowStore();
-  winStore.setId(1);
-  console.log('[Receive Main-process message]:', _event, ...args);
-});
-
 ipcRenderer.on('websocket', (...args) => {
   console.log('[websocket]:', ...args);
 });

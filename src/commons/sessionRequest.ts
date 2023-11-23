@@ -22,7 +22,13 @@ export const sessionRequest = ({
     target: 'session-request',
     url: `/session-request/${payload.params.ownerId}`,
     payload,
-    window,
+    window: {
+      size: {
+        width: 500,
+        height: 280,
+      },
+      ...window,
+    },
   });
 
 export const sendResult = (event: string, args: PickerResult) =>

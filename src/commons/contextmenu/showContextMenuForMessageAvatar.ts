@@ -88,13 +88,6 @@ export const showContextMenuForMessageAvatar = ({
         disabled: false,
         onClick: () => {
           sessionRequest({
-            window: {
-              // closable: false,
-              size: {
-                width: 500,
-                height: 500,
-              },
-            },
             payload: {
               params: {
                 ownerId: 13,

@@ -1,18 +1,20 @@
 <script setup lang="ts">
 import { UserOutlined } from '@ant-design/icons-vue';
 import { ChatObjectDto } from '../apis/dtos';
-import { Person} from '../icons'
+import { Person } from '../icons';
+import { computed } from 'vue';
 const props = defineProps<{
   name?: string | null;
   entity?: ChatObjectDto;
   size?: number | string;
 }>();
 
+const svgClass = computed(() => 'svg-icon-' + (Number(props.size) || 48) / 2);
 </script>
 
 <template>
   <a-avatar shape="circle" :size="size || 48" class="avatar" :alt="name">
-    <template #icon><Person class="svg-icon" /></template>
+    <template #icon><Person class="svg-icon" :class="svgClass" /></template>
   </a-avatar>
 </template>
 

@@ -2,8 +2,8 @@ import { BrowserWindow, ipcMain } from 'electron';
 import { WindowParams } from '../ipc-types';
 import { join } from 'node:path';
 import { addParamsToUrl } from './addParamsToUrl';
-import * as windowManager from './windowManager';
-import { subscribeWindowEvent } from './subscribeWindowEvent';
+import { windowManager } from './windowManager';
+import { sendEvent, initWindowEvent, sendWindowInfo } from './initWindowEvent';
 import { setWindow } from './windowSetting';
 
 // process.env.DIST_ELECTRON = join(__dirname, '..');
@@ -23,8 +23,12 @@ export const openChildWindow = (
     payload,
     window,
   }: {
+    /**
+     * window name
+     *
+     * @type {string}
+     */
     target: string;
-    callerId?: number;
     event: string;
     url: string;
     payload: any;
@@ -43,7 +47,7 @@ export const openChildWindow = (
     console.warn('path', path);
     let childWindow = windowManager.get(target);
     if (!childWindow) {
-      childWindow = windowManager.set(target, createChildWindow({ path }, parent));
+      childWindow = windowManager.set(target, createChildWindow({ name: target, path }, parent));
     }
     childWindow.webContents.send('navigate', path);
     // args.callerId = _.sender.id;
@@ -75,12 +79,20 @@ export const openChildWindow = (
   });
 };
 
-
-export const createChildWindow = ({ path }, parent?: BrowserWindow): BrowserWindow => {
+export const createChildWindow = (
+  {
+    name,
+    path,
+  }: {
+    name: string;
+    path: string;
+  },
+  parent?: BrowserWindow,
+): BrowserWindow => {
   console.log('createChildWindow', path);
 
-  const childWindow = new BrowserWindow({
-    parent: parent,
+  const win = new BrowserWindow({
+    parent,
     modal: true,
     maximizable: false,
     minimizable: false,
@@ -90,38 +102,40 @@ export const createChildWindow = ({ path }, parent?: BrowserWindow): BrowserWind
       nodeIntegration: true,
       contextIsolation: false,
     },
-    autoHideMenuBar: false,
-    frame: true,
+    autoHideMenuBar: true,
+    frame: false,
+    hasShadow: false,
   });
 
-  childWindow.webContents.on('did-finish-load', () => {
-    childWindow?.webContents.send('main-process-message', `childWindowId:${childWindow.id}`);
+  const contents: Electron.WebContents = win.webContents;
+  contents.on('did-finish-load', () => {
+    sendWindowInfo(win);
   });
-  parent.webContents.on('did-navigate-in-page', (_, ...args) => {
+  contents.on('did-navigate-in-page', (_, ...args) => {
     console.log('did-navigate-in-page', _, ...args);
   });
 
-  childWindow.on('close', e => {
+  win.on('close', e => {
     e.preventDefault();
     console.log('childWindow will close stoped:hide');
-    childWindow.hide();
+    win.hide();
   });
 
-  childWindow.removeMenu();
+  win.removeMenu();
 
-  subscribeWindowEvent(childWindow);
+  initWindowEvent(win);
 
   if (process.env.VITE_DEV_SERVER_URL) {
-    childWindow.loadURL(`${process.env.VITE_DEV_SERVER_URL}#${path}`);
+    win.loadURL(`${process.env.VITE_DEV_SERVER_URL}#${path}`);
     // Open devTool if the app is not packaged
 
-    childWindow.webContents.openDevTools({
+    win.webContents.openDevTools({
       mode: 'detach',
     });
   } else {
     const indexHtml = join(process.env.DIST, 'index.html');
-    childWindow.loadFile(indexHtml, { hash: path });
+    win.loadFile(indexHtml, { hash: path });
   }
 
-  return childWindow;
+  return win;
 };

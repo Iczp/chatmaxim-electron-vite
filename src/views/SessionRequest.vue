@@ -47,7 +47,7 @@ onBeforeRouteLeave((to, from) => {
 
 // 与 onBeforeRouteUpdate 相同，无法访问 `this`
 onBeforeRouteUpdate((to, from) => {
-  title.value = route.fullPath;
+  // title.value = route.fullPath;
 
   console.log('onBeforeRouteUpdate', to, from);
 });
@@ -86,22 +86,19 @@ const wrapperCol = { span: 12 };
 
 <template>
   <page :loading="isLoading">
-    <!-- <page-title :title="title || chatObjectId" description="Electron + Vite + TypeScript" /> -->
+    <page-title :title="title || chatObjectId">
+      <chat-object :entity="destination?.owner" :size="24" />
+    </page-title>
     <page-content>
       <scroll-view class="scroll-view">
         <a-form :model="formState" :label-col="labelCol" :wrapper-col="wrapperCol">
-          <div>
-            <chat-object :entity="destination?.owner" :size="24" />
-          </div>
-          {{ remoteStore?.params }}
-
-          <div>
+          <a-form-item label="请求消息">
             <a-textarea
               class="input-textarea"
               max-length="10"
               v-model:value="formState.requestMessage"
             />
-          </div>
+          </a-form-item>
         </a-form>
       </scroll-view>
     </page-content>

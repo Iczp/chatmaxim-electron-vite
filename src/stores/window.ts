@@ -1,24 +1,10 @@
 import { defineStore } from 'pinia';
+import { WindowState } from '../ipc-types';
 
-type WindowState = {
-  id?: number;
-  maximizable?: boolean;
-  minimizable?: boolean;
-  fullScreenable?: boolean;
-  resizable?: boolean;
-  closable?: boolean;
-  movable?: boolean;
-  focusable?: boolean;
-  isVisible?: boolean;
-  isModal?: boolean;
-  isMaximized?: boolean;
-  isMinimized?: boolean;
-  isFullScreen?: boolean;
-  isVisiblity?: boolean;
-};
 export const useWindowStore = defineStore('window', {
   state: (): WindowState => ({
-    id: undefined,
+    windowId: undefined,
+    name: undefined,
     maximizable: undefined,
     minimizable: undefined,
     fullScreenable: undefined,
@@ -31,19 +17,36 @@ export const useWindowStore = defineStore('window', {
     isMaximized: undefined,
     isMinimized: undefined,
     isFullScreen: undefined,
-    isVisiblity: undefined,
+    close: undefined,
+    minWidth: undefined,
+    minHeight: undefined,
+    maxWidth: undefined,
+    maxHeight: undefined,
+    skipTaskbar: undefined,
+    icon: undefined,
+    backgroundColor: undefined,
+    hasShadow: undefined,
+    opacity: undefined,
+    isKiosk: undefined,
+    isSkipTaskbar: undefined,
+    isFlashFrame: undefined,
   }),
   getters: {
-    winId: state => (): number | undefined => state.id,
+    winId: state => (): number | undefined => state.windowId,
   },
   actions: {
     setId(id: number) {
       console.log('setId', id);
-      this.id = id;
+      this.windowId = id;
     },
     update({ event, args }: { event: string; args: Array<any> }) {
       console.log('update', event, args);
       switch (event) {
+        case 'init':
+          const state = <WindowState>args[0];
+          console.log('init', state);
+          this.$patch(state);
+          break;
         case 'maximize':
           this.isMaximized = true;
           break;
@@ -51,16 +54,16 @@ export const useWindowStore = defineStore('window', {
           this.isMaximized = false;
           break;
         case 'minimize':
-          this.$state.isMinimized = true;
+          this.isMinimized = true;
           break;
         case 'restore':
-          this.$state.isVisiblity = true;
+          this.isVisible = true;
           break;
         case 'enter-full-screen':
-          this.$state.isFullScreen = true;
+          this.isFullScreen = true;
           break;
         case 'leave-full-screen':
-          this.$state.isFullScreen = false;
+          this.isFullScreen = false;
           break;
       }
       console.log('update', this);

@@ -27,19 +27,19 @@ const onTitleClick = () => {
   <header class="page-title drag">
     <div class="page-title-left" @click="onTitleClick">
       <div class="main-title" :title="title">
-        <a-space>
-          <div class="main-title-text">
-            <text class="text-ellipsis no-drag" @click="$emit('more', $event)">{{ title }}</text>
-          </div>
+        <slot>
+          <a-space>
+            <div class="main-title-text">
+              <text class="text-ellipsis no-drag" @click="$emit('more', $event)">{{ title }}</text>
+            </div>
 
-          <VerifiedOutlined v-if="search" style="color: rgb(0, 207, 0); font-size: 16px" />
-          <slot name="title"></slot>
-        </a-space>
-
-        <!-- <icon type="play" /> -->
+            <VerifiedOutlined v-if="search" style="color: rgb(0, 207, 0); font-size: 16px" />
+            <slot name="title"></slot>
+          </a-space>
+        </slot>
       </div>
-      <slot name="description">
-        <div v-if="description" class="sub-title">
+      <slot v-if="description" name="description">
+        <div class="sub-title">
           <text class="no-drag" @click="$emit('more', $event)">{{ description }}</text>
         </div>
       </slot>
@@ -64,9 +64,18 @@ const onTitleClick = () => {
 </template>
 
 <style scoped>
-.tool-bar {
+.page-title {
   display: flex;
-  height: 32px;
+  flex-direction: row;
+  justify-content: space-between;
+  min-height: 32px;
+  background-color: #f5f5f5ac;
+  font-size: 16px;
+  flex-shrink: 0;
+  border-bottom: 1px solid rgba(185, 185, 185, 0.596);
+  box-sizing: border-box;
+  /* background: linear-gradient(135deg,#f5f5f5ac, rgba(1, 156, 148, 0.2)) border-box; */
+  background: linear-gradient(135deg, #f5f5f5ac, rgba(1, 156, 148, 0.2)) border-box;
 }
 .btn {
   width: 32px;
@@ -78,19 +87,7 @@ const onTitleClick = () => {
 .btn-close:hover {
   background-color: rgb(253, 61, 61);
 }
-.page-title {
-  display: flex;
-  flex-direction: row;
-  justify-content: space-between;
-  height: 64px;
-  background-color: #f5f5f5ac;
-  font-size: 16px;
-  flex-shrink: 0;
-  border-bottom: 1px solid rgba(185, 185, 185, 0.596);
-  box-sizing: border-box;
-  /* background: linear-gradient(135deg,#f5f5f5ac, rgba(1, 156, 148, 0.2)) border-box; */
-  background: linear-gradient(135deg, #f5f5f5ac, rgba(1, 156, 148, 0.2)) border-box;
-}
+
 .page-title-left {
   display: flex;
   flex: 1;

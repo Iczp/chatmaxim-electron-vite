@@ -1,6 +1,6 @@
 import { BrowserWindow, webContents } from 'electron';
 import { WindowParams } from '../ipc-types';
-import { ifBoolean } from './ifBoolean';
+import { ifArrayNumber, ifBoolean, ifTrue } from './ifBoolean';
 
 export const windowSetting = (_: Electron.IpcMainInvokeEvent, params: WindowParams): any => {
   return new Promise((resolve, reject) => {
@@ -33,7 +33,16 @@ export const setWindowMethods = (win: BrowserWindow, params: WindowParams) => {
   ifBoolean(params?.maximize, x => (win.isMaximized() ? win.restore() : win.maximize()));
   ifBoolean(params?.minimize, x => win.minimize());
   ifBoolean(params?.close, x => win.close());
+
   ifBoolean(params?.visiblity, x => (x ? win.show() : win.hide()));
+  ifArrayNumber([params?.maxWidth, params?.maxHeight], x => win.setMaximumSize(x[0], x[1]));
+  ifArrayNumber([params?.minWidth, params?.minHeight], x => win.setMinimumSize(x[0], x[1]));
+
+  ifBoolean(params?.skipTaskbar, x => win.setSkipTaskbar(x));
+  ifBoolean(params?.hasShadow, x => win.setHasShadow(x));
+
+  ifTrue<string>(params?.backgroundColor, x => win.setBackgroundColor(x));
+  ifBoolean(params?.isFlashFrame, x => win.flashFrame(x));
 };
 
 export const setWindowBounds = (

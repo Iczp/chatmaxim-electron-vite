@@ -29,10 +29,11 @@ const setClose = () => setWindow({ close: true });
 <template>
   <a-space class="tool-bar no-drag">
     <slot></slot>
-    <a-button type="text" class="btn" title="最小化" @click="setMinimize">
+    <a-button v-if="store.minimizable" type="text" class="btn" title="最小化" @click="setMinimize">
       <MinusOutlined />
     </a-button>
     <a-button
+      v-if="store.maximizable"
       type="text"
       class="btn"
       :title="store.isMaximized ? '还原' : '最大化'"
@@ -41,7 +42,13 @@ const setClose = () => setWindow({ close: true });
       <BorderOutlined />
     </a-button>
 
-    <a-button type="text" class="btn btn-close" @click="setClose" title="关闭">
+    <a-button
+      :disabled="!store.closable"
+      type="text"
+      class="btn btn-close"
+      @click="setClose"
+      title="关闭"
+    >
       <CloseOutlined />
     </a-button>
   </a-space>
