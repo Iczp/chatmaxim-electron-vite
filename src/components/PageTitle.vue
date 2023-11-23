@@ -95,7 +95,7 @@ const onTitleClick = () => {
   /* align-items: center; */
   justify-content: center;
   flex-direction: column;
-  padding: 0 20px;
+  padding: 0 8px;
 }
 .page-title-right {
   display: flex;

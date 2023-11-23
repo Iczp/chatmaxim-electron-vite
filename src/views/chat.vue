@@ -19,10 +19,7 @@ import { message } from 'ant-design-vue';
 
 import { useImStore } from '../stores/im';
 import { MessageDto, ResultValue } from '../apis/dtos';
-import {
-  ContextmenuInput,
-  showContextMenuForMessage,
-} from '../commons/contextmenu';
+import { ContextmenuInput, showContextMenuForMessage } from '../commons/contextmenu';
 
 const store = useImStore();
 
@@ -309,6 +306,9 @@ const mouseleave = (e: MouseEvent) => {
 </template>
 
 <style scoped>
+:deep(.page-title-left) {
+  padding: 0 20px;
+}
 .chat-setting {
   background-color: #d70c0c;
   color: red;
