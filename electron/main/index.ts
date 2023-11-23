@@ -7,6 +7,7 @@ import { openChildWindow } from './commons/openChildWindow';
 import { createMainWindow } from './commons/createMainWindow';
 import { windowSetting } from './commons/windowSetting';
 import { initMachine } from './commons/machine';
+import './commons/logger';
 //
 Store.initRenderer();
 
@@ -102,31 +103,3 @@ const navTo = (win: BrowserWindow, path: string, listener?: Listener): void => {
 
 ipcMain.handle('open-child', openChildWindow);
 ipcMain.handle('win-setting', windowSetting);
-
-ipcMain.handle('win-info', (_, arg) => {
-  console.log('win-info', arg);
-  return {
-    return: 5,
-  };
-});
-
-ipcMain.handle('open-win', (_, arg) => {});
-ipcMain.handle('win-resize', (_, arg: Size) => {
-  console.log('win-resize', arg);
-  win.setSize(arg.width, arg.height);
-});
-
-ipcMain.handle('send', (_, arg) => {
-  console.log('send', _.sender.id, _, arg);
-  const from = webContents.fromId(1);
-  from.send(arg.data.event, arg);
-  // _.sender.close();
-  var b = webContents.fromId(_.sender.id);
-  console.log('sender.id b', b?.id);
-
-  // webContents
-  //   .getAllWebContents()
-  //   .find(x => x.id == _.sender.id)
-  //   ?.close();
-  return 'aaa';
-});

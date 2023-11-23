@@ -54,14 +54,14 @@ export const openChildWindow = (
     let isSuccess = false;
 
     const resolveFunc = (_: Electron.IpcMainEvent, arg: any) => {
-      console.log('ipc main once aaa', _, arg);
+      console.log('ipc main once', arg);
       isSuccess = true;
       childWindow.close();
       resolve(arg);
     };
 
     const rejectFunc = (e: any) => {
-      console.log('childWindow will close ==============', e);
+      console.log(`window will close`, childWindow.id, e);
       if (!isSuccess) {
         resolve({ success: false, message: 'window close' });
       }
