@@ -33,7 +33,7 @@ const route = useRoute();
 
 const chatInput = ref<InstanceType<typeof ChatInput> | null>(null);
 
-const quoteMessage = ref<MessageDto | undefined>();
+const quoteMessage = ref<MessageDto | null | undefined>();
 
 const selectable = ref(false);
 
@@ -142,7 +142,8 @@ const onSend = async ({ event, value }: any) => {
     .then(res => {
       console.log('sendRet', res);
       chatInput.value?.clear();
-      quoteMessage.value = undefined;
+      quoteMessage.value = null;
+      Object.assign(quoteMessage, null);
 
       fetchData({ sessionUnitId: props.sessionUnitId });
     })

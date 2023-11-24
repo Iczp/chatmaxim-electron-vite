@@ -1,22 +1,19 @@
 <script setup lang="ts">
-import { ref } from 'vue';
 import { MessageSimpleDto } from '../apis/dtos';
-import { resolveMessage } from '../commons/resolveMessage';
+import { useMessageContent } from '../commons/useMessageContent';
 
 const props = defineProps<{
   entity?: MessageSimpleDto;
 }>();
-const content = resolveMessage(props.entity);
-const type = ref(content.type);
-const text = ref(content.text);
+const { contentType, contentText } = useMessageContent(props.entity);
 </script>
 
 <template>
-  <div v-if="entity" class="message-content-proview">
-    <span v-if="type" class="message-type" :message-type="entity?.messageType">
-      {{ content.type }}
+  <span v-if="entity" class="message-content-proview">
+    <span v-if="contentType" class="message-type" :message-type="entity?.messageType">
+      {{ contentType }}
     </span>
-    <span class="message-text" :title="text">{{ text }}</span>
+    <span class="message-text" :title="contentText">{{ contentText }}</span>
 
     <!-- <span v-if="isRollback">消息被撤回</span>
   <span v-else-if="messageType == MessageTypeEnums.Cmd">{{ content.text }}</span>
@@ -33,12 +30,12 @@ const text = ref(content.text);
     {{ content.title }} {{ content.content }}
   </span>
   <span v-else>[不支持的类型]</span> -->
-  </div>
+  </span>
 </template>
 
 <style scoped>
 .message-content-proview {
-  display: inline-flex;
+  /* display: inline-flex; */
 }
 
 .message-type {
@@ -50,5 +47,6 @@ const text = ref(content.text);
   overflow: hidden;
   white-space: nowrap;
   text-overflow: ellipsis;
+  /* min-width: 80px; */
 }
 </style>

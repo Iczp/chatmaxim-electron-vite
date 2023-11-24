@@ -98,6 +98,7 @@ defineExpose({
             :autofocus="false"
             :disabled="disabled"
             @keydown.ctrl.enter="send"
+            @input="onInput"
           ></a-mentions>
           <!-- <br /> <br /> <br /> <br /> <br /> -->
         </scroll-view>
