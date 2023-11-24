@@ -262,5 +262,6 @@ const onMessageClick = (event: MouseEvent, mouseButton: MouseButton) => {
   color: #acacac;
   font-size: 12px;
   width: 100%;
+  padding: 4px;
 }
 </style>

@@ -268,7 +268,7 @@ const mouseleave = (e: MouseEvent) => {
   >
     <PageTitle
       :title="destinationName"
-      :description="`code${detail?.destination?.code},title: ${route.query.title}当前在心`"
+      :description="`code${detail?.destination?.code}`"
       @more="showDrawer"
       :search="true"
       :top="true"
