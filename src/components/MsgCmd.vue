@@ -20,7 +20,7 @@ const content = computed(() => props.item.content as CmdDto);
   display: flex;
   justify-content: center;
   align-items: center;
-  padding: 8px 8px;
+  padding: 4px 8px;
   line-height: 150%;
   font-size: 12px;
   max-width: 360px;
@@ -29,7 +29,7 @@ const content = computed(() => props.item.content as CmdDto);
   border-radius: 4px;
   color: #a1a1a1;
   background-color: #e3e3e3bf;
-  margin-top: 8px;
+  margin: 4px auto;
   border: 1px solid #e3e3e3bf;
   box-sizing: border-box;
   /* user-select: none; */

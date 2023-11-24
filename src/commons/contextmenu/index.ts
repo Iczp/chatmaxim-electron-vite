@@ -3,7 +3,6 @@ import { MessageDto } from '../../apis/dtos';
 import { showContextMenuForMessageAvatar } from './showContextMenuForMessageAvatar';
 import { showContextMenuForMessageContent } from './showContextMenuForMessageContent';
 import { showContextMenuForMessageSelect } from './showContextMenuForMessageSelect';
-
 export { showContextMenuForSession } from './showContextMenuForSession';
 export { showContextMenuForMessageContent } from './showContextMenuForMessageContent';
 export { showContextMenuForMessageAvatar } from './showContextMenuForMessageAvatar';
@@ -30,32 +29,19 @@ export type ContextmenuLabel = {
   mouseButton: MouseButton;
 };
 
-export type ContextmenuInput = ContextmenuParams & ContextmenuLabel;
-
 export type MessageContextMenuInput = ContextmenuParams & {
   sessionUnitId: string;
   selectable: Ref<boolean | undefined>;
   playMessageId: Ref<number | undefined>;
+  onQuote?: (entity: MessageDto) => void;
 };
+
+export type ContextmenuInput = ContextmenuParams & ContextmenuLabel;
 
 export const iconClass: HtmlHTMLAttributes = { class: 'svg-icon s16' };
 
-export const showContextMenuForMessage = ({
-  labelType,
-  mouseButton,
-  event,
-  entity,
-  sessionUnitId,
-  selectable,
-  playMessageId,
-}: MessageContextMenuInput & ContextmenuInput) => {
-  const args: MessageContextMenuInput = {
-    event,
-    entity,
-    sessionUnitId,
-    selectable: selectable,
-    playMessageId: playMessageId,
-  };
+export const showContextMenuForMessage = (args: MessageContextMenuInput & ContextmenuInput) => {
+  const { entity, selectable, mouseButton, labelType } = args;
 
   if (mouseButton == MouseButton.Click) {
     console.log('click', entity);

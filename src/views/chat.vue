@@ -20,6 +20,7 @@ import { message } from 'ant-design-vue';
 import { useImStore } from '../stores/im';
 import { MessageDto, ResultValue } from '../apis/dtos';
 import { ContextmenuInput, showContextMenuForMessage } from '../commons/contextmenu';
+import QuoteMessage from '../components/QuoteMessage.vue';
 
 const store = useImStore();
 
@@ -27,7 +28,18 @@ const props = defineProps<{
   sessionUnitId: string;
   title?: string;
 }>();
+
 const route = useRoute();
+
+const chatInput = ref<InstanceType<typeof ChatInput> | null>(null);
+
+const quoteMessage = ref<MessageDto | undefined>();
+
+const selectable = ref(false);
+
+const isSendBtnEnabled = ref(true);
+
+const playMessageId = ref<number | undefined>();
 
 const detail = ref<IczpSessionUnitOwnerDetailDto>({});
 
@@ -36,7 +48,6 @@ const info = computed(() => store.getItem(props.sessionUnitId!));
 const setting = computed(() => info.value?.setting);
 
 const isInputEnabled = computed(() => info.value?.setting?.isInputEnabled);
-const selectable = ref(false);
 
 watch(
   () => selectable.value,
@@ -113,27 +124,25 @@ const onClose = () => {
 const afterOpenChange = (bool: boolean) => {
   // console.log('open', bool);
 };
-const isSendBtnEnabled = ref(true);
-const playMessageId = ref<number | undefined>();
-const onSend = async () => {
+
+const onSend = async ({ event, value }: any) => {
   console.log('send', textValue.value);
   isSendBtnEnabled.value = false;
   MessageSenderService.postApiChatMessageSenderSendText({
     sessionUnitId: props.sessionUnitId,
     requestBody: {
-      quoteMessageId: null,
-
+      quoteMessageId: quoteMessage.value?.id,
       ignoreConnections: null,
-
       remindList: [],
       content: {
-        text: textValue.value,
+        text: value,
       },
     },
   })
     .then(res => {
       console.log('sendRet', res);
-      textValue.value = '';
+      chatInput.value?.clear();
+      quoteMessage.value = undefined;
 
       fetchData({ sessionUnitId: props.sessionUnitId });
     })
@@ -151,6 +160,8 @@ const onSend = async () => {
 const onTitleClick = () => {
   console.log('onTitleClick', detail.value);
 };
+
+const onRemoveQuoteMessage = () => (quoteMessage.value = undefined);
 
 const entries = computed(() =>
   Object.keys(detail.value).map(key => ({
@@ -183,9 +194,13 @@ const showContextMenu = ({ labelType, mouseButton, event, entity }: ContextmenuI
     event,
     entity,
     sessionUnitId: props.sessionUnitId,
-    selectable: selectable,
-    playMessageId: playMessageId,
+    selectable,
+    playMessageId,
     mouseButton,
+    onQuote(entity) {
+      console.log('onQuote', this, entity);
+      quoteMessage.value = entity;
+    },
   });
 
 const contentStyle: CSSProperties = {
@@ -277,19 +292,26 @@ const mouseleave = (e: MouseEvent) => {
       >
         <ChatSetting :entity="info" :sessionUnitId="props.sessionUnitId" />
       </a-drawer>
-        <scroll-view class="message-container" ref="scroll">
-          <MessageItem
-            v-for="(item, index) in ret.items"
-            :key="item.id"
-            :entity="item"
-            :sessionUnitId="props.sessionUnitId"
-            v-model:selectable="selectable"
-            @contextmenu="showContextMenu"
-          ></MessageItem>
-        </scroll-view>
+      <scroll-view class="message-container" ref="scroll">
+        <MessageItem
+          v-for="(item, index) in ret.items"
+          :key="item.id"
+          :entity="item"
+          :sessionUnitId="props.sessionUnitId"
+          v-model:selectable="selectable"
+          @contextmenu="showContextMenu"
+        ></MessageItem>
+      </scroll-view>
     </page-content>
     <page-footer class="footer">
-      <ChatInput v-model:value="textValue" @send="onSend" />
+      <ChatInput ref="chatInput" v-model:value="textValue" @send="onSend">
+        <QuoteMessage
+          v-if="quoteMessage"
+          :entity="quoteMessage"
+          @remove="onRemoveQuoteMessage"
+          removable
+        />
+      </ChatInput>
     </page-footer>
   </page>
 </template>
@@ -301,7 +323,7 @@ const mouseleave = (e: MouseEvent) => {
 :deep(.page-title-left) {
   padding: 0 20px;
 }
-:deep(.main-title-left) {
+:deep(.main-title-text) {
   font-size: 16px;
 }
 .chat-setting {
@@ -339,7 +361,6 @@ const mouseleave = (e: MouseEvent) => {
   resize: none;
   box-shadow: none;
 }
-
 
 .message-container {
   display: flex;

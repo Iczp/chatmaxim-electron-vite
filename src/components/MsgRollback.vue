@@ -18,7 +18,6 @@ defineProps<{
   color: #ccc;
   font-size: 12px;
   align-items: center;
-  height: 20px;
+  padding: 8px;
 }
-
 </style>

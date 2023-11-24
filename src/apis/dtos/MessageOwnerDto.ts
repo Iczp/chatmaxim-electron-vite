@@ -1,4 +1,3 @@
-
 import { MessageSimpleDto } from './MessageSimpleDto';
 import { SessionUnitSenderDto } from './SessionUnitSenderDto';
 
@@ -55,6 +54,7 @@ export type MessageOwnerDto = MessageSimpleDto & {
    * 引用来源Id(引用才有)
    */
   quoteMessageId?: number | null;
+  quoteMessage?: MessageOwnerDto;
 
   /**
    * 引用层级 0:不是引用

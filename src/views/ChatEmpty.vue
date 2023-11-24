@@ -1,33 +1,26 @@
 <script setup lang="ts">
 import { router } from '../routes';
 import { SettingOutlined, EditOutlined, EllipsisOutlined } from '@ant-design/icons-vue';
+import { ChatOn,Chating } from '../icons';
 </script>
 
 <template>
-  <div class="empty">
+  <page class="empty">
+    <page-title />
     <!-- <h1>welcome...</h1>
     <h2>{{ router.currentRoute.value.params.chatObjectId }}</h2> -->
-    <a-card hoverable style="width: 300px">
-      <template #cover>
-        <div class="div-image"></div>
-      </template>
-      <template #actions>
-        <setting-outlined key="setting" />
-        <edit-outlined key="edit" />
-        <ellipsis-outlined key="ellipsis" />
-      </template>
-      <a-card-meta title="Card title" description="This is the description">
-        <template #avatar>
-          <a-avatar src="https://www.rctea.com/uploadFiles/product/163/320x320/a8df2da9.png" />
-        </template>
-      </a-card-meta>
-    </a-card>
-  </div>
+    <page-content class="page-content">
+      <Chating class="svg-icon" />
+    </page-content>
+  </page>
 </template>
 
 <style scoped>
 :deep(.ant-card) {
   overflow: hidden;
+}
+:deep(.page-title-left) {
+  display: none;
 }
 .empty {
   display: flex;
@@ -44,5 +37,14 @@ import { SettingOutlined, EditOutlined, EllipsisOutlined } from '@ant-design/ico
   background-image: url('https://gw.alipayobjects.com/zos/rmsportal/JiqGstEfoWAOHiTxclqi.png');
   background-size: cover;
   background-position: center center;
+}
+.page-content {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.svg-icon{
+  scale: 10;
+  color: rgba(236, 236, 236, 0.442);
 }
 </style>

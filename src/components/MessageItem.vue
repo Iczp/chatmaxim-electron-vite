@@ -22,6 +22,7 @@ import MsgRollback from './MsgRollback.vue';
 
 import { SelfImprovement, PersonPin } from '../icons';
 import { ContextmenuInput, LabelType as LabelType, MouseButton } from '../commons/contextmenu';
+import { useMessageInfo } from '../commons/useMessageInfo';
 
 const props = defineProps<{
   sessionUnitId: string;
@@ -37,15 +38,9 @@ const emits = defineEmits<{
   'update:selectable': [selectable: boolean];
 }>();
 
-const messageType = computed(() => props.entity.messageType);
-
-const isRollback = computed(() => props.entity?.rollbackTime != null);
-
-const sendTime = computed(() => formatMessageTime(new Date(props.entity.creationTime!)));
-
-const sendTimeTitle = computed(() => props.entity.creationTime);
-
-const senderName = computed(() => getSenderNameForMessage(props.entity));
+const { senderName, messageType, isRollback, sendTime, sendTimeTitle } = useMessageInfo(
+  props.entity,
+);
 
 const isShowMemberName = ref(true);
 
@@ -140,8 +135,8 @@ const onMessageClick = (event: MouseEvent, mouseButton: MouseButton) => {
             <MsgState :state="entity.state" />
           </main>
 
-          <footer class="msg-main-footer">
-            <QuoteMessage :item="entity.quoteMessageId?.toString()" :r="entity.isSelf" />
+          <footer v-if="entity.quoteMessage" class="msg-main-footer">
+            <QuoteMessage :entity="entity.quoteMessage" />
           </footer>
         </main>
       </section>
@@ -157,6 +152,13 @@ const onMessageClick = (event: MouseEvent, mouseButton: MouseButton) => {
 /* @import url(../style/message.css); */
 /* @import url(../style/context-menu.css); */
 
+.msg-main-footer :deep(.quote-message-body) {
+  margin: 5px 12px 0 12px;
+  border-radius: 0px 12px 12px 12px;
+}
+.reverse .msg-main-footer :deep(.quote-message-body) {
+  border-radius: 12px 0px 12px 12px;
+}
 .message-item {
   margin: 0;
 }

@@ -28,6 +28,7 @@ export const showContextMenuForMessageContent = ({
   sessionUnitId,
   selectable,
   playMessageId,
+  onQuote,
 }: MessageContextMenuInput) => {
   if (!entity) {
     return;
@@ -85,7 +86,7 @@ export const showContextMenuForMessageContent = ({
       {
         label: '引用',
         icon: h(Quote, iconClass),
-        onClick: () => {},
+        onClick: () => onQuote?.call(this, entity),
       },
       {
         label: entity.isFavorited ? '取消收藏' : '收藏',
@@ -128,6 +129,7 @@ export const showContextMenuForMessageContent = ({
         onClick: () => {
           rollbackMessage({ messageId: entity.id! }).then(v => {
             entity.isRollback = true;
+            entity.rollbackTime = new Date().toDateString();
             entity.content = null;
           });
         },

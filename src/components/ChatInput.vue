@@ -9,42 +9,63 @@ import {
   MoreOutlined,
   EllipsisOutlined,
 } from '@ant-design/icons-vue';
-defineEmits(['update:modelValue', 'send']);
+import { MessageDto } from '../apis/dtos';
 
-defineProps<{
-  disabled?: boolean;
-  value?: string | number;
+const props = withDefaults(
+  defineProps<{
+    disabled?: boolean;
+    value?: string | number;
+    maxLength?: number;
+    counter?: boolean;
+    mentions?: Array<{
+      value: string;
+      label: string;
+    }>;
+  }>(),
+  {
+    maxLength: 500,
+    counter: true,
+  },
+);
+
+const emits = defineEmits<{
+  send: [
+    {
+      value: string;
+      event: MouseEvent | PointerEvent | undefined;
+    },
+  ];
 }>();
 
-const textValue = ref('');
+const inputValue = ref('');
+// const isSendDisabled = ref(false);
 const textarea = ref(null as HTMLInputElement | null);
 
-const options = [
-  {
-    value: 'afc163',
-    label: 'afc163',
-  },
-  {
-    value: 'zombieJ',
-    label: 'zombieJ',
-  },
-  {
-    value: 'yesmeck',
-    label: 'yesmeck',
-  },
-];
-const send = (e: any) => {
-  console.log('send', e);
-};
 const onInput = (e: InputEvent) => {
   console.log('onInput', e.data, (e.target as HTMLInputElement).value);
 };
+const send = (event: MouseEvent | PointerEvent | undefined): void => {
+  emits('send', {
+    event,
+    value: inputValue.value,
+  });
+};
+const clear = (): void => {
+  inputValue.value = '';
+};
+
 const click = (e: any) => {
   console.log('click', e);
   // setSelectionRange(start, end)
   // textarea.value?.setSelectionRange(1, 2)
   // https://stackoverflow.com/questions/42289080/for-text-input-how-to-make-it-so-that-clicking-on-it-will-select-everything
 };
+
+defineExpose({
+  clear,
+  send,
+  inputValue,
+});
 </script>
 
 <template>
@@ -68,23 +89,12 @@ const click = (e: any) => {
     <div class="input-body">
       <div class="input-area">
         <scroll-view>
-          <!-- <a-textarea
-            ref="textarea"
-            class="textarea"
-            placeholder="说点什么..."
-            :rows="4"
-            @keydown.ctrl.enter="send"
-            @input="onInput"
-            @click="click"
-          /> -->
-          <!-- @keydown.ctrl.83.prevent.stop="send" -->
-          <!-- @input="$emit('update:modelValue', $event.target.value)" -->
           <a-mentions
             class="textarea"
-            :value="value"
+            v-model:value="inputValue"
             rows="5"
             placeholder="说点什么..."
-            :options="options"
+            :options="mentions"
             :autofocus="false"
             :disabled="disabled"
             @keydown.ctrl.enter="send"
@@ -93,14 +103,12 @@ const click = (e: any) => {
         </scroll-view>
       </div>
       <div class="input-footer">
-        <div class="footer-left">{{ (value?.toString() || '').length }} /1000</div>
+        <div class="footer-left">
+          <div class="counter">{{ (inputValue?.toString() || '').length }}/{{ maxLength }}</div>
+          <slot></slot>
+        </div>
         <div class="footer-right">
-          <a-button
-            type="primary"
-            @click="$emit('send', $event)"
-            :disabled="disabled"
-            class="btn-send"
-          >
+          <a-button type="primary" @click="send" :disabled="disabled" class="btn-send">
             发送(
             <u>S</u>
             )
@@ -133,16 +141,24 @@ const click = (e: any) => {
   height: 48px;
   align-items: center;
   justify-content: space-between;
+  user-select: none;
 }
 .footer-left {
   display: flex;
   font-size: 12px;
   color: #ccc;
   padding-left: 12px;
+  align-items: center;
+  /* justify-content: space-between; */
+  flex: 1;
+  margin-right: 12px;
 }
 .footer-right {
   display: flex;
   padding-right: 12px;
+}
+.counter {
+  margin-right: 8px;
 }
 .btn-send {
   font-size: 12px;

@@ -11,13 +11,18 @@ import {
   VerifiedOutlined,
 } from '@ant-design/icons-vue';
 import ToolBar from './TooBar.vue';
-const props = defineProps<{
-  title?: string;
-  description?: string;
-  more?: boolean;
-  top?: boolean;
-  search?: boolean;
-}>();
+const props = withDefaults(
+  defineProps<{
+    title?: string;
+    description?: string;
+    more?: boolean;
+    top?: boolean;
+    search?: boolean;
+  }>(),
+  {
+    search: false,
+  },
+);
 const onTitleClick = () => {
   console.log('onTitleClick');
 };
@@ -70,14 +75,13 @@ const onTitleClick = () => {
   justify-content: space-between;
   min-height: 32px;
   background-color: #f5f5f5ac;
-  font-size: 14px;
-  font-weight: bold;
+
   flex-shrink: 0;
-  border-bottom: 1px solid rgba(185, 185, 185, 0.596);
+  border-bottom: 1px solid rgba(213, 213, 213, 0.596);
   box-sizing: border-box;
-  padding: 5px 0;
+  /* padding: 5px 0; */
   /* background: linear-gradient(135deg,#f5f5f5ac, rgba(1, 156, 148, 0.2)) border-box; */
-  background: linear-gradient(135deg, #f5f5f5ac, rgba(1, 156, 148, 0.2)) border-box;
+  /* background: linear-gradient(135deg, #f5f5f5ac, rgba(1, 156, 148, 0.2)) border-box; */
 }
 .btn {
   width: 32px;
