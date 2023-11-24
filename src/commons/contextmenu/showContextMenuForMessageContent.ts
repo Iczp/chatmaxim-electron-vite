@@ -21,6 +21,8 @@ import {
   FileDownload,
 } from '../../icons';
 import { MessageContextMenuInput, iconClass } from '.';
+import { useClipboard } from '@vueuse/core';
+import { useMessageContent } from '../useMessageContent';
 
 export const showContextMenuForMessageContent = ({
   event,
@@ -55,7 +57,11 @@ export const showContextMenuForMessageContent = ({
         hidden: ![MessageTypeEnums.Text].some(x => x == entity.messageType),
         onClick: e => {
           console.log('contextmenu item click', entity);
-          message.success({ content: '复制成功!', duration: 2 });
+          const { contentText } = useMessageContent(entity);
+          const { copy, isSupported } = useClipboard();
+          copy(contentText.value).then(v => {
+            message.success({ content: '复制成功!', duration: 2 });
+          });
         },
       },
       {

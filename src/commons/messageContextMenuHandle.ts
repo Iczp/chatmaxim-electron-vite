@@ -103,7 +103,7 @@ export const forwardMessage = ({
     })
     .catch(err => {
       console.error('objectPicker', err);
-      message.error({ content: '转发失败', key });
+      // message.error({ content: '转发失败', key });
     });
 };
 
