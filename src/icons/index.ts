@@ -46,6 +46,7 @@ import PersonOff from '../svgs/person_off_black_24dp.svg';
 import PersonRemove from '../svgs/person_remove_black_24dp.svg';
 
 import Group from '../svgs/group_black_24dp.svg';
+import Groups from '../svgs/groups_black_24dp.svg';
 import GroupOff from '../svgs/group_off_black_24dp.svg';
 import GroupRemove from '../svgs/group_remove_black_24dp.svg';
 import GroupAdd from '../svgs/group_add_black_24dp.svg';
@@ -75,6 +76,10 @@ import ArrowDropDown from '../svgs/arrow_drop_down_black_24dp.svg';
 
 import MoreVert from '../svgs/more_vert_black_24dp.svg';
 import MoreHoriz from '../svgs/more_horiz_black_24dp.svg';
+
+import SmartToy from '../svgs/smart_toy_black_24dp.svg';
+import Services from '../svgs/medical_services_black_24dp.svg';
+import ShoppingBag from '../svgs/shopping_bag_black_24dp.svg';
 
 export {
   Alarm,
@@ -123,6 +128,7 @@ export {
   PersonOff,
   PersonRemove,
   Group,
+  Groups,
   GroupOff,
   GroupRemove,
   GroupAdd,
@@ -145,4 +151,7 @@ export {
   ArrowDropDown,
   MoreVert,
   MoreHoriz,
+  SmartToy,
+  Services,
+  ShoppingBag,
 };

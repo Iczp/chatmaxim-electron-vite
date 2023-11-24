@@ -1,20 +1,28 @@
 <script setup lang="ts">
 import { UserOutlined } from '@ant-design/icons-vue';
 import { ChatObjectDto } from '../apis/dtos';
-import { Person } from '../icons';
+import { Person, Group, Groups, SmartToy, Services, ShoppingBag } from '../icons';
 import { computed } from 'vue';
+import { ChatObjectTypeEnums } from '../apis/enums';
 const props = defineProps<{
   name?: string | null;
   entity?: ChatObjectDto;
   size?: number | string;
 }>();
-
-const svgClass = computed(() => 'svg-icon-' + (Number(props.size) || 48) / 2);
+const objectType = computed(() => props.entity?.objectType);
+const svgClass = computed(() => 'svg-icon svg-icon-' + (Number(props.size) || 48) / 2);
 </script>
 
 <template>
-  <a-avatar shape="circle" :size="size || 48" class="avatar" :alt="name">
-    <template #icon><Person class="svg-icon" :class="svgClass" /></template>
+  <a-avatar shape="circle" :size="size || 48" class="avatar" :alt="name" :object-type="objectType">
+    <template #icon>
+      <Group v-if="objectType == ChatObjectTypeEnums.Room" :class="svgClass" />
+      <Groups v-else-if="objectType == ChatObjectTypeEnums.Square" :class="svgClass" />
+      <SmartToy v-else-if="objectType == ChatObjectTypeEnums.Robot" :class="svgClass" />
+      <Services v-else-if="objectType == ChatObjectTypeEnums.Official" :class="svgClass" />
+      <ShoppingBag v-else-if="objectType == ChatObjectTypeEnums.ShopKeeper" :class="svgClass" />
+      <Person v-else :class="svgClass" />
+    </template>
   </a-avatar>
 </template>
 
@@ -26,7 +34,8 @@ const svgClass = computed(() => 'svg-icon-' + (Number(props.size) || 48) / 2);
   /* height: 48px; */
   /* background-color: #ccc; */
   /* border-radius: 4px; */
-  color: #ecececb4;
+  /* background-color: #e4e4e4; */
+  /* color: #c6c6c6; */
   justify-content: center;
   align-items: center;
   /* font-size: 12px; */

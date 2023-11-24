@@ -21,30 +21,40 @@
   --message-max-width: 360px;
 }
 
+/* [object-type='1'] .avatar,
 :where([object-type='1'] .object-name) {
-  color: rgba(21, 21, 21, 0.912);
-}
+  color: rgba(187, 187, 187, 0.912);
+} */
+[object-type='2'] .avatar,
 :where([object-type='2'] .object-name) {
   color: rgba(2, 125, 165, 0.78);
 }
+[object-type='3'] .avatar,
 :where([object-type='3'] .object-name) {
   color: rgb(5, 143, 0);
 }
+[object-type='4'] .avatar,
 :where([object-type='4'] .object-name) {
   color: rgba(176, 195, 4, 0.78);
 }
+[object-type='5'] .avatar,
 :where([object-type='5'] .object-name) {
   color: rgba(195, 87, 4, 0.78);
 }
+[object-type='6'] .avatar,
 :where([object-type='6'] .object-name) {
   color: rgba(22, 119, 255, 1);
 }
-:where([object-type='7'] .object-name) {
+
+[object-type='7'] .avatar,
+:where([object-type='7'] .object-name){
   color: rgba(195, 4, 87, 0.78);
 }
+[object-type='8'] .avatar,
 :where([object-type='8'] .object-name) {
   color: rgba(84, 4, 195, 0.78);
 }
+[object-type='9'] .avatar,
 :where([object-type='9'] .object-name) {
   color: rgba(0, 255, 217, 0.78);
 }

@@ -241,7 +241,7 @@ const mouseleave = (e: MouseEvent) => {
 </script>
 
 <template>
-  <div
+  <page
     class="chat"
     :class="{ dragenter: isDrag }"
     @dragenter="dragenter"
@@ -250,53 +250,48 @@ const mouseleave = (e: MouseEvent) => {
     @drop="drop"
     @mouseleave="mouseleave"
   >
-    <a-layout class="layout">
-      <a-layout-content :style="contentStyle" class="layout-content">
-        <a-drawer
-          width="320"
-          v-model:open="open"
-          class="chat-setting"
-          :bodyStyle="bodyStyle"
-          root-class-name="root-class-name"
-          :root-style="{ color: 'blue' }"
-          title="聊天设置"
-          placement="right"
-          @after-open-change="afterOpenChange"
-        >
-          <ChatSetting :entity="info" :sessionUnitId="props.sessionUnitId" />
-        </a-drawer>
+    <PageTitle
+      :title="destinationName"
+      :description="`code${detail?.destination?.code},title: ${route.query.title}当前在心`"
+      @more="showDrawer"
+      :search="true"
+      :top="true"
+      more
+    >
+      <template v-if="setting?.isImmersed" v-slot:title>
+        <icon type="mute" size="16" color="gray" />
+      </template>
+    </PageTitle>
 
-        <div class="page-container">
-          <PageTitle
-            :title="destinationName"
-            :description="`code${detail?.destination?.code},title: ${route.query.title}当前在心`"
-            @more="showDrawer"
-            :search="true"
-            :top="true"
-            more
-          >
-            <template v-if="setting?.isImmersed" v-slot:title>
-              <icon type="mute" size="16" color="gray" />
-            </template>
-          </PageTitle>
-          <scroll-view class="message-container" ref="scroll">
-            <MessageItem
-              v-for="(item, index) in ret.items"
-              :key="item.id"
-              :entity="item"
-              :sessionUnitId="props.sessionUnitId"
-              v-model:selectable="selectable"
-              @contextmenu="showContextMenu"
-            >
-            </MessageItem>
-          </scroll-view>
-        </div>
-      </a-layout-content>
-      <a-layout-footer class="footer">
-        <ChatInput v-model:value="textValue" @send="onSend" />
-      </a-layout-footer>
-    </a-layout>
-  </div>
+    <page-content :style="contentStyle" class="layout-content">
+      <a-drawer
+        width="320"
+        v-model:open="open"
+        class="chat-setting"
+        :bodyStyle="bodyStyle"
+        root-class-name="root-class-name"
+        :root-style="{ color: 'blue' }"
+        title="聊天设置"
+        placement="right"
+        @after-open-change="afterOpenChange"
+      >
+        <ChatSetting :entity="info" :sessionUnitId="props.sessionUnitId" />
+      </a-drawer>
+        <scroll-view class="message-container" ref="scroll">
+          <MessageItem
+            v-for="(item, index) in ret.items"
+            :key="item.id"
+            :entity="item"
+            :sessionUnitId="props.sessionUnitId"
+            v-model:selectable="selectable"
+            @contextmenu="showContextMenu"
+          ></MessageItem>
+        </scroll-view>
+    </page-content>
+    <page-footer class="footer">
+      <ChatInput v-model:value="textValue" @send="onSend" />
+    </page-footer>
+  </page>
 </template>
 
 <style scoped>
@@ -344,19 +339,7 @@ const mouseleave = (e: MouseEvent) => {
   resize: none;
   box-shadow: none;
 }
-.ps {
-  width: 100%;
-  height: 100%;
-}
-.page-container {
-  display: flex;
-  flex-direction: column;
-  width: 100%;
-}
-.qs {
-  width: 100%;
-  height: 100%;
-}
+
 
 .message-container {
   display: flex;
@@ -372,10 +355,9 @@ const mouseleave = (e: MouseEvent) => {
   display: flex;
 }
 
-
-
 .footer {
   padding: 0;
+  height: auto;
+  flex-direction: column;
 }
-
 </style>

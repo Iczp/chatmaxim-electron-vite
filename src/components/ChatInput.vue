@@ -41,7 +41,7 @@ const onInput = (e: InputEvent) => {
 };
 const click = (e: any) => {
   console.log('click', e);
-  // setSelectionRange(start, end) 
+  // setSelectionRange(start, end)
   // textarea.value?.setSelectionRange(1, 2)
   // https://stackoverflow.com/questions/42289080/for-text-input-how-to-make-it-so-that-clicking-on-it-will-select-everything
 };
@@ -49,23 +49,23 @@ const click = (e: any) => {
 
 <template>
   <section class="chat-input" disabled="disabled">
+    <div class="tool-bar">
+      <a-space>
+        <a-button type="text"><MehOutlined /></a-button>
+        <a-button type="text"><FolderOpenOutlined /></a-button>
+        <a-button type="text"><VideoCameraOutlined /></a-button>
+        <a-button type="text"><ScissorOutlined /></a-button>
 
-      <div class="tool-bar">
-        <a-space>
-          <a-button type="text"><MehOutlined /></a-button>
-          <a-button type="text"><FolderOpenOutlined /></a-button>
-          <a-button type="text"><VideoCameraOutlined /></a-button>
-          <a-button type="text"><ScissorOutlined /></a-button>
+        <a-button type="text">
+          <UploadOutlined />
+        </a-button>
 
-          <a-button type="text">
-            <UploadOutlined />
-          </a-button>
-
-          <a-popconfirm title="Are you sure delete this task?" ok-text="Yes" cancel-text="No">
-            <a-button type="text">Confirm</a-button>
-          </a-popconfirm>
-        </a-space>
-      </div>
+        <a-popconfirm title="Are you sure delete this task?" ok-text="Yes" cancel-text="No">
+          <a-button type="text">Confirm</a-button>
+        </a-popconfirm>
+      </a-space>
+    </div>
+    <div class="input-body">
       <div class="input-area">
         <scroll-view>
           <!-- <a-textarea
@@ -82,7 +82,6 @@ const click = (e: any) => {
           <a-mentions
             class="textarea"
             :value="value"
-            
             rows="5"
             placeholder="说点什么..."
             :options="options"
@@ -96,13 +95,19 @@ const click = (e: any) => {
       <div class="input-footer">
         <div class="footer-left">{{ (value?.toString() || '').length }} /1000</div>
         <div class="footer-right">
-          <a-button type="primary" @click="$emit('send', $event)" :disabled="disabled">
+          <a-button
+            type="primary"
+            @click="$emit('send', $event)"
+            :disabled="disabled"
+            class="btn-send"
+          >
             发送(
             <u>S</u>
             )
           </a-button>
         </div>
       </div>
+    </div>
   </section>
 </template>
 
@@ -111,7 +116,11 @@ const click = (e: any) => {
   display: flex;
   flex-direction: column;
   /* height: 200px; */
-  border-top: 1px solid #ccc;
+  /* border-top: 1px solid #ccc; */
+  width: 100%;
+}
+.input-body {
+  background-color: white;
 }
 .input-area {
   display: flex;
@@ -135,7 +144,9 @@ const click = (e: any) => {
   display: flex;
   padding-right: 12px;
 }
-.send {
-  height: 24px;
+.btn-send {
+  font-size: 12px;
+  padding: 0 12px;
+  height: 28px;
 }
 </style>
