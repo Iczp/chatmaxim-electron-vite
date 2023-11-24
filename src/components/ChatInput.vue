@@ -49,7 +49,7 @@ const click = (e: any) => {
 
 <template>
   <section class="chat-input" disabled="disabled">
-    <div class="chat-input">
+
       <div class="tool-bar">
         <a-space>
           <a-button type="text"><MehOutlined /></a-button>
@@ -78,7 +78,7 @@ const click = (e: any) => {
             @click="click"
           /> -->
           <!-- @keydown.ctrl.83.prevent.stop="send" -->
-          @input="$emit('update:modelValue', $event.target.value)"
+          <!-- @input="$emit('update:modelValue', $event.target.value)" -->
           <a-mentions
             class="textarea"
             :value="value"
@@ -103,13 +103,39 @@ const click = (e: any) => {
           </a-button>
         </div>
       </div>
-    </div>
-    <!--  -->
   </section>
 </template>
 
 <style scoped>
 .chat-input {
-  display: display;
+  display: flex;
+  flex-direction: column;
+  /* height: 200px; */
+  border-top: 1px solid #ccc;
+}
+.input-area {
+  display: flex;
+  flex: 1;
+  width: 100%;
+}
+.input-footer {
+  display: flex;
+  flex-direction: row;
+  height: 48px;
+  align-items: center;
+  justify-content: space-between;
+}
+.footer-left {
+  display: flex;
+  font-size: 12px;
+  color: #ccc;
+  padding-left: 12px;
+}
+.footer-right {
+  display: flex;
+  padding-right: 12px;
+}
+.send {
+  height: 24px;
 }
 </style>

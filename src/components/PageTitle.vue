@@ -70,10 +70,12 @@ const onTitleClick = () => {
   justify-content: space-between;
   min-height: 32px;
   background-color: #f5f5f5ac;
-  font-size: 16px;
+  font-size: 14px;
+  font-weight: bold;
   flex-shrink: 0;
   border-bottom: 1px solid rgba(185, 185, 185, 0.596);
   box-sizing: border-box;
+  padding: 5px 0;
   /* background: linear-gradient(135deg,#f5f5f5ac, rgba(1, 156, 148, 0.2)) border-box; */
   background: linear-gradient(135deg, #f5f5f5ac, rgba(1, 156, 148, 0.2)) border-box;
 }
@@ -111,7 +113,7 @@ const onTitleClick = () => {
 }
 .main-title-text {
   display: flex;
-  font-size: 18px;
+  /* font-size: 18px; */
   font-weight: bold;
   margin: 0;
   padding: 0;

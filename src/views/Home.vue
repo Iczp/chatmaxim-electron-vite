@@ -30,9 +30,11 @@ import {
 
 import { navToChat } from '../commons/utils';
 import { router, chatHistorys } from '../routes';
+import { message } from 'ant-design-vue';
 
 const chatObjectItems: Ref<BadgeDto[]> = ref([]);
 
+const route = useRoute();
 // const router = useRouter();
 
 onMounted(() => {
@@ -72,7 +74,6 @@ const goto = (p: any) => router.push(p);
 const chatObjectId = computed(() => Number(router.currentRoute.value.params.chatObjectId));
 
 const isChatActive = (chatObjectId: number): boolean => {
-  const route = router.currentRoute.value;
   return route.path.startsWith('/chat/') && chatObjectId == Number(route.params.chatObjectId);
 };
 
@@ -83,7 +84,14 @@ const isNavActive = (pattern: string | RegExp, flags?: string | undefined): bool
 
 const gotoSetting = () => {
   // console.log('app.getAppPath', app.getAppPath());
-  ipcRenderer.invoke('open-win', '/settings');
+  router.push({
+    path: `/settings`,
+    // name: 'im',
+    // params: {
+    //   chatObjectId: item.chatObjectId,
+    // },
+  });
+  message.info({ content: '设置' });
 };
 
 const getKey = (route: RouteLocationNormalizedLoaded): string | string[] => {

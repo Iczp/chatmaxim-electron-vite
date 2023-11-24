@@ -279,11 +279,7 @@ const mouseleave = (e: MouseEvent) => {
               <icon type="mute" size="16" color="gray" />
             </template>
           </PageTitle>
-          <!-- <div class="message-container"> -->
           <scroll-view class="message-container" ref="scroll">
-            <!-- <h3>prop.id :{{ sessionUnitId }}</h3>
-            <div>entity id:{{ detail }}</div>
-            <div>setting:{{ setting }}</div> -->
             <MessageItem
               v-for="(item, index) in ret.items"
               :key="item.id"
@@ -292,22 +288,26 @@ const mouseleave = (e: MouseEvent) => {
               v-model:selectable="selectable"
               @contextmenu="showContextMenu"
             >
-              <h3>{{ item.senderDisplayName }}</h3>
-              <p>{{ item }}</p>
             </MessageItem>
           </scroll-view>
-          <!-- </div> -->
-          {{ textValue }}
-          <ChatInput v-model:value="textValue" @send="onSend" />
         </div>
       </a-layout-content>
+      <a-layout-footer class="footer">
+        <ChatInput v-model:value="textValue" @send="onSend" />
+      </a-layout-footer>
     </a-layout>
   </div>
 </template>
 
 <style scoped>
+:deep(.page-title) {
+  height: 64px;
+}
 :deep(.page-title-left) {
   padding: 0 20px;
+}
+:deep(.main-title-left) {
+  font-size: 16px;
 }
 .chat-setting {
   background-color: #d70c0c;
@@ -357,45 +357,7 @@ const mouseleave = (e: MouseEvent) => {
   width: 100%;
   height: 100%;
 }
-.page-title {
-  display: flex;
-  flex-direction: row;
-  justify-content: space-between;
-  align-items: center;
-  height: 64px;
-  background-color: #f5f5f5ac;
-  font-size: 16px;
-  flex-shrink: 0;
-  border-bottom: 1px solid #ccc;
 
-  box-sizing: border-box;
-}
-.page-title-left {
-  display: flex;
-  flex-direction: column;
-  padding: 0 12px;
-}
-.page-title-right {
-  display: flex;
-  flex-direction: column;
-  align-items: flex-end;
-}
-.main-title {
-  display: flex;
-  align-items: center;
-  font-size: 18px;
-  font-weight: bold;
-  margin: 0;
-  height: 32px;
-}
-.sub-title {
-  display: flex;
-  align-items: center;
-  font-size: 12px;
-  margin: 0;
-  color: #ccc;
-  height: 20px;
-}
 .message-container {
   display: flex;
   flex-direction: column;
@@ -409,62 +371,11 @@ const mouseleave = (e: MouseEvent) => {
 .message-item {
   display: flex;
 }
-.chat-input {
-  display: flex;
-  flex-direction: column;
-  height: 200px;
 
-  /* background-color: #f6f6f6; */
-  justify-content: stretch;
-  align-items: stretch;
-  flex-shrink: 0;
-  border-top: 1px solid #ccc;
+
+
+.footer {
+  padding: 0;
 }
-.tool-bar {
-  display: flex;
-  height: 36px;
-  align-items: center;
-  /* padding: 0 12px; */
-}
-.input-area {
-  display: flex;
-  flex: 1;
-  width: 100%;
-}
-.textarea {
-  width: 100%;
-  height: 100%;
-  border: none;
-  /* padding: 12px; */
-  border-radius: 0;
-  resize: none;
-  font-size: 14px;
-}
-:where(.css-dev-only-do-not-override-kqecok).ant-input:focus,
-:where(.css-dev-only-do-not-override-kqecok).ant-input-focused {
-  /* border-color: #4096ff; */
-  box-shadow: none;
-  border-inline-end-width: 1px;
-  outline: 0;
-}
-.input-footer {
-  display: flex;
-  flex-direction: row;
-  height: 36px;
-  align-items: center;
-  justify-content: space-between;
-}
-.footer-left {
-  display: flex;
-  font-size: 12px;
-  color: #ccc;
-  padding-left: 12px;
-}
-.footer-right {
-  display: flex;
-  padding-right: 12px;
-}
-.send {
-  height: 24px;
-}
+
 </style>
