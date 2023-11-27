@@ -34,6 +34,7 @@ export type MessageContextMenuInput = ContextmenuParams & {
   selectable: Ref<boolean | undefined>;
   playMessageId: Ref<number | undefined>;
   onQuote?: (entity: MessageDto) => void;
+  onFollowing?: (targetSessionUnitId: string, isFollowing: boolean) => void;
 };
 
 export type ContextmenuInput = ContextmenuParams & ContextmenuLabel;

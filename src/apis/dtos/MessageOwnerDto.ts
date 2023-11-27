@@ -8,20 +8,6 @@ export type MessageOwnerDto = MessageSimpleDto & {
   friendshipSessionUnitId?: string | null;
 
   /**
-   *
-   * 是否已读
-   * @type {boolean}
-   */
-  IsReaded?: boolean;
-
-  /**
-   * 是否已打开
-   *
-   * @type {boolean}
-   */
-  IsOpened?: boolean;
-
-  /**
    * 是否收藏了
    *
    * @type {boolean}
@@ -54,6 +40,12 @@ export type MessageOwnerDto = MessageSimpleDto & {
    * 引用来源Id(引用才有)
    */
   quoteMessageId?: number | null;
+
+  /**
+   * 引用消息
+   *
+   * @type {MessageOwnerDto}
+   */
   quoteMessage?: MessageOwnerDto;
 
   /**
@@ -75,6 +67,16 @@ export type MessageOwnerDto = MessageSimpleDto & {
    * 是否特别关注
    */
   isFollowing?: boolean | null;
+
+  /**
+   * 是否已撤回
+   */
+  isRollbacked?: boolean | null;
+
+  /**
+   * 是否@所有人
+   */
+  isRemindAll?: boolean | null;
 
   /**
    * 成员数量

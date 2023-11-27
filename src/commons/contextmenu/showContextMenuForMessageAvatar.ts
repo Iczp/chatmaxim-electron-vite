@@ -6,6 +6,8 @@ import { Remind, GroupRemove, PersonAdd, WavingHand, ChatOff, ChatOn } from '../
 import { sessionRequest } from '../sessionRequest';
 import { MessageContextMenuInput, iconClass } from '.';
 import { getSenderNameForMessage } from '../utils';
+import { FollowService } from '../../apis';
+import { message } from 'ant-design-vue';
 
 export type ContextmenuParams = {
   event: MouseEvent | PointerEvent;
@@ -17,6 +19,7 @@ export const showContextMenuForMessageAvatar = ({
   sessionUnitId,
   selectable,
   playMessageId,
+  onFollowing,
 }: MessageContextMenuInput) => {
   if (!entity) {
     return;
@@ -76,9 +79,42 @@ export const showContextMenuForMessageAvatar = ({
         icon: h(Remind, iconClass),
         hidden: entity.isSelf,
         disabled: false,
-        customClass: 'last-child',
+        // customClass: 'last-child',
         onClick: () => {
+          if (sessionUnitId == entity.senderSessionUnit?.id) {
+            message.warn({ content: '不能是自己' });
+            return;
+          }
+
           console.log(`@${senderName}`, entity);
+          if (entity.isFollowing) {
+            FollowService.postApiChatFollowDelete({
+              sessionUnitId,
+              idList: [entity.senderSessionUnit!.id!],
+            })
+              .then(res => {
+                message.success({ content: '取消关注' });
+                entity.isFollowing = false;
+                onFollowing?.call(this, entity.senderSessionUnit!.id!, entity.isFollowing);
+              })
+              .catch(err => {
+                message.error({ content: err.body?.error?.message });
+              });
+          } else {
+            FollowService.postApiChatFollow({
+              sessionUnitId,
+              idList: [entity.senderSessionUnit!.id!],
+            })
+              .then(res => {
+                message.success({ content: '关注成功' });
+                entity.isFollowing = true;
+                onFollowing?.call(this, entity.senderSessionUnit!.id!, entity.isFollowing);
+                console.log('FollowService.postApiChatFollow', res);
+              })
+              .catch(err => {
+                message.error({ content: err.body?.error?.message });
+              });
+          }
         },
       },
       {

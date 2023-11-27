@@ -202,6 +202,11 @@ const showContextMenu = ({ labelType, mouseButton, event, entity }: ContextmenuI
       console.log('onQuote', this, entity);
       quoteMessage.value = entity;
     },
+    onFollowing(targetSessionUnitId: string, isFollowing: boolean) {
+      ret.items
+        .filter(x => x.senderSessionUnit?.id == targetSessionUnitId)
+        .forEach(x => (x.isFollowing = isFollowing));
+    },
   });
 
 const contentStyle: CSSProperties = {
