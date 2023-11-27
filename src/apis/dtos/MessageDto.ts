@@ -28,7 +28,7 @@ export type MessageDto = MessageOwnerDto & {
    *
    * @type {boolean}
    */
-  isRollback?: boolean;
+  isRollbacked?: boolean;
 
   /**
    *

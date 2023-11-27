@@ -47,6 +47,13 @@ export type MessageSimpleDto = {
    */
   rollbackTime?: string | null;
 
+    /**
+   * 是否撤回
+   *
+   * @type {boolean}
+   */
+    isRollbacked?: boolean;
+
   /**
    * 创建时间
    * @type {string}

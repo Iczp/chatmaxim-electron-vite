@@ -12,13 +12,13 @@ export const useMessageContent = (
   const contentType = ref<string | undefined>();
   const contentText = ref<string>('');
 
-  const isRollback = entity?.rollbackTime != null;
+  const isRollbacked = entity?.isRollbacked || entity?.rollbackTime != null;
 
   if (!entity) {
     return { contentType, contentText };
   }
 
-  if (isRollback) {
+  if (isRollbacked) {
     contentText.value = '消息已经被撤回';
     return { contentType, contentText };
   }

@@ -72,7 +72,6 @@ declare module 'vue' {
     RouterLink: typeof import('vue-router')['RouterLink']
     RouterView: typeof import('vue-router')['RouterView']
     SessionItem: typeof import('./src/components/SessionItem.vue')['default']
-    'SessionItem copy': typeof import('./src/components/SessionItem copy.vue')['default']
     Text: typeof import('./src/components/Text.vue')['default']
     TextViewer: typeof import('./src/components/TextViewer.vue')['default']
     TooBar: typeof import('./src/components/TooBar.vue')['default']

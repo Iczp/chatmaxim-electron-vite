@@ -15,7 +15,7 @@ const { contentType, contentText } = useMessageContent(props.entity);
     </span>
     <span class="message-text" :title="contentText">{{ contentText }}</span>
 
-    <!-- <span v-if="isRollback">消息被撤回</span>
+    <!-- <span v-if="isRollbacked">消息被撤回</span>
   <span v-else-if="messageType == MessageTypeEnums.Cmd">{{ content.text }}</span>
   <span v-else-if="messageType == MessageTypeEnums.Text">{{ content.text }}</span>
   <span v-else-if="messageType == MessageTypeEnums.Image">[图片]</span>

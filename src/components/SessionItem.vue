@@ -1,17 +1,13 @@
 <script setup lang="ts">
-import { computed, watch } from 'vue';
+import { watch } from 'vue';
 import { SessionUnitOwnerDto } from '../apis';
-import {
-  formatMessageTime,
-  getDestinationNameForSessionUnit,
-  getSenderNameForMessage,
-} from '../commons/utils';
 
 import { HeartTwoTone } from '@ant-design/icons-vue';
 
-import { ChatObjectTypeEnums, MessageTypeEnums } from '../apis/enums';
+import { ChatObjectTypeEnums } from '../apis/enums';
 import ChatObject from '../components/ChatObject.vue';
 import MessageProview from '../components/MessageProview.vue';
+import { useSessionUnit } from '../commons/useSessionUnit';
 
 const props = defineProps<{
   title?: string;
@@ -34,29 +30,20 @@ watch(
     console.log('watch isImmersed:', v, props.entity?.id, props.index);
   },
 );
-const isTopping = computed(() => Number(props.entity?.sorting) > 0);
 
-const lastMessage = computed(() => props.entity?.lastMessage);
-
-const messageType = computed(
-  () => props.entity?.lastMessage?.messageType as MessageTypeEnums | undefined,
-);
-const isImmersed = computed(() => props.entity?.setting?.isImmersed);
-
-const destination = computed(() => props.entity?.destination);
-
-const objectType = computed(() => props.entity?.destination?.objectType);
-
-const sendTime = computed(() =>
-  formatMessageTime(new Date(props.entity?.lastMessage?.creationTime!)),
-);
-const badge = computed(() => props.entity?.publicBadge || 0);
-
-const senderName = computed(() => getSenderNameForMessage(props.entity?.lastMessage));
-
-const destinationName = computed(() => getDestinationNameForSessionUnit(props.entity));
-
-const isShowSender = computed(() => senderName.value && messageType.value != MessageTypeEnums.Cmd);
+const {
+  isTopping,
+  lastMessage,
+  isImmersed,
+  destination,
+  objectType,
+  sendTime,
+  badge,
+  destinationName,
+  isShowSender,
+  senderName,
+  remindMeCount,
+} = useSessionUnit(props.entity);
 </script>
 
 <template>
@@ -89,8 +76,8 @@ const isShowSender = computed(() => senderName.value && messageType.value != Mes
     <template #sub>
       <div class="text-ellipsis">
         <!-- @我 -->
-        <span v-if="entity!.remindMeCount!>0" class="remind">
-          {{ Number(entity?.remindMeCount) > 99 ? '99+' : entity?.remindMeCount }}@我
+        <span v-if="remindMeCount!>0" class="remind">
+          {{ Number(remindMeCount) > 99 ? '99+' : remindMeCount }}@我
         </span>
         <!-- 我关注的 flowing -->
         <!-- 发送人信息 -->

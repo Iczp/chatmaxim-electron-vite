@@ -134,7 +134,7 @@ export const showContextMenuForMessageContent = ({
         icon: h(Rollback, iconClass),
         onClick: () => {
           rollbackMessage({ messageId: entity.id! }).then(v => {
-            entity.isRollback = true;
+            entity.isRollbacked = true;
             entity.rollbackTime = new Date().toDateString();
             entity.content = null;
           });

@@ -22,7 +22,7 @@ import MsgRollback from './MsgRollback.vue';
 
 import { SelfImprovement, PersonPin } from '../icons';
 import { ContextmenuInput, LabelType as LabelType, MouseButton } from '../commons/contextmenu';
-import { useMessageInfo } from '../commons/useMessageInfo';
+import { useMessage } from '../commons/useMessage';
 
 const props = defineProps<{
   sessionUnitId: string;
@@ -38,7 +38,7 @@ const emits = defineEmits<{
   'update:selectable': [selectable: boolean];
 }>();
 
-const { senderName, messageType, isRollback, sendTime, sendTimeTitle } = useMessageInfo(
+const { senderName, messageType,  isRollbacked, sendTime, sendTimeTitle } = useMessage(
   props.entity,
 );
 
@@ -82,7 +82,7 @@ const onMessageClick = (event: MouseEvent, mouseButton: MouseButton) => {
     <header v-if="!entity.isShowTime" class="msg-header send-time" :title="sendTimeTitle">
       {{ sendTime }}
     </header>
-    <MsgRollback v-if="isRollback" :name="senderName" />
+    <MsgRollback v-if="isRollbacked" :name="senderName" />
     <MsgCmd v-else-if="messageType == MessageTypeEnums.Cmd" :item="entity" />
     <div v-else class="msg-body-wraper">
       <div v-if="selectable" class="checkbox-container">

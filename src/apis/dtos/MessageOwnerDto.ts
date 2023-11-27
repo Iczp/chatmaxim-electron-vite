@@ -69,11 +69,6 @@ export type MessageOwnerDto = MessageSimpleDto & {
   isFollowing?: boolean | null;
 
   /**
-   * 是否已撤回
-   */
-  isRollbacked?: boolean | null;
-
-  /**
    * 是否@所有人
    */
   isRemindAll?: boolean | null;

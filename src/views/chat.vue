@@ -15,12 +15,11 @@ import ChatSetting from './ChatSetting.vue';
 import MessageItem from '../components/MessageItem.vue';
 import ChatInput from '../components/ChatInput.vue';
 import { message } from 'ant-design-vue';
-// import { Mentions, Form } from 'ant-design-vue';
-
 import { useImStore } from '../stores/im';
 import { MessageDto, ResultValue } from '../apis/dtos';
 import { ContextmenuInput, showContextMenuForMessage } from '../commons/contextmenu';
 import QuoteMessage from '../components/QuoteMessage.vue';
+import { useSessionUnit } from '../commons/useSessionUnit';
 
 const store = useImStore();
 
@@ -30,6 +29,10 @@ const props = defineProps<{
 }>();
 
 const route = useRoute();
+
+const info = computed(() => store.getItem(props.sessionUnitId!));
+
+const { isInputEnabled, destinationName, isImmersed, memberName } = useSessionUnit(info.value);
 
 const chatInput = ref<InstanceType<typeof ChatInput> | null>(null);
 
@@ -43,11 +46,7 @@ const playMessageId = ref<number | undefined>();
 
 const detail = ref<IczpSessionUnitOwnerDetailDto>({});
 
-const info = computed(() => store.getItem(props.sessionUnitId!));
-
-const setting = computed(() => info.value?.setting);
-
-const isInputEnabled = computed(() => info.value?.setting?.isInputEnabled);
+// Mentions
 
 watch(
   () => selectable.value,
@@ -85,15 +84,6 @@ const fetchData = ({ sessionUnitId }: { sessionUnitId: string }) => {
   });
 };
 
-// const displayName = computed(
-//   () => route.query.title || props.title || entity.value?.displayName || entity.value?.destination?.name,
-// );
-
-const destinationName = computed(
-  () =>
-    info.value?.setting?.rename || info.value?.destination?.name || (route.query.title as string),
-);
-
 const pageTitle = ref('');
 
 const scroll = ref(null);
@@ -111,14 +101,9 @@ watch(
 
 const textValue = ref('669+++');
 
-const chatSettingDisplay = ref(false);
 const open = ref<boolean>(false);
 const showDrawer = () => {
   open.value = true;
-};
-
-const onClose = () => {
-  open.value = false;
 };
 
 const afterOpenChange = (bool: boolean) => {
@@ -185,7 +170,7 @@ const entryItems = computed(() => [
   },
   {
     text: '群内名称',
-    value: setting.value?.memberName,
+    value: memberName.value,
   },
 ]);
 
@@ -279,7 +264,7 @@ const mouseleave = (e: MouseEvent) => {
       :top="true"
       more
     >
-      <template v-if="setting?.isImmersed" v-slot:title>
+      <template v-if="isImmersed" v-slot:title>
         <icon type="mute" size="16" color="gray" />
       </template>
     </PageTitle>
@@ -310,7 +295,12 @@ const mouseleave = (e: MouseEvent) => {
       </scroll-view>
     </page-content>
     <page-footer class="footer">
-      <ChatInput ref="chatInput" v-model:value="textValue" @send="onSend">
+      <ChatInput
+        ref="chatInput"
+        :disabled="!isInputEnabled"
+        v-model:value="textValue"
+        @send="onSend"
+      >
         <QuoteMessage
           v-if="quoteMessage"
           :entity="quoteMessage"
