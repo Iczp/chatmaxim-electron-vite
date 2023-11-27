@@ -1,5 +1,5 @@
 import { HtmlHTMLAttributes, Ref } from 'vue';
-import { MessageDto } from '../../apis/dtos';
+import { MessageDto, SessionUnitSenderDto } from '../../apis/dtos';
 import { showContextMenuForMessageAvatar } from './showContextMenuForMessageAvatar';
 import { showContextMenuForMessageContent } from './showContextMenuForMessageContent';
 import { showContextMenuForMessageSelect } from './showContextMenuForMessageSelect';
@@ -33,6 +33,7 @@ export type MessageContextMenuInput = ContextmenuParams & {
   sessionUnitId: string;
   selectable: Ref<boolean | undefined>;
   playMessageId: Ref<number | undefined>;
+  onRemind?: (entity: SessionUnitSenderDto) => void;
   onQuote?: (entity: MessageDto) => void;
   onFollowing?: (targetSessionUnitId: string, isFollowing: boolean) => void;
 };

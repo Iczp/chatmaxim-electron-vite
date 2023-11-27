@@ -20,6 +20,7 @@ export const showContextMenuForMessageAvatar = ({
   selectable,
   playMessageId,
   onFollowing,
+  onRemind,
 }: MessageContextMenuInput) => {
   if (!entity) {
     return;
@@ -50,9 +51,7 @@ export const showContextMenuForMessageAvatar = ({
         hidden: entity.isSelf,
         customClass: 'first-child',
         disabled: false,
-        onClick: () => {
-          //   emits('remind', `@${senderName}`);
-        },
+        onClick: () => onRemind?.call(this, entity.senderSessionUnit!),
       },
       {
         label: `禁言`,

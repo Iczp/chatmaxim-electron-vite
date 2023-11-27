@@ -21,6 +21,8 @@ import { OpenAPI } from '../core/OpenAPI';
 import { request as __request } from '../core/request';
 import { PagedResultDto } from '../dtos/PagedResultDto';
 import { SessionUnitGetListInput } from '../dtos/SessionUnitGetListInput';
+import { GetListInput, SessionUnitDestinationDto } from '../dtos';
+import { DestinationGetListInput } from '../dtos/DestinationGetListInput';
 
 export class SessionUnitService {
 
@@ -410,7 +412,7 @@ sorting?: string,
      * @returns Volo_Abp_Application_Dtos_PagedResultDto_1<IczpNet_Chat_SessionUnits_Dtos_SessionUnitDestinationDto_IczpNet_Chat_Application_Contracts_Version_0_1_1_0_Culture_neutral_PublicKeyToken_null_> Success
      * @throws ApiError
      */
-    public static getApiChatSessionUnitDestination1({
+    public static getApiChatSessionUnitDestinationList({
 id,
 isMuted,
 isKilled,
@@ -426,68 +428,7 @@ keyword,
 maxResultCount,
 skipCount,
 sorting,
-}: {
-/**
- * 会话单元Id
- */
-id: string,
-/**
- * 是否被禁言
- */
-isMuted?: boolean,
-/**
- * 是否已删除的
- */
-isKilled?: boolean,
-/**
- * 是否公开的
- */
-isPublic?: boolean,
-/**
- * 是否固定成员
- */
-isStatic?: boolean,
-/**
- * 所属聊天对象Id
- */
-ownerIdList?: Array<number>,
-/**
- * 所属聊天对象类型
- */
-ownerTypeList?: Array<0 | 1 | 2 | 3 | 4 | 5 | 6 | 7 | 8 | 9>,
-/**
- * 会话标签Id
- */
-tagId?: string,
-/**
- * 会话角色Id
- */
-roleId?: string,
-/**
- * 加入方式
- */
-joinWay?: 0 | 1 | 2 | 3 | 4 | 5,
-/**
- * 邀请人Id
- */
-inviterId?: string,
-/**
- * 关键字(支持拼音)
- */
-keyword?: string,
-/**
- * 显示数量
- */
-maxResultCount?: number,
-/**
- * 跳过数量
- */
-skipCount?: number,
-/**
- * 排序
- */
-sorting?: string,
-}): CancelablePromise<Volo_Abp_Application_Dtos_PagedResultDto_1> {
+}: DestinationGetListInput): CancelablePromise<PagedResultDto<SessionUnitDestinationDto>> {
         return __request(OpenAPI, {
             method: 'GET',
             url: '/api/chat/session-unit/{id}/destination',

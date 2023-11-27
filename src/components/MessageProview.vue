@@ -36,6 +36,10 @@ const { contentType, contentText } = useMessageContent(props.entity);
 <style scoped>
 .message-content-proview {
   /* display: inline-flex; */
+  max-width: 100px;
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
 }
 
 .message-type {

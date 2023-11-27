@@ -19,7 +19,8 @@ import { useImStore } from '../stores/im';
 import { MessageDto, ResultValue } from '../apis/dtos';
 import { ContextmenuInput, showContextMenuForMessage } from '../commons/contextmenu';
 import QuoteMessage from '../components/QuoteMessage.vue';
-import { useSessionUnit } from '../commons/useSessionUnit';
+import { useSessionUnit, useSessionUnitId } from '../commons/useSessionUnit';
+import { useDestinationList } from '../commons/DestinationListGetList';
 
 const store = useImStore();
 
@@ -32,7 +33,12 @@ const route = useRoute();
 
 const info = computed(() => store.getItem(props.sessionUnitId!));
 
-const { isInputEnabled, destinationName, isImmersed, memberName } = useSessionUnit(info.value);
+const destinationList = useDestinationList({
+  id: props.sessionUnitId,
+  maxResultCount: 20,
+});
+
+const { isInputEnabled, destinationName, isImmersed, memberName } = useSessionUnitId(props.sessionUnitId);
 
 const chatInput = ref<InstanceType<typeof ChatInput> | null>(null);
 
@@ -183,6 +189,9 @@ const showContextMenu = ({ labelType, mouseButton, event, entity }: ContextmenuI
     selectable,
     playMessageId,
     mouseButton,
+    onRemind(entity) {
+      console.log('remind:', entity);
+    },
     onQuote(entity) {
       console.log('onQuote', this, entity);
       quoteMessage.value = entity;
@@ -258,7 +267,7 @@ const mouseleave = (e: MouseEvent) => {
   >
     <PageTitle
       :title="destinationName"
-      :description="`code${detail?.destination?.code}`"
+      :description="`code${detail?.destination?.code}:memberCount(${destinationList.totalCount.value})`"
       @more="showDrawer"
       :search="true"
       :top="true"
