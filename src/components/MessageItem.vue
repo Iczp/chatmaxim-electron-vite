@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { ref } from 'vue';
+import { ref, watch } from 'vue';
 
 import { MessageDto } from '../apis/dtos';
 import { MessageTypeEnums } from '../apis/enums';
@@ -40,6 +40,15 @@ const emits = defineEmits<{
 }>();
 
 const { senderName, messageType, isRollbacked, sendTime, sendTimeTitle } = useMessage(props.entity);
+
+const messageState = ref(props.entity.state);
+
+watch(
+  () => props.entity.state,
+  v => {
+    console.log('#watch# props.entity.state', v);
+  },
+);
 
 const isShowMemberName = ref(true);
 
@@ -102,7 +111,11 @@ const onMessageClick = (event: MouseEvent, mouseButton: MouseButton) => {
           <header :size="0" v-if="isShowMemberName" class="msg-main-header">
             <PersonPin v-if="entity.senderSessionUnit?.isCreator" class="svg-icon s14 color" />
             <SelfImprovement class="svg-icon-16" />
-            <FavoriteFilled v-if="entity.isFollowing" class="svg-icon s14" style="color: rgb(255, 80, 211)" />
+            <FavoriteFilled
+              v-if="entity.isFollowing"
+              class="svg-icon s14"
+              style="color: rgb(255, 80, 211)"
+            />
             <!-- <FavoriteOutline class="svg-icon s14" /> -->
 
             <span>{{ senderName }}</span>
@@ -134,7 +147,7 @@ const onMessageClick = (event: MouseEvent, mouseButton: MouseButton) => {
 
             <MsgUnsupported v-else :r="entity.isSelf" />
             <!-- 消息 End -->
-            <MsgState :state="entity.state" />
+            <MsgState :state="messageState" />
           </main>
 
           <footer v-if="entity.quoteMessage" class="msg-main-footer">

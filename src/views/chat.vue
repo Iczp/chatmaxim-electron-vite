@@ -33,10 +33,10 @@ const route = useRoute();
 
 const info = computed(() => store.getItem(sessionUnitId));
 
-const destinationList = useDestinationList({
-  id: sessionUnitId,
-  maxResultCount: 20,
-});
+// const destinationList = useDestinationList({
+//   id: sessionUnitId,
+//   maxResultCount: 20,
+// });
 
 const { isInputEnabled, destination, destinationName, isImmersed, memberName } =
   useSessionUnitId(sessionUnitId);
@@ -87,8 +87,9 @@ const afterOpenChange = (bool: boolean) => {
 const onSend = async ({ event, value }: any) => {
   console.log('send', textValue.value);
   isSendBtnEnabled.value = false;
+
   const messageDto: MessageDto = {
-    autoId: 0.001,
+    autoId: store.generateMessageId(),
     isSelf: true,
     messageType: MessageTypeEnums.Text,
     senderName: detail.value?.owner?.name,
@@ -101,7 +102,7 @@ const onSend = async ({ event, value }: any) => {
   };
   messageList.items.value.push(messageDto);
   scroll.value?.scrollToBottom({ duration: 1500 });
-  return;
+  // return;
   MessageSenderService.postApiChatMessageSenderSendText({
     sessionUnitId: sessionUnitId,
     requestBody: {
@@ -113,15 +114,24 @@ const onSend = async ({ event, value }: any) => {
   })
     .then(res => {
       console.log('sendRet', res);
+      store.setMaxMessageId(res.id!);
       chatInput.value?.clear();
       quoteMessage.value = null;
       Object.assign(quoteMessage, null);
       messageList.fetchNew();
       console.log('scrollBar.value', scroll.value);
-      scroll.value?.scrollToBottom({ duration: 1500 });
-      // const el: HTMLElement = scroll.value;
-      // el.scrollTop = el.scrollHeight;
-      // messageList.changeTick(scrollToBottom);
+      messageDto.state = MessageStateEnums.Ok;
+
+      // messageList.items.value = [...messageList.items.value];
+      // messageList.items.value.pop();
+      messageList.changeTick(() => {
+        const findIndex = messageList.items.value?.findIndex(x => x.autoId == messageDto.autoId);
+        if (findIndex != -1) {
+          console.log('findIndex', findIndex);
+          messageList.items.value.splice(findIndex, 1);
+        }
+        scroll.value?.scrollToBottom({ duration: 1500 });
+      });
     })
     .catch((err: ApiError) => {
       console.error('sendRet', err);
@@ -242,7 +252,7 @@ const mouseleave = (e: MouseEvent) => {
   >
     <PageTitle
       :title="destinationName"
-      :description="`code${destination?.code}:memberCount(${destinationList.totalCount.value})`"
+      :description="`code${destination?.code}:memberCount(${detail?.sessionUnitCount})`"
       @more="showDrawer"
       :search="true"
       :top="true"

@@ -28,6 +28,7 @@ interface State {
    * @memberof State
    */
   maxMessageId: number | undefined;
+  autoMessageId: number;
 }
 const sortFunc = (a: SessionItemDto, b: SessionItemDto): number => {
   if (a.sorting > b.sorting) {
@@ -51,6 +52,7 @@ export const useImStore = defineStore('im', {
       messageMap: {},
       sessionItemsMap: {},
       maxMessageId: undefined,
+      autoMessageId: 0,
     };
   },
   getters: {
@@ -123,6 +125,7 @@ export const useImStore = defineStore('im', {
         // store.set(x.id!, x);
       });
       this.setSessionItems(items[0].ownerId!, items, keyword);
+      this.setMaxMessageId(Math.max(...items.map(x => x.lastMessage?.id!)));
       // this.sessionUnitMap = {...this.sessionUnitMap};
     },
 
@@ -156,6 +159,11 @@ export const useImStore = defineStore('im', {
      */
     setMaxMessageId(messageId: number) {
       this.maxMessageId = Math.max(messageId, this.maxMessageId || 0);
+      this.autoMessageId = this.maxMessageId;
+    },
+    generateMessageId() {
+      this.autoMessageId = Number((this.autoMessageId + 0.0001).toFixed(4));
+      return this.autoMessageId;
     },
   },
 });
