@@ -70,6 +70,7 @@ declare module 'vue' {
     QuoteMessage: typeof import('./src/components/QuoteMessage.vue')['default']
     RouterLink: typeof import('vue-router')['RouterLink']
     RouterView: typeof import('vue-router')['RouterView']
+    ScrollView: typeof import('./src/components/ScrollView.vue')['default']
     SessionItem: typeof import('./src/components/SessionItem.vue')['default']
     Text: typeof import('./src/components/Text.vue')['default']
     TextViewer: typeof import('./src/components/TextViewer.vue')['default']

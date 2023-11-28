@@ -10,6 +10,7 @@ import {
 import ChatSetting from './ChatSetting.vue';
 
 import MessageItem from '../components/MessageItem.vue';
+import ScrollView from '../components/ScrollView.vue';
 import ChatInput from '../components/ChatInput.vue';
 import { message } from 'ant-design-vue';
 import { useImStore } from '../stores/im';
@@ -44,9 +45,9 @@ const messageList = useMessageList({ sessionUnitId });
 
 const chatInput = ref<InstanceType<typeof ChatInput> | null>(null);
 
-// const scroll = ref<InstanceType<typeof PerfectScrollbar> | null>(null);
+const scroll = ref<InstanceType<typeof ScrollView> | null>(null);
 
-const scroll = ref();
+// const scroll = ref();
 
 const quoteMessage = ref<MessageDto | null | undefined>();
 
@@ -77,12 +78,12 @@ const afterOpenChange = (bool: boolean) => {
   // console.log('open', bool);
 };
 
-const scrollToBottom = () => {
-  nextTick(() => {
-    const el: HTMLElement = scroll.value.$el;
-    el.scrollTop = el.scrollHeight;
-  });
-};
+// const scrollToBottom = () => {
+//   nextTick(() => {
+//     const el: HTMLElement = scroll.value.$el;
+//     el.scrollTop = el.scrollHeight;
+//   });
+// };
 const onSend = async ({ event, value }: any) => {
   console.log('send', textValue.value);
   isSendBtnEnabled.value = false;
@@ -103,10 +104,11 @@ const onSend = async ({ event, value }: any) => {
       quoteMessage.value = null;
       Object.assign(quoteMessage, null);
       messageList.fetchNew();
-      console.log('scrollBar.value', scroll.value?.ps);
-      const el: HTMLElement = scroll.value.$el;
-      el.scrollTop = el.scrollHeight;
-      messageList.changeTick(scrollToBottom);
+      console.log('scrollBar.value', scroll.value);
+      scroll.value?.scrollToBottom({ duration: 1500 });
+      // const el: HTMLElement = scroll.value;
+      // el.scrollTop = el.scrollHeight;
+      // messageList.changeTick(scrollToBottom);
     })
     .catch((err: ApiError) => {
       console.error('sendRet', err);
