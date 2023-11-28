@@ -20,6 +20,14 @@ interface State {
    * @memberof State
    */
   sessionItemsMap: Record<string, Record<string, SessionItemDto>>;
+
+  /**
+   * 最大消息Id
+   *
+   * @type {(number | undefined)}
+   * @memberof State
+   */
+  maxMessageId: number | undefined;
 }
 const sortFunc = (a: SessionItemDto, b: SessionItemDto): number => {
   if (a.sorting > b.sorting) {
@@ -42,6 +50,7 @@ export const useImStore = defineStore('im', {
       sessionMap: {},
       messageMap: {},
       sessionItemsMap: {},
+      maxMessageId: undefined,
     };
   },
   getters: {
@@ -138,6 +147,15 @@ export const useImStore = defineStore('im', {
           sorting: x.sorting!,
           lastMessageId: x.lastMessageId!,
         }));
+    },
+
+    /**
+     * 设置最大消息Id
+     *
+     * @param {number} messageId
+     */
+    setMaxMessageId(messageId: number) {
+      this.maxMessageId = Math.max(messageId, this.maxMessageId || 0);
     },
   },
 });

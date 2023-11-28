@@ -1,11 +1,7 @@
 <script setup lang="ts">
 import { CSSProperties, computed, nextTick, ref, watch } from 'vue';
 import { useRoute } from 'vue-router';
-import {
-  IczpNet_Chat_SessionUnits_Dtos_SessionUnitOwnerDetailDto as IczpSessionUnitOwnerDetailDto,
-  MessageSenderService,
-  ApiError,
-} from '../apis';
+import { MessageSenderService, ApiError } from '../apis';
 
 import ChatSetting from './ChatSetting.vue';
 
@@ -14,12 +10,15 @@ import ScrollView from '../components/ScrollView.vue';
 import ChatInput from '../components/ChatInput.vue';
 import { message } from 'ant-design-vue';
 import { useImStore } from '../stores/im';
-import { MessageDto } from '../apis/dtos';
+import { MessageDto, SessionUnitDetailDto } from '../apis/dtos';
 import { ContextmenuInput, showContextMenuForMessage } from '../commons/contextmenu';
 import QuoteMessage from '../components/QuoteMessage.vue';
 import { useSessionUnitId } from '../commons/useSessionUnit';
 import { useDestinationList } from '../commons/useDestinationList';
 import { useMessageList } from '../commons/useMessageList';
+import { MessageStateEnums } from '../apis/enums/MessageStateEnums';
+import { MessageTypeEnums } from '../apis/enums/MessageTypeEnums';
+import { useSessionUnitDetail } from '../commons/useSessionUnitDetail';
 
 const store = useImStore();
 
@@ -39,7 +38,8 @@ const destinationList = useDestinationList({
   maxResultCount: 20,
 });
 
-const { isInputEnabled, destinationName, isImmersed, memberName } = useSessionUnitId(sessionUnitId);
+const { isInputEnabled, destination, destinationName, isImmersed, memberName } =
+  useSessionUnitId(sessionUnitId);
 
 const messageList = useMessageList({ sessionUnitId });
 
@@ -57,7 +57,7 @@ const isSendBtnEnabled = ref(true);
 
 const playMessageId = ref<number | undefined>();
 
-const detail = ref<IczpSessionUnitOwnerDetailDto>({});
+const { detail } = useSessionUnitDetail({ sessionUnitId });
 
 watch(
   () => sessionUnitId,
@@ -87,15 +87,28 @@ const afterOpenChange = (bool: boolean) => {
 const onSend = async ({ event, value }: any) => {
   console.log('send', textValue.value);
   isSendBtnEnabled.value = false;
+  const messageDto: MessageDto = {
+    autoId: 0.001,
+    isSelf: true,
+    messageType: MessageTypeEnums.Text,
+    senderName: detail.value?.owner?.name,
+    senderSessionUnit: detail.value,
+    content: {
+      text: value,
+    },
+    state: MessageStateEnums.Sending,
+    creationTime: new Date().toUTCString(),
+  };
+  messageList.items.value.push(messageDto);
+  scroll.value?.scrollToBottom({ duration: 1500 });
+  return;
   MessageSenderService.postApiChatMessageSenderSendText({
     sessionUnitId: sessionUnitId,
     requestBody: {
       quoteMessageId: quoteMessage.value?.id,
       ignoreConnections: null,
       remindList: [],
-      content: {
-        text: value,
-      },
+      content: messageDto.content,
     },
   })
     .then(res => {
@@ -121,18 +134,8 @@ const onSend = async ({ event, value }: any) => {
       isSendBtnEnabled.value = true;
     });
 };
-const onTitleClick = () => {
-  console.log('onTitleClick', detail.value);
-};
 
 const onRemoveQuoteMessage = () => (quoteMessage.value = undefined);
-
-const entries = computed(() =>
-  Object.keys(detail.value).map(key => ({
-    key,
-    value: (detail.value as Record<string, any>)[key],
-  })),
-);
 
 const showContextMenu = ({ labelType, mouseButton, event, entity }: ContextmenuInput) =>
   showContextMenuForMessage({
@@ -239,7 +242,7 @@ const mouseleave = (e: MouseEvent) => {
   >
     <PageTitle
       :title="destinationName"
-      :description="`code${detail?.destination?.code}:memberCount(${destinationList.totalCount.value})`"
+      :description="`code${destination?.code}:memberCount(${destinationList.totalCount.value})`"
       @more="showDrawer"
       :search="true"
       :top="true"

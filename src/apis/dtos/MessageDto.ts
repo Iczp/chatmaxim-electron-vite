@@ -4,6 +4,13 @@ import { MessageOwnerDto } from './MessageOwnerDto';
 
 export type MessageDto = MessageOwnerDto & {
   /**
+   * 自动生成的Id
+   *
+   * @type {number}
+   */
+  autoId?: number;
+  
+  /**
    * 是否显示发送时间
    * @type {boolean}
    */

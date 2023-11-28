@@ -6,6 +6,11 @@ export type { SessionItemDto } from './SessionItemDto';
 export type { SessionUnitOwnerDto } from './SessionUnitOwnerDto';
 export type { SessionUnitSenderDto } from './SessionUnitSenderDto';
 export type { SessionUnitDestinationDto } from './SessionUnitDestinationDto';
+export type { SessionUnitDetailDto } from './SessionUnitDetailDto';
+
+export type { EntryDto } from './EntryDto';
+export type { EntryNameDto } from './EntryNameDto';
+export type { EntryValueDto } from './EntryValueDto';
 
 export type { SessionRequestInput } from './SessionRequestInput';
 

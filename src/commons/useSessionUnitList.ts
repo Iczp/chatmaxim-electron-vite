@@ -32,12 +32,12 @@ export const useSessionUnitList = (input: SessionUnitGetListInput) => {
     formatItems(items, query) {
       store.setMany(items);
       const arr = items.map(x => x.lastMessageId!);
-      maxMessageId.value = Math.max(...arr, maxMessageId.value || 0);
-      if (Number(query.maxMessageId) > 0) {
-        displayItems.value = displayItems.value.concat(mapToItems(items));
-      } else {
-        displayItems.value = mapToItems(items);
-      }
+      // maxMessageId.value = Math.max(...arr, maxMessageId.value || 0);
+      // if (Number(query.maxMessageId) > 0) {
+      //   displayItems.value = displayItems.value.concat(mapToItems(items));
+      // } else {
+      //   displayItems.value = mapToItems(items);
+      // }
     },
   });
 

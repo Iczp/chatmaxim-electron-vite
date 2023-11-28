@@ -3,7 +3,7 @@
 /* tslint:disable */
 /* eslint-disable */
 
-export type IczpNet_Chat_EntryNames_Dtos_EntryNameSimpleDto = {
+export type EntryNameDto = {
     id?: string;
     name?: string | null;
     code?: string | null;
