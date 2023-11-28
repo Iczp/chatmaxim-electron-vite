@@ -5,7 +5,7 @@ export type MessageOwnerDto = MessageSimpleDto & {
   /**
    * 朋友Id
    */
-  friendshipSessionUnitId?: string | null;
+  friendshipSessionUnitId?: string ;
 
   /**
    * 是否收藏了
@@ -29,7 +29,7 @@ export type MessageOwnerDto = MessageSimpleDto & {
   /**
    * 转发来源Id(转发才有)
    */
-  forwardMessageId?: number | null;
+  forwardMessageId?: number ;
 
   /**
    * 转发层级 0:不是转发
@@ -39,7 +39,7 @@ export type MessageOwnerDto = MessageSimpleDto & {
   /**
    * 引用来源Id(引用才有)
    */
-  quoteMessageId?: number | null;
+  quoteMessageId?: number ;
 
   /**
    * 引用消息
@@ -56,40 +56,40 @@ export type MessageOwnerDto = MessageSimpleDto & {
   /**
    * 是否已打开
    */
-  isOpened?: boolean | null;
+  isOpened?: boolean ;
 
   /**
    * 是否已读
    */
-  isReaded?: boolean | null;
+  isReaded?: boolean ;
 
   /**
    * 是否特别关注
    */
-  isFollowing?: boolean | null;
+  isFollowing?: boolean ;
 
   /**
    * 是否@所有人
    */
-  isRemindAll?: boolean | null;
+  isRemindAll?: boolean ;
 
   /**
    * 成员数量
    */
-  sessionUnitCount?: number | null;
+  sessionUnitCount?: number ;
 
   /**
    * 已读数量
    */
-  readedCount?: number | null;
+  readedCount?: number ;
 
   /**
    * 打开数量
    */
-  openedCount?: number | null;
+  openedCount?: number ;
 
   /**
    * 收藏数量
    */
-  favoritedCount?: number | null;
+  favoritedCount?: number ;
 };

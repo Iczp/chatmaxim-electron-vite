@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { watch } from 'vue';
+import { computed, watch } from 'vue';
 import { SessionUnitOwnerDto } from '../apis';
 
 import { HeartTwoTone } from '@ant-design/icons-vue';
@@ -7,7 +7,7 @@ import { HeartTwoTone } from '@ant-design/icons-vue';
 import { ChatObjectTypeEnums } from '../apis/enums';
 import ChatObject from '../components/ChatObject.vue';
 import MessageProview from '../components/MessageProview.vue';
-import { useSessionUnit } from '../commons/useSessionUnit';
+import { useSessionUnit, useSessionUnitId } from '../commons/useSessionUnit';
 
 const props = defineProps<{
   title?: string;
@@ -43,7 +43,8 @@ const {
   isShowSender,
   senderName,
   remindMeCount,
-} = useSessionUnit(props.entity);
+} = useSessionUnitId(props.entity?.id!);
+// const isTopping = computed(() => Number(props.entity?.sorting) > 0);
 </script>
 
 <template>

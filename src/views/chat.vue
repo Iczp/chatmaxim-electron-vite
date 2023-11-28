@@ -1,26 +1,24 @@
 <script setup lang="ts">
-import { CSSProperties, computed, reactive, ref, watch } from 'vue';
+import { CSSProperties, computed, nextTick, ref, watch } from 'vue';
 import { useRoute } from 'vue-router';
 import {
   IczpNet_Chat_SessionUnits_Dtos_SessionUnitOwnerDetailDto as IczpSessionUnitOwnerDetailDto,
-  MessageService,
-  SessionUnitService,
   MessageSenderService,
   ApiError,
 } from '../apis';
 
-import type { CancelablePromise } from '../apis/core/CancelablePromise';
 import ChatSetting from './ChatSetting.vue';
 
 import MessageItem from '../components/MessageItem.vue';
 import ChatInput from '../components/ChatInput.vue';
 import { message } from 'ant-design-vue';
 import { useImStore } from '../stores/im';
-import { MessageDto, ResultValue } from '../apis/dtos';
+import { MessageDto } from '../apis/dtos';
 import { ContextmenuInput, showContextMenuForMessage } from '../commons/contextmenu';
 import QuoteMessage from '../components/QuoteMessage.vue';
-import { useSessionUnit, useSessionUnitId } from '../commons/useSessionUnit';
-import { useDestinationList } from '../commons/DestinationListGetList';
+import { useSessionUnitId } from '../commons/useSessionUnit';
+import { useDestinationList } from '../commons/useDestinationList';
+import { useMessageList } from '../commons/useMessageList';
 
 const store = useImStore();
 
@@ -29,18 +27,26 @@ const props = defineProps<{
   title?: string;
 }>();
 
+const sessionUnitId = props.sessionUnitId;
+
 const route = useRoute();
 
-const info = computed(() => store.getItem(props.sessionUnitId!));
+const info = computed(() => store.getItem(sessionUnitId));
 
 const destinationList = useDestinationList({
-  id: props.sessionUnitId,
+  id: sessionUnitId,
   maxResultCount: 20,
 });
 
-const { isInputEnabled, destinationName, isImmersed, memberName } = useSessionUnitId(props.sessionUnitId);
+const { isInputEnabled, destinationName, isImmersed, memberName } = useSessionUnitId(sessionUnitId);
+
+const messageList = useMessageList({ sessionUnitId });
 
 const chatInput = ref<InstanceType<typeof ChatInput> | null>(null);
+
+// const scroll = ref<InstanceType<typeof PerfectScrollbar> | null>(null);
+
+const scroll = ref();
 
 const quoteMessage = ref<MessageDto | null | undefined>();
 
@@ -52,55 +58,10 @@ const playMessageId = ref<number | undefined>();
 
 const detail = ref<IczpSessionUnitOwnerDetailDto>({});
 
-// Mentions
-
 watch(
-  () => selectable.value,
-  v => {
-    console.log('isSelectable', v);
-  },
-);
-const messages = reactive<MessageDto[]>([]);
-
-const ret = reactive<ResultValue<MessageDto>>({
-  isPosting: false,
-  isEof: false,
-  items: [],
-});
-
-let task1: CancelablePromise<IczpSessionUnitOwnerDetailDto> | null;
-
-const fetchData = ({ sessionUnitId }: { sessionUnitId: string }) => {
-  task1 = SessionUnitService.getApiChatSessionUnitDetail({
-    id: sessionUnitId,
-  });
-  // task1?.cancel();
-
-  task1.then(res => {
-    // console.log('SessionUnitService.getApiChatSessionUnitDetail', res);
-    detail.value = res;
-  });
-
-  MessageService.getApiChatMessage({
-    sessionUnitId: props.sessionUnitId,
-    maxResultCount: 10,
-  }).then(res => {
-    ret.items = res.items!.map((x, i) => ({ ...x, state: 1, isSelf: i % 2 == 0 }));
-    // console.log('MessageService.getApiChatMessage', res);
-  });
-};
-
-const pageTitle = ref('');
-
-const scroll = ref(null);
-
-watch(
-  () => props.sessionUnitId,
+  () => sessionUnitId,
   sessionUnitId => {
-    task1?.cancel();
-    // console.log('watch scroll', sessionUnitId, scroll.value);
-    pageTitle.value = destinationName.value || '';
-    fetchData({ sessionUnitId });
+    console.log('watch scroll', sessionUnitId);
   },
   { immediate: true },
 );
@@ -116,11 +77,17 @@ const afterOpenChange = (bool: boolean) => {
   // console.log('open', bool);
 };
 
+const scrollToBottom = () => {
+  nextTick(() => {
+    const el: HTMLElement = scroll.value.$el;
+    el.scrollTop = el.scrollHeight;
+  });
+};
 const onSend = async ({ event, value }: any) => {
   console.log('send', textValue.value);
   isSendBtnEnabled.value = false;
   MessageSenderService.postApiChatMessageSenderSendText({
-    sessionUnitId: props.sessionUnitId,
+    sessionUnitId: sessionUnitId,
     requestBody: {
       quoteMessageId: quoteMessage.value?.id,
       ignoreConnections: null,
@@ -135,11 +102,14 @@ const onSend = async ({ event, value }: any) => {
       chatInput.value?.clear();
       quoteMessage.value = null;
       Object.assign(quoteMessage, null);
-
-      fetchData({ sessionUnitId: props.sessionUnitId });
+      messageList.fetchNew();
+      console.log('scrollBar.value', scroll.value?.ps);
+      const el: HTMLElement = scroll.value.$el;
+      el.scrollTop = el.scrollHeight;
+      messageList.changeTick(scrollToBottom);
     })
     .catch((err: ApiError) => {
-      console.error('sendRet', err.body.error.message);
+      console.error('sendRet', err);
       message.error({
         key: 'vm-chat',
         content: err.body.error.message,
@@ -161,31 +131,13 @@ const entries = computed(() =>
     value: (detail.value as Record<string, any>)[key],
   })),
 );
-const entryItems = computed(() => [
-  {
-    text: '名称',
-    value: detail.value.destination?.name,
-  },
-  {
-    text: '类型',
-    value: detail.value.destination?.objectType,
-  },
-  {
-    text: 'SessionId',
-    value: detail.value.sessionId,
-  },
-  {
-    text: '群内名称',
-    value: memberName.value,
-  },
-]);
 
 const showContextMenu = ({ labelType, mouseButton, event, entity }: ContextmenuInput) =>
   showContextMenuForMessage({
     labelType,
     event,
     entity,
-    sessionUnitId: props.sessionUnitId,
+    sessionUnitId: sessionUnitId,
     selectable,
     playMessageId,
     mouseButton,
@@ -197,11 +149,29 @@ const showContextMenu = ({ labelType, mouseButton, event, entity }: ContextmenuI
       quoteMessage.value = entity;
     },
     onFollowing(targetSessionUnitId: string, isFollowing: boolean) {
-      ret.items
+      messageList.items.value
         .filter(x => x.senderSessionUnit?.id == targetSessionUnitId)
         .forEach(x => (x.isFollowing = isFollowing));
     },
   });
+
+const onReachEnd = (event: CustomEvent) => {
+  const el = event.target as HTMLElement;
+  console.info('onReachEnd');
+  const isReachEnd = el.scrollTop != 0; //&& el.scrollTop > el.offsetHeight;
+  if (!isReachEnd) {
+    console.error(
+      'onReachEnd',
+      isReachEnd,
+      el.clientHeight,
+      el.offsetHeight,
+      el.scrollHeight,
+      el.scrollTop,
+    );
+
+    return;
+  }
+};
 
 const contentStyle: CSSProperties = {
   // display: 'flex',
@@ -290,14 +260,14 @@ const mouseleave = (e: MouseEvent) => {
         placement="right"
         @after-open-change="afterOpenChange"
       >
-        <ChatSetting :entity="info" :sessionUnitId="props.sessionUnitId" />
+        <ChatSetting :entity="info" :sessionUnitId="sessionUnitId" />
       </a-drawer>
-      <scroll-view class="message-container" ref="scroll">
+      <scroll-view class="message-container" ref="scroll" @ps-y-reach-end="onReachEnd">
         <MessageItem
-          v-for="(item, index) in ret.items"
+          v-for="item in messageList.items.value"
           :key="item.id"
           :entity="item"
-          :sessionUnitId="props.sessionUnitId"
+          :sessionUnitId="sessionUnitId"
           v-model:selectable="selectable"
           @contextmenu="showContextMenu"
         ></MessageItem>

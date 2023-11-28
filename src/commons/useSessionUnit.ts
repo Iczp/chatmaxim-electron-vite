@@ -12,7 +12,7 @@ import { useImStore } from '../stores/im';
 
 export const useSessionUnitId = (sessionUnitId: string) => {
   const store = useImStore();
-  store.getItem(sessionUnitId);
+  // store.getItem(sessionUnitId);
   const computedEntity = computed(() => store.getItem(sessionUnitId!));
   return useComputedSessionUnit(computedEntity);
 };

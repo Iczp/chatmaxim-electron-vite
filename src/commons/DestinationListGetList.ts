@@ -14,8 +14,3 @@ export class DestinationListGetList extends GetList<
   }
 }
 
-export const useDestinationList = (input: DestinationGetListInput) => {
-  const { query, isPosting, isEof, items, totalCount, isError, refresh, next, cancel } =
-    new DestinationListGetList(input);
-  return { query, isPosting, isEof, items, totalCount, isError, refresh, next, cancel };
-};

@@ -309,7 +309,7 @@ id: string,
      * @returns Volo_Abp_Application_Dtos_PagedResultDto_1<IczpNet_Chat_SessionUnits_Dtos_SessionUnitOwnerDto_IczpNet_Chat_Application_Contracts_Version_0_1_1_0_Culture_neutral_PublicKeyToken_null_> Success
      * @throws ApiError
      */
-    public static getApiChatSessionUnit1({
+    public static getApiChatSessionUnitList({
 ownerId,
 destinationId,
 destinationObjectType,

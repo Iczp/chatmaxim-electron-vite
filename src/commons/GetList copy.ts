@@ -43,13 +43,10 @@ export abstract class GetList<TInput extends GetListInput, TDto> {
   //   }
 
   fetchData(query: TInput) {
-   
-
     if (this.isEof || this.isPosting) {
       return;
     }
-    console.log('fetchData', query);
-    query = query || this.query;
+    query = query || toRaw(this.query);
     this.isPosting = true;
     this.task = this.service!(query);
     this.task
@@ -62,7 +59,6 @@ export abstract class GetList<TInput extends GetListInput, TDto> {
   }
 
   handleSuccess(query: TInput, res: PagedResultDto<TDto>): void {
-    console.log('handleSuccess', res);
     this.totalCount = res.totalCount!;
     this.isEof = res.items?.length == 0;
     const _items = this.formatItems(res.items!);
@@ -70,9 +66,8 @@ export abstract class GetList<TInput extends GetListInput, TDto> {
   }
 
   handleError(query: TInput, err: any): void {
-    console.error(err);
     this.isError = true;
-    
+    console.error(err);
   }
 
   formatItems(items: Array<TDto>): Array<TDto> {

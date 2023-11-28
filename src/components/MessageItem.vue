@@ -1,10 +1,11 @@
 <script setup lang="ts">
-import { computed, ref } from 'vue';
+import { ref } from 'vue';
 
 import { MessageDto } from '../apis/dtos';
 import { MessageTypeEnums } from '../apis/enums';
-import { formatMessageTime, getSenderNameForMessage } from '../commons/utils';
+import { HeartTwoTone } from '@ant-design/icons-vue';
 import Avatar from './Avatar.vue';
+import { FavoriteFilled, FavoriteOutline } from '../icons';
 
 import MsgText from './MsgText.vue';
 import MsgCmd from './MsgCmd.vue';
@@ -38,9 +39,7 @@ const emits = defineEmits<{
   'update:selectable': [selectable: boolean];
 }>();
 
-const { senderName, messageType,  isRollbacked, sendTime, sendTimeTitle } = useMessage(
-  props.entity,
-);
+const { senderName, messageType, isRollbacked, sendTime, sendTimeTitle } = useMessage(props.entity);
 
 const isShowMemberName = ref(true);
 
@@ -100,10 +99,13 @@ const onMessageClick = (event: MouseEvent, mouseButton: MouseButton) => {
         </aside>
 
         <main class="msg-main">
-          <header v-if="isShowMemberName" class="msg-main-header">
-            <PersonPin v-if="entity.senderSessionUnit?.isCreator" class="svg-icon s16 color" />
+          <header :size="0" v-if="isShowMemberName" class="msg-main-header">
+            <PersonPin v-if="entity.senderSessionUnit?.isCreator" class="svg-icon s14 color" />
             <SelfImprovement class="svg-icon-16" />
-            <text>{{ senderName }}</text>
+            <FavoriteFilled v-if="entity.isFollowing" class="svg-icon s14" style="color: rgb(255, 80, 211)" />
+            <!-- <FavoriteOutline class="svg-icon s14" /> -->
+
+            <span>{{ senderName }}</span>
             <!-- <a-tag color="green">群主</a-tag> -->
           </header>
 

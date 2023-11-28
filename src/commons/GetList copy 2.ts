@@ -1,4 +1,4 @@
-import { Ref, UnwrapNestedRefs, reactive, ref, toRaw, watch } from 'vue';
+import { Ref, UnwrapNestedRefs, UnwrapRef, reactive, ref, toRaw, toRef, toValue, watch } from 'vue';
 import { GetListInput, PagedResultDto } from '../apis/dtos';
 import { CancelablePromise } from '../apis';
 import { usePagedResult } from './usePagedResult';
@@ -6,34 +6,34 @@ import { usePagedResult } from './usePagedResult';
 export abstract class GetList<TInput extends GetListInput, TDto> {
   // public pagedResult;
   /** 是正在提交 @type {*} */
-  public isPosting: boolean = false;
+  public isPosting: Ref<boolean> = ref<boolean>(false);
 
   /** 是否到底了 @type {*} */
-  public isEof: boolean = false;
+  public isEof: Ref<boolean> = ref<boolean>(false);
 
-  public isError: boolean = false;
+  public isError: Ref<boolean> = ref<boolean>(false);
 
   /** 数据 @type {*} */
-  public items: Array<TDto> = [];
+  public items = ref<Array<TDto>>([]);
 
   /** 总数量@type {*} */
-  public totalCount: number | undefined;
+  public totalCount = ref<number | undefined>();
 
-  public query: TInput;
+  public query: Ref<TInput | undefined> = ref<TInput | undefined>();
 
   public task: CancelablePromise<PagedResultDto<TDto>> | null = null;
 
   public service?: (input: TInput) => CancelablePromise<PagedResultDto<TDto>>;
 
   constructor(query: TInput) {
-    // const { isPosting, isEof, items, totalCount, isError } = usePagedResult<TDto>();
+    const { isPosting, isEof, items, totalCount, isError } = usePagedResult<TDto>();
 
     // this.isEof = isEof;
     // this.isError = isError;
     // this.isPosting = isPosting;
     // this.items = items;
     // this.totalCount = totalCount;
-    this.query = query;
+    this.query.value = query;
     // this.task = null;
     // this.watch();
   }
@@ -43,18 +43,18 @@ export abstract class GetList<TInput extends GetListInput, TDto> {
   //   }
 
   fetchData(query: TInput) {
-   
-
-    if (this.isEof || this.isPosting) {
+    if (this.isEof.value || this.isPosting.value) {
       return;
     }
+    query = query || toValue(this.query.value);
     console.log('fetchData', query);
-    query = query || this.query;
-    this.isPosting = true;
+
+    this.isPosting.value = true;
     this.task = this.service!(query);
     this.task
       .then(res => this.handleSuccess(query, res))
-      .catch(err => this.handleError(query, err));
+      .catch(err => this.handleError(query, err))
+      .finally(() => (this.isPosting.value = false));
   }
 
   cancel() {
@@ -62,17 +62,15 @@ export abstract class GetList<TInput extends GetListInput, TDto> {
   }
 
   handleSuccess(query: TInput, res: PagedResultDto<TDto>): void {
-    console.log('handleSuccess', res);
-    this.totalCount = res.totalCount!;
-    this.isEof = res.items?.length == 0;
-    const _items = this.formatItems(res.items!);
-    this.items = query.skipCount ? this.items.concat(_items) : _items;
+    this.totalCount.value = res.totalCount!;
+    this.isEof.value = res.items?.length == 0;
+    const _items = ref(this.formatItems(res.items!));
+    this.items.value = query.skipCount ? this.items.value.concat(_items.value) : _items.value;
   }
 
   handleError(query: TInput, err: any): void {
+    this.isError.value = true;
     console.error(err);
-    this.isError = true;
-    
   }
 
   formatItems(items: Array<TDto>): Array<TDto> {
@@ -85,11 +83,11 @@ export abstract class GetList<TInput extends GetListInput, TDto> {
    * @memberof GetList
    */
   refresh() {
-    this.items = [];
-    this.isPosting = false;
-    this.isEof = false;
-    this.isError = false;
-    this.query.skipCount = 0;
+    this.items.value = [];
+    this.isPosting.value = false;
+    this.isEof.value = false;
+    this.isError.value = false;
+    this.query.value!.skipCount = 0;
   }
 
   /**
@@ -98,15 +96,18 @@ export abstract class GetList<TInput extends GetListInput, TDto> {
    * @memberof GetList
    */
   next() {
-    this.isPosting = false;
-    this.query.skipCount = this.items.length;
+    this.isPosting.value = false;
+    this.query.value!.skipCount = this.items.value.length;
   }
 
   watch(immediate: boolean = true) {
+    console.log('watch start');
     watch(
-      () => this.query,
+      () => this.query.value,
       v => {
-        this.fetchData(v);
+        console.log('watch this.query', v);
+
+        this.fetchData(v!);
       },
       {
         immediate,

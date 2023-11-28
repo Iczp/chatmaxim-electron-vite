@@ -43,13 +43,13 @@ const onclick = (): void => {
   // });
   console.log('click', count.value);
 
-  SessionUnitService.getApiChatSessionUnit1({
+  SessionUnitService.getApiChatSessionUnitList({
     ownerId: 555,
   }).then(res => {
     sessionUnitRet.value = res;
     console.log('res SessionUnitService.getApiChatSessionUnit1', res, res.totalCount);
   });
-  SessionUnitService.getApiChatSessionUnit1({
+  SessionUnitService.getApiChatSessionUnitList({
     ownerId: 112,
   }).then(res => {
     sessionUnitRet.value = res;

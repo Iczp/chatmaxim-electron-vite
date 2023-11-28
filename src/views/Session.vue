@@ -136,7 +136,7 @@ const fetchData = (query: SessionUnitGetListInput) => {
     return;
   }
   ret.isPosting = true;
-  SessionUnitService.getApiChatSessionUnit1(query)
+  SessionUnitService.getApiChatSessionUnitList(query)
     .then(res => {
       ret.totalCount = res.totalCount!;
       ret.isEof = res.items!.length == 0;
