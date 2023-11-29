@@ -1,0 +1,38 @@
+.mx-context-menu.message-context-menu,
+.mx-context-menu.avatar-context-menu,
+.mx-context-menu.session-context-menu {
+  /* padding: 4px;
+  margin: 0 8px; */
+  border-radius: 4px;
+  min-width: none;
+  padding: 0;
+  overflow: hidden;
+
+}
+
+.mx-context-menu-item {
+  border-radius: 0px;
+  /* padding: 8px; */
+  padding: 4px 8px;
+}
+/* .mx-context-menu-item.first-child {
+  border-radius: 4px 4px 0 0;
+}
+.mx-context-menu-item.last-child {
+  border-radius: 0 0 4px 4px;
+} */
+.mx-context-menu-item .label {
+  font-size: 12px;
+}
+
+.mx-context-menu-item-sperator {
+  padding: 0;
+}
+.mx-context-menu-item .mx-checked-mark,
+.mx-context-menu-item .mx-right-arrow {
+  fill: #9c9c9c;
+}
+.mx-context-menu-item.open .mx-checked-mark,
+.mx-context-menu-item.open .mx-right-arrow {
+  fill: #3c3c3c;
+}

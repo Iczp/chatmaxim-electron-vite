@@ -1,0 +1,81 @@
+.message-item {
+  margin: 12px 0;
+}
+.msg-layout {
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  box-sizing: border-box;
+}
+.msg-header {
+  display: flex;
+}
+
+.msg-body {
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+}
+.msg-body.reverse {
+  flex-direction: row-reverse;
+}
+
+.msg-body .msg-aside {
+  /* margin-right: 12px; */
+}
+.msg-body.reverse .msg-aside {
+  /* margin-left: 12px; */
+}
+.msg-aside {
+  display: flex;
+  flex-direction: row;
+}
+.msg-main {
+  display: flex;
+  flex: 1;
+  flex-basis: 0;
+  flex-direction: column;
+  align-items: flex-start;
+}
+.reverse .msg-main {
+  align-items: flex-end;
+}
+.msg-main-header {
+  display: flex;
+  /* min-height: 20px; */
+  /* align-items: center; */
+  margin: 0 12px;
+  margin-bottom: 2px;
+  color: #666;
+  font-size: 12px;
+  height: 20px;
+}
+.msg-main-footer {
+  display: flex;
+}
+.msg-content {
+  display: flex;
+  flex-direction: row;
+  align-items: flex-end;
+  flex: 1;
+}
+.reverse .msg-content {
+  flex-direction: row-reverse;
+}
+.reverse .msg-main-header {
+  justify-content: flex-end;
+}
+
+.msg-footer {
+  display: flex;
+  flex-direction: column;
+}
+
+.send-time {
+  display: flex;
+  justify-content: center;
+  color: gray;
+  font-size: 12px;
+  width: 100%;
+}
+

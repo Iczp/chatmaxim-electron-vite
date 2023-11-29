@@ -1,0 +1,39 @@
+.svg-icon-12,
+.svg-icon-14,
+.svg-icon-16,
+.svg-icon-18,
+.svg-icon-20,
+.svg-icon {
+  fill: currentColor;
+  vertical-align: middle;
+}
+.svg-icon-12,
+.svg-icon.s12 {
+  scale: calc(12 / 24);
+}
+.svg-icon-14,
+.svg-icon.s14 {
+  scale: calc(14 / 24);
+}
+.svg-icon-16,
+.svg-icon.s16 {
+  scale: calc(16 / 24);
+}
+.svg-icon-18,
+.svg-icon.s18 {
+  scale: calc(18 / 24);
+}
+.svg-icon-20,
+.svg-icon.s20 {
+  scale: calc(20 / 24);
+}
+
+.svg-icon-24,
+.svg-icon.s24 {
+  scale: calc(24 / 24);
+}
+
+
+.svg-icon-\[var\(--size\)\] {
+  scale: calc(var(--size) / 24);
+}

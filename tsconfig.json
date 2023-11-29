@@ -11,10 +11,12 @@
     "esModuleInterop": true,
     "lib": ["ESNext", "DOM"],
     "skipLibCheck": true,
-    "noEmit": true
+    "noEmit": true,
+    "types": [
+      // 一定要声明
+      "vite-svg-loader"
+    ]
   },
-  "include": ["src"],
-  "references": [
-    { "path": "./tsconfig.node.json" }
-  ]
+  "include": ["src", "src/ipc/index.ts"],
+  "references": [{ "path": "./tsconfig.node.json" }]
 }
