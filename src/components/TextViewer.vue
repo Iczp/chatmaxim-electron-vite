@@ -15,14 +15,37 @@ const onWordClick = (item: WordDto) => {
 <template>
   <div class="word">
     <!-- {{ words }} -->
-    <text
-      v-for="(item, index) in words"
-      :key="index"
-      @click="onWordClick(item)"
-      :class="WordTypeEnum[item.type!]"
-    >
-      {{ item.text }}
-    </text>
+    <!-- {{ value }} -->
+    <template v-for="(item, index) in words" :key="index">
+      <template v-if="item.type == WordTypeEnum.uid">
+        <a :uid="item.value" :class="WordTypeEnum[item.type!]" @click="onWordClick(item)">
+          {{ item.text }}
+        </a>
+      </template>
+      <template v-else-if="item.type == WordTypeEnum.oid">
+        <a :oid="item.value" :class="WordTypeEnum[item.type!]" @click="onWordClick(item)">
+          {{ item.text }}
+        </a>
+      </template>
+      <template v-else-if="item.type == WordTypeEnum.url">
+        <a :url="item.value" :class="WordTypeEnum[item.type!]" @click="onWordClick(item)">
+          {{ item.text }}
+        </a>
+      </template>
+      <template v-else-if="item.type == WordTypeEnum.phone">
+        <a :phone="item.value" :class="WordTypeEnum[item.type!]" @click="onWordClick(item)">
+          {{ item.text }}
+        </a>
+      </template>
+      <template v-else-if="item.type == WordTypeEnum.email">
+        <a :email="item.value" :class="WordTypeEnum[item.type!]" @click="onWordClick(item)">
+          {{ item.text }}
+        </a>
+      </template>
+      <template v-else>
+        {{ item.text }}
+      </template>
+    </template>
   </div>
 </template>
 
