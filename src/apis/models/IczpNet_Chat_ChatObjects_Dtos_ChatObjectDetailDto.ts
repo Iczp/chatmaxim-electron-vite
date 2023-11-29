@@ -3,7 +3,9 @@
 /* tslint:disable */
 /* eslint-disable */
 
-import type { IczpNet_Chat_Entries_Dtos_EntryObjectDto } from './IczpNet_Chat_Entries_Dtos_EntryObjectDto';
+import { EntryDto } from "../dtos";
+
+// import type { IczpNet_Chat_Entries_Dtos_EntryObjectDto as EntryDto } from './IczpNet_Chat_Entries_Dtos_EntryObjectDto';
 
 export type IczpNet_Chat_ChatObjects_Dtos_ChatObjectDetailDto = {
     id?: number;
@@ -26,7 +28,7 @@ export type IczpNet_Chat_ChatObjects_Dtos_ChatObjectDetailDto = {
     objectType?: IczpNet_Chat_ChatObjects_Dtos_ChatObjectDetailDto.objectType | null;
     readonly serviceStatus?: IczpNet_Chat_ChatObjects_Dtos_ChatObjectDetailDto.serviceStatus | null;
     description?: string | null;
-    entries?: Array<IczpNet_Chat_Entries_Dtos_EntryObjectDto> | null;
+    entries?: Array<EntryDto> | null;
 };
 
 export namespace IczpNet_Chat_ChatObjects_Dtos_ChatObjectDetailDto {

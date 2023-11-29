@@ -1,5 +1,6 @@
+import { WindowParams } from '../ipc-types';
 import { PickerResult, openChildWindow, sendPickerResult } from './openChildWindow';
-import { WindowParams } from './setWindow';
+// import { WindowParams } from './setWindow';
 
 export type ObjectPickerResult = PickerResult & {
   /**

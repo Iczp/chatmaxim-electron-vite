@@ -10,7 +10,7 @@ import type { IczpNet_Chat_SessionUnits_Dtos_BadgeDto } from '../models/IczpNet_
 import type { IczpNet_Chat_SessionUnits_Dtos_SessionUnitDestinationDto } from '../models/IczpNet_Chat_SessionUnits_Dtos_SessionUnitDestinationDto';
 // import type { IczpNet_Chat_SessionUnits_Dtos_SessionUnitDestinationDto_IczpNet_Chat_Application_Contracts_Version_0_1_1_0_Culture_neutral_PublicKeyToken_null_ } from '../models/IczpNet_Chat_SessionUnits_Dtos_SessionUnitDestinationDto_IczpNet_Chat_Application_Contracts_Version_0_1_1_0_Culture_neutral_PublicKeyToken_null_';
 // import type { IczpNet_Chat_SessionUnits_Dtos_SessionUnitDto_IczpNet_Chat_Application_Contracts_Version_0_1_1_0_Culture_neutral_PublicKeyToken_null_ } from '../models/IczpNet_Chat_SessionUnits_Dtos_SessionUnitDto_IczpNet_Chat_Application_Contracts_Version_0_1_1_0_Culture_neutral_PublicKeyToken_null_';
-import type { SessionUnitDetailDto } from '../models/IczpNet_Chat_SessionUnits_Dtos_SessionUnitOwnerDetailDto';
+// import type { SessionUnitDetailDto } from '../models/IczpNet_Chat_SessionUnits_Dtos_SessionUnitOwnerDetailDto';
 import type { SessionUnitOwnerDto } from '../dtos/SessionUnitOwnerDto';
 // import type { IczpNet_Chat_SessionUnits_Dtos_SessionUnitOwnerDto_IczpNet_Chat_Application_Contracts_Version_0_1_1_0_Culture_neutral_PublicKeyToken_null_ } from '../models/IczpNet_Chat_SessionUnits_Dtos_SessionUnitOwnerDto_IczpNet_Chat_Application_Contracts_Version_0_1_1_0_Culture_neutral_PublicKeyToken_null_';
 import type { IczpNet_Chat_SessionUnits_SessionUnitStatModel } from '../models/IczpNet_Chat_SessionUnits_SessionUnitStatModel';
@@ -21,7 +21,7 @@ import { OpenAPI } from '../core/OpenAPI';
 import { request as __request } from '../core/request';
 import { PagedResultDto } from '../dtos/PagedResultDto';
 import { SessionUnitGetListInput } from '../dtos/SessionUnitGetListInput';
-import { GetListInput, SessionUnitDestinationDto } from '../dtos';
+import { GetListInput, SessionUnitDestinationDto, SessionUnitDetailDto } from '../dtos';
 import { DestinationGetListInput } from '../dtos/DestinationGetListInput';
 
 export class SessionUnitService {
