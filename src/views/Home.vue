@@ -22,31 +22,20 @@ import {
   MoreOutlined,
 } from '@ant-design/icons-vue';
 
-import {
-  ChatObjectService,
-  SessionUnitService,
-} from '../apis';
+import { ChatObjectService, SessionUnitService } from '../apis';
 
 import { navToChat } from '../commons/utils';
 import { router, chatHistorys } from '../routes';
 import { message } from 'ant-design-vue';
 import { BadgeDto } from '../apis/dtos';
-
-const chatObjectItems: Ref<BadgeDto[]> = ref([]);
+import { useChatObjectList } from '../commons/useChatObjectList';
 
 const route = useRoute();
+
+const { badge, badgeItems } = useChatObjectList();
 // const router = useRouter();
 
-onMounted(() => {
-  //
-  SessionUnitService.getApiChatSessionUnitBadgeByCurrentUser({}).then(res => {
-    console.log('', res);
-    chatObjectItems.value = res;
-  });
-  ChatObjectService.getApiChatChatObjectByCurrentUser({}).then(res => {
-    console.log('getApiChatChatObjectByCurrentUser', res);
-  });
-});
+onMounted(() => {});
 
 const navToChatHitory = (item: BadgeDto) => {
   const chatObjectId = item.chatObjectId!;
@@ -59,13 +48,8 @@ const navToChatHitory = (item: BadgeDto) => {
     });
     return;
   }
-
   router.push({
     path: `/chat/${item.chatObjectId}`,
-    // name: 'im',
-    // params: {
-    //   chatObjectId: item.chatObjectId,
-    // },
   });
 };
 
@@ -108,16 +92,16 @@ const getKey = (route: RouteLocationNormalizedLoaded): string | string[] => {
       <div class="side">
         <div class="side-top">
           <div class="nav-item" @click="goto('/')">
-            <a-badge :count="1">
+            <a-badge :count="badge" :title="badge.toString()">
               <HomeOutlined />
             </a-badge>
           </div>
-
           <div
             class="nav-item"
-            v-for="(item, index) in chatObjectItems"
+            v-for="(item, index) in badgeItems"
             :key="index"
             @click="navToChatHitory(item)"
+            :title="item.owner?.name"
             :class="{
               active: isChatActive(item.chatObjectId!),
             }"
