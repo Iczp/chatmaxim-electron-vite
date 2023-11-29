@@ -29,13 +29,16 @@ import { router, chatHistorys } from '../routes';
 import { message } from 'ant-design-vue';
 import { BadgeDto } from '../apis/dtos';
 import { useChatObjectList } from '../commons/useChatObjectList';
+import { startup } from '../apis/websockets';
 
 const route = useRoute();
 
 const { badge, badgeItems } = useChatObjectList();
 // const router = useRouter();
 
-onMounted(() => {});
+onMounted(() => {
+  startup();
+});
 
 const navToChatHitory = (item: BadgeDto) => {
   const chatObjectId = item.chatObjectId!;
@@ -67,13 +70,8 @@ const isNavActive = (pattern: string | RegExp, flags?: string | undefined): bool
 };
 
 const gotoSetting = () => {
-  // console.log('app.getAppPath', app.getAppPath());
   router.push({
     path: `/settings`,
-    // name: 'im',
-    // params: {
-    //   chatObjectId: item.chatObjectId,
-    // },
   });
   message.info({ content: '设置' });
 };
@@ -153,37 +151,13 @@ const getKey = (route: RouteLocationNormalizedLoaded): string | string[] => {
           </keep-alive>
         </router-view>
       </div>
-      <!-- <keep-alive>
-       
-      </keep-alive> -->
     </div>
   </scroll-view>
-
-  <!-- <div>
-    <a href="https://www.electronjs.org/" target="_blank">
-      <img src="./assets/electron.svg" class="logo electron" alt="Electron logo" />
-    </a>
-    <a href="https://vitejs.dev/" target="_blank">
-      <img src="./assets/vite.svg" class="logo" alt="Vite logo" />
-    </a>
-    <a href="https://vuejs.org/" target="_blank">
-      <img src="./assets/vue.svg" class="logo vue" alt="Vue logo" />
-    </a>
-  </div>
-  <HelloWorld msg="Electron + Vite + Vue" />
-
-  <div class="flex-center">
-    Place static files into the
-    <code>/public</code>
-    folder
-    <img style="width: 2.4em; margin-left: 0.4em" src="/logo.svg" alt="Logo" />
-  </div> -->
 </template>
 
 <style scoped>
 #chatMaxim {
-  /* display: flex;
-  flex-direction: row; */
+  margin: auto;
 }
 .side :deep(.anticon) {
   font-size: 24px;
