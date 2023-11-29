@@ -1,6 +1,7 @@
 import { ReceivedDto } from './ReceivedDto';
 import { TicketService } from './TicketService';
 import { ipcRenderer } from 'electron';
+import { receivedHandle } from './receivedHandle';
 export type { ConnectionDto } from './ConnectionDto';
 
 export const connect = (wsUrl: string): void => {
@@ -37,9 +38,10 @@ export const connect = (wsUrl: string): void => {
         try {
           console.log(`WebSocket Received:`, e.data);
           const data = JSON.parse(e.data) as ReceivedDto;
-          console.log(`WebSocket Received:`, data);
-          // ipcRenderer.invoke('websocket', e.data);
-          ipcRenderer.emit('websocket',e.data)
+          receivedHandle(data);
+          
+          ipcRenderer.invoke('websocket', e.data);
+          // ipcRenderer.emit('websocket',e.data)
         } catch (error) {
           console.error(`data:${error}`);
         }

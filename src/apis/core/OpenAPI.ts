@@ -4,7 +4,7 @@
 /* eslint-disable */
 import { getLocalToken, getToken, isTokenUrl } from '../auth/TokenController';
 import type { ApiRequestOptions } from './ApiRequestOptions';
-
+import { version as packageVersion } from '../../../package.json';
 type Resolver<T> = (options: ApiRequestOptions) => Promise<T>;
 type Headers = Record<string, string>;
 
@@ -24,7 +24,7 @@ export type OpenAPIConfig = {
 export const OpenAPI: OpenAPIConfig = {
   BASE: 'http://10.0.5.20:8044',
   AUTH_HOST: 'http://10.0.5.20:8043',
-  VERSION: '1',
+  VERSION: packageVersion,
   WITH_CREDENTIALS: false,
   CREDENTIALS: 'include',
   TOKEN: undefined,

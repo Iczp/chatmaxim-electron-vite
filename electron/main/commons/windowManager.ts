@@ -9,7 +9,6 @@ export type WindowsMap = {
 };
 
 class WindowManger {
-  
   public windows: Windows = {};
   public windowsMap: WindowsMap = {};
   constructor() {}
@@ -22,15 +21,18 @@ class WindowManger {
     return this.windows[name];
   }
   getName(win: BrowserWindow): string {
-    return this.windowsMap[win.id] ;
+    return this.getNameById(win.id);
+  }
+  getNameById(id: number): string {
+    return this.windowsMap[id];
   }
   getMain(): BrowserWindow | undefined {
     return this.windows['main'];
   }
-  getWindows() {
+  getWindows(): Windows {
     return this.windows;
   }
-  getMap() {
+  getMap(): WindowsMap {
     return this.windowsMap;
   }
   remove(name: string): void {

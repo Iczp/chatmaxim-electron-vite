@@ -23,7 +23,6 @@ import {
 } from '@ant-design/icons-vue';
 
 import {
-  IczpNet_Chat_SessionUnits_Dtos_BadgeDto as BadgeDto,
   ChatObjectService,
   SessionUnitService,
 } from '../apis';
@@ -31,6 +30,7 @@ import {
 import { navToChat } from '../commons/utils';
 import { router, chatHistorys } from '../routes';
 import { message } from 'ant-design-vue';
+import { BadgeDto } from '../apis/dtos';
 
 const chatObjectItems: Ref<BadgeDto[]> = ref([]);
 

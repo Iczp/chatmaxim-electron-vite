@@ -6,7 +6,7 @@ import type { IczpNet_Chat_SessionSections_SessionUnits_SessionUnitCacheItem } f
 // import type { IczpNet_Chat_SessionSections_SessionUnits_SessionUnitCacheItem_IczpNet_Chat_Domain_Shared_Version_0_1_1_0_Culture_neutral_PublicKeyToken_null_ } from '../models/IczpNet_Chat_SessionSections_SessionUnits_SessionUnitCacheItem_IczpNet_Chat_Domain_Shared_Version_0_1_1_0_Culture_neutral_PublicKeyToken_null_';
 import type { IczpNet_Chat_SessionSections_SessionUnits_SessionUnitCounterInfo } from '../models/IczpNet_Chat_SessionSections_SessionUnits_SessionUnitCounterInfo';
 // import type { IczpNet_Chat_SessionSections_SessionUnits_SessionUnitDisplayName_IczpNet_Chat_Domain_Shared_Version_0_1_1_0_Culture_neutral_PublicKeyToken_null_ } from '../models/IczpNet_Chat_SessionSections_SessionUnits_SessionUnitDisplayName_IczpNet_Chat_Domain_Shared_Version_0_1_1_0_Culture_neutral_PublicKeyToken_null_';
-import type { IczpNet_Chat_SessionUnits_Dtos_BadgeDto } from '../models/IczpNet_Chat_SessionUnits_Dtos_BadgeDto';
+
 import type { IczpNet_Chat_SessionUnits_Dtos_SessionUnitDestinationDto } from '../models/IczpNet_Chat_SessionUnits_Dtos_SessionUnitDestinationDto';
 // import type { IczpNet_Chat_SessionUnits_Dtos_SessionUnitDestinationDto_IczpNet_Chat_Application_Contracts_Version_0_1_1_0_Culture_neutral_PublicKeyToken_null_ } from '../models/IczpNet_Chat_SessionUnits_Dtos_SessionUnitDestinationDto_IczpNet_Chat_Application_Contracts_Version_0_1_1_0_Culture_neutral_PublicKeyToken_null_';
 // import type { IczpNet_Chat_SessionUnits_Dtos_SessionUnitDto_IczpNet_Chat_Application_Contracts_Version_0_1_1_0_Culture_neutral_PublicKeyToken_null_ } from '../models/IczpNet_Chat_SessionUnits_Dtos_SessionUnitDto_IczpNet_Chat_Application_Contracts_Version_0_1_1_0_Culture_neutral_PublicKeyToken_null_';
@@ -21,7 +21,7 @@ import { OpenAPI } from '../core/OpenAPI';
 import { request as __request } from '../core/request';
 import { PagedResultDto } from '../dtos/PagedResultDto';
 import { SessionUnitGetListInput } from '../dtos/SessionUnitGetListInput';
-import { GetListInput, SessionUnitDestinationDto, SessionUnitDetailDto } from '../dtos';
+import { BadgeDto, GetListInput, SessionUnitDestinationDto, SessionUnitDetailDto } from '../dtos';
 import { DestinationGetListInput } from '../dtos/DestinationGetListInput';
 
 export class SessionUnitService {
@@ -90,7 +90,7 @@ isImmersed,
  * 是否包含免打扰的消息
  */
 isImmersed?: boolean,
-}): CancelablePromise<Array<IczpNet_Chat_SessionUnits_Dtos_BadgeDto>> {
+}): CancelablePromise<Array<BadgeDto>> {
         return __request(OpenAPI, {
             method: 'GET',
             url: '/api/chat/session-unit/badge-by-current-user',
@@ -118,7 +118,7 @@ id: string,
  * 是否包含免打扰的消息
  */
 isImmersed?: boolean,
-}): CancelablePromise<IczpNet_Chat_SessionUnits_Dtos_BadgeDto> {
+}): CancelablePromise<BadgeDto> {
         return __request(OpenAPI, {
             method: 'GET',
             url: '/api/chat/session-unit/{id}/badge-by-id',
@@ -149,7 +149,7 @@ ownerId: number,
  * 是否包含免打扰的消息
  */
 isImmersed?: boolean,
-}): CancelablePromise<IczpNet_Chat_SessionUnits_Dtos_BadgeDto> {
+}): CancelablePromise<BadgeDto> {
         return __request(OpenAPI, {
             method: 'GET',
             url: '/api/chat/session-unit/badge-by-owner-id/{ownerId}',
@@ -180,7 +180,7 @@ userId: string,
  * 是否包含免打扰的消息
  */
 isImmersed?: boolean,
-}): CancelablePromise<Array<IczpNet_Chat_SessionUnits_Dtos_BadgeDto>> {
+}): CancelablePromise<Array<BadgeDto>> {
         return __request(OpenAPI, {
             method: 'GET',
             url: '/api/chat/session-unit/badge-by-user-id/{userId}',

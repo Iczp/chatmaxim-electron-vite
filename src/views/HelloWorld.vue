@@ -2,14 +2,11 @@
 import { Ref, reactive, ref } from 'vue';
 defineProps<{ msg: string }>();
 
-import {
-  ChatObjectService,
-  IczpNet_Chat_SessionUnits_Dtos_BadgeDto,
-  SessionUnitService,
-} from '../apis';
+import { ChatObjectService, SessionUnitService } from '../apis';
 import { login } from '../apis/auth/TokenController';
 import { Volo_Abp_Application_Dtos_PagedResultDto_1 } from '../apis/models/Volo_Abp_Application_Dtos_PagedResultDto_1';
 import { Button } from 'ant-design-vue';
+import { BadgeDetialDto } from '../apis/dtos';
 
 interface FormState {
   username: string;
@@ -57,10 +54,7 @@ const onclick = (): void => {
   });
   // console.log('SessionUnitService', SessionUnitService.getApiChatSessionUnit1);
 };
-type BadgeDetialDto = IczpNet_Chat_SessionUnits_Dtos_BadgeDto & {
-  isShow: boolean;
-  detail?: string;
-};
+
 const badgeItems: Ref<BadgeDetialDto[]> = ref([]);
 
 const loadBadgeItems = () => {
@@ -88,12 +82,9 @@ const onLogin = () => {
 };
 
 const showDetial = (item: BadgeDetialDto) => {
-  item.detail = 'dddddd';
   ChatObjectService.getApiChatChatObjectDetail({
     id: item.chatObjectId!,
-  }).then(res => {
-    item.detail = JSON.stringify(res);
-  });
+  }).then(res => {});
 };
 </script>
 
@@ -160,7 +151,7 @@ const showDetial = (item: BadgeDetialDto) => {
         @click="showDetial(item)"
       >
         <div>chatObjectId:{{ item.chatObjectId }}, badge:{{ item.badge }}</div>
-        <div v-if="item.detail">detail:{{ item.detail }}</div>
+        <!-- <div v-if="item.detail">detail:{{ item.detail }}</div> -->
       </div>
     </div>
 

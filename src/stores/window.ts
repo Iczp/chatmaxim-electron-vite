@@ -1,35 +1,40 @@
-import { defineStore } from 'pinia';
+import { acceptHMRUpdate, defineStore } from 'pinia';
 import { WindowState } from '../ipc-types';
+
+const defaultValue: WindowState = {
+  machineId: undefined,
+  windowId: undefined,
+  name: undefined,
+  maximizable: undefined,
+  minimizable: undefined,
+  fullScreenable: undefined,
+  resizable: undefined,
+  closable: undefined,
+  movable: undefined,
+  focusable: undefined,
+  isVisible: undefined,
+  isModal: undefined,
+  isMaximized: undefined,
+  isMinimized: undefined,
+  isFullScreen: undefined,
+  close: undefined,
+  minWidth: undefined,
+  minHeight: undefined,
+  maxWidth: undefined,
+  maxHeight: undefined,
+  skipTaskbar: undefined,
+  icon: undefined,
+  backgroundColor: undefined,
+  hasShadow: undefined,
+  opacity: undefined,
+  isKiosk: undefined,
+  isSkipTaskbar: undefined,
+  isFlashFrame: undefined,
+};
 
 export const useWindowStore = defineStore('window', {
   state: (): WindowState => ({
-    windowId: undefined,
-    name: undefined,
-    maximizable: undefined,
-    minimizable: undefined,
-    fullScreenable: undefined,
-    resizable: undefined,
-    closable: undefined,
-    movable: undefined,
-    focusable: undefined,
-    isVisible: undefined,
-    isModal: undefined,
-    isMaximized: undefined,
-    isMinimized: undefined,
-    isFullScreen: undefined,
-    close: undefined,
-    minWidth: undefined,
-    minHeight: undefined,
-    maxWidth: undefined,
-    maxHeight: undefined,
-    skipTaskbar: undefined,
-    icon: undefined,
-    backgroundColor: undefined,
-    hasShadow: undefined,
-    opacity: undefined,
-    isKiosk: undefined,
-    isSkipTaskbar: undefined,
-    isFlashFrame: undefined,
+    ...defaultValue,
   }),
   getters: {
     winId: state => (): number | undefined => state.windowId,
@@ -70,3 +75,7 @@ export const useWindowStore = defineStore('window', {
     },
   },
 });
+
+if (import.meta.hot) {
+  import.meta.hot.accept(acceptHMRUpdate(useWindowStore, import.meta.hot));
+}

@@ -19,6 +19,9 @@ import { CancelablePromise } from './CancelablePromise';
 import type { OnCancel } from './CancelablePromise';
 import type { OpenAPIConfig } from './OpenAPI';
 import { getToken, isTokenUrl } from '../auth/TokenController';
+import { useWindowStore } from '../../stores/window';
+import { version } from '../../../package.json';
+
 let tokenCount: number = 0;
 const getTokenValue = () => {
   return new Promise((resolve, reject) => {
@@ -216,7 +219,13 @@ export const getHeaders = async (
   const additionalHeaders = await resolve(options, config.HEADERS);
   const formHeaders = (typeof formData?.getHeaders === 'function' && formData?.getHeaders()) || {};
 
+  const windowStore = useWindowStore();
+
   const headers = Object.entries({
+    'app-version': version,
+    'app-device-id': windowStore.machineId,
+    'app-platform': process.platform,
+    // 'app-electron': process.electron,
     // Accept: 'application/json',
     ...additionalHeaders,
     ...options.headers,

@@ -140,7 +140,7 @@ export type { IczpNet_Chat_SessionSections_SessionUnits_SessionUnitCacheItem } f
 export type { IczpNet_Chat_SessionSections_SessionUnits_SessionUnitCounterInfo } from './models/IczpNet_Chat_SessionSections_SessionUnits_SessionUnitCounterInfo';
 export type { IczpNet_Chat_SessionSections_SessionUnits_SessionUnitDisplayName } from './models/IczpNet_Chat_SessionSections_SessionUnits_SessionUnitDisplayName';
 export type { IczpNet_Chat_SessionSections_SessionUnits_SessionUnitSenderInfo } from './models/IczpNet_Chat_SessionSections_SessionUnits_SessionUnitSenderInfo';
-export type { IczpNet_Chat_SessionUnits_Dtos_BadgeDto } from './models/IczpNet_Chat_SessionUnits_Dtos_BadgeDto';
+
 export type { IczpNet_Chat_SessionUnits_Dtos_SessionUnitDestinationDetailDto } from './models/IczpNet_Chat_SessionUnits_Dtos_SessionUnitDestinationDetailDto';
 export type { IczpNet_Chat_SessionUnits_Dtos_SessionUnitDestinationDto } from './models/IczpNet_Chat_SessionUnits_Dtos_SessionUnitDestinationDto';
 export type { IczpNet_Chat_SessionUnits_Dtos_SessionUnitDto } from './models/IczpNet_Chat_SessionUnits_Dtos_SessionUnitDto';

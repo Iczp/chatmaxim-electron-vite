@@ -12,9 +12,7 @@ import {
   SketchOutlined,
   AppstoreOutlined,
 } from '@ant-design/icons-vue';
-import { IczpNet_Chat_SessionUnits_Dtos_BadgeDto as BadgeDto, SessionUnitService } from './apis';
 
-const chatObjectItems: Ref<BadgeDto[]> = ref([]);
 // onMounted(() => {
 //   //
 //   SessionUnitService.getApiChatSessionUnitBadgeByCurrentUser({}).then(res => {

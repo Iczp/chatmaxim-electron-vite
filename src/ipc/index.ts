@@ -15,16 +15,15 @@ export type WinSize = {
   height: number;
 };
 
-
-
 const store = new Store();
 
 store.set('unicorn', '🦄');
 
 console.log(store.get('unicorn'));
 
-ipcRenderer.on('websocket', (...args) => {
-  console.log('[websocket]:', ...args);
+ipcRenderer.on('websocket', (_, args) => {
+  const payload = JSON.parse(args.payload);
+  console.log('[websocket]:', _, payload);
 });
 
 lstat(cwd())

@@ -79,15 +79,14 @@ export const router = createRouter({
   routes: routes,
 });
 /** asdff @type {*} */
-export const chatHistorys = <
-  Record<string, { chatObjectId: string; sessionUnitId: string; title: string }>
->{};
+export const chatHistorys: {
+  [key: string]: { chatObjectId: string; sessionUnitId: string; title: string };
+} = {};
 
 router.beforeEach((to, from) => {
   if (to.path != '/login' && !isLogined()) {
     return '/login';
   }
-
   // ...
   // 返回 false 以取消导航
   // return false

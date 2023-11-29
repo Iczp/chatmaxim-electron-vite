@@ -24,3 +24,6 @@ export type { ContactsDto } from './ContactsDto';
 
 export type { TextDto } from './TextDto';
 export type { CmdDto } from './CmdDto';
+
+export type { BadgeDto } from './BadgeDto';
+export type { BadgeDetialDto } from './BadgeDetialDto';
