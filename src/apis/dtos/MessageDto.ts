@@ -9,7 +9,7 @@ export type MessageDto = MessageOwnerDto & {
    * @type {number}
    */
   autoId?: number;
-  
+
   /**
    * 是否显示发送时间
    * @type {boolean}
@@ -43,4 +43,11 @@ export type MessageDto = MessageOwnerDto & {
    * @type {('ok' | 'fail' | 'pending')}
    */
   state?: MessageStateEnums;
+
+  /**
+   * 错误消息
+   *
+   * @type {*}
+   */
+  error?: any;
 };

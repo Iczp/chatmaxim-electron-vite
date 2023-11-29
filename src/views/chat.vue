@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { CSSProperties, computed, nextTick, ref, watch } from 'vue';
+import { CSSProperties, computed, nextTick, onMounted, ref, watch } from 'vue';
 import { useRoute } from 'vue-router';
 import { MessageSenderService, ApiError } from '../apis';
 
@@ -73,17 +73,16 @@ const open = ref<boolean>(false);
 const showDrawer = () => {
   open.value = true;
 };
-
+const scrollToBottom = () => {
+  scroll.value?.scrollToBottom({ duration: 1500 });
+};
 const afterOpenChange = (bool: boolean) => {
   // console.log('open', bool);
 };
+// onMounted(() => {
+//   scrollToBottom();
+// });
 
-// const scrollToBottom = () => {
-//   nextTick(() => {
-//     const el: HTMLElement = scroll.value.$el;
-//     el.scrollTop = el.scrollHeight;
-//   });
-// };
 const onSend = async ({ event, value }: any) => {
   console.log('send', textValue.value);
   isSendBtnEnabled.value = false;
@@ -101,7 +100,7 @@ const onSend = async ({ event, value }: any) => {
     creationTime: new Date().toUTCString(),
   };
   messageList.items.value.push(messageDto);
-  scroll.value?.scrollToBottom({ duration: 1500 });
+  scrollToBottom();
   // return;
   MessageSenderService.postApiChatMessageSenderSendText({
     sessionUnitId: sessionUnitId,
@@ -130,10 +129,12 @@ const onSend = async ({ event, value }: any) => {
           console.log('findIndex', findIndex);
           messageList.items.value.splice(findIndex, 1);
         }
-        scroll.value?.scrollToBottom({ duration: 1500 });
+        scrollToBottom();
       });
     })
     .catch((err: ApiError) => {
+      messageDto.state = MessageStateEnums.Error;
+      messageDto.error = err.body.error.message;
       console.error('sendRet', err);
       message.error({
         key: 'vm-chat',
