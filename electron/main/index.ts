@@ -3,11 +3,12 @@ import { release } from 'node:os';
 import { join } from 'node:path';
 import Store from 'electron-store';
 import { Size } from './ipc-types';
-import { openChildWindow } from './commons/openChildWindow';
+import { openChildWindowHandle } from './commons/openChildWindowHandle';
 import { createMainWindow } from './commons/createMainWindow';
-import { windowSetting } from './commons/windowSetting';
+import { windowSettingHandle } from './commons/windowSettingHandle';
 import { initMachine } from './commons/machine';
 import './commons/logger';
+import { websocketHandle } from './commons/webscoketHandle';
 //
 Store.initRenderer();
 
@@ -101,5 +102,6 @@ const navTo = (win: BrowserWindow, path: string, listener?: Listener): void => {
   }
 };
 
-ipcMain.handle('open-child', openChildWindow);
-ipcMain.handle('win-setting', windowSetting);
+ipcMain.handle('open-child', openChildWindowHandle);
+ipcMain.handle('win-setting', windowSettingHandle);
+ipcMain.handle('websocket', websocketHandle);

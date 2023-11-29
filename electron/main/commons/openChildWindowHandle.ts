@@ -4,7 +4,7 @@ import { join } from 'node:path';
 import { addParamsToUrl } from './addParamsToUrl';
 import { windowManager } from './windowManager';
 import { sendEvent, initWindowEvent, sendWindowInfo } from './initWindowEvent';
-import { setWindow } from './windowSetting';
+import { setWindow } from './windowSettingHandle';
 
 // process.env.DIST_ELECTRON = join(__dirname, '..');
 // process.env.DIST = join(process.env.DIST_ELECTRON, '../dist');
@@ -14,7 +14,7 @@ import { setWindow } from './windowSetting';
 
 const preload = join(__dirname, '../preload/index.js');
 
-export const openChildWindow = (
+export const openChildWindowHandle = (
   _: Electron.IpcMainInvokeEvent,
   {
     target,

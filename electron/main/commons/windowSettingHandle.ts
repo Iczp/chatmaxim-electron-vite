@@ -2,7 +2,7 @@ import { BrowserWindow, webContents } from 'electron';
 import { WindowParams } from '../ipc-types';
 import { ifArrayNumber, ifBoolean, ifTrue } from './ifBoolean';
 
-export const windowSetting = (_: Electron.IpcMainInvokeEvent, params: WindowParams): any => {
+export const windowSettingHandle = (_: Electron.IpcMainInvokeEvent, params: WindowParams): any => {
   return new Promise((resolve, reject) => {
     console.log('win-setting', _.sender.id, senderWindow?.id);
 

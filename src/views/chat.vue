@@ -22,6 +22,7 @@ import { useSessionUnitDetail } from '../commons/useSessionUnitDetail';
 
 const store = useImStore();
 
+
 const props = defineProps<{
   sessionUnitId: string;
   title?: string;

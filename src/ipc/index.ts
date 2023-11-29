@@ -3,11 +3,6 @@ import { cwd } from 'node:process';
 import { ipcRenderer } from 'electron';
 import Store from 'electron-store';
 import { router } from '../routes';
-
-import queryString from 'query-string';
-
-import { toQueryString } from '../commons/utils';
-import { addParamsToUrl } from '../commons/addParamsToUrl';
 import { useWindowStore } from '../stores/window';
 
 export enum WinEvents {
@@ -19,7 +14,6 @@ export type WinSize = {
   width: number;
   height: number;
 };
-
 
 
 
