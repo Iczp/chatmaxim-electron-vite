@@ -2,15 +2,20 @@ import { ReceivedDto } from './ReceivedDto';
 import { TicketService } from './TicketService';
 import { ipcRenderer } from 'electron';
 import { receivedHandle } from './receivedHandle';
-import { ConnectionState } from './ConnectionState';
+import { ConnectionState, ConnectionStateText } from './ConnectionState';
+import { useWebsocketStore } from '../../stores/websocket';
 export type { ConnectionDto } from './ConnectionDto';
 
 export let isConnected: boolean = false;
 export let connectionState: ConnectionState = ConnectionState.None;
 export let heartbeatRunning: boolean = false;
+export let websocketClient: any = null;
+
 const setState = (state: ConnectionState) => {
   connectionState = state;
-  console.log('set connectionState', state);
+  console.log('set connectionState', state, ConnectionStateText[state]);
+  const store = useWebsocketStore();
+  store.set(state)
 };
 
 export const isCanReConnect = () => {
@@ -79,12 +84,16 @@ export const connect = (wsUrl: string): void => {
 };
 
 export const generateTickect = () => {
+  if (websocketClient) {
+    websocketClient?.close();
+    console.warn('websocketClient?.close()');
+  }
   setState(ConnectionState.Signing);
   TicketService.generate({})
     .then(res => {
       console.log('TicketService.generate', res);
-      connect(res.webSocketUrl);
       setState(ConnectionState.SignOk);
+      websocketClient = connect(res.webSocketUrl);
     })
     .catch(err => {
       setState(ConnectionState.SignFail);

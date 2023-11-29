@@ -1,0 +1,9 @@
+.ant-message {
+  top: 64px;
+}
+
+.ant-message-notice.websocket-state .ant-message-notice-content {
+  color: white;
+  background-color: rgba(0, 0, 0, 0.686);
+  font-size: 12px;
+}

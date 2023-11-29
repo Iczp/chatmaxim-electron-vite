@@ -1,5 +1,6 @@
 @import url('../assets/font/imfont.css');
 @import url('./svg-icon.css');
+@import url('./ant.css');
 :root {
   font-family: Inter, system-ui, Avenir, Helvetica, Arial, sans-serif;
   line-height: 1.5;
@@ -47,7 +48,7 @@
 }
 
 [object-type='7'] .avatar,
-:where([object-type='7'] .object-name){
+:where([object-type='7'] .object-name) {
   color: rgba(195, 4, 87, 0.78);
 }
 [object-type='8'] .avatar,

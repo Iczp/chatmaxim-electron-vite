@@ -30,15 +30,14 @@ import { message } from 'ant-design-vue';
 import { BadgeDto } from '../apis/dtos';
 import { useChatObjectList } from '../commons/useChatObjectList';
 import { startup } from '../apis/websockets';
+import { useWebsocket } from '../commons/useWebsocket';
 
 const route = useRoute();
-
+const { connectionText, connectionState, retryCount } = useWebsocket();
 const { badge, badgeItems } = useChatObjectList();
 // const router = useRouter();
 
-onMounted(() => {
-  startup();
-});
+
 
 const navToChatHitory = (item: BadgeDto) => {
   const chatObjectId = item.chatObjectId!;

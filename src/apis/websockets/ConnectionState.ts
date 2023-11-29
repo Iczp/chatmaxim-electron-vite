@@ -40,7 +40,7 @@ export enum ConnectionState {
   SignFail = 7,
 }
 
-export const ConnectionStateText: { [key in ConnectionState]?: string } = {
+export const ConnectionStateText: { [key in ConnectionState]: string } = {
   [ConnectionState.None]: '未连接',
   [ConnectionState.Ok]: '连接成功',
   [ConnectionState.Connecting]: '连接中',
