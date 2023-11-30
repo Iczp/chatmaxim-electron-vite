@@ -4,6 +4,7 @@ import Store from 'electron-store';
 const store = new Store<{}>();
 
 import { MessageDto, SessionItemDto, SessionUnitOwnerDto } from '../apis/dtos';
+import { SessionUnitService } from '../apis';
 
 interface State {
   /**
@@ -150,6 +151,13 @@ export const useImStore = defineStore('im', {
           sorting: x.sorting!,
           lastMessageId: x.lastMessageId!,
         }));
+    },
+
+    fetchList() {},
+    fetchItem() {},
+    async fetchMany(idList: string[]) {
+      const res = await SessionUnitService.getMany({ idList });
+      this.setMany(res.items!);
     },
 
     /**

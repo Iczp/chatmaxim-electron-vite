@@ -355,6 +355,28 @@ sorting,
     }
 
     /**
+     * 获取多个会话单元列表（消息总线）
+     * @returns Volo_Abp_Application_Dtos_PagedResultDto_1<IczpNet_Chat_SessionUnits_Dtos_SessionUnitOwnerDto_IczpNet_Chat_Application_Contracts_Version_0_1_1_0_Culture_neutral_PublicKeyToken_null_> Success
+     * @throws ApiError
+     */
+    public static getMany({
+        idList,
+        }: {
+        /**
+         * 会话单元 SessionUnitIdId [多个]
+         */
+        idList?: Array<string>,
+        }): CancelablePromise<PagedResultDto<SessionUnitOwnerDto>> {
+                return __request(OpenAPI, {
+                    method: 'GET',
+                    url: '/api/chat/session-unit/many',
+                    query: {
+                        'idList': idList,
+                    },
+                });
+            }
+
+    /**
      * 获取会话单元列表【缓存】
      * @returns Volo_Abp_Application_Dtos_PagedResultDto_1<IczpNet_Chat_SessionSections_SessionUnits_SessionUnitCacheItem_IczpNet_Chat_Domain_Shared_Version_0_1_1_0_Culture_neutral_PublicKeyToken_null_> Success
      * @throws ApiError

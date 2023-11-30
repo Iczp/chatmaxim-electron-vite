@@ -1,6 +1,6 @@
 <script setup lang="ts">
-import { CSSProperties, computed, nextTick, onMounted, ref, watch } from 'vue';
-import { useRoute } from 'vue-router';
+import { CSSProperties, computed, nextTick, onActivated, onMounted, ref, watch } from 'vue';
+import { useRoute, onBeforeRouteUpdate } from 'vue-router';
 import { MessageSenderService, ApiError } from '../apis';
 
 import ChatSetting from './ChatSetting.vue';
@@ -19,9 +19,9 @@ import { useMessageList } from '../commons/useMessageList';
 import { MessageStateEnums } from '../apis/enums/MessageStateEnums';
 import { MessageTypeEnums } from '../apis/enums/MessageTypeEnums';
 import { useSessionUnitDetail } from '../commons/useSessionUnitDetail';
+import { setReadedMessageId } from '../commons/setting';
 
 const store = useImStore();
-
 
 const props = defineProps<{
   sessionUnitId: string;
@@ -39,8 +39,21 @@ const info = computed(() => store.getItem(sessionUnitId));
 //   maxResultCount: 20,
 // });
 
-const { isInputEnabled, destination, destinationName, isImmersed, memberName } =
+const { isInputEnabled, destination, destinationName, isImmersed, lastMessageId } =
   useSessionUnitId(sessionUnitId);
+
+// onBeforeRouteUpdate((to, from) => {
+//   console.log('onBeforeRouteUpdate', to, from);
+//   setReadedMessageId({ sessionUnitId, messageId: lastMessageId.value! });
+// });
+
+onActivated(() => {
+  console.log('onActivated', destinationName.value);
+  if (lastMessageId.value) {
+    setReadedMessageId({ sessionUnitId, messageId: lastMessageId.value! });
+  }
+  scrollToBottom(0);
+});
 
 const messageList = useMessageList({ sessionUnitId });
 
@@ -74,8 +87,8 @@ const open = ref<boolean>(false);
 const showDrawer = () => {
   open.value = true;
 };
-const scrollToBottom = () => {
-  scroll.value?.scrollToBottom({ duration: 1500 });
+const scrollToBottom = (duration: number = 1500) => {
+  scroll.value?.scrollToBottom({ duration });
 };
 const afterOpenChange = (bool: boolean) => {
   // console.log('open', bool);

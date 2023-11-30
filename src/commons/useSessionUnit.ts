@@ -22,11 +22,13 @@ export const useSessionUnit = (entity: SessionUnitOwnerDto | undefined) => {
   return useComputedSessionUnit(computedEntity);
 };
 
- const useComputedSessionUnit = (computedEntity: ComputedRef<SessionUnitOwnerDto | undefined>) => {
+const useComputedSessionUnit = (computedEntity: ComputedRef<SessionUnitOwnerDto | undefined>) => {
   const entity = computedEntity;
   const isTopping = computed(() => Number(entity.value?.sorting) > 0);
 
   const lastMessage = computed(() => entity.value?.lastMessage);
+
+  const lastMessageId = computed(() => entity.value?.lastMessageId);
 
   const messageType = computed(
     () => entity.value?.lastMessage?.messageType as MessageTypeEnums | undefined,
@@ -37,7 +39,9 @@ export const useSessionUnit = (entity: SessionUnitOwnerDto | undefined) => {
 
   const objectType = computed(() => entity.value?.destination?.objectType);
 
-  const sendTime = computed(() => formatMessageTime(new Date(entity.value?.lastMessage?.creationTime!)));
+  const sendTime = computed(() =>
+    formatMessageTime(new Date(entity.value?.lastMessage?.creationTime!)),
+  );
   const badge = computed(() => entity.value?.publicBadge || 0);
 
   const senderName = computed(() => getSenderNameForMessage(entity.value?.lastMessage));
@@ -75,5 +79,6 @@ export const useSessionUnit = (entity: SessionUnitOwnerDto | undefined) => {
     isInputEnabled,
     setting,
     memberName,
+    lastMessageId,
   };
 };

@@ -1,7 +1,7 @@
 import { ReceivedDto } from './ReceivedDto';
 import { TicketService } from './TicketService';
 import { ipcRenderer } from 'electron';
-import { receivedHandle } from './receivedHandle';
+import { commandHandle } from './commandHandle';
 import { ConnectionState, ConnectionStateText } from './ConnectionState';
 import { useWebsocketStore } from '../../stores/websocket';
 export type { ConnectionDto } from './ConnectionDto';
@@ -70,7 +70,7 @@ export const connect = (wsUrl: string): void => {
         try {
           console.log(`WebSocket Received:`, e.data);
           const data = JSON.parse(e.data) as ReceivedDto;
-          receivedHandle(data);
+          commandHandle(data);
 
           ipcRenderer.invoke('websocket', e.data);
           // ipcRenderer.emit('websocket',e.data)

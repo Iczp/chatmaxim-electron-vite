@@ -6,6 +6,6 @@ export type ScopeDto = {
 export type ReceivedDto = {
   appUserId: string;
   scopes: Array<ScopeDto>;
-  command: string | 'Chat';
+  command: 'Chat' | 'Rollback' | 'SessionRequest' | 'IncrementCompleted' | string;
   payload: any;
 };

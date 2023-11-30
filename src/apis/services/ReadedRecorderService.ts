@@ -114,7 +114,7 @@ messageId: number,
      * @returns number Success
      * @throws ApiError
      */
-    public static postApiChatReadedRecorderSetReadedMany({
+    public static setReadedMany({
 sessunitUnitId,
 messageIdList,
 deviceId,

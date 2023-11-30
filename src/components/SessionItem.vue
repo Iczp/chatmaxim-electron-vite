@@ -8,6 +8,7 @@ import { ChatObjectTypeEnums } from '../apis/enums';
 import ChatObject from '../components/ChatObject.vue';
 import MessageProview from '../components/MessageProview.vue';
 import { useSessionUnit, useSessionUnitId } from '../commons/useSessionUnit';
+import { useImStore } from '../stores/im';
 
 const props = defineProps<{
   title?: string;
@@ -30,10 +31,11 @@ watch(
     console.log('watch isImmersed:', v, props.entity?.id, props.index);
   },
 );
-
+const store = useImStore();
+const lastMessage = computed(() => store.getItem(props.entity?.id!).lastMessage);
 const {
   isTopping,
-  lastMessage,
+  // lastMessage,
   isImmersed,
   destination,
   objectType,
@@ -83,6 +85,7 @@ const {
         <!-- 我关注的 flowing -->
         <!-- 发送人信息 -->
         <span v-if="isShowSender" class="sender">{{ senderName }}:</span>
+        {{ lastMessage?.content.text }}
         <message-proview :entity="lastMessage" />
       </div>
     </template>
@@ -98,6 +101,12 @@ const {
 
 <style scoped>
 /* @import url(../style/message.css); */
+:deep(.title-container) {
+  height: 26px;
+}
+:deep(.sub-container) {
+  height: 22px;
+}
 .session-item {
   --spacing-size: 12px;
   height: var(--side-width);

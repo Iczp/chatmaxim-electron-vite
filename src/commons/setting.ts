@@ -48,3 +48,31 @@ export const setImmersed = ({
     successHandle(isImmersed ? '设置免打扰' : '取消免打扰', res);
   });
 };
+
+export const setReadedMessageId = ({
+  sessionUnitId,
+  isForce,
+  messageId,
+}: {
+  /**
+   * 会话单元Id
+   */
+  sessionUnitId: string;
+  /**
+   * 是否强制
+   */
+  isForce?: boolean;
+  /**
+   * 消息Id
+   */
+  messageId?: number;
+}) => {
+  console.log('setReadedMessageId', sessionUnitId, isForce, messageId);
+
+  SettingService.postApiChatSettingSetReadedMessageId({ sessionUnitId, isForce, messageId }).then(
+    entity => {
+      store.setMany([entity]);
+      console.log('setReadedMessageId success', messageId);
+    },
+  );
+};
