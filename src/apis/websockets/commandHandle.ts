@@ -24,19 +24,19 @@ const data = {
 export const commandHandle = ({ appUserId, scopes, command, payload }: ReceivedDto) => {
   console.log(`commandHandle`);
   console.log('scopes', scopes);
-
+  const store = useImStore();
   switch (command) {
     case CommandConsts.Chat:
-      const store = useImStore();
       const idList = scopes.map(x => x.sessionUnitId);
       store.fetchMany(idList);
+      break;
+    case CommandConsts.IncrementCompleted:
       break;
     case CommandConsts.SessionRequest:
       break;
     case CommandConsts.Rollback:
       break;
-    case CommandConsts.IncrementCompleted:
-      break;
+
     default:
       break;
   }
