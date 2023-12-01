@@ -5,6 +5,7 @@ const store = new Store<{}>();
 
 import { MessageDto, SessionItemDto, SessionUnitOwnerDto } from '../apis/dtos';
 import { SessionUnitService } from '../apis';
+import { groupByToMap } from '../commons/utils';
 
 interface State {
   /**
@@ -44,6 +45,14 @@ const sortFunc = (a: SessionItemDto, b: SessionItemDto): number => {
   }
   return 0;
 };
+
+const groupBy = (xs: any, key: string) => {
+  return xs.reduce((rv: any, x: any) => {
+    (rv[x[key]] = rv[x[key]] || []).push(x);
+    return rv;
+  }, {});
+};
+
 const key = (chatObjectId: number, keyword?: string) => `${chatObjectId}-${keyword || ''}`;
 export const useImStore = defineStore('im', {
   state: (): State => {
@@ -125,7 +134,9 @@ export const useImStore = defineStore('im', {
         this.sessionUnitMap[x.id!] = x;
         // store.set(x.id!, x);
       });
+
       this.setSessionItems(items[0].ownerId!, items, keyword);
+
       this.setMaxMessageId(Math.max(...items.map(x => x.lastMessage?.id!)));
       // this.sessionUnitMap = {...this.sessionUnitMap};
     },
@@ -157,7 +168,7 @@ export const useImStore = defineStore('im', {
     fetchItem() {},
     async fetchMany(idList: string[]) {
       const res = await SessionUnitService.getMany({ idList });
-      this.setMany(res.items!);
+      res.items?.forEach(x => this.setMany([x]));
     },
 
     /**

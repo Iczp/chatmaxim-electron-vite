@@ -44,6 +44,10 @@ export const useUserStore = defineStore({
     badgeItems: (state): BadgeDetialDto[] => Object.entries(state.chatObjects).map(([_, x]) => x),
   },
   actions: {
+    //修改
+    CorrectBadge(){
+
+    },
     logout() {
       this.$patch({ ...devaultValue });
       // we could do other stuff like redirecting the user

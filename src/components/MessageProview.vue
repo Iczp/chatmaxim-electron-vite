@@ -1,19 +1,20 @@
 <script setup lang="ts">
+import { computed, watch } from 'vue';
 import { MessageSimpleDto } from '../apis/dtos';
-import { useMessageContent } from '../commons/useMessageContent';
+import { formatMessageContent } from '../commons/utils';
 
 const props = defineProps<{
   entity?: MessageSimpleDto;
 }>();
-const { contentType, contentText } = useMessageContent(props.entity);
+const content = computed(() => formatMessageContent(props.entity));
 </script>
 
 <template>
   <span v-if="entity" class="message-content-proview">
-    <span v-if="contentType" class="message-type" :message-type="entity?.messageType">
-      {{ contentType }}
+    <span v-if="content.contentType" class="message-type" :message-type="entity?.messageType">
+      {{ content.contentType }}
     </span>
-    <span class="message-text" :title="contentText">{{ contentText }}</span>
+    <span class="message-text" :title="content.contentText">{{ content.contentText }}</span>
 
     <!-- <span v-if="isRollbacked">消息被撤回</span>
   <span v-else-if="messageType == MessageTypeEnums.Cmd">{{ content.text }}</span>

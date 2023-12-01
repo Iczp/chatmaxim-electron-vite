@@ -1,7 +1,9 @@
 import moment from 'moment';
 import { useRouter } from 'vue-router';
 import { router, chatHistorys } from '../routes';
-import { MessageDto, SessionUnitOwnerDto } from '../apis/dtos';
+import { CmdDto, MessageDto, MessageSimpleDto, SessionUnitOwnerDto, TextDto } from '../apis/dtos';
+import { MessageTypeEnums } from '../apis/enums';
+import { formatText } from './formatWords';
 /**
  * toQueryString
  *
@@ -113,3 +115,90 @@ export const getDestinationNameForSessionUnit = (
 ): string | undefined | null => {
   return entity?.setting?.rename || entity?.destination?.name;
 };
+
+export const formatMessageContent = (
+  entity?: MessageSimpleDto,
+): {
+  contentType: string | undefined;
+  contentText: string;
+} => {
+  let contentType: string | undefined;
+  let contentText: string = '';
+
+  const isRollbacked = entity?.isRollbacked || entity?.rollbackTime != null;
+
+  if (!entity) {
+    return { contentType, contentText };
+  }
+
+  if (isRollbacked) {
+    contentText = '消息已经被撤回';
+    return { contentType, contentText };
+  }
+
+  const content = entity.content;
+
+  switch (entity.messageType) {
+    case MessageTypeEnums.Contacts:
+      contentType = '[名片]';
+      break;
+    case MessageTypeEnums.Image:
+      contentType = '[图片]';
+      break;
+    case MessageTypeEnums.Video:
+      contentType = '[视频]';
+      break;
+    case MessageTypeEnums.File:
+      contentType = '[文件]';
+      break;
+    case MessageTypeEnums.Sound:
+      contentType = '[语音]';
+      break;
+    case MessageTypeEnums.Link:
+      contentType = '[链接]';
+      break;
+    case MessageTypeEnums.History:
+      contentType = '[聊天记录]';
+      break;
+    case MessageTypeEnums.Html:
+      contentType = '[语音]';
+      break;
+    case MessageTypeEnums.Cmd:
+      contentType = '[系统]';
+      contentText = formatText((content as CmdDto).text!);
+      break;
+    case MessageTypeEnums.Text:
+      contentType = '';
+      contentText = formatText((content as TextDto).text!);
+      break;
+    default:
+      contentText = '[不支持的类型]';
+      break;
+  }
+  return { contentType, contentText };
+};
+
+/**
+ * 数组 groupBy
+ *
+ * @template T
+ * @template Q
+ * @param {T[]} array
+ * @param {(value: T, index: number, array: T[]) => Q} predicate
+ * @return {*}  {Map<Q, T[]>}
+ * @example 
+ * 
+  groupByToMap(items, x => x.ownerId!)
+    .forEach((list, ownerId) => {
+      this.setSessionItems(ownerId, list, keyword);
+    });
+ */
+export const groupByToMap = <T, Q>(
+  array: T[],
+  predicate: (value: T, index: number, array: T[]) => Q,
+): Map<Q, T[]> =>
+  array.reduce((map, value, index, array) => {
+    const key = predicate(value, index, array);
+    map.get(key)?.push(value) ?? map.set(key, [value]);
+    return map;
+  }, new Map<Q, T[]>());

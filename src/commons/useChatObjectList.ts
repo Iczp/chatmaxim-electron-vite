@@ -2,11 +2,11 @@ import { computed } from 'vue';
 import { useUserStore } from '../stores/user';
 
 export const useChatObjectList = () => {
-  const store = useUserStore();
-  store.getChatObjectByCurrentUser();
-  store.getBadgeByCurrentUser();
+  const userStore = useUserStore();
+  userStore.getChatObjectByCurrentUser();
+  userStore.getBadgeByCurrentUser();
 
-  const badge = computed(() => store.badge);
-  const badgeItems = computed(() => store.badgeItems);
+  const badge = computed(() => userStore.badge);
+  const badgeItems = computed(() => userStore.badgeItems);
   return { badge, badgeItems };
 };

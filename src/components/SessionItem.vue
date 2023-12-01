@@ -32,10 +32,10 @@ watch(
   },
 );
 const store = useImStore();
-const lastMessage = computed(() => store.getItem(props.entity?.id!).lastMessage);
+// const lastMessage = computed(() => store.getItem(props.entity?.id!).lastMessage);
 const {
   isTopping,
-  // lastMessage,
+  lastMessage,
   isImmersed,
   destination,
   objectType,
