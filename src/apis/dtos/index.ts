@@ -15,6 +15,8 @@ export type { EntryValueDto } from './EntryValueDto';
 export type { SessionRequestInput } from './SessionRequestInput';
 
 export type { SessionUnitSettingDto } from './SessionUnitSettingDto';
+export type { SessionUnitSettingSimpleDto } from './SessionUnitSettingSimpleDto';
+
 export type { ChatObjectDto } from './ChatObjectDto';
 export type { MessageDto } from './MessageDto';
 export type { MessageOwnerDto } from './MessageOwnerDto';

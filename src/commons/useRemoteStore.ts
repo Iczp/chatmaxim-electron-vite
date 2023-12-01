@@ -11,14 +11,17 @@ export const useRemoteStore = <T>(args?: WindowParams) => {
     console.log('caller:', caller);
     const event = route.query.event as string;
     storeValue.value = getStoreValue<T>(event);
-    // console.log('useFetchValue', event, storeValue.value);
+    console.log('useRemoteStore', event, storeValue.value);
     if (storeValue.value) {
       setWindow(args);
-      // console.log('useFetchValue resolve');
+      // console.log('useRemoteStore resolve');
     }
   };
   onMounted(() => _fn('onMounted'));
-  watch(route, v => _fn('watch route'));
+  watch(
+    () => route.fullPath,
+    v => _fn('watch route'),
+  );
 
   return storeValue;
 };

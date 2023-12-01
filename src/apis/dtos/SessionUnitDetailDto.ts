@@ -1,8 +1,3 @@
-/* generated using openapi-typescript-codegen -- do no edit */
-/* istanbul ignore file */
-/* tslint:disable */
-/* eslint-disable */
-
 import { ChatObjectDto } from './ChatObjectDto';
 import type { EntryDto } from './EntryDto';
 import { SessionUnitSenderDto } from './SessionUnitSenderDto';

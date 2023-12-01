@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { computed, onMounted, reactive, ref, watch } from 'vue';
+import { computed, onMounted, onUnmounted, reactive, ref, watch } from 'vue';
 import { onBeforeRouteLeave, onBeforeRouteUpdate, useRoute } from 'vue-router';
 import { router, chatHistorys } from '../routes';
 import { SessionUnitOwnerDto, SessionUnitService } from '../apis';
@@ -219,6 +219,9 @@ var intersectionObserver = new IntersectionObserver(function (entries) {
 });
 onMounted(() => {
   intersectionObserver.observe(footerObserver.value!);
+});
+onUnmounted(() => {
+  intersectionObserver.unobserve(footerObserver.value!);
 });
 </script>
 

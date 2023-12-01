@@ -126,7 +126,7 @@ export const showContextMenuForMessageAvatar = ({
             payload: {
               params: {
                 ownerId: 13,
-                destinationId: entity.senderSessionUnit?.ownerId!,
+                destinationId: entity.senderSessionUnit?.owner?.id!,
                 requestMessage: `你好:${entity.senderSessionUnit?.displayName || ''}`,
               },
               destination: toRaw(entity.senderSessionUnit),
