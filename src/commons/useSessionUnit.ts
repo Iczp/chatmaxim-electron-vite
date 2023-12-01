@@ -68,6 +68,10 @@ const useComputedSessionUnit = (computedEntity: ComputedRef<SessionUnitOwnerDto 
 
   const displaySenderName = computed(() => (isSelfSender.value ? '我' : senderName.value));
 
+  const readedMessageId = computed(() => entity.value?.setting?.readedMessageId);
+
+  // const readedMessageId = entity.value?.setting?.readedMessageId;
+
   return {
     isTopping,
     lastMessage,
@@ -88,5 +92,6 @@ const useComputedSessionUnit = (computedEntity: ComputedRef<SessionUnitOwnerDto 
     lastMessageId,
     isSelfSender,
     displaySenderName,
+    readedMessageId,
   };
 };

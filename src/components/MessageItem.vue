@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { ref, watch } from 'vue';
+import { ref, useSlots, watch } from 'vue';
 
 import { MessageDto } from '../apis/dtos';
 import { MessageTypeEnums } from '../apis/enums';
@@ -31,7 +31,7 @@ const props = defineProps<{
   selectable?: boolean;
   isPlay?: boolean;
 }>();
-
+const slots = useSlots();
 // const emits = defineEmits(['contextmenu', 'update:selectable']);
 const emits = defineEmits<{
   contextmenu: [ContextmenuInput];
@@ -155,11 +155,10 @@ const onMessageClick = (event: MouseEvent, mouseButton: MouseButton) => {
           </footer>
         </main>
       </section>
-
-      <footer class="msg-footer">
-        <slot name="footer"></slot>
-      </footer>
     </div>
+    <footer v-if="slots.footer" class="msg-footer">
+      <slot name="footer"></slot>
+    </footer>
   </section>
 </template>
 

@@ -29,7 +29,7 @@ export const useUserStore = defineStore({
   getters: {},
   actions: {
     //修改
-    CorrectBadge() {},
+    correctBadge() {},
     clearBadge(chatObjectId: number, sessionUnitId: string) {},
     logout() {
       this.$patch({ ...devaultValue });

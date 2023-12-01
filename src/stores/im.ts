@@ -142,25 +142,34 @@ export const useImStore = defineStore('im', {
       const senderSessionUnit = entity.senderSessionUnit!;
       this.setLastMessage(senderSessionUnit.ownerId!, senderSessionUnit.id!, entity);
     },
+    ifMap(sessionUnitId: string, callback: (item: SessionUnitOwnerDto) => void, caller?: string) {
+      const item = this.sessionUnitMap.get(sessionUnitId);
+      if (!item) {
+        console.warn('ifMap: sessionUnitMap undefined,sessionUnitId:', sessionUnitId, caller);
+        return;
+      }
+      callback(item!);
+    },
     setLastMessage(
       chatObjectId: number,
       sessionUnitId: string,
       message: MessageOwnerDto,
       keyword?: string,
     ) {
-      const item = this.sessionUnitMap.get(sessionUnitId);
-      if (!item) {
-        console.warn('setLastMessage: sessionUnitMap undefined,sessionUnitId:', sessionUnitId);
-        return;
-      }
-      item.lastMessage = message;
-      item.lastMessageId = message.id!;
-      const keyName = key(chatObjectId, keyword);
-      if (!this.sessionItemsMap[keyName]) {
-        console.warn('setLastMessage: sessionItemsMap undefined,keyName:', keyName);
-        return;
-      }
-      this.sessionItemsMap[keyName][sessionUnitId].lastMessageId = message.id;
+      this.ifMap(
+        sessionUnitId,
+        item => {
+          item.lastMessage = message;
+          item.lastMessageId = message.id!;
+          const keyName = key(chatObjectId, keyword);
+          if (!this.sessionItemsMap[keyName]) {
+            console.warn('setLastMessage: sessionItemsMap undefined,keyName:', keyName);
+            return;
+          }
+          this.sessionItemsMap[keyName][sessionUnitId].lastMessageId = message.id;
+        },
+        'setLastMessage',
+      );
     },
     setItem(item: SessionUnitOwnerDto): void {
       this.sessionUnitMap.set(item.id!, item);
@@ -242,6 +251,31 @@ export const useImStore = defineStore('im', {
         const items = res.items!.map(owner => <BadgeDetialDto>{ chatObjectId: owner.id, owner });
         this.setChatObjects(items);
       });
+    },
+    correctBadge() {
+      //
+    },
+    clearBadge(chatObjectId: number, sessionUnitId: string) {
+      // this.setChatObjects([{ chatObjectId, badge: 0 }]);
+
+      this.ifMap(
+        sessionUnitId,
+        item => {
+          let badge = this.chatObjects[chatObjectId].badge || 0;
+          const publicBadge = item.publicBadge || 0;
+          badge -= publicBadge;
+          if (badge < 0) {
+            badge = 0;
+          }
+          this.setChatObjects([{ chatObjectId, badge }]);
+          item.publicBadge = 0;
+          item.privateBadge = 0;
+          item.followingCount = 0;
+          item.remindAllCount = 0;
+        },
+        'clearBadge',
+      );
+      //
     },
   },
 });

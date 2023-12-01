@@ -1,6 +1,13 @@
 <script setup lang="ts">
-import { CSSProperties, computed, nextTick, onActivated, onMounted, ref, watch } from 'vue';
-import { useRoute, onBeforeRouteUpdate } from 'vue-router';
+import {
+  CSSProperties,
+  computed,
+  onActivated,
+  onUnmounted,
+  ref,
+  watch,
+} from 'vue';
+import { useRoute } from 'vue-router';
 import { MessageSenderService, ApiError } from '../apis';
 
 import ChatSetting from './ChatSetting.vue';
@@ -10,11 +17,10 @@ import ScrollView from '../components/ScrollView.vue';
 import ChatInput from '../components/ChatInput.vue';
 import { message } from 'ant-design-vue';
 import { useImStore } from '../stores/im';
-import { MessageDto, SessionUnitDetailDto } from '../apis/dtos';
+import { MessageDto } from '../apis/dtos';
 import { ContextmenuInput, showContextMenuForMessage } from '../commons/contextmenu';
 import QuoteMessage from '../components/QuoteMessage.vue';
 import { useSessionUnitId } from '../commons/useSessionUnit';
-import { useDestinationList } from '../commons/useDestinationList';
 import { useMessageList } from '../commons/useMessageList';
 import { MessageStateEnums } from '../apis/enums/MessageStateEnums';
 import { MessageTypeEnums } from '../apis/enums/MessageTypeEnums';
@@ -31,6 +37,7 @@ const props = defineProps<{
 const sessionUnitId = props.sessionUnitId;
 
 const route = useRoute();
+const chatObjectId = Number(route.params.chatObjectId);
 
 const info = computed(() => store.getSessionUnit(sessionUnitId));
 
@@ -39,8 +46,10 @@ const info = computed(() => store.getSessionUnit(sessionUnitId));
 //   maxResultCount: 20,
 // });
 
-const { isInputEnabled, destination, destinationName, isImmersed, lastMessageId } =
+const { isInputEnabled, destination, destinationName, isImmersed, lastMessageId, readedMessageId } =
   useSessionUnitId(sessionUnitId);
+
+const activeLastMessageId = ref<number | null | undefined>();
 
 // onBeforeRouteUpdate((to, from) => {
 //   console.log('onBeforeRouteUpdate', to, from);
@@ -48,11 +57,16 @@ const { isInputEnabled, destination, destinationName, isImmersed, lastMessageId 
 // });
 
 onActivated(() => {
+  activeLastMessageId.value = lastMessageId.value;
+  store.clearBadge(chatObjectId, sessionUnitId);
   console.log('onActivated', destinationName.value);
   if (lastMessageId.value) {
     setReadedMessageId({ sessionUnitId, messageId: lastMessageId.value! });
   }
   scrollToBottom(0);
+});
+onUnmounted(() => {
+  activeLastMessageId.value = lastMessageId.value;
 });
 
 const messageList = useMessageList({ sessionUnitId });
@@ -268,7 +282,7 @@ const mouseleave = (e: MouseEvent) => {
   >
     <PageTitle
       :title="destinationName"
-      :description="`code${destination?.code}:memberCount(${detail?.sessionUnitCount})`"
+      :description="`code${destination?.code}:memberCount(${detail?.sessionUnitCount}) activeLastMessageId:${activeLastMessageId}`"
       @more="showDrawer"
       :search="true"
       :top="true"
@@ -295,13 +309,20 @@ const mouseleave = (e: MouseEvent) => {
       </a-drawer>
       <scroll-view class="message-container" ref="scroll" @ps-y-reach-end="onReachEnd">
         <MessageItem
-          v-for="item in messageList.items.value"
+          v-for="(item, index) in messageList.items.value"
           :key="item.id"
           :entity="item"
           :sessionUnitId="sessionUnitId"
           v-model:selectable="selectable"
           @contextmenu="showContextMenu"
-        ></MessageItem>
+        >
+          <template
+            v-if="index != messageList.items.value.length - 1 && readedMessageId == item.id"
+            #footer
+          >
+            <a-divider class="divider-latest">以下是新消息</a-divider>
+          </template>
+        </MessageItem>
       </scroll-view>
     </page-content>
     <page-footer class="footer">
@@ -381,7 +402,11 @@ const mouseleave = (e: MouseEvent) => {
 .message-item {
   display: flex;
 }
-
+.divider-latest {
+  font-size: 12px;
+  color: #999;
+  padding: 0 50px;
+}
 .footer {
   padding: 0;
   height: auto;
