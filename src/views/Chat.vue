@@ -32,7 +32,7 @@ const sessionUnitId = props.sessionUnitId;
 
 const route = useRoute();
 
-const info = computed(() => store.getItem(sessionUnitId));
+const info = computed(() => store.getSessionUnit(sessionUnitId));
 
 // const destinationList = useDestinationList({
 //   id: sessionUnitId,

@@ -259,7 +259,7 @@ onMounted(() => {
             v-for="(item, index) in displayItems"
             :key="item.id"
             @click="navToChat(item)"
-            :entity="store.getItem(item.id!)"
+            :entity="store.getSessionUnit(item.id!)"
             :index="index"
             :active="acitveSessionUnitId == item.id"
             @contextmenu="showContextMenuForSession"

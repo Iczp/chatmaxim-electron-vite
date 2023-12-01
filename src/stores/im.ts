@@ -5,16 +5,15 @@ const store = new Store<{}>();
 
 import { MessageDto, SessionItemDto, SessionUnitOwnerDto } from '../apis/dtos';
 import { SessionUnitService } from '../apis';
-import { groupByToMap } from '../commons/utils';
 
 interface State {
   /**
    * 会话单元
-   * @type {Record<string, SessionUnitOwnerDto>}
+   * @type {[key: string]: SessionUnitOwnerDto;}
    * @memberof State
    */
-  sessionUnitMap: Record<string, SessionUnitOwnerDto>;
-  sessionMap: Record<number, SessionUnitOwnerDto[]>;
+  sessionUnitMap: Map<string, SessionUnitOwnerDto>;
+  // sessionMap: Map<number, Array<SessionUnitOwnerDto>>;
   messageMap: Record<string, MessageDto[]>;
   /**
    * 会话列表
@@ -32,7 +31,7 @@ interface State {
   maxMessageId: number | undefined;
   autoMessageId: number;
 }
-const sortFunc = (a: SessionItemDto, b: SessionItemDto): number => {
+export const sortFunc = (a: SessionItemDto, b: SessionItemDto): number => {
   if (a.sorting > b.sorting) {
     return -1;
   } else if (a.sorting < b.sorting) {
@@ -54,11 +53,12 @@ const groupBy = (xs: any, key: string) => {
 };
 
 const key = (chatObjectId: number, keyword?: string) => `${chatObjectId}-${keyword || ''}`;
+
 export const useImStore = defineStore('im', {
   state: (): State => {
     return {
-      sessionUnitMap: {},
-      sessionMap: {},
+      sessionUnitMap: new Map<string, SessionUnitOwnerDto>(),
+      // sessionMap: new Map<number, Array<SessionUnitOwnerDto>>(),
       messageMap: {},
       sessionItemsMap: {},
       maxMessageId: undefined,
@@ -66,49 +66,40 @@ export const useImStore = defineStore('im', {
     };
   },
   getters: {
-    getSessionItems:
-      state =>
-      (chatObjectId: number, keyword?: string): SessionItemDto[] => {
-        const items: SessionItemDto[] = Object.values(
-          state.sessionItemsMap[key(chatObjectId, keyword)] || [],
-        );
-        items.sort(sortFunc);
-        return items;
-        // state.sessionItemsMap[chatObjectId] ||
-        //   // store.get(`session-items-${chatObjectId}`) ||
-        //   [];
-      },
-    getSessionUnit:
-      state =>
-      (chatObjectId: number, sessionUnitId: string): SessionUnitOwnerDto | undefined =>
-        state.sessionMap[chatObjectId]?.find(x => x.id == sessionUnitId),
+    // getSessionItems:
+    //   state =>
+    //   (chatObjectId: number, keyword?: string): SessionItemDto[] => {
+    //     const items: SessionItemDto[] = Object.values(
+    //       state.sessionItemsMap[key(chatObjectId, keyword)] || [],
+    //     );
+    //     items.sort(sortFunc);
+    //     return items;
+    //     // state.sessionItemsMap[chatObjectId] ||
+    //     //   // store.get(`session-items-${chatObjectId}`) ||
+    //     //   [];
+    //   },
+    // getSessionUnit:
+    //   state =>
+    //   (chatObjectId: number, sessionUnitId: string): SessionUnitOwnerDto | undefined =>
+    //     state.sessionMap.get(chatObjectId)?.find(x => x.id == sessionUnitId),
 
-    getItem:
-      state =>
-      (sessionUnitId: string): SessionUnitOwnerDto =>
-        state.sessionUnitMap[sessionUnitId], //|| store.get(sessionUnitId),
+    // getItem:
+    //   state =>
+    //   (sessionUnitId: string): SessionUnitOwnerDto | undefined =>
+    //     state.sessionUnitMap.get(sessionUnitId), //|| store.get(sessionUnitId),
   },
   // 也可以这样定义
   // state: () => ({ count: 0 })
   actions: {
-    sortFunc(a: SessionItemDto, b: SessionItemDto): number {
-      if (a.sorting > b.sorting) {
-        return -1;
-      } else if (a.sorting < b.sorting) {
-        return 1;
-      }
-      if (a.lastMessageId > b.lastMessageId) {
-        return -1;
-      } else if (a.lastMessageId < b.lastMessageId) {
-        return 1;
-      }
-      return 0;
+    getSessionUnit(sessionUnitId: string): SessionUnitOwnerDto | undefined {
+      return this.sessionUnitMap.get(sessionUnitId);
     },
-    // sortSessionItems(chatObjectId: number) {
-    //   this.sessionItemsMap[chatObjectId].sort(this.sortFunc);
-    // },
-    storeSessionItems(chatObjectId: number): void {
-      // store.set(`session-items-${chatObjectId}`, this.sessionItemsMap[chatObjectId]);
+    getSessionItems(chatObjectId: number, keyword?: string): SessionItemDto[] {
+      const items: SessionItemDto[] = Object.values(
+        this.sessionItemsMap[key(chatObjectId, keyword)] || [],
+      );
+      items.sort(sortFunc);
+      return items;
     },
     setSessionItems(chatObjectId: number, items: SessionUnitOwnerDto[], keyword?: string): void {
       // console.log('setSessionItems', chatObjectId, items);
@@ -124,14 +115,15 @@ export const useImStore = defineStore('im', {
         this.sessionItemsMap[keyName][item.id] = item;
       });
     },
+    setLastMessage(sessionUnitId: string) {},
     setItem(item: SessionUnitOwnerDto): void {
-      this.sessionUnitMap[item.id!] = item;
+      this.sessionUnitMap.set(item.id!, item);
       // store.set(item.id!, item);
     },
     setMany(items: Array<SessionUnitOwnerDto>, keyword?: string): void {
       // console.log('setMany', items);
       items.map(x => {
-        this.sessionUnitMap[x.id!] = x;
+        this.sessionUnitMap.set(x.id!, x);
         // store.set(x.id!, x);
       });
 
@@ -152,11 +144,12 @@ export const useImStore = defineStore('im', {
       const regex = new RegExp(keyword, 'ig');
       const test = (str?: string | null) => str && regex.test(str);
       return this.getSessionItems(chatObjectId)
-        .map<SessionUnitOwnerDto>(x => this.getItem(x.id))
+        .filter(x => x != undefined)
+        .map(x => this.getSessionUnit(x.id)!)
         .filter(
           x => test(x.setting?.rename) || test(x.destination?.name) || test(x.destination?.code),
         )
-        .map<SessionItemDto>(x => ({
+        .map(x => ({
           id: x.id!,
           oid: x.ownerId!,
           sorting: x.sorting!,

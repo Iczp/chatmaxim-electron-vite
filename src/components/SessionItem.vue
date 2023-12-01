@@ -45,6 +45,7 @@ const {
   isShowSender,
   senderName,
   remindMeCount,
+  displaySenderName,
 } = useSessionUnitId(props.entity?.id!);
 // const isTopping = computed(() => Number(props.entity?.sorting) > 0);
 </script>
@@ -84,8 +85,7 @@ const {
         </span>
         <!-- 我关注的 flowing -->
         <!-- 发送人信息 -->
-        <span v-if="isShowSender" class="sender">{{ senderName }}:</span>
-        {{ lastMessage?.content.text }}
+        <span v-if="isShowSender" class="sender">{{ displaySenderName }}</span>
         <message-proview :entity="lastMessage" />
       </div>
     </template>
@@ -203,5 +203,13 @@ const {
   padding: 0 4px;
   box-shadow: 0 0 0 1px #ffffff;
   margin-right: 4px;
+}
+.sender {
+  color: #999;
+}
+.sender::after {
+  content: ':';
+  color: #333;
+  margin: 0 2px;
 }
 </style>

@@ -13,7 +13,7 @@ import { useImStore } from '../stores/im';
 export const useSessionUnitId = (sessionUnitId: string) => {
   const store = useImStore();
   // store.getItem(sessionUnitId);
-  const computedEntity = computed(() => store.getItem(sessionUnitId!));
+  const computedEntity = computed(() => store.getSessionUnit(sessionUnitId!));
   return useComputedSessionUnit(computedEntity);
 };
 
@@ -62,6 +62,12 @@ const useComputedSessionUnit = (computedEntity: ComputedRef<SessionUnitOwnerDto 
 
   const memberName = computed(() => entity.value?.setting?.memberName);
 
+  const isSelfSender = computed(
+    () => entity.value?.id == entity.value?.lastMessage?.senderSessionUnit?.id,
+  );
+
+  const displaySenderName = computed(() => (isSelfSender.value ? '我' : senderName.value));
+
   return {
     isTopping,
     lastMessage,
@@ -80,5 +86,7 @@ const useComputedSessionUnit = (computedEntity: ComputedRef<SessionUnitOwnerDto 
     setting,
     memberName,
     lastMessageId,
+    isSelfSender,
+    displaySenderName,
   };
 };
