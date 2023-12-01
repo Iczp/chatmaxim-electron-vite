@@ -1,7 +1,5 @@
 // @ts-check
 import { defineStore, acceptHMRUpdate } from 'pinia';
-import { BadgeDetialDto, BadgeDto, ChatObjectDto } from '../apis/dtos';
-import { ChatObjectService, SessionUnitService } from '../apis';
 
 /**
  * Simulate a login
@@ -16,19 +14,11 @@ interface UserState {
   id?: string | null;
   name?: string | null;
   isAdmin: boolean;
-  chatObjectItems: Array<ChatObjectDto>;
-  chatObjects: {
-    [key: number]: BadgeDetialDto;
-  };
-  initBadge: number;
 }
 const devaultValue: UserState = {
   id: null,
   name: null,
   isAdmin: true,
-  chatObjectItems: [],
-  chatObjects: {},
-  initBadge: 0,
 };
 export const useUserStore = defineStore({
   id: 'user',
@@ -36,18 +26,11 @@ export const useUserStore = defineStore({
     ...devaultValue,
   }),
 
-  getters: {
-    badge: (state): number =>
-      Object.entries(state.chatObjects)
-        .map(([_, x]) => x.badge || 0)
-        .reduce((partialSum, n) => partialSum + n, state.initBadge),
-    badgeItems: (state): BadgeDetialDto[] => Object.entries(state.chatObjects).map(([_, x]) => x),
-  },
+  getters: {},
   actions: {
     //修改
-    CorrectBadge(){
-
-    },
+    CorrectBadge() {},
+    clearBadge(chatObjectId: number, sessionUnitId: string) {},
     logout() {
       this.$patch({ ...devaultValue });
       // we could do other stuff like redirecting the user
@@ -61,31 +44,6 @@ export const useUserStore = defineStore({
       this.$patch({
         name: user,
         ...userData,
-      });
-    },
-    setChatObjects(items: Array<BadgeDetialDto | BadgeDto>) {
-      items.map(x => {
-        if (!this.chatObjects[x.chatObjectId!]) {
-          this.chatObjects[x.chatObjectId!] = x;
-        }
-        this.chatObjects[x.chatObjectId!] = {
-          ...this.chatObjects[x.chatObjectId!],
-          ...x,
-        };
-      });
-      console.log('setChatObjects', this.chatObjects);
-    },
-    getBadgeByCurrentUser() {
-      SessionUnitService.getApiChatSessionUnitBadgeByCurrentUser({}).then(items => {
-        console.log('getBadgeByCurrentUser', items);
-        this.setChatObjects(items);
-      });
-    },
-    getChatObjectByCurrentUser() {
-      ChatObjectService.getApiChatChatObjectByCurrentUser({}).then(res => {
-        console.log('getChatObjectByCurrentUser', res);
-        const items = res.items!.map(owner => <BadgeDetialDto>{ chatObjectId: owner.id, owner });
-        this.setChatObjects(items);
       });
     },
   },

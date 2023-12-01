@@ -1,12 +1,23 @@
 import { defineStore } from 'pinia';
-import Store from 'electron-store';
+// import Store from 'electron-store';
 
-const store = new Store<{}>();
+// const store = new Store<{}>();
 
-import { MessageDto, SessionItemDto, SessionUnitOwnerDto } from '../apis/dtos';
-import { SessionUnitService } from '../apis';
+import {
+  BadgeDetialDto,
+  BadgeDto,
+  MessageDto,
+  MessageOwnerDto,
+  SessionItemDto,
+  SessionUnitOwnerDto,
+} from '../apis/dtos';
+import { ChatObjectService, SessionUnitService } from '../apis';
 
 interface State {
+  chatObjects: {
+    [key: number]: BadgeDetialDto;
+  };
+  initBadge: number;
   /**
    * 会话单元
    * @type {[key: string]: SessionUnitOwnerDto;}
@@ -23,23 +34,29 @@ interface State {
   sessionItemsMap: Record<string, Record<string, SessionItemDto>>;
 
   /**
-   * 最大消息Id
+   * maxMessageId
    *
    * @type {(number | undefined)}
    * @memberof State
    */
   maxMessageId: number | undefined;
+  /**
+   *
+   *
+   * @type {number}
+   * @memberof State
+   */
   autoMessageId: number;
 }
 export const sortFunc = (a: SessionItemDto, b: SessionItemDto): number => {
-  if (a.sorting > b.sorting) {
+  if (a.sorting! > b.sorting!) {
     return -1;
-  } else if (a.sorting < b.sorting) {
+  } else if (a.sorting! < b.sorting!) {
     return 1;
   }
-  if (a.lastMessageId > b.lastMessageId) {
+  if (a.lastMessageId! > b.lastMessageId!) {
     return -1;
-  } else if (a.lastMessageId < b.lastMessageId) {
+  } else if (a.lastMessageId! < b.lastMessageId!) {
     return 1;
   }
   return 0;
@@ -57,6 +74,9 @@ const key = (chatObjectId: number, keyword?: string) => `${chatObjectId}-${keywo
 export const useImStore = defineStore('im', {
   state: (): State => {
     return {
+      chatObjects: {},
+      initBadge: 0,
+
       sessionUnitMap: new Map<string, SessionUnitOwnerDto>(),
       // sessionMap: new Map<number, Array<SessionUnitOwnerDto>>(),
       messageMap: {},
@@ -66,6 +86,11 @@ export const useImStore = defineStore('im', {
     };
   },
   getters: {
+    badge: (state): number =>
+      Object.entries(state.chatObjects)
+        .map(([_, x]) => x.badge || 0)
+        .reduce((partialSum, n) => partialSum + n, state.initBadge),
+    badgeItems: (state): BadgeDetialDto[] => Object.entries(state.chatObjects).map(([_, x]) => x),
     // getSessionItems:
     //   state =>
     //   (chatObjectId: number, keyword?: string): SessionItemDto[] => {
@@ -82,7 +107,6 @@ export const useImStore = defineStore('im', {
     //   state =>
     //   (chatObjectId: number, sessionUnitId: string): SessionUnitOwnerDto | undefined =>
     //     state.sessionMap.get(chatObjectId)?.find(x => x.id == sessionUnitId),
-
     // getItem:
     //   state =>
     //   (sessionUnitId: string): SessionUnitOwnerDto | undefined =>
@@ -101,21 +125,43 @@ export const useImStore = defineStore('im', {
       items.sort(sortFunc);
       return items;
     },
-    setSessionItems(chatObjectId: number, items: SessionUnitOwnerDto[], keyword?: string): void {
+    setSessionItems(
+      chatObjectId: number,
+      items: Array<SessionUnitOwnerDto>,
+      keyword?: string,
+    ): void {
       // console.log('setSessionItems', chatObjectId, items);
+      const keyName = key(chatObjectId, keyword);
       items.map(x => {
-        const item: SessionItemDto = {
-          id: x.id!,
-          oid: x.ownerId!,
-          sorting: x.sorting!,
-          lastMessageId: x.lastMessageId!,
-        };
-        const keyName = key(chatObjectId, keyword);
+        // const item: SessionItemDto = x as SessionItemDto;
         this.sessionItemsMap[keyName] = this.sessionItemsMap[keyName] || {};
-        this.sessionItemsMap[keyName][item.id] = item;
+        this.sessionItemsMap[keyName][x.id!] = x as SessionItemDto;
       });
     },
-    setLastMessage(sessionUnitId: string) {},
+    setLastMessageForSender(entity: MessageOwnerDto) {
+      const senderSessionUnit = entity.senderSessionUnit!;
+      this.setLastMessage(senderSessionUnit.ownerId!, senderSessionUnit.id!, entity);
+    },
+    setLastMessage(
+      chatObjectId: number,
+      sessionUnitId: string,
+      message: MessageOwnerDto,
+      keyword?: string,
+    ) {
+      const item = this.sessionUnitMap.get(sessionUnitId);
+      if (!item) {
+        console.warn('setLastMessage: sessionUnitMap undefined,sessionUnitId:', sessionUnitId);
+        return;
+      }
+      item.lastMessage = message;
+      item.lastMessageId = message.id!;
+      const keyName = key(chatObjectId, keyword);
+      if (!this.sessionItemsMap[keyName]) {
+        console.warn('setLastMessage: sessionItemsMap undefined,keyName:', keyName);
+        return;
+      }
+      this.sessionItemsMap[keyName][sessionUnitId].lastMessageId = message.id;
+    },
     setItem(item: SessionUnitOwnerDto): void {
       this.sessionUnitMap.set(item.id!, item);
       // store.set(item.id!, item);
@@ -138,23 +184,17 @@ export const useImStore = defineStore('im', {
      * 搜索备注名/账号
      * @param {number} chatObjectId
      * @param {string} keyword
-     * @return {*}  {SessionUnitOwnerDto[]}
+     * @return {*}  {Array<SessionItemDto>}
      */
-    searchSessionItems(chatObjectId: number, keyword: string): SessionItemDto[] {
+    searchSessionItems(chatObjectId: number, keyword: string): Array<SessionItemDto> {
       const regex = new RegExp(keyword, 'ig');
       const test = (str?: string | null) => str && regex.test(str);
       return this.getSessionItems(chatObjectId)
         .filter(x => x != undefined)
-        .map(x => this.getSessionUnit(x.id)!)
+        .map(x => this.getSessionUnit(x.id!)!)
         .filter(
           x => test(x.setting?.rename) || test(x.destination?.name) || test(x.destination?.code),
-        )
-        .map(x => ({
-          id: x.id!,
-          oid: x.ownerId!,
-          sorting: x.sorting!,
-          lastMessageId: x.lastMessageId!,
-        }));
+        ) as Array<SessionItemDto>;
     },
 
     fetchList() {},
@@ -165,7 +205,7 @@ export const useImStore = defineStore('im', {
     },
 
     /**
-     * 设置最大消息Id
+     * MaxMessageId
      *
      * @param {number} messageId
      */
@@ -176,6 +216,32 @@ export const useImStore = defineStore('im', {
     generateMessageId() {
       this.autoMessageId = Number((this.autoMessageId + 0.0001).toFixed(4));
       return this.autoMessageId;
+    },
+
+    setChatObjects(items: Array<BadgeDetialDto | BadgeDto>) {
+      items.map(x => {
+        if (!this.chatObjects[x.chatObjectId!]) {
+          this.chatObjects[x.chatObjectId!] = x;
+        }
+        this.chatObjects[x.chatObjectId!] = {
+          ...this.chatObjects[x.chatObjectId!],
+          ...x,
+        };
+      });
+      console.log('setChatObjects', this.chatObjects);
+    },
+    getBadgeByCurrentUser() {
+      SessionUnitService.getApiChatSessionUnitBadgeByCurrentUser({}).then(items => {
+        console.log('getBadgeByCurrentUser', items);
+        this.setChatObjects(items);
+      });
+    },
+    getChatObjectByCurrentUser() {
+      ChatObjectService.getApiChatChatObjectByCurrentUser({}).then(res => {
+        console.log('getChatObjectByCurrentUser', res);
+        const items = res.items!.map(owner => <BadgeDetialDto>{ chatObjectId: owner.id, owner });
+        this.setChatObjects(items);
+      });
     },
   },
 });

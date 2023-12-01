@@ -1,20 +1,21 @@
 import { ChatObjectDto } from './ChatObjectDto';
 import { MessageDto } from './MessageDto';
+import { SessionItemDto } from './SessionItemDto';
 import { SessionUnitSettingDto } from './SessionUnitSettingDto';
 
-export type SessionUnitOwnerDto = {
-  id?: string;
+export type SessionUnitOwnerDto = SessionItemDto & {
+  // id?: string;
+  // ownerId?: number;
+  // lastMessageId?: number | null;
+  // sorting?: number;
   sessionId?: string;
-  ownerId?: number;
   destination?: ChatObjectDto;
   setting?: SessionUnitSettingDto;
   lastMessage?: MessageDto;
-  lastMessageId?: number | null;
   publicBadge?: number;
   privateBadge?: number;
   remindAllCount?: number;
   remindMeCount?: number;
   followingCount?: number;
-  sorting?: number;
   ticks?: number;
 };

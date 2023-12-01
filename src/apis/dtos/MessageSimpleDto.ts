@@ -1,12 +1,12 @@
 import { MessageTypeEnums, ReminderTypeEnums } from '../enums';
 
 export type MessageSimpleDto = {
-    /**
+  /**
    * 发送人 senderName
    *
    * @type {(string | null)}
    */
-    senderName?: string | null;
+  senderName?: string | null;
 
   /**
    * 发送人 senderDisplayName
@@ -47,18 +47,19 @@ export type MessageSimpleDto = {
    */
   rollbackTime?: string | null;
 
-    /**
+  /**
    * 是否撤回
    *
    * @type {boolean}
    */
-    isRollbacked?: boolean;
+  isRollbacked?: boolean;
 
   /**
    * 创建时间
    * @type {string}
    */
   creationTime?: string;
+  
   /**
    * 消息内容
    * @type {*}

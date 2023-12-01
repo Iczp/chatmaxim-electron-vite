@@ -124,7 +124,7 @@ const setMinMessageId = (v: number) => {
 const mapToItems = (items: SessionUnitOwnerDto[]): SessionItemDto[] => {
   return items.map<SessionItemDto>(x => ({
     id: x.id!,
-    oid: x.ownerId!,
+    ownerId: x.ownerId!,
     sorting: x.sorting!,
     lastMessageId: x.lastMessageId!,
   }));

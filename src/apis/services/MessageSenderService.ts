@@ -23,6 +23,7 @@ import type { IczpNet_Chat_MessageSections_Messages_MessageInput_1 } from '../mo
 import type { CancelablePromise } from '../core/CancelablePromise';
 import { OpenAPI } from '../core/OpenAPI';
 import { request as __request } from '../core/request';
+import { MessageOwnerDto } from '../dtos';
 
 export class MessageSenderService {
 
@@ -341,7 +342,7 @@ requestBody,
  */
 sessionUnitId: string,
 requestBody?: IczpNet_Chat_MessageSections_Messages_MessageInput_1,
-}): CancelablePromise<IczpNet_Chat_MessageSections_Messages_MessageInfo_1> {
+}): CancelablePromise<MessageOwnerDto> {
         return __request(OpenAPI, {
             method: 'POST',
             url: '/api/chat/message-sender/send-sound/{sessionUnitId}',
@@ -368,7 +369,7 @@ requestBody,
  */
 sessionUnitId: string,
 requestBody?: IczpNet_Chat_MessageSections_Messages_MessageInput_1,
-}): CancelablePromise<IczpNet_Chat_MessageSections_Messages_MessageInfo_1> {
+}): CancelablePromise<MessageOwnerDto> {
         return __request(OpenAPI, {
             method: 'POST',
             url: '/api/chat/message-sender/send-text/{sessionUnitId}',

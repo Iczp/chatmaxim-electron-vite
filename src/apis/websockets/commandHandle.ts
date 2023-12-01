@@ -1,6 +1,5 @@
 import { useImStore } from '../../stores/im';
-import { useUserStore } from '../../stores/user';
-import { SessionUnitService } from '../services/SessionUnitService';
+import { MessageDto } from '../dtos';
 import { ReceivedDto } from './ReceivedDto';
 import * as CommandConsts from './commandConsts';
 const data = {
@@ -29,25 +28,22 @@ export const commandHandle = ({ appUserId, scopes, command, payload }: ReceivedD
   const idList = scopes.map(x => x.sessionUnitId);
   switch (command) {
     case CommandConsts.Chat:
+      const message = payload as MessageDto;
+      // store.setLastMessageForSender(message);
+      console.log('CommandConsts.Chat payload', message);
+      scopes.map(x => store.setLastMessage(x.chatObjectId, x.sessionUnitId, message));
       break;
     case CommandConsts.IncrementCompleted:
-
-    
-
       store.fetchMany(idList);
-      const userStore = useUserStore();
-      userStore.getBadgeByCurrentUser();
+      store.getBadgeByCurrentUser();
       break;
     case CommandConsts.SessionRequest:
       break;
     case CommandConsts.Rollback:
-      
       break;
     default:
       break;
   }
 };
 
-export const handleIncrementCompleted = ()=>{
-
-}
+export const handleIncrementCompleted = () => {};

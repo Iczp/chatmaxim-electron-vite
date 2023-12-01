@@ -128,6 +128,7 @@ const onSend = async ({ event, value }: any) => {
     .then(res => {
       console.log('sendRet', res);
       store.setMaxMessageId(res.id!);
+      store.setLastMessageForSender(res);
       chatInput.value?.clear();
       quoteMessage.value = null;
       Object.assign(quoteMessage, null);
@@ -290,7 +291,7 @@ const mouseleave = (e: MouseEvent) => {
         placement="right"
         @after-open-change="afterOpenChange"
       >
-        <ChatSetting :entity="info" :sessionUnitId="sessionUnitId" />
+        <ChatSetting :entity="info!" :sessionUnitId="sessionUnitId" />
       </a-drawer>
       <scroll-view class="message-container" ref="scroll" @ps-y-reach-end="onReachEnd">
         <MessageItem

@@ -111,7 +111,7 @@ const {
   --spacing-size: 12px;
   height: var(--side-width);
   position: relative;
-  padding: var(--spacing-size);
+  padding: 0 var(--spacing-size);
   box-sizing: border-box;
   align-items: center;
   flex-shrink: 0;

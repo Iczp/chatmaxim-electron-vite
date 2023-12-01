@@ -31,13 +31,6 @@ export type MessageDto = MessageOwnerDto & {
   isSelf?: boolean;
 
   /**
-   * 是否撤回
-   *
-   * @type {boolean}
-   */
-  isRollbacked?: boolean;
-
-  /**
    *
    *
    * @type {('ok' | 'fail' | 'pending')}

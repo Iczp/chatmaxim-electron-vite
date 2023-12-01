@@ -2,28 +2,28 @@ export type SessionItemDto = {
   /**
    * sessionUnitId:
    *
-   * @type {string}
+   * @type {string| null}
    */
-  id: string;
+  id?: string;
 
   /**
    * chatObjectId
    *
-   * @type {number}
+   * @type {number| null}
    */
-  oid: number;
+  ownerId?: number | null;
 
   /**
    * sorting number
    *
-   * @type {number}
+   * @type {number| null}
    */
-  sorting: number;
+  sorting?: number | null;
 
   /**
    * lastMessageId
    *
-   * @type {number}
+   * @type {number| null}
    */
-  lastMessageId: number;
+  lastMessageId?: number | null;
 };
