@@ -1,17 +1,10 @@
 <script setup lang="ts">
-import {
-  CSSProperties,
-  computed,
-  onActivated,
-  onUnmounted,
-  ref,
-  watch,
-} from 'vue';
+import { CSSProperties, computed, nextTick, onActivated, onUnmounted, ref, watch } from 'vue';
 import { useRoute } from 'vue-router';
 import { MessageSenderService, ApiError } from '../apis';
 
 import ChatSetting from './ChatSetting.vue';
-
+import Loading from '../components/Loading.vue';
 import MessageItem from '../components/MessageItem.vue';
 import ScrollView from '../components/ScrollView.vue';
 import ChatInput from '../components/ChatInput.vue';
@@ -41,6 +34,8 @@ const chatObjectId = Number(route.params.chatObjectId);
 
 const info = computed(() => store.getSessionUnit(sessionUnitId));
 
+const loadingHeight = ref(40);
+
 // const destinationList = useDestinationList({
 //   id: sessionUnitId,
 //   maxResultCount: 20,
@@ -63,7 +58,7 @@ onActivated(() => {
   if (lastMessageId.value) {
     setReadedMessageId({ sessionUnitId, messageId: lastMessageId.value! });
   }
-  scrollToBottom(0);
+  scrollTo(0);
 });
 onUnmounted(() => {
   activeLastMessageId.value = lastMessageId.value;
@@ -74,6 +69,8 @@ const messageList = useMessageList({ sessionUnitId });
 const chatInput = ref<InstanceType<typeof ChatInput> | null>(null);
 
 const scroll = ref<InstanceType<typeof ScrollView> | null>(null);
+
+const scrollElement = computed(() => scroll.value?.getElement());
 
 // const scroll = ref();
 
@@ -101,8 +98,8 @@ const open = ref<boolean>(false);
 const showDrawer = () => {
   open.value = true;
 };
-const scrollToBottom = (duration: number = 1500) => {
-  scroll.value?.scrollToBottom({ duration });
+const scrollTo = (duration: number = 1500) => {
+  scroll.value?.scrollTo({ duration });
 };
 const afterOpenChange = (bool: boolean) => {
   // console.log('open', bool);
@@ -110,6 +107,12 @@ const afterOpenChange = (bool: boolean) => {
 // onMounted(() => {
 //   scrollToBottom();
 // });
+
+onActivated(() => {
+  messageList.fetchLatest().then(() => {
+    scrollTo(0);
+  });
+});
 
 const onSend = async ({ event, value }: any) => {
   console.log('send', textValue.value);
@@ -128,7 +131,7 @@ const onSend = async ({ event, value }: any) => {
     creationTime: new Date().toUTCString(),
   };
   messageList.items.value.push(messageDto);
-  scrollToBottom();
+  scrollTo();
   // return;
   MessageSenderService.postApiChatMessageSenderSendText({
     sessionUnitId: sessionUnitId,
@@ -146,20 +149,20 @@ const onSend = async ({ event, value }: any) => {
       chatInput.value?.clear();
       quoteMessage.value = null;
       Object.assign(quoteMessage, null);
-      messageList.fetchNew();
+      // messageList.fetchNew();
       console.log('scrollBar.value', scroll.value);
       messageDto.state = MessageStateEnums.Ok;
 
       // messageList.items.value = [...messageList.items.value];
       // messageList.items.value.pop();
-      messageList.changeTick(() => {
-        const findIndex = messageList.items.value?.findIndex(x => x.autoId == messageDto.autoId);
-        if (findIndex != -1) {
-          console.log('findIndex', findIndex);
-          messageList.items.value.splice(findIndex, 1);
-        }
-        scrollToBottom();
-      });
+      // messageList.changeTick(() => {
+      //   const findIndex = messageList.items.value?.findIndex(x => x.autoId == messageDto.autoId);
+      //   if (findIndex != -1) {
+      //     console.log('findIndex', findIndex);
+      //     messageList.items.value.splice(findIndex, 1);
+      //   }
+      //   scrollToBottom();
+      // });
     })
     .catch((err: ApiError) => {
       messageDto.state = MessageStateEnums.Error;
@@ -200,6 +203,35 @@ const showContextMenu = ({ labelType, mouseButton, event, entity }: ContextmenuI
     },
   });
 
+const isStartPosting = ref(false);
+const onReachStart = (event: CustomEvent) => {
+  const el = event.target as HTMLElement;
+  console.info('onReachStart');
+  const isReachStart = el.scrollTop == 0;
+  if (isStartPosting.value) {
+    return;
+  }
+  if (!isReachStart) {
+    console.error('onReachStart', isReachStart);
+    return;
+  }
+  isStartPosting.value = true;
+
+  const originalScrollHeight = scrollElement.value?.scrollHeight || 0;
+  console.log('originalScrollHeight', originalScrollHeight);
+
+  messageList.fetchHistorical().then(x => {
+    const newScrollHeight = scrollElement.value?.scrollHeight || 0;
+    console.log('newScrollHeight', newScrollHeight);
+    const scrollTop = newScrollHeight - originalScrollHeight - loadingHeight.value * 2;
+
+    scroll.value?.scrollTo({ to: scrollTop, duration: 0 });
+    isStartPosting.value = false;
+    nextTick(() => {
+      // console.log('scrollHeight nextTick', scrollElement.value?.scrollHeight);
+    });
+  });
+};
 const onReachEnd = (event: CustomEvent) => {
   const el = event.target as HTMLElement;
   console.info('onReachEnd');
@@ -307,7 +339,13 @@ const mouseleave = (e: MouseEvent) => {
       >
         <ChatSetting :entity="info!" :sessionUnitId="sessionUnitId" />
       </a-drawer>
-      <scroll-view class="message-container" ref="scroll" @ps-y-reach-end="onReachEnd">
+      <scroll-view
+        class="message-container"
+        ref="scroll"
+        @ps-y-reach-start="onReachStart"
+        @ps-y-reach-end="onReachEnd"
+      >
+        <Loading v-if="isStartPosting" :height="loadingHeight" />
         <MessageItem
           v-for="(item, index) in messageList.items.value"
           :key="item.id"
@@ -324,6 +362,7 @@ const mouseleave = (e: MouseEvent) => {
           </template>
         </MessageItem>
       </scroll-view>
+      <div class="latest-counter">有 {{ messageList.latestMessageCount }} 条最新消息</div>
     </page-content>
     <page-footer class="footer">
       <ChatInput
@@ -379,6 +418,21 @@ const mouseleave = (e: MouseEvent) => {
 .layout-content {
   display: flex;
   background-color: unset;
+  position: relative;
+}
+.latest-counter {
+  position: absolute;
+  top: 20px;
+  color: rgb(17, 0, 255);
+  background-color: #ffffff6c;
+  border: 1px solid #9999998e;
+  border-radius: 12px;
+  height: 24px;
+  padding: 0 12px;
+  display: flex;
+  align-items: center;
+  right: 12px;
+  font-size: 12px;
 }
 :deep(.ant-mentions) {
   /* background-color: #f5f5f5ac; */

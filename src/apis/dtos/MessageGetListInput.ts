@@ -4,7 +4,7 @@ export type MessageGetListInput = GetListInput & {
   /**
    * 会话单元Id
    */
-  sessionUnitId: string;
+  sessionUnitId?: string;
   /**
    * 发送人【聊天对象】
    */

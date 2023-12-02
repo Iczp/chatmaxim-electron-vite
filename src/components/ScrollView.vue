@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { ref, useAttrs, useSlots } from 'vue';
+import { computed, ref, useAttrs, useSlots } from 'vue';
 import { PerfectScrollbarOptions, PerfectScrollbar } from 'vue3-perfect-scrollbar';
 import { useScrollTo } from '@pureadmin/utils';
 const slots = useSlots();
@@ -8,21 +8,23 @@ const attrs = useAttrs();
 const props = defineProps<{
   options?: PerfectScrollbarOptions;
 }>();
-
-const scrollbarRef = ref();
-const scrollToBottom = (args?: {
+export type ScrollToArgs = {
   directions?: 'scrollTop' | 'scrollLeft';
   duration?: number | undefined;
+  to?: number;
   callback?: (() => void) | undefined;
-}): void => {
-  const el: HTMLElement = scrollbarRef.value.ps.element;
+};
+const scrollbarRef = ref();
+const element = computed<HTMLElement>(() => scrollbarRef.value.ps.element);
+
+const scrollTo = (args?: ScrollToArgs): void => {
+  const el: HTMLElement = element.value;
   console.log('scrollbarRef', el, scrollbarRef.value);
   const scrollTo = useScrollTo({
-    ...args,
     el: ref(el),
-    to: el.scrollHeight,
-    directions: args?.directions || 'scrollTop',
-    // duration: duration || 1200,
+    to: element.value.scrollHeight,
+    directions: 'scrollTop',
+    ...args,
   });
   console.log('typeof scrollTo', typeof scrollTo, scrollTo);
   if (typeof scrollTo == 'object') {
@@ -31,7 +33,8 @@ const scrollToBottom = (args?: {
 };
 
 defineExpose({
-  scrollToBottom,
+  scrollTo,
+  getElement: (): HTMLElement => element.value,
 });
 </script>
 

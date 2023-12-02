@@ -13,7 +13,7 @@ const onWordClick = (item: WordDto) => {
 </script>
 
 <template>
-  <div class="word">
+  <span class="word">
     <!-- {{ words }} -->
     <!-- {{ value }} -->
     <template v-for="(item, index) in words" :key="index">
@@ -46,7 +46,7 @@ const onWordClick = (item: WordDto) => {
         {{ item.text }}
       </template>
     </template>
-  </div>
+  </span>
 </template>
 
 <style scoped>
