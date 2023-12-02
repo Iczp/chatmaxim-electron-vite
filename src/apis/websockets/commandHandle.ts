@@ -34,7 +34,7 @@ export const commandHandle = ({ appUserId, scopes, command, payload }: ReceivedD
       scopes.map(x => store.setLastMessage(x.chatObjectId, x.sessionUnitId, message));
       break;
     case CommandConsts.IncrementCompleted:
-      store.fetchMany(idList);
+      store.fetchSessionUnitMany(idList);
       store.getBadgeByCurrentUser();
       break;
     case CommandConsts.SessionRequest:

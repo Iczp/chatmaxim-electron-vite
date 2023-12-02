@@ -206,9 +206,9 @@ export const useImStore = defineStore('im', {
         ) as Array<SessionItemDto>;
     },
 
-    fetchList() {},
-    fetchItem() {},
-    async fetchMany(idList: string[]) {
+    fetchSessionUnitList() {},
+    fetchSessionUnitItem() {},
+    async fetchSessionUnitMany(idList: string[]) {
       const res = await SessionUnitService.getMany({ idList });
       res.items?.forEach(x => this.setMany([x]));
     },
