@@ -11,7 +11,7 @@ const content = computed(() => props.item.content as TextDto);
 
 <template>
   <Bubble :r="item.isSelf" class="msg-text">
-    {{ item.id }}
+    <!-- {{ item.id }} -->
     <TextViewer :value="content?.text!" />
   </Bubble>
 </template>

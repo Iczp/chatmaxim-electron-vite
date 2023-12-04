@@ -160,7 +160,7 @@ const onSend = async ({ event, value }: any) => {
     senderName: detail.value?.owner?.name,
     senderSessionUnit: detail.value,
     content: {
-      text: autoId + value,
+      text: value,
     },
     state: MessageStateEnums.Sending,
     creationTime: new Date().toUTCString(),
@@ -189,7 +189,7 @@ const onSend = async ({ event, value }: any) => {
       console.log('sendRet', res);
       store.setMaxMessageId(res.id!);
       store.setLastMessageForSender(res);
-      // chatInput.value?.clear();
+      chatInput.value?.clear();
       quoteMessage.value = null;
 
       messageList

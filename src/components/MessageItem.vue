@@ -86,6 +86,7 @@ const onMessageClick = (event: MouseEvent, mouseButton: MouseButton) => {
     :class="{ selectable: selectable, checked: entity.checked }"
     @click.stop="onMessageClick($event, MouseButton.Click)"
     @click.right.stop.native="onMessageClick($event, MouseButton.Right)"
+    :title="`id:${entity.id}`"
   >
     <header v-if="entity.isShowTime" class="msg-header send-time" :title="sendTimeTitle">
       {{ sendTime }}
