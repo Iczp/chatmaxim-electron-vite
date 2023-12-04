@@ -47,7 +47,9 @@ export const commandHandle = (args: ReceivedDto<any>) => {
       // eventBus
       break;
     case CommandConsts.IncrementCompleted:
-      store.fetchSessionUnitMany(idList);
+      store.fetchSessionUnitMany(idList).then(() => {
+        eventBus.emit('IncrementCompleted', args);
+      });
       store.getBadgeByCurrentUser();
       break;
     case CommandConsts.SessionRequest:

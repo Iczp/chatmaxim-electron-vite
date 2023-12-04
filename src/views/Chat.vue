@@ -48,23 +48,12 @@ const { isInputEnabled, destination, destinationName, isImmersed, lastMessageId,
 
 const activeLastMessageId = ref<number | null | undefined>();
 
+const localReadedMessageId = ref<number | null | undefined>();
+
 // onBeforeRouteUpdate((to, from) => {
 //   console.log('onBeforeRouteUpdate', to, from);
 //   setReadedMessageId({ sessionUnitId, messageId: lastMessageId.value! });
 // });
-
-onActivated(() => {
-  activeLastMessageId.value = lastMessageId.value;
-  store.clearBadge(chatObjectId, sessionUnitId);
-  console.log('onActivated', destinationName.value);
-  if (lastMessageId.value) {
-    setReadedMessageId({ sessionUnitId, messageId: lastMessageId.value! });
-  }
-  scrollTo(0);
-});
-onUnmounted(() => {
-  activeLastMessageId.value = lastMessageId.value;
-});
 
 const messageList = useMessageList({ sessionUnitId });
 
@@ -106,9 +95,21 @@ const scrollTo = (duration: number = 1500) => {
 const afterOpenChange = (bool: boolean) => {
   // console.log('open', bool);
 };
-// onMounted(() => {
-//   scrollToBottom();
-// });
+
+onActivated(() => {
+  activeLastMessageId.value = lastMessageId.value;
+  localReadedMessageId.value = readedMessageId.value;
+  store.clearBadge(chatObjectId, sessionUnitId);
+  console.log('onActivated', destinationName.value);
+  if (lastMessageId.value) {
+    setReadedMessageId({ sessionUnitId, messageId: lastMessageId.value! });
+  }
+  scrollTo(0);
+});
+onUnmounted(() => {
+  activeLastMessageId.value = lastMessageId.value;
+  localReadedMessageId.value = readedMessageId.value;
+});
 
 onActivated(() => {
   messageList
@@ -131,6 +132,8 @@ onActivated(() => {
       receivedMessage.id,
       messageList.maxMessageId.value,
     );
+    // store.clearBadge(chatObjectId, sessionUnitId);
+    // setReadedMessageId({ sessionUnitId, messageId: receivedMessage!.id! });
     if (isLatestMessage) {
       messageList
         .fetchLatest({
@@ -166,15 +169,8 @@ const onSend = async ({ event, value }: any) => {
     creationTime: new Date().toUTCString(),
   };
   messageList.list.value.push(messageDto);
-  const bus = useEventBus<number>(messageDto.autoId!);
-  scroll.value?.scrollTo({
-    duration: 1500,
-    callback() {
-      bus.emit(messageDto.autoId!);
-      bus.reset();
-      console.log('bus emit', messageDto.autoId!);
-    },
-  });
+
+  scroll.value?.scrollTo({ duration: 1500 });
   // return;
   MessageSenderService.postApiChatMessageSenderSendText({
     sessionUnitId: sessionUnitId,
@@ -195,18 +191,13 @@ const onSend = async ({ event, value }: any) => {
       messageList
         .fetchLatest({ caller: 'onSend' })
         .then(({ items, list }) => {
-          bus.on(e => {
-            console.log('bus on', e);
-            const findIndex = list.value?.findIndex(x => x.autoId == messageDto.autoId);
-            if (findIndex != -1) {
-              console.log('findIndex', findIndex);
-              list.value.splice(findIndex, 1);
-            }
-            list.value = list.value.concat(items);
-            bus.reset();
-            // scroll.value?.scrollTo();
-          });
-          setTimeout(() => bus.emit(1), 0);
+          const findIndex = list.value?.findIndex(x => x.autoId == messageDto.autoId);
+          if (findIndex != -1) {
+            console.log('findIndex', findIndex);
+            // messageDto.state = MessageStateEnums.Ok;
+            list.value.splice(findIndex, 1);
+          }
+          list.value = list.value.concat(items);
         })
         .catch(err => {
           console.error(err);
@@ -413,7 +404,7 @@ const mouseleave = (e: MouseEvent) => {
           @contextmenu="showContextMenu"
         >
           <template
-            v-if="index != messageList.list.value.length - 1 && readedMessageId == item.id"
+            v-if="index != messageList.list.value.length - 1 && localReadedMessageId == item.id"
             #footer
           >
             <a-divider class="divider-latest">以下是新消息</a-divider>

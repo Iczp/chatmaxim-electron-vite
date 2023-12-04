@@ -10,6 +10,7 @@ export type EventBus = {
   [key: string]: any;
   message: ReceivedDto<any>;
   chat: [ReceivedDto<any>, MessageDto];
+  IncrementCompleted: ReceivedDto<any>;
 };
 // const { on, once, all, off } = mittExtend();
 export const eventBus = mittExtend<EventBus>();
