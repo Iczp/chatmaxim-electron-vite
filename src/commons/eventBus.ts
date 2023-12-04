@@ -1,8 +1,15 @@
+import { MessageDto } from '../apis/dtos';
+import { ReceivedDto } from '../apis/websockets/ReceivedDto';
 import mittExtend from './mittExtend';
 
+const Message: string = 'Message';
+export const EventConsts = {
+  Message,
+};
 export type EventBus = {
-  message: string;
-  [key: string]: string;
+  [key: string]: any;
+  message: ReceivedDto<any>;
+  chat: [ReceivedDto<any>, MessageDto];
 };
 // const { on, once, all, off } = mittExtend();
 export const eventBus = mittExtend<EventBus>();

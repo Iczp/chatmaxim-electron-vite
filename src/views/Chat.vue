@@ -19,6 +19,8 @@ import { MessageStateEnums } from '../apis/enums/MessageStateEnums';
 import { MessageTypeEnums } from '../apis/enums/MessageTypeEnums';
 import { useSessionUnitDetail } from '../commons/useSessionUnitDetail';
 import { setReadedMessageId } from '../commons/setting';
+import { useEventBus } from '@vueuse/core';
+import { resolve } from '../apis/core/request';
 
 const store = useImStore();
 
@@ -112,26 +114,44 @@ onActivated(() => {
   messageList.fetchLatest().then(() => {
     scrollTo(0);
   });
+  messageList.onMessage(receivedMessage => {
+    console.warn('readedMessageId', receivedMessage.id, messageList.maxMessageId.value);
+    if (Number(receivedMessage?.id) > Number(messageList.maxMessageId.value)) {
+      messageList.fetchLatest().then(res => {
+        console.warn('[chat] fetchLatest');
+        scroll.value?.scrollTo({ duration: 1500 });
+      });
+    }
+  });
 });
 
 const onSend = async ({ event, value }: any) => {
   console.log('send', textValue.value);
   isSendBtnEnabled.value = false;
-
+  const autoId = store.generateMessageId();
   const messageDto: MessageDto = {
-    autoId: store.generateMessageId(),
+    autoId,
     isSelf: true,
+    isShowTime: true,
     messageType: MessageTypeEnums.Text,
     senderName: detail.value?.owner?.name,
     senderSessionUnit: detail.value,
     content: {
-      text: value,
+      text: autoId + value,
     },
     state: MessageStateEnums.Sending,
     creationTime: new Date().toUTCString(),
   };
   messageList.items.value.push(messageDto);
-  scrollTo();
+  const bus = useEventBus<number>(messageDto.autoId!);
+  scroll.value?.scrollTo({
+    duration: 1500,
+    callback() {
+      bus.emit(messageDto.autoId!);
+      bus.reset();
+      console.log('bus emit', messageDto.autoId!);
+    },
+  });
   // return;
   MessageSenderService.postApiChatMessageSenderSendText({
     sessionUnitId: sessionUnitId,
@@ -146,23 +166,29 @@ const onSend = async ({ event, value }: any) => {
       console.log('sendRet', res);
       store.setMaxMessageId(res.id!);
       store.setLastMessageForSender(res);
-      chatInput.value?.clear();
+      // chatInput.value?.clear();
       quoteMessage.value = null;
-      Object.assign(quoteMessage, null);
-      // messageList.fetchNew();
-      console.log('scrollBar.value', scroll.value);
-      messageDto.state = MessageStateEnums.Ok;
 
-      // messageList.items.value = [...messageList.items.value];
-      // messageList.items.value.pop();
-      // messageList.changeTick(() => {
-      //   const findIndex = messageList.items.value?.findIndex(x => x.autoId == messageDto.autoId);
-      //   if (findIndex != -1) {
-      //     console.log('findIndex', findIndex);
-      //     messageList.items.value.splice(findIndex, 1);
-      //   }
-      //   scrollToBottom();
-      // });
+      messageList.fetchLatest({
+        onBefore: (items, list) => {
+          return new Promise((resolve, reject) => {
+            bus.on(e => {
+              console.log('bus on', e);
+              const findIndex = items.value?.findIndex(x => x.autoId == messageDto.autoId);
+              if (findIndex != -1) {
+                console.log('findIndex', findIndex);
+                // items.value[findIndex].state = MessageStateEnums.Ok;
+                items.value.splice(findIndex, 1);
+              }
+              items.value = items.value.concat(list);
+              scroll.value?.scrollTo();
+              bus.reset();
+              reject();
+            });
+            setTimeout(() => bus.emit(1), 1500);
+          });
+        },
+      });
     })
     .catch((err: ApiError) => {
       messageDto.state = MessageStateEnums.Error;
@@ -208,6 +234,10 @@ const onReachStart = (event: CustomEvent) => {
   const el = event.target as HTMLElement;
   console.info('onReachStart');
   const isReachStart = el.scrollTop == 0;
+  if (messageList.isBof.value) {
+    console.error('onReachStart isBof', messageList.isBof.value);
+    return;
+  }
   if (isStartPosting.value) {
     return;
   }
@@ -220,17 +250,23 @@ const onReachStart = (event: CustomEvent) => {
   const originalScrollHeight = scrollElement.value?.scrollHeight || 0;
   console.log('originalScrollHeight', originalScrollHeight);
 
-  messageList.fetchHistorical().then(x => {
-    const newScrollHeight = scrollElement.value?.scrollHeight || 0;
-    console.log('newScrollHeight', newScrollHeight);
-    const scrollTop = newScrollHeight - originalScrollHeight - loadingHeight.value * 2;
+  messageList
+    .fetchHistorical()
+    .then(x => {
+      const newScrollHeight = scrollElement.value?.scrollHeight || 0;
+      console.log('newScrollHeight', newScrollHeight);
+      const scrollTop = newScrollHeight - originalScrollHeight - loadingHeight.value * 2;
 
-    scroll.value?.scrollTo({ to: scrollTop, duration: 0 });
-    isStartPosting.value = false;
-    nextTick(() => {
-      // console.log('scrollHeight nextTick', scrollElement.value?.scrollHeight);
+      scroll.value?.scrollTo({ to: scrollTop, duration: 0 });
+      isStartPosting.value = false;
+      nextTick(() => {
+        // console.log('scrollHeight nextTick', scrollElement.value?.scrollHeight);
+      });
+    })
+    .catch(err => {
+      isStartPosting.value = false;
+      console.log(err);
     });
-  });
 };
 const onReachEnd = (event: CustomEvent) => {
   const el = event.target as HTMLElement;

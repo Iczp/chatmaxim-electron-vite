@@ -87,7 +87,7 @@ const onMessageClick = (event: MouseEvent, mouseButton: MouseButton) => {
     @click.stop="onMessageClick($event, MouseButton.Click)"
     @click.right.stop.native="onMessageClick($event, MouseButton.Right)"
   >
-    <header v-if="!entity.isShowTime" class="msg-header send-time" :title="sendTimeTitle">
+    <header v-if="entity.isShowTime" class="msg-header send-time" :title="sendTimeTitle">
       {{ sendTime }}
     </header>
     <MsgRollback v-if="isRollbacked" :name="senderName" />

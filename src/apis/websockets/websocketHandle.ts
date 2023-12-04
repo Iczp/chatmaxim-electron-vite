@@ -1,7 +1,9 @@
+import { eventBus } from '../../commons/eventBus';
 import { useImStore } from '../../stores/im';
 import { MessageDto } from '../dtos';
 import { ReceivedDto } from './ReceivedDto';
 import * as CommandConsts from './commandConsts';
+
 const data = {
   appUserId: '360cfedb-e92d-3331-1fad-3a086371e0e4',
   scopes: [
@@ -21,7 +23,16 @@ const data = {
     creationTime: '2023-11-29T13:43:55.3106486+08:00',
   },
 };
-export const commandHandle = ({ appUserId, scopes, command, payload }: ReceivedDto) => {
+
+export const websocketHandle = (_: Electron.IpcRendererEvent, args: any) => {
+  // console.log('[websocket]:', _, args);
+  const data = JSON.parse(args.payload) as ReceivedDto<any>;
+  console.log('[websocket]:', _, data);
+  commandHandle(data);
+  eventBus.emit('message', data);
+};
+export const commandHandle = (args: ReceivedDto<any>) => {
+  const { appUserId, scopes, command, payload } = args;
   console.log(`commandHandle`, command);
   console.log('scopes', scopes);
   const store = useImStore();
@@ -29,9 +40,11 @@ export const commandHandle = ({ appUserId, scopes, command, payload }: ReceivedD
   switch (command) {
     case CommandConsts.Chat:
       const message = payload as MessageDto;
-      // store.setLastMessageForSender(message);
+      // setLastMessage
       console.log('CommandConsts.Chat payload', message);
       scopes.map(x => store.setLastMessage(x.chatObjectId, x.sessionUnitId, message));
+      eventBus.emit('chat', [args, message]);
+      // eventBus
       break;
     case CommandConsts.IncrementCompleted:
       store.fetchSessionUnitMany(idList);

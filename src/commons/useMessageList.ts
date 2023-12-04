@@ -1,27 +1,29 @@
-import { onActivated, ref, watch, WatchOptions } from 'vue';
-import { CancelablePromise, MessageService } from '../apis';
-import { MessageDto, MessageOwnerDto, PagedResultDto } from '../apis/dtos';
+import { Ref, onActivated, onDeactivated, ref } from 'vue';
+import { MessageService } from '../apis';
+import { MessageDto, MessageOwnerDto } from '../apis/dtos';
 import { MessageGetListInput } from '../apis/dtos/MessageGetListInput';
 import { MessageStateEnums } from '../apis/enums';
-import { useFetchList } from './useFetchList';
-import mitt from 'mitt';
-import { usePagedResult } from './usePagedResult';
+import { eventBus } from '../commons/eventBus';
+import { ReceivedDto } from '../apis/websockets/ReceivedDto';
+import * as CommandConsts from '../apis/websockets/commandConsts';
 export const useMessageList = ({ sessionUnitId }: { sessionUnitId: string }) => {
-  let maxMessageId: number | undefined = undefined;
-  let minMessageId: number | undefined = undefined;
+  let receivedData: ReceivedDto<any> | undefined = undefined;
+  let receivedMessage: MessageDto | undefined = undefined;
+  const maxMessageId = ref<number | undefined>();
+  const minMessageId = ref<number | undefined>();
+  let maxResultCount = 20;
+  const isBof = ref(false);
+  const isEof = ref(false);
   const latestMessageCount = ref<number>(0);
   const items = ref<MessageDto[]>([]);
   const service = MessageService.getApiChatMessage;
   // let task = CancelablePromise<PagedResultDto<MessageOwnerDto>>
-  const emitter = mitt<{
-    changeTick: any;
-  }>();
 
   const setMaxMessageId = (list: MessageDto[]): void => {
-    maxMessageId = Math.max(maxMessageId || 0, ...list.map(x => x.id || 0));
+    maxMessageId.value = Math.max(maxMessageId.value || 0, ...list.map(x => x.id || 0));
   };
   const setMinMessageId = (list: MessageDto[]): void => {
-    minMessageId = Math.min(...list.map(x => x.id || 0));
+    minMessageId.value = Math.min(...list.map(x => x.id || 0));
   };
 
   const formatItems = (list: MessageOwnerDto[]): MessageDto[] => {
@@ -37,22 +39,40 @@ export const useMessageList = ({ sessionUnitId }: { sessionUnitId: string }) => 
   };
 
   const fetchItems = async (query: MessageGetListInput): Promise<MessageDto[]> => {
-    const req = { maxResultCount: 10, sessionUnitId, ...query };
+    const req = { maxResultCount, sessionUnitId, ...query };
     console.log('fetchItems query', req);
     const ret = await service(req);
     const list = formatItems(ret.items!.reverse());
-    setMaxMessageId(list);
-    setMinMessageId(list);
+    if (list.length != 0) {
+      setMaxMessageId(list);
+      setMinMessageId(list);
+    }
     return list;
   };
 
-  const fetchLatest = async () => {
-    const list = await fetchItems({ minMessageId: maxMessageId });
-    items.value = items.value.concat(list);
+  const fetchLatest = async (args?: {
+    minMessageId?: number;
+    onBefore?: (items: Ref<MessageDto[]>, list: MessageDto[]) => Promise<void>;
+  }) => {
+    // minMessageId.value = args?.minMessageId || maxMessageId.value;
+    const list = await fetchItems({ minMessageId: maxMessageId.value });
+
+    if (args?.onBefore) {
+      await args.onBefore(items, list);
+    }
+    if (list.length == maxResultCount) {
+      items.value = list;
+    } else {
+      items.value = items.value.concat(list);
+    }
   };
 
   const fetchHistorical = async () => {
-    const list = await fetchItems({ maxMessageId: minMessageId });
+    if (isBof.value) {
+      throw new Error('没有了');
+    }
+    const list = await fetchItems({ maxMessageId: minMessageId.value });
+    isBof.value = list.length < maxResultCount;
     items.value = list.concat(items.value);
     console.log(
       'fetchHistorical',
@@ -60,16 +80,40 @@ export const useMessageList = ({ sessionUnitId }: { sessionUnitId: string }) => 
     );
   };
 
-  // watch(
-  //   () => query.value,
-  //   v => {
-  //     console.log('#watch', v);
-  //   },
-  //   {
-  //     immediate: true,
-  //     deep: true,
-  //   },
-  // );
+  const ifCommand = (command: string) => {
+    if (receivedData?.command == command) {
+    }
+  };
 
-  return { latestMessageCount, items, fetchLatest, fetchHistorical };
+  const onMessage = (callback: (e: MessageDto) => void) => {
+    eventBus.on('chat', ([data, receivedMessage]) => {
+      console.log('onMessage', receivedMessage);
+
+      const isSelfSender = receivedMessage.senderSessionUnit?.id == sessionUnitId;
+      // if (isSelfSender) {
+      //   return;
+      // }
+      callback(receivedMessage);
+      // fetchLatest().then(res => {
+      //   console.warn('[chat] fetchLatest');
+      // });
+    });
+  };
+
+  onActivated(() => {});
+
+  onDeactivated(() => {
+    eventBus.off('chat');
+  });
+  return {
+    latestMessageCount,
+    items,
+    fetchLatest,
+    fetchHistorical,
+    isBof,
+    isEof,
+    onMessage,
+    maxMessageId,
+    minMessageId,
+  };
 };

@@ -1,7 +1,6 @@
 import { ReceivedDto } from './ReceivedDto';
 import { TicketService } from './TicketService';
 import { ipcRenderer } from 'electron';
-import { commandHandle } from './commandHandle';
 import { ConnectionState, ConnectionStateText } from './ConnectionState';
 import { useWebsocketStore } from '../../stores/websocket';
 export type { ConnectionDto } from './ConnectionDto';
@@ -15,7 +14,7 @@ const setState = (state: ConnectionState) => {
   connectionState = state;
   console.log('set connectionState', state, ConnectionStateText[state]);
   const store = useWebsocketStore();
-  store.set(state)
+  store.set(state);
 };
 
 export const isCanReConnect = () => {
@@ -69,11 +68,11 @@ export const connect = (wsUrl: string): void => {
       } else {
         try {
           console.log(`WebSocket Received:`, e.data);
-          const data = JSON.parse(e.data) as ReceivedDto;
-          commandHandle(data);
-
+          const data = JSON.parse(e.data) as ReceivedDto<any>;
+          // emit self window
+          ipcRenderer.emit('websocket', {}, { payload: e.data });
+          // sent to remote window
           ipcRenderer.invoke('websocket', e.data);
-          // ipcRenderer.emit('websocket',e.data)
         } catch (error) {
           console.error(`data:${error}`);
         }

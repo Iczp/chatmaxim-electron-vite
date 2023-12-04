@@ -10,8 +10,9 @@ const content = computed(() => props.item.content as TextDto);
 </script>
 
 <template>
-  <Bubble :r="item.isSelf">
-    <TextViewer :value="content?.text!" class="msg-text" />
+  <Bubble :r="item.isSelf" class="msg-text">
+    {{ item.id }}
+    <TextViewer :value="content?.text!" />
   </Bubble>
 </template>
 

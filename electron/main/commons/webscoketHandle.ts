@@ -6,13 +6,16 @@ export const websocketHandle = (_: Electron.IpcMainInvokeEvent, payload: any): a
   var senderWindow: BrowserWindow = BrowserWindow.fromWebContents(webContents.fromId(_.sender.id));
   console.log('[websocket]', _.sender.id, senderWindow?.id);
   const wins = windowManager.getWindows();
-  Object.entries(wins).map(([name, win]) => {
-    win.webContents.send('websocket', {
-      callerId: senderWindow?.id,
-      callerName: windowManager.getNameById(senderWindow?.id),
-      payload,
-      ticks: new Date().getTime(),
+  Object.entries(wins)
+    //ignore sender window
+    .filter(([, win]) => win.id != _.sender.id)
+    .map(([, win]) => {
+      win.webContents.send('websocket', {
+        callerId: senderWindow?.id,
+        callerName: windowManager.getNameById(senderWindow?.id),
+        payload,
+        ticks: new Date().getTime(),
+      });
     });
-  });
   return { message: 'ok' };
 };

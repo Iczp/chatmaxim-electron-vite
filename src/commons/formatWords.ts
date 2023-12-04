@@ -28,6 +28,9 @@ export enum WordTypeEnum {
 }
 
 export const formatWords = (input: string): Array<WordDto> => {
+  if (!input) {
+    return [];
+  }
   //<a uid="fdc164ec-39bf-87bb-70aa-3a0e9fa5397e">林惠娟</a>' 加入 '<a oid="5847">CreateRoom-2023-03-27 09:26:33.586099</a>
   const pattern_uid =
     '<a uid="[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}">[^<]+</a>';

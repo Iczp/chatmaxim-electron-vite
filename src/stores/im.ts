@@ -47,6 +47,8 @@ interface State {
    * @memberof State
    */
   autoMessageId: number;
+  isPendingForGetBadgeByCurrentUser: boolean;
+  isPendingForGetChatObjectByCurrentUser: boolean;
 }
 export const sortFunc = (a: SessionItemDto, b: SessionItemDto): number => {
   if (a.sorting! > b.sorting!) {
@@ -83,6 +85,8 @@ export const useImStore = defineStore('im', {
       sessionItemsMap: {},
       maxMessageId: undefined,
       autoMessageId: 0,
+      isPendingForGetBadgeByCurrentUser: false,
+      isPendingForGetChatObjectByCurrentUser: false,
     };
   },
   getters: {
@@ -240,17 +244,29 @@ export const useImStore = defineStore('im', {
       console.log('setChatObjects', this.chatObjects);
     },
     getBadgeByCurrentUser() {
-      SessionUnitService.getApiChatSessionUnitBadgeByCurrentUser({}).then(items => {
-        console.log('getBadgeByCurrentUser', items);
-        this.setChatObjects(items);
-      });
+      if (this.isPendingForGetBadgeByCurrentUser) {
+        return;
+      }
+      this.isPendingForGetBadgeByCurrentUser = true;
+      SessionUnitService.getApiChatSessionUnitBadgeByCurrentUser({})
+        .then(items => {
+          console.log('getBadgeByCurrentUser', items);
+          this.setChatObjects(items);
+        })
+        .finally(() => (this.isPendingForGetBadgeByCurrentUser = false));
     },
     getChatObjectByCurrentUser() {
-      ChatObjectService.getApiChatChatObjectByCurrentUser({}).then(res => {
-        console.log('getChatObjectByCurrentUser', res);
-        const items = res.items!.map(owner => <BadgeDetialDto>{ chatObjectId: owner.id, owner });
-        this.setChatObjects(items);
-      });
+      if (this.isPendingForGetChatObjectByCurrentUser) {
+        return;
+      }
+      this.isPendingForGetChatObjectByCurrentUser = true;
+      ChatObjectService.getApiChatChatObjectByCurrentUser({})
+        .then(res => {
+          console.log('getChatObjectByCurrentUser', res);
+          const items = res.items!.map(owner => <BadgeDetialDto>{ chatObjectId: owner.id, owner });
+          this.setChatObjects(items);
+        })
+        .finally(() => (this.isPendingForGetChatObjectByCurrentUser = false));
     },
     correctBadge() {
       //
