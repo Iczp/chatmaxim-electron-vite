@@ -111,9 +111,18 @@ const afterOpenChange = (bool: boolean) => {
 // });
 
 onActivated(() => {
-  messageList.fetchLatest({ caller: 'onActivated' }).then(() => {
-    scrollTo(0);
-  });
+  messageList
+    .fetchLatest({
+      caller: 'onActivated',
+    })
+    .then(({ items, list, maxResultCount }) => {
+      list.value = items.length == maxResultCount ? items : list.value.concat(items);
+      nextTick(() => scrollTo(0));
+    })
+    .catch(err => {
+      console.error(err);
+    });
+
   messageList.onMessage(receivedMessage => {
     const isLatestMessage = Number(receivedMessage?.id) > Number(messageList.maxMessageId.value);
     console.warn(
@@ -123,10 +132,18 @@ onActivated(() => {
       messageList.maxMessageId.value,
     );
     if (isLatestMessage) {
-      messageList.fetchLatest({ caller: 'onMessage' }).then(res => {
-        console.warn('[chat] fetchLatest');
-        scroll.value?.scrollTo({ duration: 1500 });
-      });
+      messageList
+        .fetchLatest({
+          caller: 'onMessage',
+        })
+        .then(({ items, list, maxResultCount }) => {
+          console.warn('[chat] fetchLatest');
+          list.value = items.length == maxResultCount ? items : list.value.concat(items);
+          scroll.value?.scrollTo({ duration: 1500 });
+        })
+        .catch(err => {
+          console.error(err);
+        });
     }
   });
 });
@@ -175,28 +192,25 @@ const onSend = async ({ event, value }: any) => {
       // chatInput.value?.clear();
       quoteMessage.value = null;
 
-      messageList.fetchLatest({
-        caller: 'onSend',
-        onBefore: (list, items) => {
-          return new Promise((resolve, reject) => {
-            bus.on(e => {
-              console.log('bus on', e);
-              const findIndex = list.value?.findIndex(x => x.autoId == messageDto.autoId);
-              if (findIndex != -1) {
-                console.log('findIndex', findIndex);
-                // items.value[findIndex].state = MessageStateEnums.Ok;
-                list.value.splice(findIndex, 1);
-              }
-              // items.value = items.value.concat(list);
-
-              bus.reset();
-              resolve();
-              scroll.value?.scrollTo();
-            });
-            setTimeout(() => bus.emit(1), 0);
+      messageList
+        .fetchLatest({ caller: 'onSend' })
+        .then(({ items, list }) => {
+          bus.on(e => {
+            console.log('bus on', e);
+            const findIndex = list.value?.findIndex(x => x.autoId == messageDto.autoId);
+            if (findIndex != -1) {
+              console.log('findIndex', findIndex);
+              list.value.splice(findIndex, 1);
+            }
+            list.value = list.value.concat(items);
+            bus.reset();
+            // scroll.value?.scrollTo();
           });
-        },
-      });
+          setTimeout(() => bus.emit(1), 0);
+        })
+        .catch(err => {
+          console.error(err);
+        });
     })
     .catch((err: ApiError) => {
       messageDto.state = MessageStateEnums.Error;

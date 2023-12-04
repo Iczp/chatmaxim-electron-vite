@@ -11,6 +11,7 @@ export const useMessageList = ({ sessionUnitId }: { sessionUnitId: string }) => 
   const maxMessageId = ref<number | undefined>();
   const minMessageId = ref<number | undefined>();
   let maxResultCount = 20;
+  const isPendingForFetchLatest = ref(false);
   const isBof = ref(false);
   const isEof = ref(false);
   const latestMessageCount = ref<number>(0);
@@ -19,11 +20,12 @@ export const useMessageList = ({ sessionUnitId }: { sessionUnitId: string }) => 
   // let task = CancelablePromise<PagedResultDto<MessageOwnerDto>>
 
   const setMaxMessageId = (items: MessageDto[]): void => {
-    maxMessageId.value = Math.max(maxMessageId.value || 0, ...items.map(x => x.id || 0));
+    maxMessageId.value =
+      Math.max(maxMessageId.value || 0, ...items.map(x => x.id || 0)) || undefined;
     console.log('setMaxMessageId', maxMessageId.value);
   };
   const setMinMessageId = (items: MessageDto[]): void => {
-    minMessageId.value = Math.min(...items.map(x => x.id || 0));
+    minMessageId.value = Math.min(...items.map(x => x.id || 0)) || undefined;
     console.log('setMinMessageId', minMessageId.value);
   };
 
@@ -43,33 +45,36 @@ export const useMessageList = ({ sessionUnitId }: { sessionUnitId: string }) => 
     const req = { maxResultCount, sessionUnitId, ...query };
     console.log('fetchItems query', req);
     const ret = await service(req);
-    const list = formatItems(ret.items!.reverse());
-    if (list.length != 0) {
-      setMaxMessageId(list);
-      setMinMessageId(list);
+    const items = formatItems(ret.items!.reverse());
+    if (items.length != 0) {
+      setMaxMessageId(items);
+      setMinMessageId(items);
     }
-    return list;
+    return items;
   };
 
   const fetchLatest = async (args: {
-    // minMessageId?: number;
-    onBefore?: (items: Ref<MessageDto[]>, list: MessageDto[]) => Promise<void>;
     caller?: string;
-  }) => {
+  }): Promise<{
+    items: MessageDto[];
+    list: Ref<MessageDto[]>;
+    maxResultCount: number;
+  }> => {
     // minMessageId.value = args?.minMessageId || maxMessageId.value;
-
+    if (isPendingForFetchLatest.value) {
+      throw new Error(
+        `caller:${args.caller},isPendingForFetchLatest:${isPendingForFetchLatest.value}`,
+      );
+    }
+    isPendingForFetchLatest.value = true;
     console.warn('caller', args.caller);
-
     const items = await fetchItems({ minMessageId: maxMessageId.value });
-
-    if (args.onBefore) {
-      await args.onBefore(list, items);
-    }
-    if (items.length == maxResultCount) {
-      list.value = items;
-    } else {
-      list.value = list.value.concat(items);
-    }
+    isPendingForFetchLatest.value = false;
+    console.log(
+      'fetchLatest',
+      items.map(x => x.id),
+    );
+    return { items, list, maxResultCount };
   };
 
   const fetchHistorical = async () => {
