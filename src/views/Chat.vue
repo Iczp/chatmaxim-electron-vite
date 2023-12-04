@@ -148,7 +148,7 @@ const onSend = async ({ event, value }: any) => {
     state: MessageStateEnums.Sending,
     creationTime: new Date().toUTCString(),
   };
-  messageList.items.value.push(messageDto);
+  messageList.list.value.push(messageDto);
   const bus = useEventBus<number>(messageDto.autoId!);
   scroll.value?.scrollTo({
     duration: 1500,
@@ -177,15 +177,15 @@ const onSend = async ({ event, value }: any) => {
 
       messageList.fetchLatest({
         caller: 'onSend',
-        onBefore: (items, list) => {
+        onBefore: (list, items) => {
           return new Promise((resolve, reject) => {
             bus.on(e => {
               console.log('bus on', e);
-              const findIndex = items.value?.findIndex(x => x.autoId == messageDto.autoId);
+              const findIndex = list.value?.findIndex(x => x.autoId == messageDto.autoId);
               if (findIndex != -1) {
                 console.log('findIndex', findIndex);
                 // items.value[findIndex].state = MessageStateEnums.Ok;
-                items.value.splice(findIndex, 1);
+                list.value.splice(findIndex, 1);
               }
               // items.value = items.value.concat(list);
 
@@ -231,7 +231,7 @@ const showContextMenu = ({ labelType, mouseButton, event, entity }: ContextmenuI
       quoteMessage.value = entity;
     },
     onFollowing(targetSessionUnitId: string, isFollowing: boolean) {
-      messageList.items.value
+      messageList.list.value
         .filter(x => x.senderSessionUnit?.id == targetSessionUnitId)
         .forEach(x => (x.isFollowing = isFollowing));
     },
@@ -391,7 +391,7 @@ const mouseleave = (e: MouseEvent) => {
       >
         <Loading v-if="isStartPosting" :height="loadingHeight" />
         <MessageItem
-          v-for="(item, index) in messageList.items.value"
+          v-for="(item, index) in messageList.list.value"
           :key="item.id"
           :entity="item"
           :sessionUnitId="sessionUnitId"
@@ -399,7 +399,7 @@ const mouseleave = (e: MouseEvent) => {
           @contextmenu="showContextMenu"
         >
           <template
-            v-if="index != messageList.items.value.length - 1 && readedMessageId == item.id"
+            v-if="index != messageList.list.value.length - 1 && readedMessageId == item.id"
             #footer
           >
             <a-divider class="divider-latest">以下是新消息</a-divider>

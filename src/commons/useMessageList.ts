@@ -14,21 +14,21 @@ export const useMessageList = ({ sessionUnitId }: { sessionUnitId: string }) => 
   const isBof = ref(false);
   const isEof = ref(false);
   const latestMessageCount = ref<number>(0);
-  const items = ref<MessageDto[]>([]);
+  const list = ref<MessageDto[]>([]);
   const service = MessageService.getApiChatMessage;
   // let task = CancelablePromise<PagedResultDto<MessageOwnerDto>>
 
-  const setMaxMessageId = (list: MessageDto[]): void => {
-    maxMessageId.value = Math.max(maxMessageId.value || 0, ...list.map(x => x.id || 0));
+  const setMaxMessageId = (items: MessageDto[]): void => {
+    maxMessageId.value = Math.max(maxMessageId.value || 0, ...items.map(x => x.id || 0));
     console.log('setMaxMessageId', maxMessageId.value);
   };
-  const setMinMessageId = (list: MessageDto[]): void => {
-    minMessageId.value = Math.min(...list.map(x => x.id || 0));
+  const setMinMessageId = (items: MessageDto[]): void => {
+    minMessageId.value = Math.min(...items.map(x => x.id || 0));
     console.log('setMinMessageId', minMessageId.value);
   };
 
-  const formatItems = (list: MessageOwnerDto[]): MessageDto[] => {
-    return list.map(
+  const formatItems = (items: MessageOwnerDto[]): MessageDto[] => {
+    return items.map(
       x =>
         <MessageDto>{
           ...x,
@@ -60,15 +60,15 @@ export const useMessageList = ({ sessionUnitId }: { sessionUnitId: string }) => 
 
     console.warn('caller', args.caller);
 
-    const list = await fetchItems({ minMessageId: maxMessageId.value });
+    const items = await fetchItems({ minMessageId: maxMessageId.value });
 
     if (args.onBefore) {
-      await args.onBefore(items, list);
+      await args.onBefore(list, items);
     }
-    if (list.length == maxResultCount) {
-      items.value = list;
+    if (items.length == maxResultCount) {
+      list.value = items;
     } else {
-      items.value = items.value.concat(list);
+      list.value = list.value.concat(items);
     }
   };
 
@@ -76,12 +76,12 @@ export const useMessageList = ({ sessionUnitId }: { sessionUnitId: string }) => 
     if (isBof.value) {
       throw new Error('没有了');
     }
-    const list = await fetchItems({ maxMessageId: minMessageId.value });
-    isBof.value = list.length < maxResultCount;
-    items.value = list.concat(items.value);
+    const items = await fetchItems({ maxMessageId: minMessageId.value });
+    isBof.value = items.length < maxResultCount;
+    list.value = items.concat(list.value);
     console.log(
       'fetchHistorical',
-      list.map(x => x.id),
+      items.map(x => x.id),
     );
   };
 
@@ -112,7 +112,7 @@ export const useMessageList = ({ sessionUnitId }: { sessionUnitId: string }) => 
   });
   return {
     latestMessageCount,
-    items,
+    list: list,
     fetchLatest,
     fetchHistorical,
     isBof,
