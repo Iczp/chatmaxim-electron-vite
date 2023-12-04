@@ -44,7 +44,7 @@ const {
   destinationName,
   isShowSender,
   senderName,
-  remindMeCount,
+  remindCount,
   displaySenderName,
 } = useSessionUnitId(props.entity?.id!);
 // const isTopping = computed(() => Number(props.entity?.sorting) > 0);
@@ -80,8 +80,8 @@ const {
     <template #sub>
       <div class="text-ellipsis">
         <!-- @我 -->
-        <span v-if="remindMeCount!>0" class="remind">
-          {{ Number(remindMeCount) > 99 ? '99+' : remindMeCount }}@我
+        <span v-if="remindCount > 0" class="remind">
+          {{ Number(remindCount) > 99 ? '99+' : remindCount }}@我
         </span>
         <!-- 我关注的 flowing -->
         <!-- 发送人信息 -->
@@ -90,8 +90,14 @@ const {
       </div>
     </template>
     <template #sub-right>
-      <a-space>
-        <a-badge v-if="badge != 0" :count="badge" :overflow-count="99" :dot="isImmersed" />
+      <a-space class="sub-right">
+        <a-badge
+          v-if="badge != 0"
+          :count="badge"
+          :overflow-count="99"
+          :dot="isImmersed"
+          class="badge"
+        />
         <icon v-if="isImmersed" type="mute" size="14" />
         <heart-two-tone v-if="isTopping" two-tone-color="#eb2f96" />
       </a-space>
@@ -203,6 +209,17 @@ const {
   padding: 0 4px;
   box-shadow: 0 0 0 1px #ffffff;
   margin-right: 4px;
+  /* font-size: 12px; */
+}
+.sub-right :deep(.ant-space-item) {
+  display: flex;
+}
+.badge :deep(.ant-badge-count) {
+  --badge-size: 18px;
+  /* font-size: 12px;
+  height: var(--badge-size);
+  line-height: var(--badge-size);
+  min-width: var(--badge-size); */
 }
 .sender {
   color: #999;

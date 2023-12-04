@@ -8,7 +8,6 @@ import { ReceivedDto } from '../apis/websockets/ReceivedDto';
 import * as CommandConsts from '../apis/websockets/commandConsts';
 export const useMessageList = ({ sessionUnitId }: { sessionUnitId: string }) => {
   let receivedData: ReceivedDto<any> | undefined = undefined;
-  let receivedMessage: MessageDto | undefined = undefined;
   const maxMessageId = ref<number | undefined>();
   const minMessageId = ref<number | undefined>();
   let maxResultCount = 20;
@@ -21,9 +20,11 @@ export const useMessageList = ({ sessionUnitId }: { sessionUnitId: string }) => 
 
   const setMaxMessageId = (list: MessageDto[]): void => {
     maxMessageId.value = Math.max(maxMessageId.value || 0, ...list.map(x => x.id || 0));
+    console.log('setMaxMessageId', maxMessageId.value);
   };
   const setMinMessageId = (list: MessageDto[]): void => {
     minMessageId.value = Math.min(...list.map(x => x.id || 0));
+    console.log('setMinMessageId', minMessageId.value);
   };
 
   const formatItems = (list: MessageOwnerDto[]): MessageDto[] => {
@@ -50,14 +51,18 @@ export const useMessageList = ({ sessionUnitId }: { sessionUnitId: string }) => 
     return list;
   };
 
-  const fetchLatest = async (args?: {
-    minMessageId?: number;
+  const fetchLatest = async (args: {
+    // minMessageId?: number;
     onBefore?: (items: Ref<MessageDto[]>, list: MessageDto[]) => Promise<void>;
+    caller?: string;
   }) => {
     // minMessageId.value = args?.minMessageId || maxMessageId.value;
+
+    console.warn('caller', args.caller);
+
     const list = await fetchItems({ minMessageId: maxMessageId.value });
 
-    if (args?.onBefore) {
+    if (args.onBefore) {
       await args.onBefore(items, list);
     }
     if (list.length == maxResultCount) {

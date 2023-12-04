@@ -56,6 +56,8 @@ const useComputedSessionUnit = (computedEntity: ComputedRef<SessionUnitOwnerDto 
 
   const remindAllCount = computed(() => entity.value?.remindAllCount || 0);
 
+  const remindCount = computed(() => remindMeCount.value + remindAllCount.value);
+
   const isInputEnabled = computed(() => entity.value?.setting?.isInputEnabled);
 
   const setting = computed(() => entity.value?.setting);
@@ -86,6 +88,7 @@ const useComputedSessionUnit = (computedEntity: ComputedRef<SessionUnitOwnerDto 
     senderName,
     remindMeCount,
     remindAllCount,
+    remindCount,
     isInputEnabled,
     setting,
     memberName,

@@ -111,13 +111,19 @@ const afterOpenChange = (bool: boolean) => {
 // });
 
 onActivated(() => {
-  messageList.fetchLatest().then(() => {
+  messageList.fetchLatest({ caller: 'onActivated' }).then(() => {
     scrollTo(0);
   });
   messageList.onMessage(receivedMessage => {
-    console.warn('readedMessageId', receivedMessage.id, messageList.maxMessageId.value);
-    if (Number(receivedMessage?.id) > Number(messageList.maxMessageId.value)) {
-      messageList.fetchLatest().then(res => {
+    const isLatestMessage = Number(receivedMessage?.id) > Number(messageList.maxMessageId.value);
+    console.warn(
+      'onMessage isLatestMessage',
+      isLatestMessage,
+      receivedMessage.id,
+      messageList.maxMessageId.value,
+    );
+    if (isLatestMessage) {
+      messageList.fetchLatest({ caller: 'onMessage' }).then(res => {
         console.warn('[chat] fetchLatest');
         scroll.value?.scrollTo({ duration: 1500 });
       });
@@ -170,6 +176,7 @@ const onSend = async ({ event, value }: any) => {
       quoteMessage.value = null;
 
       messageList.fetchLatest({
+        caller: 'onSend',
         onBefore: (items, list) => {
           return new Promise((resolve, reject) => {
             bus.on(e => {
@@ -180,12 +187,13 @@ const onSend = async ({ event, value }: any) => {
                 // items.value[findIndex].state = MessageStateEnums.Ok;
                 items.value.splice(findIndex, 1);
               }
-              items.value = items.value.concat(list);
-              scroll.value?.scrollTo();
+              // items.value = items.value.concat(list);
+
               bus.reset();
-              reject();
+              resolve();
+              scroll.value?.scrollTo();
             });
-            setTimeout(() => bus.emit(1), 1500);
+            setTimeout(() => bus.emit(1), 0);
           });
         },
       });
