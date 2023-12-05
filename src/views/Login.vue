@@ -22,6 +22,7 @@ import { router } from '../routes';
 import { message } from 'ant-design-vue';
 import { UserOutlined, LockOutlined } from '@ant-design/icons-vue';
 import { ref } from 'vue';
+import { setWindow } from '../commons/setWindow';
 const key = 'updatable';
 
 interface FormState {
@@ -41,7 +42,6 @@ const onFinish = (values: any) => {
 
   ipcRenderer.send('login', 'ping');
 
-
   // window.electronAPI.setTitle(title)
   // window.electron?.ping();
   login({
@@ -52,6 +52,7 @@ const onFinish = (values: any) => {
       console.log('登录成功！', res);
       message.success({ content: '欢迎回来!', key, duration: 2 });
       router.push('/');
+      setWindow({ size: { width: 1080, height: 760 } });
     })
     .catch(err => {
       message.error({ content: err.message, key, duration: 2 });
@@ -64,50 +65,55 @@ const onFinishFailed = (errorInfo: any) => {
 </script>
 
 <template>
-  <div class="page drag">
-    <div class="login-page no-drag">
-      <div>isLogined:{{ isLogined() }}</div>
-      <!-- <p>userDataPath:{{ userDataPath }}</p> -->
-      <a-form
-        :model="formState"
-        name="basic"
-        :label-col="{ span: 8 }"
-        :wrapper-col="{ span: 16 }"
-        autocomplete="off"
-        @finish="onFinish"
-        @finishFailed="onFinishFailed"
-        class="login-form"
-      >
-        <a-form-item
-          label="用户名"
-          name="username"
-          :rules="[{ message: 'Please input your username!' }]"
-        >
-          <a-input v-model:value="formState.username">
-            <template #prefix><UserOutlined style="color: rgba(0, 0, 0, 0.25)" /></template>
-          </a-input>
-        </a-form-item>
+  <page>
+    <page-title title="登录"></page-title>
+    <page-content>
+      <div class="page drag">
+        <div class="login-page no-drag">
+          <div>isLogined:{{ isLogined() }}</div>
+          <!-- <p>userDataPath:{{ userDataPath }}</p> -->
+          <a-form
+            :model="formState"
+            name="basic"
+            :label-col="{ span: 8 }"
+            :wrapper-col="{ span: 16 }"
+            autocomplete="off"
+            @finish="onFinish"
+            @finishFailed="onFinishFailed"
+            class="login-form"
+          >
+            <a-form-item
+              label="用户名"
+              name="username"
+              :rules="[{ message: 'Please input your username!' }]"
+            >
+              <a-input v-model:value="formState.username">
+                <template #prefix><UserOutlined style="color: rgba(0, 0, 0, 0.25)" /></template>
+              </a-input>
+            </a-form-item>
 
-        <a-form-item
-          label="密码"
-          name="password"
-          :rules="[{ message: 'Please input your password!' }]"
-        >
-          <a-input-password v-model:value="formState.password">
-            <template #prefix><LockOutlined style="color: rgba(0, 0, 0, 0.25)" /></template>
-          </a-input-password>
-        </a-form-item>
+            <a-form-item
+              label="密码"
+              name="password"
+              :rules="[{ message: 'Please input your password!' }]"
+            >
+              <a-input-password v-model:value="formState.password">
+                <template #prefix><LockOutlined style="color: rgba(0, 0, 0, 0.25)" /></template>
+              </a-input-password>
+            </a-form-item>
 
-        <a-form-item name="isAutoLogin" :wrapper-col="{ offset: 8, span: 16 }">
-          <a-checkbox v-model:checked="formState.isAutoLogin">自动登录</a-checkbox>
-        </a-form-item>
+            <a-form-item name="isAutoLogin" :wrapper-col="{ offset: 8, span: 16 }">
+              <a-checkbox v-model:checked="formState.isAutoLogin">自动登录</a-checkbox>
+            </a-form-item>
 
-        <a-form-item :wrapper-col="{ offset: 8, span: 16 }">
-          <a-button type="primary" html-type="submit">登录</a-button>
-        </a-form-item>
-      </a-form>
-    </div>
-  </div>
+            <a-form-item :wrapper-col="{ offset: 8, span: 16 }">
+              <a-button type="primary" html-type="submit">登录</a-button>
+            </a-form-item>
+          </a-form>
+        </div>
+      </div>
+    </page-content>
+  </page>
 </template>
 
 <style scoped>
@@ -116,14 +122,15 @@ const onFinishFailed = (errorInfo: any) => {
   height: 100%;
 }
 .login-page {
-  position: fixed;
+  padding: 20px;
+  /* position: fixed;
   top: 50%;
   left: 50%;
   transform: translate(-50%, -50%);
-  /* background-color: rgb(11, 7, 37); */
+  background-color: rgb(11, 7, 37);
   box-shadow: 0 0 5px #cccccc89;
   padding: 30px;
-  border-radius: 5px;
+  border-radius: 5px; */
 }
 .login-page:hover {
   box-shadow: 0 0 10px #cccccc89;

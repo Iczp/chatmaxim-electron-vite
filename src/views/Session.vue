@@ -9,6 +9,7 @@ import { ResultValue, SessionUnitGetListInput, SessionItemDto } from '../apis/dt
 import { useImStore } from '../stores/im';
 import { navToChat as navToChatX } from '../commons/utils';
 import { showContextMenuForSession } from '../commons/contextmenu';
+import { openChildWindow } from '../commons/openChildWindow';
 
 const props = defineProps<{
   chatObjectId: number | undefined;
@@ -30,9 +31,24 @@ const store = useImStore();
 
 const acitveSessionUnitId = computed(() => route.params.sessionUnitId);
 
+const onItemClick = (item: SessionItemDto) => {
+  console.log('onDbClick', item);
+  // openChildWindow({
+  //   target: `chat-${item.id}`,
+  //   url: `/single-chat/${item.ownerId}/${item.id}`,
+  //   // event,
+  //   payload: {},
+  //   window: {
+  //     size: {
+  //       width: 480,
+  //       height: 640,
+  //     },
+  //   },
+  // });
+  navToChat(item);
+};
 const navToChat = (item: SessionItemDto) => {
   // console.log(item);
-
   if (item.id == acitveSessionUnitId.value) {
     delete chatHistorys[props.chatObjectId!];
     router.push(`/chat/${props.chatObjectId}`);
@@ -261,7 +277,7 @@ const footerObserver = ref<HTMLElement | null>();
           <SessionItem
             v-for="(item, index) in displayItems"
             :key="item.id"
-            @click="navToChat(item)"
+            @click="onItemClick(item)"
             :entity="store.getSessionUnit(item.id!)"
             :index="index"
             :active="acitveSessionUnitId == item.id"

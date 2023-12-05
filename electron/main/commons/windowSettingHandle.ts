@@ -58,6 +58,12 @@ export const setWindowBounds = (
   const parent = win.getParentWindow();
   if (!parent) {
     console.log('setWindowBounds: parent isnull');
+    win.hide();
+    win.setSize(size.width, size.height);
+    win.center();
+    setTimeout(() => {
+      win.show();
+    }, 800);
     return;
   }
   const parentBounds = parent.getBounds();

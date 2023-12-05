@@ -279,7 +279,7 @@ export const useImStore = defineStore('im', {
       if (sessionUnitId == message.senderSessionUnit?.id) {
         return;
       }
-      let badge = this.chatObjects[chatObjectId].badge || 0;
+      let badge = this.chatObjects[chatObjectId]?.badge || 0;
       badge++;
       this.ifMap(
         sessionUnitId,
