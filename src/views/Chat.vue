@@ -155,7 +155,6 @@ const onSend = async ({ event, value }: any) => {
   isSendBtnEnabled.value = false;
   const autoId = store.generateMessageId();
   const messageDto: MessageDto = {
-    id: autoId,
     autoId,
     isSelf: true,
     isShowTime: true,
@@ -403,7 +402,7 @@ const mouseleave = (e: MouseEvent) => {
         <Loading v-if="isStartPosting" :height="loadingHeight" />
         <MessageItem
           v-for="(item, index) in list"
-          :key="item.id"
+          :key="item.id || item.autoId"
           :entity="item"
           :sessionUnitId="sessionUnitId"
           v-model:selectable="selectable"

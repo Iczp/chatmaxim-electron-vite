@@ -171,6 +171,7 @@ export const useImStore = defineStore('im', {
             return;
           }
           this.sessionItemsMap[keyName][sessionUnitId].lastMessageId = message.id;
+          // setBadge
         },
         'setLastMessage',
       );
@@ -270,6 +271,25 @@ export const useImStore = defineStore('im', {
     },
     correctBadge() {
       //
+    },
+    incrementBadge(chatObjectId: number, sessionUnitId: string, message: MessageOwnerDto) {
+      // igonre isSelfSender=true
+      if (sessionUnitId == message.senderSessionUnit?.id) {
+        return;
+      }
+      let badge = this.chatObjects[chatObjectId].badge || 0;
+      badge++;
+      this.setChatObjects([{ chatObjectId, badge }]);
+      this.ifMap(
+        sessionUnitId,
+        item => {
+          item.publicBadge = Number(item.publicBadge || 0) + 1;
+          if (message?.isRemindAll) {
+            item.remindAllCount = Number(item.remindAllCount || 0) + 1;
+          }
+        },
+        'incrementBadge',
+      );
     },
     clearBadge(chatObjectId: number, sessionUnitId: string) {
       // this.setChatObjects([{ chatObjectId, badge: 0 }]);

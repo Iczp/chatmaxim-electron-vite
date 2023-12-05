@@ -42,7 +42,10 @@ export const commandHandle = (args: ReceivedDto<any>) => {
       const message = payload as MessageDto;
       // setLastMessage
       console.log('CommandConsts.Chat payload', message);
-      scopes.map(x => store.setLastMessage(x.chatObjectId, x.sessionUnitId, message));
+      scopes.map(x => {
+        store.setLastMessage(x.chatObjectId, x.sessionUnitId, message);
+        store.incrementBadge(x.chatObjectId, x.sessionUnitId, message);
+      });
       eventBus.emit('chat', [args, message]);
       // eventBus
       break;
