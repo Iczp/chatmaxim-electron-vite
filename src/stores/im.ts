@@ -14,9 +14,7 @@ import {
 import { ChatObjectService, SessionUnitService } from '../apis';
 
 interface State {
-  chatObjects: {
-    [key: number]: BadgeDetialDto;
-  };
+  chatObjects: Map<number, BadgeDetialDto>;
   initBadge: number;
   /**
    * 会话单元
@@ -76,7 +74,7 @@ const key = (chatObjectId: number, keyword?: string) => `${chatObjectId}-${keywo
 export const useImStore = defineStore('im', {
   state: (): State => {
     return {
-      chatObjects: {},
+      chatObjects: new Map<number, BadgeDetialDto>(),
       initBadge: 0,
 
       sessionUnitMap: new Map<string, SessionUnitOwnerDto>(),
@@ -91,10 +89,10 @@ export const useImStore = defineStore('im', {
   },
   getters: {
     badge: (state): number =>
-      Object.entries(state.chatObjects)
+    [...state.chatObjects]
         .map(([_, x]) => x.badge || 0)
         .reduce((partialSum, n) => partialSum + n, state.initBadge),
-    badgeItems: (state): BadgeDetialDto[] => Object.entries(state.chatObjects).map(([_, x]) => x),
+    badgeItems: (state): BadgeDetialDto[] => [...state.chatObjects].map(([_, x]) => x),
     // getSessionItems:
     //   state =>
     //   (chatObjectId: number, keyword?: string): SessionItemDto[] => {
@@ -142,10 +140,23 @@ export const useImStore = defineStore('im', {
         this.sessionItemsMap[keyName][x.id!] = x as SessionItemDto;
       });
     },
+    /**
+     * 设置发送人最新消息
+     *
+     * @param {MessageOwnerDto} entity
+     */
     setLastMessageForSender(entity: MessageOwnerDto) {
       const senderSessionUnit = entity.senderSessionUnit!;
       this.setLastMessage(senderSessionUnit.ownerId!, senderSessionUnit.id!, entity);
     },
+    /**
+     * 如果存在会话单元，则执行 callback
+     *
+     * @param {string} sessionUnitId
+     * @param {(item: SessionUnitOwnerDto) => void} callback
+     * @param {string} [caller]
+     * @return {*}
+     */
     ifMap(sessionUnitId: string, callback: (item: SessionUnitOwnerDto) => void, caller?: string) {
       const item = this.sessionUnitMap.get(sessionUnitId);
       if (!item) {
@@ -154,6 +165,14 @@ export const useImStore = defineStore('im', {
       }
       callback(item!);
     },
+    /**
+     * 设置最新消息
+     *
+     * @param {number} chatObjectId
+     * @param {string} sessionUnitId
+     * @param {MessageOwnerDto} message
+     * @param {string} [keyword]
+     */
     setLastMessage(
       chatObjectId: number,
       sessionUnitId: string,
@@ -176,10 +195,21 @@ export const useImStore = defineStore('im', {
         'setLastMessage',
       );
     },
+    /**
+     * 设置会话单元
+     *
+     * @param {SessionUnitOwnerDto} item
+     */
     setItem(item: SessionUnitOwnerDto): void {
       this.sessionUnitMap.set(item.id!, item);
       // store.set(item.id!, item);
     },
+    /**
+     * 设置会话单元（多个）
+     *
+     * @param {Array<SessionUnitOwnerDto>} items
+     * @param {string} [keyword] 默认为空
+     */
     setMany(items: Array<SessionUnitOwnerDto>, keyword?: string): void {
       // console.log('setMany', items);
       items.map(x => {
@@ -211,11 +241,28 @@ export const useImStore = defineStore('im', {
         ) as Array<SessionItemDto>;
     },
 
-    fetchSessionUnitList() {},
-    fetchSessionUnitItem() {},
-    async fetchSessionUnitMany(idList: string[]) {
+    fetchSessionUnitList(): void {},
+    /**
+     * 获取单个会话单元
+     *
+     * @param {string} sessionUnitId
+     * @return {*}  {(Promise<SessionUnitOwnerDto | null>)}
+     */
+    async fetchSessionUnitItem(sessionUnitId: string): Promise<SessionUnitOwnerDto | null> {
+      const items = await this.fetchSessionUnitMany([sessionUnitId]);
+      return items.length > 0 ? items[0] : null;
+    },
+
+    /**
+     * 获取多个会话单元（sessionUnit）
+     *
+     * @param {string[]} idList
+     * @return {*}  {Promise<SessionUnitOwnerDto[]>}
+     */
+    async fetchSessionUnitMany(idList: string[]): Promise<SessionUnitOwnerDto[]> {
       const res = await SessionUnitService.getMany({ idList });
       res.items?.forEach(x => this.setMany([x]));
+      return res.items!;
     },
 
     /**
@@ -223,28 +270,43 @@ export const useImStore = defineStore('im', {
      *
      * @param {number} messageId
      */
-    setMaxMessageId(messageId: number) {
+    setMaxMessageId(messageId: number): void {
       this.maxMessageId = Math.max(messageId, this.maxMessageId || 0);
       this.autoMessageId = this.maxMessageId;
     },
-    generateMessageId() {
+    /**
+     * 生成消息Id(自增0.0001)
+     *
+     * @return {*}
+     */
+    generateMessageId(): number {
       this.autoMessageId = Number((this.autoMessageId + 0.0001).toFixed(4));
       return this.autoMessageId;
     },
 
-    setChatObjects(items: Array<BadgeDetialDto | BadgeDto>) {
+    /**
+     * 设置聊天对象
+     *
+     * @param {(Array<BadgeDetialDto | BadgeDto>)} items
+     */
+    setChatObjects(items: Array<BadgeDetialDto | BadgeDto>): void {
       items.map(x => {
-        if (!this.chatObjects[x.chatObjectId!]) {
-          this.chatObjects[x.chatObjectId!] = x;
+        const entity = this.chatObjects.get(x.chatObjectId!);
+        if (!entity) {
+          this.chatObjects.set(x.chatObjectId!, x);
         }
-        this.chatObjects[x.chatObjectId!] = {
-          ...this.chatObjects[x.chatObjectId!],
+        this.chatObjects.set(x.chatObjectId!, {
+          ...entity,
           ...x,
-        };
+        });
       });
       console.log('setChatObjects', this.chatObjects);
     },
-    getBadgeByCurrentUser() {
+    /**
+     * 获取用户消息数量（角标）
+     *
+     */
+    getBadgeByCurrentUser(): void {
       if (this.isPendingForGetBadgeByCurrentUser) {
         throw new Error(`getBadgeByCurrentUser:${this.isPendingForGetBadgeByCurrentUser}`);
       }
@@ -256,7 +318,11 @@ export const useImStore = defineStore('im', {
         })
         .finally(() => (this.isPendingForGetBadgeByCurrentUser = false));
     },
-    getChatObjectByCurrentUser() {
+    /**
+     * 获取用户聊天对象
+     *
+     */
+    getChatObjectByCurrentUser(): void {
       if (this.isPendingForGetChatObjectByCurrentUser) {
         throw new Error(
           `getChatObjectByCurrentUser:${this.isPendingForGetChatObjectByCurrentUser}`,
@@ -271,15 +337,28 @@ export const useImStore = defineStore('im', {
         })
         .finally(() => (this.isPendingForGetChatObjectByCurrentUser = false));
     },
-    correctBadge() {
+    /**
+     * 修正角标
+     *
+     */
+    correctBadge(): void {
       //
     },
-    incrementBadge(chatObjectId: number, sessionUnitId: string, message: MessageOwnerDto) {
+
+    /**
+     * 自增角标（+1）
+     *
+     * @param {number} chatObjectId
+     * @param {string} sessionUnitId
+     * @param {MessageOwnerDto} message
+     * @return {*}
+     */
+    incrementBadge(chatObjectId: number, sessionUnitId: string, message: MessageOwnerDto): void {
       // igonre isSelfSender=true
       if (sessionUnitId == message.senderSessionUnit?.id) {
         return;
       }
-      let badge = this.chatObjects[chatObjectId]?.badge || 0;
+      let badge = this.chatObjects.get(chatObjectId)?.badge || 0;
       badge++;
       this.ifMap(
         sessionUnitId,
@@ -296,13 +375,19 @@ export const useImStore = defineStore('im', {
       );
       this.setChatObjects([{ chatObjectId, badge }]);
     },
-    clearBadge(chatObjectId: number, sessionUnitId: string) {
+    /**
+     * 清除角标
+     *
+     * @param {number} chatObjectId
+     * @param {string} sessionUnitId
+     */
+    clearBadge(chatObjectId: number, sessionUnitId: string): void {
       // this.setChatObjects([{ chatObjectId, badge: 0 }]);
 
       this.ifMap(
         sessionUnitId,
         item => {
-          let badge = this.chatObjects[chatObjectId].badge || 0;
+          let badge = this.chatObjects.get(chatObjectId)?.badge || 0;
           const publicBadge = item.publicBadge || 0;
           badge -= publicBadge;
           if (badge < 0) {
