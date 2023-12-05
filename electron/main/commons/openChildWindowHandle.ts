@@ -1,4 +1,4 @@
-import { BrowserWindow, ipcMain } from 'electron';
+import { BrowserWindow, ipcMain, webContents } from 'electron';
 import { WindowParams } from '../ipc-types';
 import { join } from 'node:path';
 import { addParamsToUrl } from './addParamsToUrl';
@@ -41,13 +41,17 @@ export const openChildWindowHandle = (
       payload,
       window,
     });
-    const parent = windowManager.getMain();
+    const parentWindow =
+      BrowserWindow.fromWebContents(webContents.fromId(_.sender.id)) || windowManager.getMain();
     const path = addParamsToUrl(url, { event, callerId: _.sender.id });
     console.warn('args.url', url);
     console.warn('path', path);
     let childWindow = windowManager.get(target);
     if (!childWindow) {
-      childWindow = windowManager.set(target, createChildWindow({ name: target, path }, parent));
+      childWindow = windowManager.set(
+        target,
+        createChildWindow({ name: target, path, isModel: window.isModel || false }, parentWindow),
+      );
     }
     childWindow.webContents.send('navigate', path);
     // args.callerId = _.sender.id;
@@ -83,9 +87,11 @@ export const createChildWindow = (
   {
     name,
     path,
+    isModel,
   }: {
     name: string;
     path: string;
+    isModel: boolean;
   },
   parent?: BrowserWindow,
 ): BrowserWindow => {
@@ -93,7 +99,7 @@ export const createChildWindow = (
 
   const win = new BrowserWindow({
     parent,
-    modal: true,
+    modal: isModel,
     maximizable: false,
     minimizable: false,
     // show: true,

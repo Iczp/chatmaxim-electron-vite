@@ -1,12 +1,8 @@
 <script setup lang="ts">
-import { Ref, computed, onMounted, ref } from 'vue';
-import { ipcRenderer } from 'electron';
+import { computed } from 'vue';
 import {
   RouteLocationNormalizedLoaded,
-  onBeforeRouteLeave,
-  onBeforeRouteUpdate,
   useRoute,
-  useRouter,
 } from 'vue-router';
 import {
   HomeOutlined,
@@ -18,18 +14,15 @@ import {
   ClockCircleOutlined,
   SketchOutlined,
   AppstoreOutlined,
-  EllipsisOutlined,
   MoreOutlined,
 } from '@ant-design/icons-vue';
 
-import { ChatObjectService, SessionUnitService } from '../apis';
 
 import { navToChat } from '../commons/utils';
 import { router, chatHistorys } from '../routes';
 import { message } from 'ant-design-vue';
 import { BadgeDto } from '../apis/dtos';
 import { useChatObjectList } from '../commons/useChatObjectList';
-import { startup } from '../apis/websockets';
 import { useWebsocket } from '../commons/useWebsocket';
 
 const route = useRoute();

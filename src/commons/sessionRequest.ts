@@ -23,6 +23,7 @@ export const sessionRequest = ({
     url: `/session-request/${payload.params.ownerId}`,
     payload,
     window: {
+      isModel: true,
       size: {
         width: 500,
         height: 280,

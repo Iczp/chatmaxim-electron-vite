@@ -28,6 +28,7 @@ export const sendWindowInfo = (win: BrowserWindow) => {
   const [maxWidth, maxHeight] = win.getMaximumSize();
   sendEvent(win, 'init', [
     <WindowState>{
+      isModel: win.isModal(),
       windowId: win.id,
       machineId: machine.id,
       frame: false,
@@ -40,7 +41,6 @@ export const sendWindowInfo = (win: BrowserWindow) => {
       isFullScreen: win.isFullScreen(),
       isMaximized: win.isMaximized(),
       isMinimized: win.isMinimized(),
-      isModal: win.isModal(),
       isVisible: win.isVisible(),
       fullScreenable: win.fullScreenable,
       focusable: win.focusable,

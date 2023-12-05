@@ -51,8 +51,8 @@ const onFinish = (values: any) => {
     .then(res => {
       console.log('登录成功！', res);
       message.success({ content: '欢迎回来!', key, duration: 2 });
-      router.push('/');
       setWindow({ size: { width: 1080, height: 760 } });
+      router.push('/');
     })
     .catch(err => {
       message.error({ content: err.message, key, duration: 2 });

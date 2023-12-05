@@ -1,6 +1,7 @@
 import { Size } from './Size';
 
 export type WindowParams = {
+  isModel?: boolean;
   frame?: boolean;
   name?: string;
   targetId?: number;
@@ -64,4 +65,7 @@ export type WindowParams = {
    * @type {boolean}
    */
   isFlashFrame?: boolean;
+
+
+
 };
