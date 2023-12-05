@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { ref, useSlots, watch } from 'vue';
+import { computed, ref, useSlots, watch } from 'vue';
 
 import { MessageDto } from '../apis/dtos';
 import { MessageTypeEnums } from '../apis/enums';
@@ -39,12 +39,14 @@ const emits = defineEmits<{
   'update:selectable': [selectable: boolean];
 }>();
 
-const { senderName, messageType, isRollbacked, sendTime, sendTimeTitle } = useMessage(props.entity);
+const { senderName, messageType, isRollbacked, sendTime, sendTimeTitle, state } = useMessage(
+  props.entity,
+);
 
-const messageState = ref(props.entity.state);
+const messageState = computed(() => props.entity.state);
 
 watch(
-  () => props.entity.state,
+  () => props.entity?.state,
   v => {
     console.log('#watch# props.entity.state', v);
   },
@@ -148,7 +150,10 @@ const onMessageClick = (event: MouseEvent, mouseButton: MouseButton) => {
 
             <MsgUnsupported v-else :r="entity.isSelf" />
             <!-- 消息 End -->
-            <MsgState :state="messageState" />
+            <div>
+              <!-- messageState: {{ messageState }} -->
+              <MsgState :state="messageState" />
+            </div>
           </main>
 
           <footer v-if="entity.quoteMessage" class="msg-main-footer">
@@ -221,9 +226,11 @@ const onMessageClick = (event: MouseEvent, mouseButton: MouseButton) => {
 
 .msg-body .msg-aside {
   /* margin-right: 12px; */
+  text-decoration: none;
 }
 .msg-body.reverse .msg-aside {
   /* margin-left: 12px; */
+  text-decoration: none;
 }
 .msg-aside {
   display: flex;

@@ -212,17 +212,17 @@ const onReachEnd = (event: CustomEvent) => {
 };
 const footerObserver = ref<HTMLElement | null>();
 
-var intersectionObserver = new IntersectionObserver(function (entries) {
-  console.log('Loaded new items', entries[0]);
-  // 如果不可见，就返回
-  if (entries[0].intersectionRatio <= 0) return;
-});
-onMounted(() => {
-  intersectionObserver.observe(footerObserver.value!);
-});
-onUnmounted(() => {
-  intersectionObserver.unobserve(footerObserver.value!);
-});
+// var intersectionObserver = new IntersectionObserver(function (entries) {
+//   console.log('Loaded new items', entries[0]);
+//   // 如果不可见，就返回
+//   if (entries[0].intersectionRatio <= 0) return;
+// });
+// onMounted(() => {
+//   intersectionObserver.observe(footerObserver.value!);
+// });
+// onUnmounted(() => {
+//   intersectionObserver.unobserve(footerObserver.value!);
+// });
 </script>
 
 <template>

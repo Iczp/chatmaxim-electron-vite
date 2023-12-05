@@ -15,5 +15,7 @@ export const useMessage = (entity: MessageDto | undefined) => {
 
   const sendTimeTitle = computed(() => entity?.creationTime);
 
-  return { senderName, messageType, isRollbacked, sendTime, sendTimeTitle };
+  const state = computed(() => entity?.state);
+
+  return { senderName, messageType, isRollbacked, sendTime, sendTimeTitle, state };
 };

@@ -117,7 +117,7 @@ export const useMessageList = ({ sessionUnitId }: { sessionUnitId: string }) => 
   });
   return {
     latestMessageCount,
-    list: list,
+    list,
     fetchLatest,
     fetchHistorical,
     isBof,

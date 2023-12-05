@@ -7,7 +7,10 @@ defineProps<{
 
 <template>
   <div v-if="state != MessageStateEnums.Ok" class="msg-state">
-    <a-spin size="small" />
+    <!-- <a-spin v-if="state==MessageStateEnums.Sending" size="small" />
+    <span v-else>{{ state }}</span> -->
+
+    <span>{{ state }}</span>
   </div>
 </template>
 

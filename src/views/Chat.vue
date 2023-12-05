@@ -55,7 +55,8 @@ const localReadedMessageId = ref<number | null | undefined>();
 //   setReadedMessageId({ sessionUnitId, messageId: lastMessageId.value! });
 // });
 
-const messageList = useMessageList({ sessionUnitId });
+const { list, fetchHistorical, fetchLatest, maxMessageId, onMessage, latestMessageCount, isBof } =
+  useMessageList({ sessionUnitId });
 
 const chatInput = ref<InstanceType<typeof ChatInput> | null>(null);
 
@@ -112,10 +113,9 @@ onUnmounted(() => {
 });
 
 onActivated(() => {
-  messageList
-    .fetchLatest({
-      caller: 'onActivated',
-    })
+  fetchLatest({
+    caller: 'onActivated',
+  })
     .then(({ items, list, maxResultCount }) => {
       list.value = items.length == maxResultCount ? items : list.value.concat(items);
       nextTick(() => scrollTo(0));
@@ -124,21 +124,20 @@ onActivated(() => {
       console.error(err);
     });
 
-  messageList.onMessage(receivedMessage => {
-    const isLatestMessage = Number(receivedMessage?.id) > Number(messageList.maxMessageId.value);
+  onMessage(receivedMessage => {
+    const isLatestMessage = Number(receivedMessage?.id) > Number(maxMessageId.value);
     console.warn(
       'onMessage isLatestMessage',
       isLatestMessage,
       receivedMessage.id,
-      messageList.maxMessageId.value,
+      maxMessageId.value,
     );
     // store.clearBadge(chatObjectId, sessionUnitId);
     // setReadedMessageId({ sessionUnitId, messageId: receivedMessage!.id! });
     if (isLatestMessage) {
-      messageList
-        .fetchLatest({
-          caller: 'onMessage',
-        })
+      fetchLatest({
+        caller: 'onMessage',
+      })
         .then(({ items, list, maxResultCount }) => {
           console.warn('[chat] fetchLatest');
           list.value = items.length == maxResultCount ? items : list.value.concat(items);
@@ -156,6 +155,7 @@ const onSend = async ({ event, value }: any) => {
   isSendBtnEnabled.value = false;
   const autoId = store.generateMessageId();
   const messageDto: MessageDto = {
+    id: autoId,
     autoId,
     isSelf: true,
     isShowTime: true,
@@ -168,9 +168,16 @@ const onSend = async ({ event, value }: any) => {
     state: MessageStateEnums.Sending,
     creationTime: new Date().toUTCString(),
   };
-  messageList.list.value.push(messageDto);
+  list.value.push(messageDto);
 
-  scroll.value?.scrollTo({ duration: 1500 });
+  // scroll.value?.scrollTo({ duration: 1500 });
+  const removeItem = () => {
+    const findIndex = list.value?.findIndex(x => x.autoId == messageDto.autoId);
+    console.log('findIndex', findIndex);
+    if (findIndex != -1) {
+      list.value.splice(findIndex, 1);
+    }
+  };
   // return;
   MessageSenderService.postApiChatMessageSenderSendText({
     sessionUnitId: sessionUnitId,
@@ -187,25 +194,25 @@ const onSend = async ({ event, value }: any) => {
       store.setLastMessageForSender(res);
       chatInput.value?.clear();
       quoteMessage.value = null;
-
-      messageList
-        .fetchLatest({ caller: 'onSend' })
+      fetchLatest({ caller: 'onSend' })
         .then(({ items, list }) => {
-          const findIndex = list.value?.findIndex(x => x.autoId == messageDto.autoId);
-          if (findIndex != -1) {
-            console.log('findIndex', findIndex);
-            // messageDto.state = MessageStateEnums.Ok;
-            list.value.splice(findIndex, 1);
-          }
+          removeItem();
           list.value = list.value.concat(items);
+          scroll.value?.scrollTo({ duration: 1500 });
         })
         .catch(err => {
+          removeItem();
           console.error(err);
         });
     })
     .catch((err: ApiError) => {
-      messageDto.state = MessageStateEnums.Error;
-      messageDto.error = err.body.error.message;
+      removeItem();
+      list.value.push({
+        ...messageDto,
+        state: MessageStateEnums.Error,
+        error: err.body.error.message,
+      });
+      scroll.value?.scrollTo({ duration: 1500 });
       console.error('sendRet', err);
       message.error({
         key: 'vm-chat',
@@ -236,7 +243,7 @@ const showContextMenu = ({ labelType, mouseButton, event, entity }: ContextmenuI
       quoteMessage.value = entity;
     },
     onFollowing(targetSessionUnitId: string, isFollowing: boolean) {
-      messageList.list.value
+      list.value
         .filter(x => x.senderSessionUnit?.id == targetSessionUnitId)
         .forEach(x => (x.isFollowing = isFollowing));
     },
@@ -247,8 +254,8 @@ const onReachStart = (event: CustomEvent) => {
   const el = event.target as HTMLElement;
   console.info('onReachStart');
   const isReachStart = el.scrollTop == 0;
-  if (messageList.isBof.value) {
-    console.error('onReachStart isBof', messageList.isBof.value);
+  if (isBof.value) {
+    console.error('onReachStart isBof', isBof.value);
     return;
   }
   if (isStartPosting.value) {
@@ -263,8 +270,7 @@ const onReachStart = (event: CustomEvent) => {
   const originalScrollHeight = scrollElement.value?.scrollHeight || 0;
   console.log('originalScrollHeight', originalScrollHeight);
 
-  messageList
-    .fetchHistorical()
+  fetchHistorical()
     .then(x => {
       const newScrollHeight = scrollElement.value?.scrollHeight || 0;
       console.log('newScrollHeight', newScrollHeight);
@@ -396,22 +402,19 @@ const mouseleave = (e: MouseEvent) => {
       >
         <Loading v-if="isStartPosting" :height="loadingHeight" />
         <MessageItem
-          v-for="(item, index) in messageList.list.value"
+          v-for="(item, index) in list"
           :key="item.id"
           :entity="item"
           :sessionUnitId="sessionUnitId"
           v-model:selectable="selectable"
           @contextmenu="showContextMenu"
         >
-          <template
-            v-if="index != messageList.list.value.length - 1 && localReadedMessageId == item.id"
-            #footer
-          >
+          <template v-if="index != list.length - 1 && localReadedMessageId == item.id" #footer>
             <a-divider class="divider-latest">以下是新消息</a-divider>
           </template>
         </MessageItem>
       </scroll-view>
-      <div class="latest-counter">有 {{ messageList.latestMessageCount }} 条最新消息</div>
+      <div class="latest-counter">有 {{ latestMessageCount }} 条最新消息</div>
     </page-content>
     <page-footer class="footer">
       <ChatInput
