@@ -46,6 +46,7 @@ export const setImmersed = ({
   console.log('setImmersed', sessionUnitId, isImmersed);
   SettingService.postApiChatSettingSetImmersed({ sessionUnitId, isImmersed }).then(res => {
     successHandle(isImmersed ? '设置免打扰' : '取消免打扰', res);
+    store.getBadgeByCurrentUser();
   });
 };
 

@@ -246,19 +246,21 @@ export const useImStore = defineStore('im', {
     },
     getBadgeByCurrentUser() {
       if (this.isPendingForGetBadgeByCurrentUser) {
-        return;
+        throw new Error(`getBadgeByCurrentUser:${this.isPendingForGetBadgeByCurrentUser}`);
       }
       this.isPendingForGetBadgeByCurrentUser = true;
-      SessionUnitService.getApiChatSessionUnitBadgeByCurrentUser({})
+      SessionUnitService.getApiChatSessionUnitBadgeByCurrentUser({ isImmersed: false })
         .then(items => {
-          console.log('getBadgeByCurrentUser', items);
+          console.log('getApiChatSessionUnitBadgeByCurrentUser', items);
           this.setChatObjects(items);
         })
         .finally(() => (this.isPendingForGetBadgeByCurrentUser = false));
     },
     getChatObjectByCurrentUser() {
       if (this.isPendingForGetChatObjectByCurrentUser) {
-        return;
+        throw new Error(
+          `getChatObjectByCurrentUser:${this.isPendingForGetChatObjectByCurrentUser}`,
+        );
       }
       this.isPendingForGetChatObjectByCurrentUser = true;
       ChatObjectService.getApiChatChatObjectByCurrentUser({})
@@ -279,10 +281,12 @@ export const useImStore = defineStore('im', {
       }
       let badge = this.chatObjects[chatObjectId].badge || 0;
       badge++;
-      this.setChatObjects([{ chatObjectId, badge }]);
       this.ifMap(
         sessionUnitId,
         item => {
+          if (item.setting?.isImmersed) {
+            badge--;
+          }
           item.publicBadge = Number(item.publicBadge || 0) + 1;
           if (message?.isRemindAll) {
             item.remindAllCount = Number(item.remindAllCount || 0) + 1;
@@ -290,6 +294,7 @@ export const useImStore = defineStore('im', {
         },
         'incrementBadge',
       );
+      this.setChatObjects([{ chatObjectId, badge }]);
     },
     clearBadge(chatObjectId: number, sessionUnitId: string) {
       // this.setChatObjects([{ chatObjectId, badge: 0 }]);

@@ -4,26 +4,33 @@ import { MessageDto, MessageOwnerDto } from '../apis/dtos';
 import { MessageGetListInput } from '../apis/dtos/MessageGetListInput';
 import { MessageStateEnums } from '../apis/enums';
 import { eventBus } from '../commons/eventBus';
-import { ReceivedDto } from '../apis/websockets/ReceivedDto';
-import * as CommandConsts from '../apis/websockets/commandConsts';
-export const useMessageList = ({ sessionUnitId }: { sessionUnitId: string }) => {
-  let receivedData: ReceivedDto<any> | undefined = undefined;
+export type FetchMessageResult = {
+  items: MessageDto[];
+  list: Ref<MessageDto[]>;
+  maxResultCount: number;
+};
+export const useMessageList = ({
+  sessionUnitId,
+  maxResultCount = 20,
+}: {
+  sessionUnitId: string;
+  maxResultCount?: number;
+}) => {
   const maxMessageId = ref<number | undefined>();
   const minMessageId = ref<number | undefined>();
-  let maxResultCount = 20;
-  const isPendingForFetchLatest = ref(false);
+  const isPendingOfFetchLatest = ref(false);
   const isBof = ref(false);
   const isEof = ref(false);
   const latestMessageCount = ref<number>(0);
   const list = ref<MessageDto[]>([]);
   const service = MessageService.getApiChatMessage;
-  // let task = CancelablePromise<PagedResultDto<MessageOwnerDto>>
 
   const setMaxMessageId = (items: MessageDto[]): void => {
     maxMessageId.value =
       Math.max(maxMessageId.value || 0, ...items.map(x => x.id || 0)) || undefined;
     console.log('setMaxMessageId', maxMessageId.value);
   };
+
   const setMinMessageId = (items: MessageDto[]): void => {
     minMessageId.value = Math.min(...items.map(x => x.id || 0)) || undefined;
     console.log('setMinMessageId', minMessageId.value);
@@ -53,23 +60,15 @@ export const useMessageList = ({ sessionUnitId }: { sessionUnitId: string }) => 
     return items;
   };
 
-  const fetchLatest = async (args: {
-    caller?: string;
-  }): Promise<{
-    items: MessageDto[];
-    list: Ref<MessageDto[]>;
-    maxResultCount: number;
-  }> => {
+  const fetchLatest = async ({ caller }: { caller?: string }): Promise<FetchMessageResult> => {
     // minMessageId.value = args?.minMessageId || maxMessageId.value;
-    if (isPendingForFetchLatest.value) {
-      throw new Error(
-        `caller:${args.caller},isPendingForFetchLatest:${isPendingForFetchLatest.value}`,
-      );
+    if (isPendingOfFetchLatest.value) {
+      throw new Error(`caller:${caller},isPendingForFetchLatest:${isPendingOfFetchLatest.value}`);
     }
-    isPendingForFetchLatest.value = true;
-    console.warn('caller', args.caller);
+    isPendingOfFetchLatest.value = true;
+    console.warn('caller', caller);
     const items = await fetchItems({ minMessageId: maxMessageId.value });
-    isPendingForFetchLatest.value = false;
+    isPendingOfFetchLatest.value = false;
     console.log(
       'fetchLatest',
       items.map(x => x.id),
@@ -77,7 +76,7 @@ export const useMessageList = ({ sessionUnitId }: { sessionUnitId: string }) => 
     return { items, list, maxResultCount };
   };
 
-  const fetchHistorical = async () => {
+  const fetchHistorical = async (): Promise<FetchMessageResult> => {
     if (isBof.value) {
       throw new Error('没有了');
     }
@@ -88,42 +87,32 @@ export const useMessageList = ({ sessionUnitId }: { sessionUnitId: string }) => 
       'fetchHistorical',
       items.map(x => x.id),
     );
+    return { items, list, maxResultCount };
   };
 
-  const ifCommand = (command: string) => {
-    if (receivedData?.command == command) {
-    }
-  };
-
-  const onMessage = (callback: (e: MessageDto) => void) => {
+  const onMessage = (callback: (e: MessageDto) => void): void => {
     eventBus.on('chat', ([data, receivedMessage]) => {
       console.log('onMessage', receivedMessage);
-
-      const isSelfSender = receivedMessage.senderSessionUnit?.id == sessionUnitId;
-      // if (isSelfSender) {
-      //   return;
-      // }
       callback(receivedMessage);
-      // fetchLatest().then(res => {
-      //   console.warn('[chat] fetchLatest');
-      // });
     });
   };
 
+  const offMessage = (): void => eventBus.off('chat');
+
   onActivated(() => {});
 
-  onDeactivated(() => {
-    eventBus.off('chat');
-  });
+  onDeactivated(offMessage);
+
   return {
     latestMessageCount,
     list,
-    fetchLatest,
-    fetchHistorical,
     isBof,
     isEof,
-    onMessage,
     maxMessageId,
     minMessageId,
+    fetchLatest,
+    fetchHistorical,
+    onMessage,
+    offMessage,
   };
 };
