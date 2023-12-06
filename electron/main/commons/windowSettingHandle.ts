@@ -1,6 +1,8 @@
 import { BrowserWindow, webContents } from 'electron';
 import { WindowParams } from '../ipc-types';
 import { ifArrayNumber, ifBoolean, ifTrue } from './ifBoolean';
+import { globalState } from '../global';
+// import { preventClose } from './openChildWindowHandle';
 
 export const windowSettingHandle = (_: Electron.IpcMainInvokeEvent, params: WindowParams): any => {
   return new Promise((resolve, reject) => {
@@ -20,6 +22,36 @@ export const setWindow = (win: BrowserWindow, params: WindowParams) => {
   setWindowMethods(win, params);
 };
 
+/**
+ * 防止窗口关闭
+ *
+ * @param {BrowserWindow} win
+ * @param {boolean} isListening
+ */
+export const preventClose = (win: BrowserWindow, isListening: boolean) => {
+  const preventCloseHandle = (e: {
+    preventDefault: () => void;
+    readonly defaultPrevented: boolean;
+  }): void => {
+    if (!globalState.isAppQuitting) {
+      e.preventDefault();
+      console.log('childWindow will close stoped:hide');
+      win.hide();
+    }
+  };
+  if (isListening) {
+    win.on('close', preventCloseHandle);
+  } else {
+    win.off('close', preventCloseHandle);
+  }
+};
+
+/**
+ *
+ *
+ * @param {BrowserWindow} win
+ * @param {WindowParams} params
+ */
 export const setWindowProperties = (win: BrowserWindow, params: WindowParams) => {
   ifBoolean(params?.maximizable, x => (win.maximizable = x));
   ifBoolean(params?.minimizable, x => (win.minimizable = x));
@@ -29,6 +61,12 @@ export const setWindowProperties = (win: BrowserWindow, params: WindowParams) =>
   ifBoolean(params?.focusable, x => (win.focusable = x));
 };
 
+/**
+ *
+ *
+ * @param {BrowserWindow} win
+ * @param {WindowParams} params
+ */
 export const setWindowMethods = (win: BrowserWindow, params: WindowParams) => {
   ifBoolean(params?.maximize, x => (win.isMaximized() ? win.restore() : win.maximize()));
   ifBoolean(params?.minimize, x => win.minimize());
@@ -43,8 +81,20 @@ export const setWindowMethods = (win: BrowserWindow, params: WindowParams) => {
 
   ifTrue<string>(params?.backgroundColor, x => win.setBackgroundColor(x));
   ifBoolean(params?.isFlashFrame, x => win.flashFrame(x));
+
+  ifBoolean(params?.isPreventClose, x => preventClose(win, x));
 };
 
+/**
+ *
+ *
+ * @param {BrowserWindow} win
+ * @param {{
+ *     width: number;
+ *     height: number;
+ *   }} size
+ * @return {*}
+ */
 export const setWindowBounds = (
   win: BrowserWindow,
   size: {

@@ -33,6 +33,7 @@ const acitveSessionUnitId = computed(() => route.params.sessionUnitId);
 
 const onItemDbClick = (item: SessionItemDto) => {
   console.log('onItemDbClick', item);
+  item.isSeparated = true;
   openChildWindow({
     target: `chat-${item.id}`,
     url: `/separate-chat/${item.ownerId}/${item.id}`,
@@ -44,6 +45,9 @@ const onItemDbClick = (item: SessionItemDto) => {
         height: 640,
       },
     },
+  }).finally(() => {
+    console.warn('separate-chat window is closed');
+    item.isSeparated = false;
   });
 };
 
@@ -283,7 +287,7 @@ const footerObserver = ref<HTMLElement | null>();
           <SessionItem
             v-for="(item, index) in displayItems"
             :key="item.id"
-            @click="onItemClick(item)"
+            @click.native="onItemClick(item)"
             @dblclick.native="onItemDbClick(item)"
             :entity="store.getSessionUnit(item.id!)"
             :index="index"

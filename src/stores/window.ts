@@ -4,6 +4,7 @@ import { WindowState } from '../ipc-types';
 const defaultValue: WindowState = {
   machineId: undefined,
   windowId: undefined,
+  isModel: undefined,
   name: undefined,
   maximizable: undefined,
   minimizable: undefined,
@@ -13,7 +14,6 @@ const defaultValue: WindowState = {
   movable: undefined,
   focusable: undefined,
   isVisible: undefined,
-  isModal: undefined,
   isMaximized: undefined,
   isMinimized: undefined,
   isFullScreen: undefined,
@@ -30,6 +30,7 @@ const defaultValue: WindowState = {
   isKiosk: undefined,
   isSkipTaskbar: undefined,
   isFlashFrame: undefined,
+  isPreventClose: undefined,
 };
 
 export const useWindowStore = defineStore('window', {

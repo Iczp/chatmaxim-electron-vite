@@ -9,6 +9,7 @@ import { windowSettingHandle } from './commons/windowSettingHandle';
 import { initMachine } from './commons/machine';
 import './commons/logger';
 import { websocketHandle } from './commons/webscoketHandle';
+import { globalState } from './global';
 //
 Store.initRenderer();
 
@@ -76,6 +77,11 @@ app.on('second-instance', () => {
     if (win.isMinimized()) win.restore();
     win.focus();
   }
+});
+
+
+app.on('before-quit', e => {
+  globalState.isAppQuitting = true;
 });
 
 type Listener = (

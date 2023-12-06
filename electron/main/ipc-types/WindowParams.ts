@@ -65,4 +65,11 @@ export type WindowParams = {
    * @type {boolean}
    */
   isFlashFrame?: boolean;
+
+  /**
+   * 是否防止关闭, true:隐藏而不关闭窗口，hide()
+   *
+   * @type {boolean}
+   */
+  isPreventClose?: boolean;
 };

@@ -5,6 +5,7 @@ import { addParamsToUrl } from './addParamsToUrl';
 import { windowManager } from './windowManager';
 import { sendEvent, initWindowEvent, sendWindowInfo } from './initWindowEvent';
 import { setWindow } from './windowSettingHandle';
+import { globalState } from '../global';
 
 // process.env.DIST_ELECTRON = join(__dirname, '..');
 // process.env.DIST = join(process.env.DIST_ELECTRON, '../dist');
@@ -56,7 +57,13 @@ export const openChildWindowHandle = (
     if (!childWindow) {
       childWindow = windowManager.set(
         target,
-        createChildWindow({ name: target, path, isModel: window.isModel || false }, parentWindow),
+        createChildWindow({
+          parent: parentWindow,
+          name: target,
+          path,
+          isModel: window.isModel || false,
+          isPreventClose: true,
+        }),
       );
     }
     childWindow.webContents.send('navigate', path);
@@ -89,18 +96,20 @@ export const openChildWindowHandle = (
   });
 };
 
-export const createChildWindow = (
-  {
-    name,
-    path,
-    isModel,
-  }: {
-    name: string;
-    path: string;
-    isModel: boolean;
-  },
-  parent?: BrowserWindow,
-): BrowserWindow => {
+
+export const createChildWindow = ({
+  name,
+  path,
+  isModel,
+  isPreventClose,
+  parent,
+}: {
+  name: string;
+  path: string;
+  isModel: boolean;
+  isPreventClose?: boolean;
+  parent?: BrowserWindow;
+}): BrowserWindow => {
   console.log('createChildWindow', path);
 
   const win = new BrowserWindow({
@@ -127,11 +136,7 @@ export const createChildWindow = (
     console.log('did-navigate-in-page', _, ...args);
   });
 
-  win.on('close', e => {
-    e.preventDefault();
-    console.log('childWindow will close stoped:hide');
-    win.hide();
-  });
+  // preventClose(win, isPreventClose);
 
   win.removeMenu();
 

@@ -33,6 +33,7 @@ export const objectPicker = ({
     payload,
     window: window || {
       isModel: true,
+      isPreventClose: true,
       size: {
         width: 480,
         height: 640,

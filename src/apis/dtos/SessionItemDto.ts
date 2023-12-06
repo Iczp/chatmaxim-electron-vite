@@ -26,4 +26,11 @@ export type SessionItemDto = {
    * @type {number| null}
    */
   lastMessageId?: number | null;
+
+  /**
+   * 是否独立窗口
+   *
+   * @type {boolean}
+   */
+  isSeparated?: boolean;
 };

@@ -24,6 +24,7 @@ export const sessionRequest = ({
     payload,
     window: {
       isModel: true,
+      isPreventClose: true,
       size: {
         width: 500,
         height: 280,
