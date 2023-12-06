@@ -39,6 +39,9 @@ class WindowManger {
     delete this.windowsMap[this.windows[name].id];
     delete this.windows[name];
   }
+  isSeparatedChat(name: string){
+    return /^chat-.+$/.test(name)
+  }
 }
 
 export const windowManager = new WindowManger();

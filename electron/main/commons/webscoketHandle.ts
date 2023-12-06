@@ -8,8 +8,8 @@ export const websocketHandle = (_: Electron.IpcMainInvokeEvent, payload: any): a
   const wins = windowManager.getWindows();
   Object.entries(wins)
     //ignore sender window
-    .filter(([, win]) => win.id != _.sender.id)
-    .map(([, win]) => {
+    .filter(([name, win]) => win.id != _.sender.id && windowManager.isSeparatedChat(name))
+    .map(([name, win]) => {
       win.webContents.send('websocket', {
         callerId: senderWindow?.id,
         callerName: windowManager.getNameById(senderWindow?.id),

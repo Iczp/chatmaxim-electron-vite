@@ -65,6 +65,7 @@ export const openChildWindowHandle = (
           isPreventClose: true,
         }),
       );
+      childWindow.on('closed', e => windowManager.remove(target));
     }
     childWindow.webContents.send('navigate', path);
     // args.callerId = _.sender.id;
@@ -95,7 +96,6 @@ export const openChildWindowHandle = (
     childWindow.show();
   });
 };
-
 
 export const createChildWindow = ({
   name,

@@ -26,6 +26,8 @@ const data = {
 
 export const websocketHandle = (_: Electron.IpcRendererEvent, args: any) => {
   // console.log('[websocket]:', _, args);
+
+  const isEmitter = _.senderId
   const data = JSON.parse(args.payload) as ReceivedDto<any>;
   console.log('[websocket]:', _, data);
   commandHandle(data);

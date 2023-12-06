@@ -12,6 +12,7 @@ import {
   SessionUnitOwnerDto,
 } from '../apis/dtos';
 import { ChatObjectService, SessionUnitService } from '../apis';
+import { mapToSessionItemDto, sortSessionItemDto } from '../commons/utils';
 
 interface State {
   chatObjects: Map<number, BadgeDetialDto>;
@@ -45,38 +46,32 @@ interface State {
    * @memberof State
    */
   autoMessageId: number;
+  /**
+   *
+   *
+   * @type {boolean}
+   * @memberof State
+   */
   isPendingForGetBadgeByCurrentUser: boolean;
+  /**
+   *
+   *
+   * @type {boolean}
+   * @memberof State
+   */
   isPendingForGetChatObjectByCurrentUser: boolean;
 }
-export const sortFunc = (a: SessionItemDto, b: SessionItemDto): number => {
-  if (a.sorting! > b.sorting!) {
-    return -1;
-  } else if (a.sorting! < b.sorting!) {
-    return 1;
-  }
-  if (a.lastMessageId! > b.lastMessageId!) {
-    return -1;
-  } else if (a.lastMessageId! < b.lastMessageId!) {
-    return 1;
-  }
-  return 0;
-};
 
-const groupBy = (xs: any, key: string) => {
-  return xs.reduce((rv: any, x: any) => {
-    (rv[x[key]] = rv[x[key]] || []).push(x);
-    return rv;
-  }, {});
-};
+
 
 const key = (chatObjectId: number, keyword?: string) => `${chatObjectId}-${keyword || ''}`;
+
 
 export const useImStore = defineStore('im', {
   state: (): State => {
     return {
       chatObjects: new Map<number, BadgeDetialDto>(),
       initBadge: 0,
-
       sessionUnitMap: new Map<string, SessionUnitOwnerDto>(),
       // sessionMap: new Map<number, Array<SessionUnitOwnerDto>>(),
       messageMap: {},
@@ -89,7 +84,7 @@ export const useImStore = defineStore('im', {
   },
   getters: {
     badge: (state): number =>
-    [...state.chatObjects]
+      [...state.chatObjects]
         .map(([_, x]) => x.badge || 0)
         .reduce((partialSum, n) => partialSum + n, state.initBadge),
     badgeItems: (state): BadgeDetialDto[] => [...state.chatObjects].map(([_, x]) => x),
@@ -124,7 +119,7 @@ export const useImStore = defineStore('im', {
       const items: SessionItemDto[] = Object.values(
         this.sessionItemsMap[key(chatObjectId, keyword)] || [],
       );
-      items.sort(sortFunc);
+      items.sort(sortSessionItemDto);
       return items;
     },
     setSessionItems(
@@ -133,11 +128,11 @@ export const useImStore = defineStore('im', {
       keyword?: string,
     ): void {
       // console.log('setSessionItems', chatObjectId, items);
+
       const keyName = key(chatObjectId, keyword);
       items.map(x => {
-        // const item: SessionItemDto = x as SessionItemDto;
         this.sessionItemsMap[keyName] = this.sessionItemsMap[keyName] || {};
-        this.sessionItemsMap[keyName][x.id!] = x as SessionItemDto;
+        this.sessionItemsMap[keyName][x.id!] = mapToSessionItemDto(x);
       });
     },
     /**
@@ -238,7 +233,8 @@ export const useImStore = defineStore('im', {
         .map(x => this.getSessionUnit(x.id!)!)
         .filter(
           x => test(x.setting?.rename) || test(x.destination?.name) || test(x.destination?.code),
-        ) as Array<SessionItemDto>;
+        )
+        .map(x => mapToSessionItemDto(x));
     },
 
     fetchSessionUnitList(): void {},

@@ -7,7 +7,7 @@ import SessionItem from '../components/SessionItem.vue';
 import Loading from '../components/Loading.vue';
 import { ResultValue, SessionUnitGetListInput, SessionItemDto } from '../apis/dtos';
 import { useImStore } from '../stores/im';
-import { navToChat as navToChatX } from '../commons/utils';
+import { mapToSessionItemDto, navToChat as navToChatX } from '../commons/utils';
 import { showContextMenuForSession } from '../commons/contextmenu';
 import { openChildWindow } from '../commons/openChildWindow';
 
@@ -38,7 +38,7 @@ const onItemDbClick = (item: SessionItemDto) => {
     target: `chat-${item.id}`,
     url: `/separate-chat/${item.ownerId}/${item.id}`,
     // event,
-    payload: { sessionUnit: item },
+    payload: { sessionUnit: store.getSessionUnit(item.id!) },
     window: {
       size: {
         width: 480,
@@ -170,10 +170,11 @@ const fetchData = (query: SessionUnitGetListInput) => {
       if (!ret.isEof) {
         store.setMany(res.items!);
         setMinMessageId(res.items![res.items!.length - 1].lastMessageId!);
+        const _items = res.items!.map(x => mapToSessionItemDto(x));
         if (Number(query.maxMessageId) > 0) {
-          ret.items = ret.items!.concat(mapToItems(res.items!));
+          ret.items = ret.items!.concat(_items);
         } else {
-          ret.items = mapToItems(res.items!);
+          ret.items = _items;
         }
       }
       store.setSessionItems(props.chatObjectId!, ret.items, query.keyword);

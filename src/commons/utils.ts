@@ -1,7 +1,14 @@
 import moment from 'moment';
 import { useRouter } from 'vue-router';
 import { router, chatHistorys } from '../routes';
-import { CmdDto, MessageDto, MessageSimpleDto, SessionUnitOwnerDto, TextDto } from '../apis/dtos';
+import {
+  CmdDto,
+  MessageDto,
+  MessageSimpleDto,
+  SessionItemDto,
+  SessionUnitOwnerDto,
+  TextDto,
+} from '../apis/dtos';
 import { MessageTypeEnums } from '../apis/enums';
 import { formatText } from './formatWords';
 /**
@@ -202,3 +209,34 @@ export const groupByToMap = <T, Q>(
     map.get(key)?.push(value) ?? map.set(key, [value]);
     return map;
   }, new Map<Q, T[]>());
+
+/**
+ * 依次排序：sorting/lastMessageId
+ *
+ * @param {SessionItemDto} a
+ * @param {SessionItemDto} b
+ * @return {*}  {number}
+ */
+export const sortSessionItemDto = (a: SessionItemDto, b: SessionItemDto): number => {
+  if (a.sorting! > b.sorting!) {
+    return -1;
+  } else if (a.sorting! < b.sorting!) {
+    return 1;
+  }
+  if (a.lastMessageId! > b.lastMessageId!) {
+    return -1;
+  } else if (a.lastMessageId! < b.lastMessageId!) {
+    return 1;
+  }
+  return 0;
+};
+
+/**
+ * SessionUnitOwnerDto => SessionItemDto
+ * @param {SessionUnitOwnerDto} x
+ * @return {*}  {SessionItemDto}
+ */
+export const mapToSessionItemDto = (x: SessionUnitOwnerDto): SessionItemDto => {
+  const { id, ownerId, sorting, lastMessageId } = x;
+  return { id, ownerId, sorting, lastMessageId };
+};

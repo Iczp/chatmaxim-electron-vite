@@ -111,22 +111,14 @@ const afterOpenChange = (bool: boolean) => {
   // console.log('open', bool);
 };
 
-onActivated(() => {
-  activeLastMessageId.value = lastMessageId.value;
-  localReadedMessageId.value = readedMessageId.value;
-  store.clearBadge(chatObjectId, sessionUnitId);
-  console.log('onActivated', destinationName.value);
-  if (lastMessageId.value) {
-    setReadedMessageId({ sessionUnitId, messageId: lastMessageId.value! });
-  }
-  // scrollTo(0);
-});
+
 
 const _onDeactivated = () => {
   activeLastMessageId.value = lastMessageId.value;
   localReadedMessageId.value = readedMessageId.value;
 };
 const _onActivated = () => {
+  scrollTo(0);
   fetchLatest({
     caller: 'onActivated',
   })
@@ -162,6 +154,14 @@ const _onActivated = () => {
         });
     }
   });
+  // ---------------------------------------------
+  activeLastMessageId.value = lastMessageId.value;
+  localReadedMessageId.value = readedMessageId.value;
+  store.clearBadge(chatObjectId, sessionUnitId);
+  console.log('onActivated', destinationName.value);
+  if (lastMessageId.value) {
+    setReadedMessageId({ sessionUnitId, messageId: lastMessageId.value! });
+  }
 };
 
 if (isSeparated) {
