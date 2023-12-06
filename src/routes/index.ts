@@ -54,8 +54,8 @@ export const routes = <RouteRecordRaw[]>[
     ],
   },
   {
-    path: '/single-chat/:chatObjectId(\\d+)/:sessionUnitId',
-    name: 'single-chat',
+    path: '/separate-chat/:chatObjectId(\\d+)/:sessionUnitId',
+    name: 'separate-chat',
     component: () => import('../views/Chat.vue'),
     props: true,
   },

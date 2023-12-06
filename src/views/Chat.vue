@@ -1,5 +1,15 @@
 <script setup lang="ts">
-import { CSSProperties, computed, nextTick, onActivated, onUnmounted, ref, watch } from 'vue';
+import {
+  CSSProperties,
+  computed,
+  nextTick,
+  onActivated,
+  onDeactivated,
+  onMounted,
+  onUnmounted,
+  ref,
+  watch,
+} from 'vue';
 import { useRoute } from 'vue-router';
 import { MessageSenderService, ApiError } from '../apis';
 
@@ -27,11 +37,15 @@ const store = useImStore();
 const props = defineProps<{
   sessionUnitId: string;
   title?: string;
+  /* 是否独立窗口（由Router传入参数 isSeparated, /src/routes/index.ts） */
+  isSeparated?: boolean;
 }>();
+const route = useRoute();
+
+const isSeparated = route.path.split('/').some(x => x == 'separate-chat');
 
 const sessionUnitId = props.sessionUnitId;
 
-const route = useRoute();
 const chatObjectId = Number(route.params.chatObjectId);
 
 const info = computed(() => store.getSessionUnit(sessionUnitId));
@@ -105,14 +119,14 @@ onActivated(() => {
   if (lastMessageId.value) {
     setReadedMessageId({ sessionUnitId, messageId: lastMessageId.value! });
   }
-  scrollTo(0);
-});
-onUnmounted(() => {
-  activeLastMessageId.value = lastMessageId.value;
-  localReadedMessageId.value = readedMessageId.value;
+  // scrollTo(0);
 });
 
-onActivated(() => {
+const _onDeactivated = () => {
+  activeLastMessageId.value = lastMessageId.value;
+  localReadedMessageId.value = readedMessageId.value;
+};
+const _onActivated = () => {
   fetchLatest({
     caller: 'onActivated',
   })
@@ -148,7 +162,15 @@ onActivated(() => {
         });
     }
   });
-});
+};
+
+if (isSeparated) {
+  onMounted(_onActivated);
+  onUnmounted(_onDeactivated);
+} else {
+  onActivated(_onActivated);
+  onDeactivated(_onDeactivated);
+}
 
 const onSend = async ({ event, value }: any) => {
   console.log('send', textValue.value);

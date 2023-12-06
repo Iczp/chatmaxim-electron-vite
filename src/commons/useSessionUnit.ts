@@ -1,17 +1,35 @@
 //
 
-import { ComputedRef, computed } from 'vue';
+import { ComputedRef, computed, watch } from 'vue';
 import {
   formatMessageTime,
   getDestinationNameForSessionUnit,
   getSenderNameForMessage,
 } from './utils';
-import { SessionUnitOwnerDto } from '../apis/dtos';
+import { SessionItemDto, SessionUnitOwnerDto } from '../apis/dtos';
 import { MessageTypeEnums } from '../apis/enums';
 import { useImStore } from '../stores/im';
+import { useWindowStore } from '../stores/window';
+import { useRemoteStore } from './useRemoteStore';
 
 export const useSessionUnitId = (sessionUnitId: string) => {
+  const windowStore = useWindowStore();
+  const isMainWindow = windowStore.name == 'main';
   const store = useImStore();
+  if (!isMainWindow) {
+    const remoteStore = useRemoteStore<{ sessionUnit: SessionItemDto }>();
+    console.log('remoteStore', remoteStore.value?.sessionUnit);
+    watch(
+      () => remoteStore.value,
+      v => {
+        console.log('remoteStore#watch', v);
+        if (v) {
+          store.setMany([v?.sessionUnit!]);
+        }
+      },
+    );
+  }
+
   // store.getItem(sessionUnitId);
   const computedEntity = computed(() => store.getSessionUnit(sessionUnitId!));
   return useComputedSessionUnit(computedEntity);

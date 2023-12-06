@@ -41,8 +41,14 @@ export const openChildWindowHandle = (
       payload,
       window,
     });
+
+    // parentWindowName
+    const parentWindowName = 'chat----------';
+
     const parentWindow =
-      BrowserWindow.fromWebContents(webContents.fromId(_.sender.id)) || windowManager.getMain();
+      windowManager.get(parentWindowName) ||
+      BrowserWindow.fromWebContents(webContents.fromId(_.sender.id)) ||
+      windowManager.getMain();
     const path = addParamsToUrl(url, { event, callerId: _.sender.id });
     console.warn('args.url', url);
     console.warn('path', path);

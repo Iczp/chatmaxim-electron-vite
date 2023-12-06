@@ -31,22 +31,28 @@ const store = useImStore();
 
 const acitveSessionUnitId = computed(() => route.params.sessionUnitId);
 
+const onItemDbClick = (item: SessionItemDto) => {
+  console.log('onItemDbClick', item);
+  openChildWindow({
+    target: `chat-${item.id}`,
+    url: `/separate-chat/${item.ownerId}/${item.id}`,
+    // event,
+    payload: { sessionUnit: item },
+    window: {
+      size: {
+        width: 480,
+        height: 640,
+      },
+    },
+  });
+};
+
 const onItemClick = (item: SessionItemDto) => {
   console.log('onDbClick', item);
-  // openChildWindow({
-  //   target: `chat-${item.id}`,
-  //   url: `/single-chat/${item.ownerId}/${item.id}`,
-  //   // event,
-  //   payload: {},
-  //   window: {
-  //     size: {
-  //       width: 480,
-  //       height: 640,
-  //     },
-  //   },
-  // });
+
   navToChat(item);
 };
+
 const navToChat = (item: SessionItemDto) => {
   // console.log(item);
   if (item.id == acitveSessionUnitId.value) {
@@ -278,6 +284,7 @@ const footerObserver = ref<HTMLElement | null>();
             v-for="(item, index) in displayItems"
             :key="item.id"
             @click="onItemClick(item)"
+            @dblclick.native="onItemDbClick(item)"
             :entity="store.getSessionUnit(item.id!)"
             :index="index"
             :active="acitveSessionUnitId == item.id"

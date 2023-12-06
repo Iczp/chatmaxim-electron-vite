@@ -12,7 +12,7 @@ export const useRemoteStore = <T>(args?: WindowParams) => {
     const event = route.query.event as string;
     storeValue.value = getStoreValue<T>(event);
     console.log('useRemoteStore', event, storeValue.value);
-    if (storeValue.value) {
+    if (storeValue.value && args) {
       setWindow(args);
       // console.log('useRemoteStore resolve');
     }
