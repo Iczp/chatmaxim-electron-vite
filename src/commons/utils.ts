@@ -98,7 +98,6 @@ export const navToChat = ({
   title?: string;
 }) => {
   router.push({
-    // path: `/message/1/${item.id}`,
     name: 'chat',
     params: {
       chatObjectId,

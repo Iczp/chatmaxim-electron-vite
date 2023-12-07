@@ -48,6 +48,8 @@ const {
   displaySenderName,
 } = useSessionUnitId(props.entity?.id!);
 // const isTopping = computed(() => Number(props.entity?.sorting) > 0);
+
+
 </script>
 
 <template>
@@ -55,6 +57,7 @@ const {
     :entity="destination"
     class="session-item"
     draggable="true"
+    
     :class="{ active }"
     :object-type="objectType?.toString()"
     @click.right.native="emits('contextmenu', { entity, event: $event })"

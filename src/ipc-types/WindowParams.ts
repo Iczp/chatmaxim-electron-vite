@@ -24,6 +24,7 @@ export type WindowParams = {
   closable?: boolean;
   movable?: boolean;
   focusable?: boolean;
+  focus?: boolean;
   close?: boolean;
   minWidth?: number;
   minHeight?: number;

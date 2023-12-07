@@ -53,6 +53,12 @@ export const useWindowStore = defineStore('window', {
           console.log('init', state);
           this.$patch(state);
           break;
+        case 'focus':
+          this.focus = true;
+          break;
+        case 'blur':
+          this.focus = false;
+          break;
         case 'maximize':
           this.isMaximized = true;
           break;

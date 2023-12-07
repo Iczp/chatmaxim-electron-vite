@@ -31,15 +31,43 @@ const store = useImStore();
 
 const acitveSessionUnitId = computed(() => route.params.sessionUnitId);
 
+const useClick = ({ delay = 500, click }: { delay?: number; click: (count: number) => void }) => {
+  let clicks: number = 0;
+  let timer: NodeJS.Timeout;
+  const onClick = (callback: (count: number) => void) => {
+    clicks++;
+    console.log('clicks', clicks);
+
+    if (clicks === 1) {
+      timer = setTimeout(() => {
+        // result.push(event.type);
+        callback(clicks);
+        clicks = 0;
+      }, delay);
+    } else {
+      clearTimeout(timer);
+      //  result.push('dblclick');
+      callback(clicks);
+      clicks = 0;
+    }
+  };
+  onClick(click);
+  return { onClick };
+};
+
+const dragend = (item: SessionItemDto) => {
+  onItemDbClick(item);
+};
 const onItemDbClick = (item: SessionItemDto) => {
   console.log('onItemDbClick', item);
   item.isSeparated = true;
+  router.push({ name: 'chat-empty' });
   openChildWindow({
-    
     url: `/separate-chat/${item.ownerId}/${item.id}`,
     // event,
     payload: { sessionUnit: store.getSessionUnit(item.id!) },
     window: {
+      focus: true,
       name: `chat-${item.id}`,
       size: {
         width: 480,
@@ -53,9 +81,17 @@ const onItemDbClick = (item: SessionItemDto) => {
 };
 
 const onItemClick = (item: SessionItemDto) => {
-  console.log('onDbClick', item);
-
+  console.log('onItemClick', item);
   navToChat(item);
+  // useClick({
+  //   click: v => {
+  //     if (v == 1) {
+  //       navToChat(item);
+  //     } else {
+  //       onItemDbClick(item);
+  //     }
+  //   },
+  // });
 };
 
 const navToChat = (item: SessionItemDto) => {
@@ -110,7 +146,9 @@ const ret = reactive<ResultValue<SessionItemDto>>({
 //     : ret.items
 //   ).slice(0, displayCount.value),
 // );
-const displayItems = computed<SessionItemDto[]>(() => ret.items.slice(0, displayCount.value));
+const displayItems = computed<SessionItemDto[]>(() =>
+  ret.items.filter(x => !x.isSeparated).slice(0, displayCount.value),
+);
 // const displayItems = computed<SessionItemDto[]>(() =>
 //   store.getSessionItems(props.chatObjectId!, queryInput.keyword).slice(0, displayCount.value),
 // );
@@ -289,11 +327,11 @@ const footerObserver = ref<HTMLElement | null>();
           <SessionItem
             v-for="(item, index) in displayItems"
             :key="item.id"
-            @click.native="onItemClick(item)"
-            @dblclick.native="onItemDbClick(item)"
             :entity="store.getSessionUnit(item.id!)"
             :index="index"
             :active="acitveSessionUnitId == item.id"
+            @click.native="onItemClick(item)"
+            @dragend="dragend(item)"
             @contextmenu="showContextMenuForSession"
           />
           <!-- </div> -->

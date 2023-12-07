@@ -59,6 +59,7 @@ export const setWindowProperties = (win: BrowserWindow, params: WindowParams) =>
   ifBoolean(params?.movable, x => (win.movable = x));
   ifBoolean(params?.resizable, x => (win.resizable = x));
   ifBoolean(params?.focusable, x => (win.focusable = x));
+  
 };
 
 /**
@@ -81,6 +82,8 @@ export const setWindowMethods = (win: BrowserWindow, params: WindowParams) => {
 
   ifTrue<string>(params?.backgroundColor, x => win.setBackgroundColor(x));
   ifBoolean(params?.isFlashFrame, x => win.flashFrame(x));
+
+  ifBoolean(params?.focus, x => win.focus());
 
   ifBoolean(params?.isPreventClose, x => preventClose(win, x));
 };
