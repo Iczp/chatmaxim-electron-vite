@@ -31,6 +31,14 @@ const store = useImStore();
 
 const acitveSessionUnitId = computed(() => route.params.sessionUnitId);
 
+const flashSessionUnitId = ref<string>();
+
+const setFlash = (sessionUnitId: string) => {
+  flashSessionUnitId.value = sessionUnitId;
+  setTimeout(() => {
+    flashSessionUnitId.value = undefined;
+  }, 1000);
+};
 const useClick = ({ delay = 500, click }: { delay?: number; click: (count: number) => void }) => {
   let clicks: number = 0;
   let timer: NodeJS.Timeout;
@@ -77,6 +85,7 @@ const onItemDbClick = (item: SessionItemDto) => {
   }).finally(() => {
     console.warn('separate-chat window is closed');
     item.isSeparated = false;
+    setFlash(item.id!);
   });
 };
 
@@ -330,6 +339,7 @@ const footerObserver = ref<HTMLElement | null>();
             :entity="store.getSessionUnit(item.id!)"
             :index="index"
             :active="acitveSessionUnitId == item.id"
+            :flash="flashSessionUnitId == item.id"
             @click.native="onItemClick(item)"
             @dragend="dragend(item)"
             @contextmenu="showContextMenuForSession"

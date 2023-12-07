@@ -1,5 +1,6 @@
 import { eventBus } from '../../commons/eventBus';
 import { useImStore } from '../../stores/im';
+import { useWindowStore } from '../../stores/window';
 import { MessageDto } from '../dtos';
 import { ReceivedDto } from './ReceivedDto';
 import * as CommandConsts from './commandConsts';
@@ -27,7 +28,7 @@ const data = {
 export const websocketHandle = (_: Electron.IpcRendererEvent, args: any) => {
   // console.log('[websocket]:', _, args);
 
-  const isEmitter = _.senderId
+  const isEmitter = _.senderId;
   const data = JSON.parse(args.payload) as ReceivedDto<any>;
   console.log('[websocket]:', _, data);
   commandHandle(data);
@@ -39,6 +40,7 @@ export const commandHandle = (args: ReceivedDto<any>) => {
   console.log('scopes', scopes);
   const store = useImStore();
   const idList = scopes.map(x => x.sessionUnitId);
+  const windowStore = useWindowStore();
   switch (command) {
     case CommandConsts.Chat:
       const message = payload as MessageDto;
@@ -52,10 +54,13 @@ export const commandHandle = (args: ReceivedDto<any>) => {
       // eventBus
       break;
     case CommandConsts.IncrementCompleted:
-      store.fetchSessionUnitMany(idList).then(() => {
-        eventBus.emit('IncrementCompleted', args);
-      });
-      store.getBadgeByCurrentUser();
+      if (windowStore.isMain()) {
+        store.fetchSessionUnitMany(idList).then(() => {
+          eventBus.emit('IncrementCompleted', args);
+        });
+        store.getBadgeByCurrentUser();
+      }
+
       break;
     case CommandConsts.SessionRequest:
       break;

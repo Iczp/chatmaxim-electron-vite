@@ -13,6 +13,7 @@ import { useImStore } from '../stores/im';
 const props = defineProps<{
   title?: string;
   active?: boolean;
+  flash?: boolean;
   entity?: SessionUnitOwnerDto;
   index?: number;
 }>();
@@ -48,8 +49,6 @@ const {
   displaySenderName,
 } = useSessionUnitId(props.entity?.id!);
 // const isTopping = computed(() => Number(props.entity?.sorting) > 0);
-
-
 </script>
 
 <template>
@@ -57,8 +56,7 @@ const {
     :entity="destination"
     class="session-item"
     draggable="true"
-    
-    :class="{ active }"
+    :class="{ active, flash }"
     :object-type="objectType?.toString()"
     @click.right.native="emits('contextmenu', { entity, event: $event })"
     sub
@@ -231,5 +229,18 @@ const {
   content: ':';
   color: #333;
   margin: 0 2px;
+}
+
+.flash {
+  animation: flash 0.5s infinite;
+}
+
+@keyframes flash {
+  from {
+    background: rgba(255, 0, 0, 0.637);
+  }
+  to {
+    background: rgba(255, 0, 0, 0);
+  }
 }
 </style>

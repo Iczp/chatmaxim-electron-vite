@@ -111,8 +111,6 @@ const afterOpenChange = (bool: boolean) => {
   // console.log('open', bool);
 };
 
-
-
 const _onDeactivated = () => {
   activeLastMessageId.value = lastMessageId.value;
   localReadedMessageId.value = readedMessageId.value;
@@ -159,7 +157,7 @@ const _onActivated = () => {
   localReadedMessageId.value = readedMessageId.value;
   store.clearBadge(chatObjectId, sessionUnitId);
   console.log('onActivated', destinationName.value);
-  if (lastMessageId.value) {
+  if (lastMessageId.value && Number(lastMessageId.value) > Number(readedMessageId.value)) {
     setReadedMessageId({ sessionUnitId, messageId: lastMessageId.value! });
   }
 };
