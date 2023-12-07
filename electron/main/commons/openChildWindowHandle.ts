@@ -18,18 +18,11 @@ const preload = join(__dirname, '../preload/index.js');
 export const openChildWindowHandle = (
   _: Electron.IpcMainInvokeEvent,
   {
-    target,
     event,
     url,
     payload,
     window,
   }: {
-    /**
-     * window name
-     *
-     * @type {string}
-     */
-    target: string;
     event: string;
     url: string;
     payload: any;
@@ -37,35 +30,25 @@ export const openChildWindowHandle = (
   },
 ): any => {
   return new Promise((resolve, reject) => {
-    console.log('open-child', {
-      target,
-      payload,
-      window,
-    });
+    console.log('open-child', { payload, window });
 
-    // parentWindowName
-    const parentWindowName = 'chat----------';
-
-    const parentWindow =
-      windowManager.get(parentWindowName) ||
-      BrowserWindow.fromWebContents(webContents.fromId(_.sender.id)) ||
-      windowManager.getMain();
+    const parent = windowManager.get(window.parent);
+    // || BrowserWindow.fromWebContents(webContents.fromId(_.sender.id)) || windowManager.getMain();
     const path = addParamsToUrl(url, { event, callerId: _.sender.id });
     console.warn('args.url', url);
     console.warn('path', path);
-    let childWindow = windowManager.get(target);
+    let childWindow = windowManager.get(window.name);
     if (!childWindow) {
       childWindow = windowManager.set(
-        target,
+        window.name,
         createChildWindow({
-          parent: parentWindow,
-          name: target,
+          parent,
           path,
           isModel: window.isModel || false,
           isPreventClose: true,
         }),
       );
-      childWindow.on('closed', e => windowManager.remove(target));
+      childWindow.on('closed', e => windowManager.remove(window.name));
     }
     childWindow.webContents.send('navigate', path);
     // args.callerId = _.sender.id;
@@ -98,13 +81,11 @@ export const openChildWindowHandle = (
 };
 
 export const createChildWindow = ({
-  name,
   path,
   isModel,
   isPreventClose,
   parent,
 }: {
-  name: string;
   path: string;
   isModel: boolean;
   isPreventClose?: boolean;

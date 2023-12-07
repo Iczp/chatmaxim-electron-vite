@@ -9,7 +9,6 @@ export type PickerResult = {
 
 export const openChildWindow = (args: {
   url: string;
-  target: string | 'session-request' | 'object-picker';
   event?: string;
   payload?: any;
   window?: WindowParams;

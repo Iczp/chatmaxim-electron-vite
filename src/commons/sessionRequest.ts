@@ -19,10 +19,12 @@ export const sessionRequest = ({
   window?: WindowParams;
 }): Promise<PickerResult> =>
   openChildWindow({
-    target: 'session-request',
+   
     url: `/session-request/${payload.params.ownerId}`,
     payload,
     window: {
+      name: 'session-request',
+      parent:'main',
       isModel: true,
       isPreventClose: true,
       size: {

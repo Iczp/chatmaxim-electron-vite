@@ -35,11 +35,12 @@ const onItemDbClick = (item: SessionItemDto) => {
   console.log('onItemDbClick', item);
   item.isSeparated = true;
   openChildWindow({
-    target: `chat-${item.id}`,
+    
     url: `/separate-chat/${item.ownerId}/${item.id}`,
     // event,
     payload: { sessionUnit: store.getSessionUnit(item.id!) },
     window: {
+      name: `chat-${item.id}`,
       size: {
         width: 480,
         height: 640,

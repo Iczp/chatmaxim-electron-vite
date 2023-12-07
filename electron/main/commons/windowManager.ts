@@ -18,6 +18,9 @@ class WindowManger {
     return win;
   }
   get(name: string): BrowserWindow | undefined {
+    if (!name) {
+      return undefined;
+    }
     return this.windows[name];
   }
   getName(win: BrowserWindow): string {
@@ -39,8 +42,8 @@ class WindowManger {
     delete this.windowsMap[this.windows[name].id];
     delete this.windows[name];
   }
-  isSeparatedChat(name: string){
-    return /^chat-.+$/.test(name)
+  isSeparatedChat(name: string) {
+    return /^chat-.+$/.test(name);
   }
 }
 

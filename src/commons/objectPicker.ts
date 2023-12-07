@@ -27,11 +27,12 @@ export const objectPicker = ({
   const ticks = new Date().getTime();
   const event = `${payload.chatObjectId}-${ticks}`;
   return openChildWindow({
-    target: 'object-picker',
     url: `/object-picker/${payload.chatObjectId}`,
     event,
     payload,
     window: window || {
+      name: 'object-picker',
+      parent:'main',
       isModel: true,
       isPreventClose: true,
       size: {

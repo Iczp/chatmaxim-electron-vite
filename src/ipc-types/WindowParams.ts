@@ -1,6 +1,12 @@
 import { Size } from './Size';
 
 export type WindowParams = {
+  /**
+   * 父窗口名称
+   *
+   * @type {string}
+   */
+  parent?: string;
   isModel?: boolean;
   frame?: boolean;
   name?: string;
