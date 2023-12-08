@@ -5,8 +5,10 @@
 import { getLocalToken, getToken, isTokenUrl } from '../auth/TokenController';
 import type { ApiRequestOptions } from './ApiRequestOptions';
 import { version as packageVersion } from '../../../package.json';
+import { useWindowStore } from '../../stores/window';
 type Resolver<T> = (options: ApiRequestOptions) => Promise<T>;
 type Headers = Record<string, string>;
+import { version } from '../../../package.json';
 
 export type OpenAPIConfig = {
   BASE: string;
@@ -22,15 +24,19 @@ export type OpenAPIConfig = {
 };
 
 export const OpenAPI: OpenAPIConfig = {
-  BASE: 'http://10.0.5.20:8044',
-  AUTH_HOST: 'http://10.0.5.20:8043',
+  BASE: import.meta.env.VITE_APP_BASEURL,
+  AUTH_HOST: import.meta.env.VITE_APP_AUTH_HOST,
   VERSION: packageVersion,
   WITH_CREDENTIALS: false,
   CREDENTIALS: 'include',
   TOKEN: undefined,
   USERNAME: undefined,
   PASSWORD: undefined,
-  HEADERS: undefined,
+  HEADERS: {
+    'app-id': import.meta.env.VITE_APP_ID,
+    'app-version': version,
+    'app-platform': process.platform,
+  },
   ENCODE_PATH: undefined,
 };
 

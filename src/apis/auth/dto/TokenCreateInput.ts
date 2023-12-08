@@ -7,7 +7,7 @@ export type TokenCreateInput = TokenInputBase & {
    * @type {string}
    * @memberof TokenCreateInput
    */
-  username: string;
+  username?: string;
 
   /**
    * 密码

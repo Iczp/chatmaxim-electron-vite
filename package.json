@@ -11,7 +11,10 @@
     "rollup",
     "vite",
     "vue3",
-    "vue"
+    "vue",
+    "im",
+    "chat",
+    "typescript"
   ],
   "debug": {
     "env": {

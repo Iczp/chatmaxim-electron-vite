@@ -39,11 +39,11 @@ export const isLogined = (): boolean => getLocalToken() != null;
 export const login = ({ username, password }: LoginInput): Promise<LoginResult> => {
   return new Promise((resolve, reject) => {
     TokenService.fetchToken({
-      client_id: 'IM_App',
-      // client_secret: '1q2w3E*',
+      client_id: import.meta.env.VITE_APP_CLIENT_ID,
+      client_secret: import.meta.env.VITE_APP_CLIENT_SECRET,
       grant_type: GrantTypeEnum.Password,
-      username: username || 'admin',
-      password: password || '1q2w3E*',
+      username,
+      password,
       scope: 'IM offline_access roles profile phone email address',
     })
       .then(token => {
@@ -88,8 +88,8 @@ export const handleToken = (token: TokenDto): TokenDto => {
  */
 export const refreshToken = async (token: TokenDto) => {
   var newToken = await TokenService.RefreshToken({
-    client_id: 'IM_App',
-    // client_secret: '1q2w3E*',
+    client_id: import.meta.env.VITE_APP_CLIENT_ID,
+    client_secret: import.meta.env.VITE_APP_CLIENT_SECRET,
     refresh_token: token.refresh_token,
     grant_type: GrantTypeEnum.Refresh_token,
   });
