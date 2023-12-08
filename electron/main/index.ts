@@ -2,14 +2,15 @@ import { app, BrowserWindow, ipcMain, webContents } from 'electron';
 import { release } from 'node:os';
 import { join } from 'node:path';
 import Store from 'electron-store';
-import { Size } from './ipc-types';
 import { openChildWindowHandle } from './commons/openChildWindowHandle';
 import { createMainWindow } from './commons/createMainWindow';
 import { windowSettingHandle } from './commons/windowSettingHandle';
 import { initMachine } from './commons/machine';
-import './commons/logger';
+
 import { websocketHandle } from './commons/webscoketHandle';
 import { globalState } from './global';
+import './commons/logger';
+import './commons/tray';
 //
 Store.initRenderer();
 
@@ -78,7 +79,6 @@ app.on('second-instance', () => {
     win.focus();
   }
 });
-
 
 app.on('before-quit', e => {
   globalState.isAppQuitting = true;

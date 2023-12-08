@@ -5,7 +5,7 @@ import { ChatOn,Chating } from '../icons';
 </script>
 
 <template>
-  <page class="empty">
+  <page class="empty drag">
     <page-title />
     <!-- <h1>welcome...</h1>
     <h2>{{ router.currentRoute.value.params.chatObjectId }}</h2> -->
