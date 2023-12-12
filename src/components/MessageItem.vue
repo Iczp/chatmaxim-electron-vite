@@ -152,7 +152,7 @@ const onMessageClick = (event: MouseEvent, mouseButton: MouseButton) => {
             <!-- 消息 End -->
             <div>
               <!-- messageState: {{ messageState }} -->
-              <MsgState :state="messageState" />
+              <MsgState :entity="entity" :state="messageState" />
             </div>
           </main>
 

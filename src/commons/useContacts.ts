@@ -58,7 +58,8 @@ export const useContacts = ({
   };
 
   const isChecked = (item: ContactsDto): boolean => selectedList.value.some(x => x.id == item.id);
-  const isDisabled = (item: ContactsDto): boolean => disabledList.value.some(x => x.id == item.id);
+  const isDisabled = (item: ContactsDto): boolean =>
+    disabledList.value.some(x => x.id == item.id) || !item.setting?.isInputEnabled || false;
   const toggleChecked = (item: ContactsDto): void => {
     console.log('item', item);
     if (isDisabled(item)) {

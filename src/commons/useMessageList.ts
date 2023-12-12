@@ -19,7 +19,9 @@ export const useMessageList = ({
 }) => {
   const maxMessageId = ref<number | undefined>();
   const minMessageId = ref<number | undefined>();
+  const isPendingOfFetchHistorical = ref(false);
   const isPendingOfFetchLatest = ref(false);
+
   const isBof = ref(false);
   const isEof = ref(false);
   const latestMessageCount = ref<number>(0);
@@ -70,35 +72,52 @@ export const useMessageList = ({
     return items;
   };
 
-  const fetchLatest = async ({ caller }: { caller?: string }): Promise<FetchMessageResult> => {
-    // minMessageId.value = args?.minMessageId || maxMessageId.value;
-    if (isPendingOfFetchLatest.value) {
-      throw new Error(`caller:${caller},isPendingForFetchLatest:${isPendingOfFetchLatest.value}`);
-    }
-    isPendingOfFetchLatest.value = true;
-    console.warn('caller', caller);
-    const items = await fetchItems({ minMessageId: maxMessageId.value }, true);
-    isPendingOfFetchLatest.value = false;
-    console.log(
-      'fetchLatest',
-      items.map(x => x.id),
-    );
-    return { items, list, maxResultCount };
-  };
+  const fetchLatest = async ({ caller }: { caller?: string }): Promise<FetchMessageResult> =>
+    new Promise(async (resolve, reject) => {
+      if (isPendingOfFetchLatest.value) {
+        reject(`caller:${caller},isPendingForFetchLatest:${isPendingOfFetchLatest.value}`);
+        return;
+      }
+      isPendingOfFetchLatest.value = true;
+      console.warn('caller', caller);
+      fetchItems({ minMessageId: maxMessageId.value }, true)
+        .then(items => {
+          console.log(
+            'fetchLatest',
+            items.map(x => x.id),
+          );
+          resolve({ items, list, maxResultCount });
+        })
+        .catch(reject)
+        .finally(() => {
+          isPendingOfFetchLatest.value = false;
+        });
+    });
 
-  const fetchHistorical = async (): Promise<FetchMessageResult> => {
-    if (isBof.value) {
-      throw new Error('没有了');
-    }
-    const items = await fetchItems({ maxMessageId: minMessageId.value }, false);
-    isBof.value = items.length < maxResultCount;
-    list.value = items.concat(list.value);
-    console.log(
-      'fetchHistorical',
-      items.map(x => x.id),
-    );
-    return { items, list, maxResultCount };
-  };
+  const fetchHistorical = (): Promise<FetchMessageResult> =>
+    new Promise(async (resolve, reject) => {
+      if (isBof.value) {
+        reject({ message: '没有了' });
+        return;
+      }
+      isPendingOfFetchHistorical.value = true;
+      fetchItems({ maxMessageId: minMessageId.value }, false)
+        .then(items => {
+          isBof.value = items.length < maxResultCount;
+          list.value = items.concat(list.value);
+          console.log(
+            'fetchHistorical',
+            items.map(x => x.id),
+          );
+          resolve({ items, list, maxResultCount });
+        })
+        .catch(err => {
+          reject(err);
+        })
+        .finally(() => {
+          isPendingOfFetchHistorical.value = false;
+        });
+    });
 
   const onMessage = (callback: (e: MessageDto) => void): void => {
     eventBus.on('chat', ([data, receivedMessage]) => {
@@ -129,5 +148,7 @@ export const useMessageList = ({
     onMessage,
     offMessage,
     cancelChecked,
+    isPendingOfFetchLatest,
+    isPendingOfFetchHistorical,
   };
 };

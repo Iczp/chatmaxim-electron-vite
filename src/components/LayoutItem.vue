@@ -108,7 +108,7 @@ defineProps<{
 .title-container {
   display: flex;
   justify-content: space-between;
-  color: rgba(0, 0, 0, 1);
+  /* color: rgba(0, 0, 0, 1); */
   font-size: 14px;
   min-height: 28px;
   align-items: center;
@@ -129,7 +129,7 @@ defineProps<{
 
 .sub-container {
   position: relative;
-  color: rgb(150, 150, 150);
+  /* color: rgb(150, 150, 150); */
   font-size: 12px;
   min-height: 20px;
 }

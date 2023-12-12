@@ -30,6 +30,7 @@ import { MessageTypeEnums } from '../apis/enums/MessageTypeEnums';
 import { useSessionUnitDetail } from '../commons/useSessionUnitDetail';
 import { setReadedMessageId } from '../commons/setting';
 import { formatMessage } from '../commons/utils';
+import { sendMessage } from '../commons/sendMessage';
 
 const store = useImStore();
 
@@ -77,6 +78,8 @@ const {
   latestMessageCount,
   isBof,
   cancelChecked,
+  isPendingOfFetchLatest,
+  isPendingOfFetchHistorical,
 } = useMessageList({ sessionUnitId });
 
 const chatInput = ref<InstanceType<typeof ChatInput> | null>(null);
@@ -180,69 +183,45 @@ if (isSeparated) {
 }
 
 const onSend = async ({ event, value }: any) => {
-  console.log('send', textValue.value);
-  isSendBtnEnabled.value = false;
-  const autoId = store.generateMessageId();
-  const messageDto: MessageDto = formatMessage({
-    sessionUnitId,
-    items: [
-      {
-        autoId,
-        isSelf: true,
-        isShowTime: true,
-        messageType: MessageTypeEnums.Text,
-        senderName: detail.value?.owner?.name,
-        senderSessionUnit: detail.value,
-        content: {
-          text: value,
-        },
-        state: MessageStateEnums.Sending,
-        creationTime: new Date().toUTCString(),
-      },
-    ],
-    lastItem: list.value.length > 0 ? list.value[list.value.length - 1] : undefined,
-  })[0];
-  list.value.push(messageDto);
-
-  // scroll.value?.scrollTo({ duration: 1500 });
-  const removeItem = () => {
-    const findIndex = list.value?.findIndex(x => x.autoId == messageDto.autoId);
+  const removeItem = (autoId?: number) => {
+    const findIndex = list.value?.findIndex(x => x.autoId == autoId);
     console.log('findIndex', findIndex);
     if (findIndex != -1) {
       list.value.splice(findIndex, 1);
     }
   };
-  // return;
-  MessageSenderService.postApiChatMessageSenderSendText({
-    sessionUnitId: sessionUnitId,
-    requestBody: {
-      quoteMessageId: quoteMessage.value?.id,
-      ignoreConnections: null,
-      remindList: [],
-      content: messageDto.content,
+
+  sendMessage({
+    sessionUnitId,
+    senderSessionUnit: detail.value,
+    messageType: MessageTypeEnums.Text,
+    lastItem: list.value.length > 0 ? list.value[list.value.length - 1] : undefined,
+    quoteMessageId: quoteMessage.value?.id,
+    content: {
+      text: value,
     },
-  })
-    .then(res => {
-      console.log('sendRet', res);
-      store.setMaxMessageId(res.id!);
-      store.setLastMessageForSender(res);
+    onBefore(input) {
+      isSendBtnEnabled.value = false;
+      list.value.push(input);
+    },
+    onSuccess(entity, input) {
       chatInput.value?.clear();
       quoteMessage.value = null;
       fetchLatest({ caller: 'onSend' })
         .then(({ items, list }) => {
-          removeItem();
+          removeItem(input.autoId);
           list.value = list.value.concat(items);
           scroll.value?.scrollTo({ duration: 1500 });
         })
         .catch(err => {
-          removeItem();
+          removeItem(input.autoId);
           console.error(err);
         });
-    })
-    .catch((err: ApiError) => {
-      removeItem();
+    },
+    onError(err, input) {
+      removeItem(input.autoId);
       list.value.push({
-        ...messageDto,
+        ...input,
         state: MessageStateEnums.Error,
         error: err.body.error.message,
       });
@@ -252,10 +231,11 @@ const onSend = async ({ event, value }: any) => {
         key: 'vm-chat',
         content: err.body.error.message,
       });
-    })
-    .finally(() => {
+    },
+    onAfter(input) {
       isSendBtnEnabled.value = true;
-    });
+    },
+  });
 };
 
 const onRemoveQuoteMessage = () => (quoteMessage.value = undefined);
@@ -284,7 +264,6 @@ const showContextMenu = ({ labelType, mouseButton, event, entity }: ContextmenuI
     },
   });
 
-const isStartPosting = ref(false);
 const onReachStart = (event: CustomEvent) => {
   const el = event.target as HTMLElement;
   console.info('onReachStart');
@@ -293,14 +272,13 @@ const onReachStart = (event: CustomEvent) => {
     console.error('onReachStart isBof', isBof.value);
     return;
   }
-  if (isStartPosting.value) {
+  if (isPendingOfFetchHistorical.value) {
     return;
   }
   if (!isReachStart) {
     console.error('onReachStart', isReachStart);
     return;
   }
-  isStartPosting.value = true;
 
   const originalScrollHeight = scrollElement.value?.scrollHeight || 0;
   console.log('originalScrollHeight', originalScrollHeight);
@@ -312,13 +290,12 @@ const onReachStart = (event: CustomEvent) => {
       const scrollTop = newScrollHeight - originalScrollHeight - loadingHeight.value * 2;
 
       scroll.value?.scrollTo({ to: scrollTop, duration: 0 });
-      isStartPosting.value = false;
+
       nextTick(() => {
         // console.log('scrollHeight nextTick', scrollElement.value?.scrollHeight);
       });
     })
     .catch(err => {
-      isStartPosting.value = false;
       console.log(err);
     });
 };
@@ -429,13 +406,14 @@ const mouseleave = (e: MouseEvent) => {
       >
         <ChatSetting :entity="info!" :sessionUnitId="sessionUnitId" />
       </a-drawer>
+
       <scroll-view
         class="message-container"
         ref="scroll"
         @ps-y-reach-start="onReachStart"
         @ps-y-reach-end="onReachEnd"
       >
-        <Loading v-if="isStartPosting" :height="loadingHeight" />
+        <Loading v-if="isPendingOfFetchHistorical" :height="loadingHeight" />
         <MessageItem
           v-for="(item, index) in list"
           :key="item.id || item.autoId"
@@ -448,8 +426,10 @@ const mouseleave = (e: MouseEvent) => {
             <a-divider class="divider-latest">以下是新消息</a-divider>
           </template>
         </MessageItem>
+
+        <Loading v-if="isPendingOfFetchLatest" :height="loadingHeight" text="正在收取消息..." />
       </scroll-view>
-      <div class="latest-counter">有 {{ latestMessageCount }} 条最新消息</div>
+      <!-- <div class="latest-counter">有 {{ latestMessageCount }} 条最新消息</div> -->
     </page-content>
     <page-footer class="footer">
       <ChatInput

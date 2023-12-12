@@ -267,7 +267,9 @@ onMounted(() => {
       </div>
       <a-space size="large">
         <a-button type="default" @click="onCancle">取消</a-button>
-        <a-button type="primary" @click="onConfirm">确定转发({{ selectedList.length }})</a-button>
+        <a-button type="primary" @click="onConfirm" :disabled="selectedList.length == 0">
+          确定转发({{ selectedList.length }})
+        </a-button>
       </a-space>
     </page-footer>
   </page>
@@ -285,15 +287,20 @@ onMounted(() => {
   justify-content: space-between;
   padding: 4px 12px;
 }
+.contacts-item:hover {
+  background-color: rgba(248, 248, 248, 0.5);
+}
+.checked,
+.checked:hover {
+  background: linear-gradient(135deg, #ddefff, #e9ffeb) border-box;
+}
 .check-box {
   margin: 0 var(--split-size);
 }
 .chat-object {
   flex: 1;
 }
-.contacts-item:hover {
-  background-color: rgba(248, 248, 248, 2480.5);
-}
+
 .footer {
   /* justify-content: space-between;
   padding: 0 24px; */
