@@ -1,27 +1,18 @@
+import { IdInput } from '../apis/dtos';
 import { WindowParams } from '../ipc-types';
-import { PickerResult, openChildWindow, sendPickerResult } from './openChildWindow';
-// import { WindowParams } from './setWindow';
+import { PickerInput, PickerResult, openChildWindow, sendPickerResult } from './openChildWindow';
 
-export type ObjectPickerResult = PickerResult & {
-  /**
-   * sessionUnitId List
-   *
-   * @type {Array<{
-   *     id: string;
-   *   }>}
-   */
-  selectedItems?: Array<{
-    id: string;
-  }>;
+export type ObjectPickerResult = PickerResult & PickerInput;
+
+export type ObjectPickerPayLoad = PickerInput & {
+  chatObjectId: number;
 };
+
 export const objectPicker = ({
   payload,
   window,
 }: {
-  payload: {
-    chatObjectId: number;
-    selectedItems?: Array<any>;
-  };
+  payload: ObjectPickerPayLoad;
   window?: WindowParams;
 }): Promise<ObjectPickerResult> => {
   const ticks = new Date().getTime();
@@ -32,7 +23,7 @@ export const objectPicker = ({
     payload,
     window: window || {
       name: 'object-picker',
-      parent:'main',
+      parent: 'main',
       isModel: true,
       isPreventClose: true,
       size: {

@@ -1,4 +1,4 @@
-import { onMounted, ref, watch } from 'vue';
+import { WatchCallback, WatchOptions, onMounted, ref, watch } from 'vue';
 import { useRoute } from 'vue-router';
 import { getStoreValue } from './openChildWindow';
 import { setWindow } from './setWindow';
@@ -23,5 +23,11 @@ export const useRemoteStore = <T>(args?: WindowParams) => {
     v => _fn('watch route'),
   );
 
+  const watchValue = (
+    cb: WatchCallback<T | undefined, T | undefined>,
+    options?: WatchOptions<false> | undefined,
+  ) => {
+    watch(storeValue, cb, options);
+  };
   return storeValue;
 };

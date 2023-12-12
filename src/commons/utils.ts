@@ -9,7 +9,7 @@ import {
   SessionUnitOwnerDto,
   TextDto,
 } from '../apis/dtos';
-import { MessageTypeEnums } from '../apis/enums';
+import { MessageStateEnums, MessageTypeEnums } from '../apis/enums';
 import { formatText } from './formatWords';
 /**
  * toQueryString
@@ -238,4 +238,66 @@ export const sortSessionItemDto = (a: SessionItemDto, b: SessionItemDto): number
 export const mapToSessionItemDto = (x: SessionUnitOwnerDto): SessionItemDto => {
   const { id, ownerId, sorting, lastMessageId } = x;
   return { id, ownerId, sorting, lastMessageId };
+};
+
+
+/**
+ * 格式化消息
+ *
+ * @param {{
+*   sessionUnitId: string;
+*   items: MessageDto[];
+*   timespan?: number;
+*   lastItem?: MessageDto;
+* }} {
+*   sessionUnitId,
+*   items,
+*   timespan = 1000 * 60 * 3,
+*   lastItem = undefined,
+* }
+* @return {*}  {MessageDto[]}
+*/
+export const formatMessage = ({
+ sessionUnitId,
+ items,
+ timespan = 1000 * 60 * 3,
+ lastItem = undefined,
+}: {
+ sessionUnitId: string;
+ items: MessageDto[];
+ timespan?: number;
+ lastItem?: MessageDto;
+}): MessageDto[] => {
+ // 3分钟
+ // const Split_Time = 1000 * 60 * 3
+ // 时间分组
+ let splitTime = timespan || 1000 * 60 * 3;
+ let getTmpSendTime = (item: MessageDto): Date | undefined => new Date(item?.creationTime!);
+ let tmpTime: Date | undefined = lastItem ? getTmpSendTime(lastItem) : undefined;
+
+ items.map(item => {
+   // console.error('item.isReverse', item.isReverse)
+
+   item.isSelf = sessionUnitId == item.senderSessionUnit?.id;
+   // item.sendTime = getTmpSendTime(item);
+   if (typeof item.state == 'undefined') {
+     item.state = MessageStateEnums.Ok;
+   }
+
+   //时间分组
+   if (tmpTime == null) {
+     item.isShowTime = true;
+     tmpTime = getTmpSendTime(item);
+   } else {
+     let sp = new Date(item.creationTime!).getTime() - tmpTime.getTime();
+     // console.error(sp);
+     if (sp > splitTime) {
+       item.isShowTime = true;
+       tmpTime = getTmpSendTime(item);
+     } else {
+       item.isShowTime = false;
+     }
+   }
+ });
+ return items;
 };

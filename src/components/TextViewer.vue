@@ -13,7 +13,7 @@ const onWordClick = (item: WordDto) => {
 </script>
 
 <template>
-  <span class="word">
+  <span class="word" :title="`count:${words.length}`">
     <!-- {{ words }} -->
     <!-- {{ value }} -->
     <template v-for="(item, index) in words" :key="index">
@@ -52,9 +52,8 @@ const onWordClick = (item: WordDto) => {
 <style scoped>
 .word {
   word-wrap: break-word;
-  white-space: wrap;
-  word-wrap: break-word;
   word-break: break-all;
+  white-space: break-spaces;
 }
 
 .uid {

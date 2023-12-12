@@ -80,7 +80,8 @@ export const forwardMessage = ({
   objectPicker({
     payload: {
       chatObjectId,
-      // selectedItems: [],
+      selectedItems: [],
+      disabledItems: [{ id: sessionUnitId }],
     },
   })
     .then(v => {
@@ -91,7 +92,7 @@ export const forwardMessage = ({
       MessageSenderService.postApiChatMessageSenderForward({
         sessionUnitId,
         messageId,
-        requestBody: v.selectedItems?.map(x => x.id) || [],
+        requestBody: v.selectedItems?.map(x => x.id!) || [],
       })
         .then(res => {
           message.success({ content: '转发成功!', key });

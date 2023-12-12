@@ -1,13 +1,16 @@
 <script setup lang="ts">
-import { reactive, ref } from 'vue';
+import { onMounted, reactive, ref, toRaw, watch } from 'vue';
 import { generateTickect } from '../apis/websockets';
-import { ChatObjectDto, ResultValue } from '../apis/dtos';
+import { ChatObjectDto, IdInput, ResultValue } from '../apis/dtos';
 import { ChatObjectService, OfficialService, SessionRequestService } from '../apis';
 import { ChatObjectTypeEnumText, ChatObjectTypeEnums } from '../apis/enums';
 import { useTitle } from '@vueuse/core';
-import { sendResult } from '../commons/objectPicker';
+import { ObjectPickerPayLoad, sendResult } from '../commons/objectPicker';
 import { onBeforeRouteLeave, onBeforeRouteUpdate, useRoute } from 'vue-router';
 import { useRemoteStore } from '../commons/useRemoteStore';
+import { useContacts } from '../commons/useContacts';
+import ChatObject from '../components/ChatObject.vue';
+import Loading from '../components/Loading.vue';
 
 const route = useRoute();
 
@@ -15,11 +18,45 @@ const title = useTitle((route.query.title as string) ?? '转发');
 
 const props = defineProps<{
   title?: string;
-  chatObjectId: Number;
-  ticks?: Number;
+  chatObjectId: number;
+  ticks?: number;
 }>();
 
-const remoteStore = useRemoteStore<{}>();
+const {
+  isChecked,
+  isDisabled,
+  isPending,
+  list,
+  selectedList,
+  disabledList,
+  isBof,
+  isEof,
+  fetchData,
+  fetchNext,
+  query,
+  totalCount,
+  maxSelectCount,
+  toggleChecked,
+  picker,
+} = useContacts({
+  input: { ownerId: props.chatObjectId! },
+});
+
+watch(
+  () => props.chatObjectId,
+  v => {
+    query.value.ownerId = v;
+    list.value = [];
+    fetchNext();
+  },
+);
+const remoteStore = useRemoteStore<ObjectPickerPayLoad>();
+watch(
+  () => remoteStore.value,
+  v => {
+    picker.value = v;
+  },
+);
 
 const isLoading = ref(false);
 
@@ -44,7 +81,6 @@ onBeforeRouteLeave((to, from) => {
 
 // 与 onBeforeRouteUpdate 相同，无法访问 `this`
 onBeforeRouteUpdate((to, from) => {
-  title.value = route.fullPath;
   console.log('onBeforeRouteUpdate', to, from);
 });
 
@@ -118,40 +154,85 @@ const onConfirm = (): void => {
   sendResult(event as string, {
     success: true,
     message: 'ok',
-    selectedItems: [{ id: 'abc123' }],
+    selectedItems: toRaw(selectedList.value),
   });
 };
+
+const onReachStart = (event: CustomEvent) => {
+  console.info('onReachStart');
+};
+const onReachEnd = (event: CustomEvent) => {
+  const el = event.target as HTMLElement;
+  console.info('onReachEnd');
+  const isReachEnd = el.scrollTop != 0; //&& el.scrollTop > el.offsetHeight;
+  if (!isReachEnd) {
+    console.error(
+      'onReachEnd',
+      isReachEnd,
+      el.clientHeight,
+      el.offsetHeight,
+      el.scrollHeight,
+      el.scrollTop,
+    );
+    return;
+  }
+
+  fetchNext();
+};
+
+onMounted(() => {
+  fetchNext();
+});
 </script>
 
 <template>
   <page :loading="isLoading">
-    <page-title :title="title || chatObjectId" description="Electron + Vite + TypeScript" />
-    <page-content>
-      <scroll-view>
-        <a-tabs v-model:activeKey="activeKey">
-          <a-tab-pane key="all" tab="所有">所有</a-tab-pane>
-          <a-tab-pane v-for="(item, index) in objectTypes" :key="index" :tab="item.text">
-            {{ item.text }} ({{ item.key }} )
-          </a-tab-pane>
-          <template #leftExtra>
-            <a-button type="text" class="tabs-extra-demo-button">Left</a-button>
-          </template>
-          <template #rightExtra>
-            <a-input-search
-              v-model:value="keyword"
-              placeholder="搜索：公众号"
-              enter-button
-              @search="onSearch"
-            />
-          </template>
-        </a-tabs>
+    <page-title :title="title || chatObjectId" />
 
-        <h2 @click="onClick">{{ count }}</h2>
-        <a-space>
-          <a-button @click="onClick">Connect to websocket</a-button>
-          <RouterLink to="/contacts/13?id=321">Contacts:13</RouterLink>
-          <RouterLink to="/contacts/14?id=321">Contacts:14</RouterLink>
-        </a-space>
+    <page-content>
+      <a-tabs v-model:activeKey="activeKey">
+        <a-tab-pane key="all" tab="所有">所有</a-tab-pane>
+        <a-tab-pane v-for="(item, index) in objectTypes" :key="index" :tab="item.text">
+          <!-- {{ item.text }} ({{ item.key }} ) -->
+        </a-tab-pane>
+        <!-- <template #leftExtra>
+          <a-button type="text" class="tabs-extra-demo-button">Left</a-button>
+        </template>
+        <template #rightExtra>
+          <a-input-search
+            v-model:value="keyword"
+            placeholder="搜索：公众号"
+            enter-button
+            @search="onSearch"
+          />
+        </template> -->
+      </a-tabs>
+      <scroll-view @ps-y-reach-end="onReachEnd" @ps-y-reach-start="onReachStart">
+        <div class="contacts-list">
+          <div
+            v-for="(item, index) in list"
+            :key="item.id"
+            class="contacts-item"
+            :class="{ checked: isChecked(item), disabled: isDisabled(item) }"
+            @click="toggleChecked(item)"
+          >
+            <a-checkbox
+              :checked="isChecked(item)"
+              :disabled="isDisabled(item)"
+              class="check-box"
+            ></a-checkbox>
+            <chat-object :entity="item.destination" class="chat-object" :size="32">
+              <!-- <template #title>title-left</template> -->
+              <!-- <template #title-right>title-right555</template> -->
+              <!-- <template #sub>sub-left555</template> -->
+              <template #footer>
+                <!-- <a-button @click="addFriend(item)">添加/关注</a-button> -->
+              </template>
+            </chat-object>
+          </div>
+          <Loading v-if="isPending" :height="48" />
+          <div>总数:{{ list.length }}/{{ totalCount }}</div>
+        </div>
 
         <div>
           {{ ChatObjectTypeEnumText }}
@@ -176,27 +257,49 @@ const onConfirm = (): void => {
             </a-input-group>
           </a-space>
         </div>
-        <!-- <a-loading></a-loading> -->
-        <h3 v-for="(item, index) in searchResult.items">
-          {{ item.fullPathName }} - {{ item.id }}
-          <a-button @click="addFriend(item)">添加/关注</a-button>
-        </h3>
-
-        <p>Lorem Ipsum is simply dummy text of the printing and typesetting industry.</p>
       </scroll-view>
     </page-content>
     <page-footer class="footer">
+      <div class="select-result">
+        已选择
+        <b>{{ selectedList.length }}</b>
+        项
+      </div>
       <a-space size="large">
         <a-button type="default" @click="onCancle">取消</a-button>
-        <a-button type="primary" @click="onConfirm">确定转发(1)</a-button>
+        <a-button type="primary" @click="onConfirm">确定转发({{ selectedList.length }})</a-button>
       </a-space>
     </page-footer>
   </page>
 </template>
 
 <style scoped>
+.contacts-list {
+  display: flex;
+  flex-direction: column;
+  --split-size: 12px;
+}
+.contacts-item {
+  display: flex;
+  flex-direction: row-reverse;
+  justify-content: space-between;
+  padding: 4px 12px;
+}
+.check-box {
+  margin: 0 var(--split-size);
+}
+.chat-object {
+  flex: 1;
+}
+.contacts-item:hover {
+  background-color: rgba(248, 248, 248, 2480.5);
+}
 .footer {
-  justify-content: flex-end;
-  padding: 0 24px;
+  /* justify-content: space-between;
+  padding: 0 24px; */
+}
+.select-result {
+  color: gray;
+  font-size: 12px;
 }
 </style>

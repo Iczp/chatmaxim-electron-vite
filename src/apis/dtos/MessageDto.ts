@@ -17,6 +17,13 @@ export type MessageDto = MessageOwnerDto & {
   isShowTime?: boolean;
 
   /**
+   * 发送时间，格式化后的CreationTime
+   *
+   * @type {string}
+   */
+  sendTime?:string;
+
+  /**
    * 是否选择中
    *
    * @type {boolean}

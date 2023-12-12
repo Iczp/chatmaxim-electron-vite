@@ -30,6 +30,7 @@ export type ContextmenuLabel = {
 };
 
 export type MessageContextMenuInput = ContextmenuParams & {
+  chatObjectId: number;
   sessionUnitId: string;
   selectable: Ref<boolean | undefined>;
   playMessageId: Ref<number | undefined>;

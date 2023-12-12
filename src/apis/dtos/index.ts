@@ -1,3 +1,5 @@
+export type { SelectableDto } from './SelectableDto';
+export type { IdInput } from './IdInput';
 export type { GetListInput } from './GetListInput';
 export type { PagedResultDto } from './PagedResultDto';
 export type { ResultValue } from './ResultValue';
@@ -13,6 +15,8 @@ export type { EntryNameDto } from './EntryNameDto';
 export type { EntryValueDto } from './EntryValueDto';
 
 export type { SessionRequestInput } from './SessionRequestInput';
+
+export type { ContactsGetListInput } from './ContactsGetListInput';
 
 export type { SessionUnitSettingDto } from './SessionUnitSettingDto';
 export type { SessionUnitSettingSimpleDto } from './SessionUnitSettingSimpleDto';

@@ -4,7 +4,7 @@ import { connect, generateTickect } from '../apis/websockets';
 import { ChatObjectDto, ResultValue } from '../apis/dtos';
 import { ChatObjectService, OfficialService, SessionRequestService } from '../apis';
 import { ChatObjectTypeEnumText, ChatObjectTypeEnums } from '../apis/enums';
-
+import ChatObject from '../components/ChatObject.vue';
 // defineProps<{ msg: string }>();
 const count = ref(0);
 const onClick = () => {
@@ -124,10 +124,23 @@ const activeKey = ref('all');
         </a-space>
       </div>
       <!-- <a-loading></a-loading> -->
-      <h3 v-for="(item, index) in searchResult.items">
-        {{ item.fullPathName }} - {{ item.id }}
-        <a-button @click="addFriend(item)">添加/关注</a-button>
-      </h3>
+
+      <chat-object
+        v-for="(item, index) in searchResult.items"
+        :footer="true"
+        :key="item.id"
+        :entity="item"
+        class="atavar-layout"
+        :size="32"
+        icon="arrow"
+      >
+        <!-- <template #title>title-left</template> -->
+        <!-- <template #title-right>title-right555</template> -->
+        <!-- <template #sub>sub-left555</template> -->
+        <template #footer>
+          <a-button @click="addFriend(item)">添加/关注</a-button>
+        </template>
+      </chat-object>
 
       <p>Lorem Ipsum is simply dummy text of the printing and typesetting industry.</p>
 

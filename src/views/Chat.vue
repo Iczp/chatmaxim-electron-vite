@@ -29,8 +29,7 @@ import { MessageStateEnums } from '../apis/enums/MessageStateEnums';
 import { MessageTypeEnums } from '../apis/enums/MessageTypeEnums';
 import { useSessionUnitDetail } from '../commons/useSessionUnitDetail';
 import { setReadedMessageId } from '../commons/setting';
-import { useEventBus } from '@vueuse/core';
-import { resolve } from '../apis/core/request';
+import { formatMessage } from '../commons/utils';
 
 const store = useImStore();
 
@@ -69,8 +68,16 @@ const localReadedMessageId = ref<number | null | undefined>();
 //   setReadedMessageId({ sessionUnitId, messageId: lastMessageId.value! });
 // });
 
-const { list, fetchHistorical, fetchLatest, maxMessageId, onMessage, latestMessageCount, isBof } =
-  useMessageList({ sessionUnitId });
+const {
+  list,
+  fetchHistorical,
+  fetchLatest,
+  maxMessageId,
+  onMessage,
+  latestMessageCount,
+  isBof,
+  cancelChecked,
+} = useMessageList({ sessionUnitId });
 
 const chatInput = ref<InstanceType<typeof ChatInput> | null>(null);
 
@@ -112,8 +119,10 @@ const afterOpenChange = (bool: boolean) => {
 };
 
 const _onDeactivated = () => {
-  activeLastMessageId.value = lastMessageId.value;
+  // activeLastMessageId.value = lastMessageId.value;
   localReadedMessageId.value = readedMessageId.value;
+  selectable.value = false;
+  cancelChecked();
 };
 const _onActivated = () => {
   scrollTo(0);
@@ -153,7 +162,7 @@ const _onActivated = () => {
     }
   });
   // ---------------------------------------------
-  activeLastMessageId.value = lastMessageId.value;
+  // activeLastMessageId.value = lastMessageId.value;
   localReadedMessageId.value = readedMessageId.value;
   store.clearBadge(chatObjectId, sessionUnitId);
   console.log('onActivated', destinationName.value);
@@ -174,19 +183,25 @@ const onSend = async ({ event, value }: any) => {
   console.log('send', textValue.value);
   isSendBtnEnabled.value = false;
   const autoId = store.generateMessageId();
-  const messageDto: MessageDto = {
-    autoId,
-    isSelf: true,
-    isShowTime: true,
-    messageType: MessageTypeEnums.Text,
-    senderName: detail.value?.owner?.name,
-    senderSessionUnit: detail.value,
-    content: {
-      text: value,
-    },
-    state: MessageStateEnums.Sending,
-    creationTime: new Date().toUTCString(),
-  };
+  const messageDto: MessageDto = formatMessage({
+    sessionUnitId,
+    items: [
+      {
+        autoId,
+        isSelf: true,
+        isShowTime: true,
+        messageType: MessageTypeEnums.Text,
+        senderName: detail.value?.owner?.name,
+        senderSessionUnit: detail.value,
+        content: {
+          text: value,
+        },
+        state: MessageStateEnums.Sending,
+        creationTime: new Date().toUTCString(),
+      },
+    ],
+    lastItem: list.value.length > 0 ? list.value[list.value.length - 1] : undefined,
+  })[0];
   list.value.push(messageDto);
 
   // scroll.value?.scrollTo({ duration: 1500 });
@@ -250,7 +265,8 @@ const showContextMenu = ({ labelType, mouseButton, event, entity }: ContextmenuI
     labelType,
     event,
     entity,
-    sessionUnitId: sessionUnitId,
+    chatObjectId,
+    sessionUnitId,
     selectable,
     playMessageId,
     mouseButton,
@@ -388,7 +404,7 @@ const mouseleave = (e: MouseEvent) => {
   >
     <PageTitle
       :title="destinationName"
-      :description="`code${destination?.code}:memberCount(${detail?.sessionUnitCount}) activeLastMessageId:${activeLastMessageId}`"
+      :description="`code${destination?.code}:memberCount(${detail?.sessionUnitCount}) readedMessageId:${readedMessageId}`"
       @more="showDrawer"
       :search="true"
       :top="true"

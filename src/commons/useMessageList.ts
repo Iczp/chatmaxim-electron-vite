@@ -4,6 +4,7 @@ import { MessageDto, MessageOwnerDto } from '../apis/dtos';
 import { MessageGetListInput } from '../apis/dtos/MessageGetListInput';
 import { MessageStateEnums } from '../apis/enums';
 import { eventBus } from '../commons/eventBus';
+import { formatMessage } from './utils';
 export type FetchMessageResult = {
   items: MessageDto[];
   list: Ref<MessageDto[]>;
@@ -48,11 +49,20 @@ export const useMessageList = ({
     );
   };
 
-  const fetchItems = async (query: MessageGetListInput): Promise<MessageDto[]> => {
+  const fetchItems = async (query: MessageGetListInput, isLast: boolean): Promise<MessageDto[]> => {
     const req = { maxResultCount, sessionUnitId, ...query };
     console.log('fetchItems query', req);
     const ret = await service(req);
-    const items = formatItems(ret.items!.reverse());
+    const items = formatMessage({
+      sessionUnitId,
+      items: ret.items!.reverse(),
+      lastItem:
+        list.value.length > 0
+          ? isLast
+            ? list.value[list.value.length - 1]
+            : list.value[0]
+          : undefined,
+    });
     if (items.length != 0) {
       setMaxMessageId(items);
       setMinMessageId(items);
@@ -67,7 +77,7 @@ export const useMessageList = ({
     }
     isPendingOfFetchLatest.value = true;
     console.warn('caller', caller);
-    const items = await fetchItems({ minMessageId: maxMessageId.value });
+    const items = await fetchItems({ minMessageId: maxMessageId.value }, true);
     isPendingOfFetchLatest.value = false;
     console.log(
       'fetchLatest',
@@ -80,7 +90,7 @@ export const useMessageList = ({
     if (isBof.value) {
       throw new Error('没有了');
     }
-    const items = await fetchItems({ maxMessageId: minMessageId.value });
+    const items = await fetchItems({ maxMessageId: minMessageId.value }, false);
     isBof.value = items.length < maxResultCount;
     list.value = items.concat(list.value);
     console.log(
@@ -103,6 +113,10 @@ export const useMessageList = ({
 
   onDeactivated(offMessage);
 
+  const cancelChecked = () => {
+    list.value.map(x => (x.checked = false));
+  };
+
   return {
     latestMessageCount,
     list,
@@ -114,5 +128,6 @@ export const useMessageList = ({
     fetchHistorical,
     onMessage,
     offMessage,
+    cancelChecked,
   };
 };

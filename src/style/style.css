@@ -228,3 +228,10 @@ code {
   flex: 1;
   flex-direction: column;
 }
+
+@media (prefers-color-scheme: dark) {
+  :root {
+    --background-color: #1b1b1b;
+    color-scheme: light dark;
+  }
+}

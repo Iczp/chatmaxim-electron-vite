@@ -27,6 +27,7 @@ import { formatMessageContent } from '../utils';
 export const showContextMenuForMessageContent = ({
   event,
   entity,
+  chatObjectId,
   sessionUnitId,
   selectable,
   playMessageId,
@@ -83,8 +84,8 @@ export const showContextMenuForMessageContent = ({
         onClick: e => {
           console.log('contextmenu item click', entity);
           forwardMessage({
-            chatObjectId: 13,
-            sessionUnitId: sessionUnitId,
+            chatObjectId,
+            sessionUnitId,
             messageId: entity.id!,
           });
         },

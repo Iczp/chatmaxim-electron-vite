@@ -35,13 +35,13 @@ export const formatWords = (input: string): Array<WordDto> => {
   const pattern_uid =
     '<a uid="[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}">[^<]+</a>';
   const pattern_oid = '<a oid="\\d+">[^<]+</a>';
-  let reg = new RegExp(`(${pattern_uid})|(${pattern_oid})`, 'ig');
+  let reg = new RegExp(`(${pattern_uid})|(${pattern_oid})`, 'i');
 
   return input
     .split(reg)
     .filter(x => x && x != '')
     .map<WordDto>(x => {
-      let reg_uid = new RegExp('<a uid="([0-9a-f-]{36})">([^<]+)</a>', 'ig');
+      let reg_uid = new RegExp('<a uid="([0-9a-f-]{36})">([^<]+)</a>', 'i');
       if (reg_uid.test(x)) {
         const v = x.split(reg_uid);
         return {
@@ -50,7 +50,7 @@ export const formatWords = (input: string): Array<WordDto> => {
           text: v[2],
         };
       }
-      let reg_oid = new RegExp('<a oid="(\\d+)">([^<]+)</a>', 'ig');
+      let reg_oid = new RegExp('<a oid="(\\d+)">([^<]+)</a>', 'i');
       if (reg_oid.test(x)) {
         const v2 = x.split(reg_oid);
         return {
