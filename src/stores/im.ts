@@ -62,26 +62,23 @@ interface State {
   isPendingForGetChatObjectByCurrentUser: boolean;
 }
 
-
-
 const key = (chatObjectId: number, keyword?: string) => `${chatObjectId}-${keyword || ''}`;
 
+const defaultValue: State = {
+  chatObjects: new Map<number, BadgeDetialDto>(),
+  initBadge: 0,
+  sessionUnitMap: new Map<string, SessionUnitOwnerDto>(),
+  // sessionMap: new Map<number, Array<SessionUnitOwnerDto>>(),
+  messageMap: {},
+  sessionItemsMap: {},
+  maxMessageId: undefined,
+  autoMessageId: 0,
+  isPendingForGetBadgeByCurrentUser: false,
+  isPendingForGetChatObjectByCurrentUser: false,
+};
 
 export const useImStore = defineStore('im', {
-  state: (): State => {
-    return {
-      chatObjects: new Map<number, BadgeDetialDto>(),
-      initBadge: 0,
-      sessionUnitMap: new Map<string, SessionUnitOwnerDto>(),
-      // sessionMap: new Map<number, Array<SessionUnitOwnerDto>>(),
-      messageMap: {},
-      sessionItemsMap: {},
-      maxMessageId: undefined,
-      autoMessageId: 0,
-      isPendingForGetBadgeByCurrentUser: false,
-      isPendingForGetChatObjectByCurrentUser: false,
-    };
-  },
+  state: (): State => ({ ...defaultValue }),
   getters: {
     badge: (state): number =>
       [...state.chatObjects]

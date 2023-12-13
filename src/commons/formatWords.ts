@@ -67,7 +67,8 @@ export const formatWords = (input: string): Array<WordDto> => {
 export const formatText = (input: string, maxLength?: number): string => {
   const text: string = formatWords(input)
     .map(x => x.text)
-    .join('');
+    .join('')
+    .replace('\n', '↵');
   if (Number(maxLength) > 0 && maxLength! < text.length) {
     return text.substring(0, maxLength!);
   }

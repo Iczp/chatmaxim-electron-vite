@@ -60,6 +60,7 @@ export const commandHandle = (args: ReceivedDto<any>) => {
         });
         store.getBadgeByCurrentUser();
       }
+      //窗口闪烁
 
       break;
     case CommandConsts.SessionRequest:

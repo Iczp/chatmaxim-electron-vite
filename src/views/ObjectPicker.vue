@@ -190,23 +190,14 @@ onMounted(() => {
     <page-title :title="title || chatObjectId" />
 
     <page-content>
-      <a-tabs v-model:activeKey="activeKey">
-        <a-tab-pane key="all" tab="所有">所有</a-tab-pane>
-        <a-tab-pane v-for="(item, index) in objectTypes" :key="index" :tab="item.text">
-          <!-- {{ item.text }} ({{ item.key }} ) -->
-        </a-tab-pane>
-        <!-- <template #leftExtra>
-          <a-button type="text" class="tabs-extra-demo-button">Left</a-button>
-        </template>
-        <template #rightExtra>
-          <a-input-search
-            v-model:value="keyword"
-            placeholder="搜索：公众号"
-            enter-button
-            @search="onSearch"
-          />
-        </template> -->
-      </a-tabs>
+      <div class="search-section">
+        <a-input-search
+          v-model:value="keyword"
+          placeholder="搜索"
+          enter-button
+          @search="onSearch"
+        />
+      </div>
       <scroll-view @ps-y-reach-end="onReachEnd" @ps-y-reach-start="onReachStart">
         <div class="contacts-list">
           <div
@@ -276,6 +267,11 @@ onMounted(() => {
 </template>
 
 <style scoped>
+.search-section {
+  display: flex;
+  padding: 12px;
+  border-bottom: 1px solid #e3e3e3;
+}
 .contacts-list {
   display: flex;
   flex-direction: column;

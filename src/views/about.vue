@@ -5,6 +5,7 @@ import { ChatObjectDto, ResultValue } from '../apis/dtos';
 import { ChatObjectService, OfficialService, SessionRequestService } from '../apis';
 import { ChatObjectTypeEnumText, ChatObjectTypeEnums } from '../apis/enums';
 import ChatObject from '../components/ChatObject.vue';
+import SearchInput from '../components/SearchInput.vue';
 // defineProps<{ msg: string }>();
 const count = ref(0);
 const onClick = () => {
@@ -67,6 +68,10 @@ const objectTypes = ref(
 const objectType = ref<ChatObjectTypeEnums>();
 
 const activeKey = ref('all');
+
+const onInput = (e: any) => {
+  console.log(e.target.value);
+};
 </script>
 
 <template>
@@ -74,6 +79,7 @@ const activeKey = ref('all');
     <page-title title="About" description="Electron + Vite + TypeScript" />
 
     <page-content>
+      <SearchInput @input="onInput"></SearchInput>
       <a-tabs v-model:activeKey="activeKey">
         <a-tab-pane key="all" tab="所有">所有</a-tab-pane>
         <a-tab-pane v-for="(item, index) in objectTypes" :key="index" :tab="item.text">
@@ -92,9 +98,7 @@ const activeKey = ref('all');
         </template>
       </a-tabs>
 
-      <h2 @click="onClick">{{ count }}</h2>
       <a-space>
-        <a-button @click="onClick">Connect to websocket</a-button>
         <RouterLink to="/contacts/13?id=321">Contacts:13</RouterLink>
         <RouterLink to="/contacts/14?id=321">Contacts:14</RouterLink>
       </a-space>
