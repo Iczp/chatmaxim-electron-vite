@@ -18,6 +18,7 @@ import Loading from '../components/Loading.vue';
 import MessageItem from '../components/MessageItem.vue';
 import ScrollView from '../components/ScrollView.vue';
 import ChatInput from '../components/ChatInput.vue';
+import EmptyData from '../components/EmptyData.vue';
 import { message } from 'ant-design-vue';
 import { useImStore } from '../stores/im';
 import { MessageDto } from '../apis/dtos';
@@ -271,6 +272,7 @@ const onReachStart = (event: CustomEvent) => {
   const isReachStart = el.scrollTop == 0;
   if (isBof.value) {
     console.error('onReachStart isBof', isBof.value);
+    // message.info({ content: '没有了', key: 'list-bof' });
     return;
   }
   if (isPendingOfFetchHistorical.value) {
@@ -415,6 +417,8 @@ const mouseleave = (e: MouseEvent) => {
         @ps-y-reach-end="onReachEnd"
       >
         <Loading v-if="isPendingOfFetchHistorical" :height="loadingHeight" />
+        <!-- <EmptyData v-if="isBof" text="没有了" :height="20" /> -->
+        <a-divider v-if="isBof" class="divider">美好的生活从这里开始</a-divider>
         <MessageItem
           v-for="(item, index) in list"
           :key="item.id || item.autoId"
@@ -424,11 +428,15 @@ const mouseleave = (e: MouseEvent) => {
           @contextmenu="showContextMenu"
         >
           <template v-if="index != list.length - 1 && localReadedMessageId == item.id" #footer>
-            <a-divider class="divider-latest">以下是新消息</a-divider>
+            <a-divider class="divider">以下是新消息</a-divider>
           </template>
         </MessageItem>
 
-        <Loading v-if="isPendingOfFetchLatest" :height="loadingHeight" text="正在收取消息..." />
+        <Loading
+          v-if="list.length == 0 && isPendingOfFetchLatest"
+          :height="loadingHeight"
+          text="正在收取消息..."
+        />
       </scroll-view>
       <!-- <div class="latest-counter">有 {{ latestMessageCount }} 条最新消息</div> -->
     </page-content>
@@ -524,7 +532,7 @@ const mouseleave = (e: MouseEvent) => {
 .message-item {
   display: flex;
 }
-.divider-latest {
+.divider {
   font-size: 12px;
   color: #999;
   padding: 0 50px;

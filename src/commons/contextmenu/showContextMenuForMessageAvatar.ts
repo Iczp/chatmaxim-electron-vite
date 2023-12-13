@@ -135,7 +135,7 @@ export const showContextMenuForMessageAvatar = ({
           sessionRequest({
             payload: {
               params: {
-                ownerId: 13,
+                ownerId: chatObjectId,
                 destinationId: entity.senderSessionUnit?.owner?.id!,
                 requestMessage: `你好:${entity.senderSessionUnit?.displayName || ''}`,
               },

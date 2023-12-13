@@ -104,6 +104,13 @@ export const useMessageList = ({
       fetchItems({ maxMessageId: minMessageId.value }, false)
         .then(items => {
           isBof.value = items.length < maxResultCount;
+          if (items.length == 0) {
+            reject({ message: '没有数据' });
+            return;
+          }
+          if (isBof.value) {
+            items[0].isShowTime = true;
+          }
           list.value = items.concat(list.value);
           console.log(
             'fetchHistorical',
@@ -122,7 +129,9 @@ export const useMessageList = ({
   const onMessage = (callback: (e: MessageDto) => void): void => {
     eventBus.on('chat', ([data, receivedMessage]) => {
       console.log('onMessage', receivedMessage);
-      callback(receivedMessage);
+      if (data.scopes.some(x => x.sessionUnitId == sessionUnitId)) {
+        callback(receivedMessage);
+      }
     });
   };
 
