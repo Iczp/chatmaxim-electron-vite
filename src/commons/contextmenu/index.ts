@@ -1,5 +1,5 @@
 import { HtmlHTMLAttributes, Ref } from 'vue';
-import { MessageDto, SessionUnitSenderDto } from '../../apis/dtos';
+import { MessageDto, SessionUnitOwnerDto, SessionUnitSenderDto } from '../../apis/dtos';
 import { showContextMenuForMessageAvatar } from './showContextMenuForMessageAvatar';
 import { showContextMenuForMessageContent } from './showContextMenuForMessageContent';
 import { showContextMenuForMessageSelect } from './showContextMenuForMessageSelect';
@@ -32,6 +32,7 @@ export type ContextmenuLabel = {
 export type MessageContextMenuInput = ContextmenuParams & {
   chatObjectId: number;
   sessionUnitId: string;
+  sessionUnit: SessionUnitOwnerDto | undefined;
   selectable: Ref<boolean | undefined>;
   playMessageId: Ref<number | undefined>;
   onRemind?: (entity: SessionUnitSenderDto) => void;

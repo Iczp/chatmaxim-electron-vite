@@ -5,18 +5,25 @@ import ContextMenu from '@imengyu/vue3-context-menu';
 import { Remind, GroupRemove, PersonAdd, WavingHand, ChatOff, ChatOn } from '../../icons';
 import { sessionRequest } from '../sessionRequest';
 import { MessageContextMenuInput, iconClass } from '.';
-import { getSenderNameForMessage } from '../utils';
+import { getSenderNameForMessage, navToChat } from '../utils';
 import { FollowService } from '../../apis';
 import { message } from 'ant-design-vue';
+import { router } from '../../routes';
+import { ExclamationCircleOutlined } from '@ant-design/icons-vue';
+import { Modal } from 'ant-design-vue';
+import { useWindowStore } from '../../stores/window';
 
 export type ContextmenuParams = {
   event: MouseEvent | PointerEvent;
   entity?: MessageDto;
 };
+
 export const showContextMenuForMessageAvatar = ({
   event,
   entity,
+  chatObjectId,
   sessionUnitId,
+  sessionUnit,
   selectable,
   playMessageId,
   onFollowing,
@@ -29,6 +36,10 @@ export const showContextMenuForMessageAvatar = ({
   event.preventDefault();
 
   const senderName = getSenderNameForMessage(entity);
+  const isIn = (objectTypes: ChatObjectTypeEnums[]) => {
+    return objectTypes.some(x => x == sessionUnit?.destination?.objectType);
+  };
+  const isFriendship = entity.senderSessionUnit?.isFriendship;
 
   //show your menu
   ContextMenu.showContextMenu({
@@ -56,7 +67,7 @@ export const showContextMenuForMessageAvatar = ({
       {
         label: `禁言`,
         icon: h(ChatOff, iconClass),
-        hidden: entity.isSelf,
+        hidden: entity.isSelf || !isIn([ChatObjectTypeEnums.Room]),
         disabled: false,
         onClick: () => {
           console.log(`@${senderName}`, entity);
@@ -66,7 +77,6 @@ export const showContextMenuForMessageAvatar = ({
       {
         label: `拍一拍`,
         icon: h(WavingHand, iconClass),
-
         hidden: entity.isSelf,
         disabled: false,
         onClick: () => {
@@ -119,7 +129,7 @@ export const showContextMenuForMessageAvatar = ({
       {
         label: `加为好友`,
         icon: h(PersonAdd, iconClass),
-        hidden: entity.isSelf || entity.senderSessionUnit?.isFriendship,
+        hidden: entity.isSelf || isFriendship,
         disabled: false,
         onClick: () => {
           sessionRequest({
@@ -143,19 +153,39 @@ export const showContextMenuForMessageAvatar = ({
       {
         label: `私信`,
         icon: h(ChatOn, iconClass),
-        // hidden: item.isSelf && item.senderSessionUnit?.isFriendship,
+        hidden: !isFriendship || entity.senderSessionUnit?.friendshipSessionUnitId == sessionUnitId,
         disabled: false,
         onClick: () => {
-          console.log(`@${senderName}`, entity);
+          navToChat({
+            chatObjectId,
+            sessionUnitId: entity.senderSessionUnit?.friendshipSessionUnitId,
+          });
         },
       },
       {
         label: `移出群聊`,
         icon: h(GroupRemove, iconClass),
-        hidden: entity.isSelf || [ChatObjectTypeEnums.Room].some(x => x == 0),
+        hidden: entity.isSelf || !isIn([ChatObjectTypeEnums.Room]),
         disabled: false,
         onClick: () => {
           console.log(`@${senderName}`, entity);
+          Modal.confirm({
+            title: '移出群聊',
+            icon: h(ExclamationCircleOutlined),
+            content: `是否要将“${entity.senderSessionUnit?.owner?.name}”移出群聊?`,
+            cancelText: '取消',
+            okText: '确定移出',
+            async onOk() {
+              try {
+                return await new Promise((resolve, reject) => {
+                  setTimeout(Math.random() > 0.5 ? resolve : reject, 1000);
+                });
+              } catch {
+                return console.log('Oops errors!');
+              }
+            },
+            onCancel() {},
+          });
         },
       },
     ],

@@ -11,6 +11,8 @@ import {
 } from '../apis/dtos';
 import { MessageStateEnums, MessageTypeEnums } from '../apis/enums';
 import { formatText } from './formatWords';
+import { useWindowStore } from '../stores/window';
+import { message } from 'ant-design-vue';
 /**
  * toQueryString
  *
@@ -97,6 +99,12 @@ export const navToChat = ({
   sessionUnitId?: string;
   title?: string;
 }) => {
+  const windowStore = useWindowStore();
+  if (!windowStore.isMain()) {
+    message.error({ content: '独立窗口未实现', duration: 2 });
+    return;
+  }
+ 
   router.push({
     name: 'chat',
     params: {

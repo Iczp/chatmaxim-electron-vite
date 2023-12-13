@@ -41,8 +41,12 @@ export const useWindowStore = defineStore('window', {
     winId: state => (): number | undefined => state.windowId,
   },
   actions: {
-    isMain() {
-      return this.name == 'main';
+    isMain(callback?: () => void) {
+      const isMain = this.name == 'main';
+      if (isMain) {
+        callback?.call(this);
+      }
+      return isMain;
     },
     setId(id: number) {
       console.log('setId', id);

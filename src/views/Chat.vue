@@ -48,7 +48,7 @@ const sessionUnitId = props.sessionUnitId;
 
 const chatObjectId = Number(route.params.chatObjectId);
 
-const info = computed(() => store.getSessionUnit(sessionUnitId));
+const sessionUnit = computed(() => store.getSessionUnit(sessionUnitId));
 
 const loadingHeight = ref(40);
 
@@ -247,6 +247,7 @@ const showContextMenu = ({ labelType, mouseButton, event, entity }: ContextmenuI
     entity,
     chatObjectId,
     sessionUnitId,
+    sessionUnit: sessionUnit.value,
     selectable,
     playMessageId,
     mouseButton,
@@ -404,7 +405,7 @@ const mouseleave = (e: MouseEvent) => {
         placement="right"
         @after-open-change="afterOpenChange"
       >
-        <ChatSetting :entity="info!" :sessionUnitId="sessionUnitId" />
+        <ChatSetting :entity="sessionUnit!" :sessionUnitId="sessionUnitId" />
       </a-drawer>
 
       <scroll-view
