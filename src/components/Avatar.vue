@@ -14,7 +14,7 @@ const svgClass = computed(() => 'svg-icon svg-icon-' + (Number(props.size) || 48
 </script>
 
 <template>
-  <a-avatar shape="circle" :size="size || 48" class="avatar" :alt="name" :object-type="objectType">
+  <a-avatar shape="circle" :size="size || 40" class="avatar" :alt="name" :object-type="objectType">
     <template #icon>
       <Group v-if="objectType == ChatObjectTypeEnums.Room" :class="svgClass" />
       <Groups v-else-if="objectType == ChatObjectTypeEnums.Square" :class="svgClass" />

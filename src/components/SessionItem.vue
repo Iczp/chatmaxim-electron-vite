@@ -2,7 +2,7 @@
 import { computed, watch } from 'vue';
 import { SessionUnitOwnerDto } from '../apis';
 
-import { HeartTwoTone } from '@ant-design/icons-vue';
+import { HeartTwoTone, HeartFilled } from '@ant-design/icons-vue';
 
 import { ChatObjectTypeEnums } from '../apis/enums';
 import ChatObject from '../components/ChatObject.vue';
@@ -35,6 +35,7 @@ watch(
 const store = useImStore();
 // const lastMessage = computed(() => store.getItem(props.entity?.id!).lastMessage);
 const {
+  followingCount,
   isTopping,
   lastMessage,
   isImmersed,
@@ -56,8 +57,11 @@ const {
     :entity="destination"
     class="session-item"
     draggable="true"
+    :badge="badge"
+    :dot="isImmersed"
     :class="{ active, flash }"
     :object-type="objectType?.toString()"
+    :size="44"
     @click.right.native="emits('contextmenu', { entity, event: $event })"
     sub
     sub-right
@@ -84,6 +88,10 @@ const {
         <span v-if="remindCount > 0" class="remind">
           {{ Number(remindCount) > 99 ? '99+' : remindCount }}@我
         </span>
+        <span v-if="followingCount > 0" class="following" :title="followingCount.toString()">
+          <HeartFilled />
+          <!-- {{followingCount}} -->
+        </span>
         <!-- 我关注的 flowing -->
         <!-- 发送人信息 -->
         <span v-if="isShowSender" class="sender">{{ displaySenderName }}</span>
@@ -92,14 +100,14 @@ const {
     </template>
     <template #sub-right>
       <a-space class="sub-right">
-        <a-badge
+        <!-- <a-badge
           v-if="badge != 0"
           :count="badge"
           :overflow-count="99"
           :dot="isImmersed"
           class="badge"
-        />
-        <icon v-if="isImmersed" type="mute" size="14" />
+        /> -->
+        <icon v-if="isImmersed" type="mute" size="14" class="mute" />
         <heart-two-tone v-if="isTopping" two-tone-color="#eb2f96" />
       </a-space>
     </template>
@@ -109,10 +117,10 @@ const {
 <style scoped>
 /* @import url(../style/message.css); */
 :deep(.title-container) {
-  height: 26px;
+  height: 24px;
 }
 :deep(.sub-container) {
-  height: 22px;
+  height: 20px;
 }
 .session-item {
   --spacing-size: 12px;
@@ -211,6 +219,19 @@ const {
   box-shadow: 0 0 0 1px #ffffff;
   margin-right: 4px;
   /* font-size: 12px; */
+}
+.following{
+  display: inline-flex;
+  align-items: center;
+  color: white;
+  background: #ff4d4f;
+  border-radius: 4px;
+  padding: 2px 4px;
+  margin-right: 4px;
+
+}
+.mute{
+  color: #ccc;
 }
 .sub-right :deep(.ant-space-item) {
   display: flex;

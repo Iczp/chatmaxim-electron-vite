@@ -110,7 +110,7 @@ defineProps<{
   justify-content: space-between;
   /* color: rgba(0, 0, 0, 1); */
   font-size: 14px;
-  min-height: 28px;
+  /* min-height: 28px; */
   align-items: center;
 }
 .title-left {

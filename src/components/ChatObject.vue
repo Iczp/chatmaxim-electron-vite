@@ -11,6 +11,8 @@ const attrs = useAttrs();
 const props = defineProps<{
   entity?: ChatObjectDto;
   size?: number;
+  badge?: string | number;
+  dot?: boolean | null;
 }>();
 
 // custom slot
@@ -21,7 +23,9 @@ const inheritanceKeys = Object.keys(slots).filter(x => !ignoreSlots.some(d => d 
 <template>
   <layout-item class="chat-object" v-bind="attrs" header>
     <template #header>
-      <avatar :entity="entity" :size="size" />
+      <a-badge :count="badge" :overflow-count="99" :dot="dot">
+        <avatar :entity="entity" :size="size" />
+      </a-badge>
     </template>
     <template #title>
       <slot name="title">
