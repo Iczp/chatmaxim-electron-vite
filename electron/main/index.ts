@@ -11,6 +11,7 @@ import { websocketHandle } from './commons/webscoketHandle';
 import { globalState } from './global';
 import './commons/logger';
 import './commons/tray';
+import { createTipWindow } from './commons/createTipWindow';
 //
 Store.initRenderer();
 
@@ -49,7 +50,7 @@ if (!app.requestSingleInstanceLock()) {
 // process.env['ELECTRON_DISABLE_SECURITY_WARNINGS'] = 'true'
 
 let win: BrowserWindow | null = null;
-let childWindow: BrowserWindow | null = null;
+let tip: BrowserWindow | null = null;
 // Here, you can also use other preload
 const preload = join(__dirname, '../preload/index.js');
 const url = process.env.VITE_DEV_SERVER_URL;
@@ -58,6 +59,7 @@ console.log('app.getPath', app.getAppPath(), app.getPath('userData'));
 
 app.whenReady().then(() => {
   win = createMainWindow();
+  tip = createTipWindow();
 });
 app.on('activate', () => {
   const allWindows = BrowserWindow.getAllWindows();
@@ -83,31 +85,6 @@ app.on('second-instance', () => {
 app.on('before-quit', e => {
   globalState.isAppQuitting = true;
 });
-
-type Listener = (
-  event: {
-    preventDefault: () => void;
-    readonly defaultPrevented: boolean;
-  },
-  url: string,
-  isMainFrame: boolean,
-  frameProcessId: number,
-  frameRoutingId: number,
-) => void;
-
-const navTo = (win: BrowserWindow, path: string, listener?: Listener): void => {
-  if (process.env.VITE_DEV_SERVER_URL) {
-    win.loadURL(`${url}#${path}`);
-    // Open devTool if the app is not packaged
-
-    win.webContents.openDevTools({
-      mode: 'detach',
-    });
-  } else {
-    win.loadFile(indexHtml, { hash: path });
-  }
-};
-
 ipcMain.handle('open-child', openChildWindowHandle);
 ipcMain.handle('win-setting', windowSettingHandle);
 ipcMain.handle('websocket', websocketHandle);

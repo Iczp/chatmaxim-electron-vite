@@ -66,17 +66,12 @@ export const routes = <RouteRecordRaw[]>[
     props: true,
   },
   {
-    path: '/login',
-    meta: {
-      windows: ['main'],
-      size: [320, 560],
-      options: <WindowParams>{
-        maximizable: true,
-        size: { width: 320, height: 560 },
-      },
-    },
-    component: () => import('../views/Login.vue'),
+    path: '/management/members/:chatObjectId(\\d+)/:sessionUnitId',
+    name: 'management-members',
+    component: () => import('../views/management/MemberList.vue'),
+    props: true,
   },
+
   { path: '/settings', component: () => import('../views/Settings.vue'), props: true },
   {
     path: '/object-picker/:chatObjectId(\\d+)',
@@ -91,6 +86,31 @@ export const routes = <RouteRecordRaw[]>[
     meta: { keep: true },
     component: () => import('../views/SessionRequest.vue'),
     props: true,
+  },
+  {
+    path: '/tip',
+    meta: {
+      windows: ['tip'],
+    },
+    component: () => import('../views/tips/Tip.vue'),
+  },
+  {
+    path: '/profile/:sessionUnitId',
+    meta: {},
+    component: () => import('../views/Profile.vue'),
+    props: true,
+  },
+  {
+    path: '/login',
+    meta: {
+      windows: ['main'],
+      size: [320, 560],
+      options: <WindowParams>{
+        maximizable: true,
+        size: { width: 320, height: 560 },
+      },
+    },
+    component: () => import('../views/Login.vue'),
   },
 ];
 

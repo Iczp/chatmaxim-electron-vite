@@ -31,6 +31,8 @@ const defaultValue: WindowState = {
   isSkipTaskbar: undefined,
   isFlashFrame: undefined,
   isPreventClose: undefined,
+  payload: undefined,
+  path: undefined,
 };
 
 export const useWindowStore = defineStore('window', {
@@ -51,6 +53,11 @@ export const useWindowStore = defineStore('window', {
     setId(id: number) {
       console.log('setId', id);
       this.windowId = id;
+    },
+    setPayload(path: string, payload: any) {
+      console.log('setPayload', path, payload);
+      this.path = path;
+      this.payload = payload;
     },
     update({ event, args }: { event: string; args: Array<any> }) {
       console.log('update', event, args);

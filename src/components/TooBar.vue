@@ -72,6 +72,8 @@ const setClose = () => setWindow({ close: true });
   align-items: center;
   justify-content: center;
   font-size: 12px;
+  border-radius: 0;
+  outline: none;
 }
 .btn-close:hover {
   background-color: rgb(253, 61, 61);

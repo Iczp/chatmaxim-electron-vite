@@ -54,12 +54,12 @@ watch(
 
 const isShowMemberName = ref(true);
 
-const onAvatarRightClick = (event: MouseEvent) => {
+const onAvatarClick = (event: MouseEvent, mouseButton: MouseButton) => {
   emits('contextmenu', {
     entity: props.entity,
     event,
     labelType: LabelType.Avatar,
-    mouseButton: MouseButton.Right,
+    mouseButton,
   });
 };
 
@@ -106,7 +106,8 @@ const onMessageClick = (event: MouseEvent, mouseButton: MouseButton) => {
             :item="entity.senderSessionUnit?.owner"
             :size="40"
             :name="senderName"
-            @click.right.stop.native="onAvatarRightClick"
+            @click.stop.native="onAvatarClick($event, MouseButton.Click)"
+            @click.right.stop.native="onAvatarClick($event, MouseButton.Right)"
           />
         </aside>
 

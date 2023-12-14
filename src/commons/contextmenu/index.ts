@@ -1,8 +1,9 @@
-import { HtmlHTMLAttributes, Ref } from 'vue';
+import { HtmlHTMLAttributes, Ref, toRaw } from 'vue';
 import { MessageDto, SessionUnitOwnerDto, SessionUnitSenderDto } from '../../apis/dtos';
 import { showContextMenuForMessageAvatar } from './showContextMenuForMessageAvatar';
 import { showContextMenuForMessageContent } from './showContextMenuForMessageContent';
 import { showContextMenuForMessageSelect } from './showContextMenuForMessageSelect';
+import { setWindow } from '../setWindow';
 export { showContextMenuForSession } from './showContextMenuForSession';
 export { showContextMenuForMessageContent } from './showContextMenuForMessageContent';
 export { showContextMenuForMessageAvatar } from './showContextMenuForMessageAvatar';
@@ -45,10 +46,29 @@ export type ContextmenuInput = ContextmenuParams & ContextmenuLabel;
 export const iconClass: HtmlHTMLAttributes = { class: 'svg-icon s16' };
 
 export const showContextMenuForMessage = (args: MessageContextMenuInput & ContextmenuInput) => {
-  const { entity, selectable, mouseButton, labelType } = args;
-
+  const { event, entity, selectable, mouseButton, labelType } = args;
+  console.log('click', mouseButton, labelType);
   if (mouseButton == MouseButton.Click) {
-    console.log('click', entity);
+    // console.log('click', entity);
+
+    if (labelType == LabelType.Avatar) {
+      const params = {
+        clientX: event.clientX,
+        clientY: event.clientY,
+      };
+      console.log('event', params, event);
+      setWindow({
+        name: 'tip',
+        path: `/profile/${entity.senderSessionUnit?.id}`,
+        position: 'absolute',
+        x: event.clientX,
+        y: event.clientY,
+        visiblity: true,
+        focus: true,
+        payload: toRaw(entity.senderSessionUnit),
+      });
+      return;
+    }
     if (selectable.value) {
       entity.checked = !entity.checked;
       return;

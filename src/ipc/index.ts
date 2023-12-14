@@ -36,12 +36,11 @@ ipcRenderer.on(WinEvents.resized, (_event, ...args) => {
   console.log(WinEvents.resized, ...args);
 });
 
-ipcRenderer.on('navigate', (_event, url) => {
-  console.log('[navigate]:', url);
-  // const { event, callerId } = args;
-  // const url = addParamsToUrl(args.url, { event, callerId });
-  // console.log('url', url);
-  router.replace(url);
+ipcRenderer.on('navigate', (_event, { path, payload }) => {
+  console.log('[navigate]:', path, payload);
+  const windowStore = useWindowStore();
+  windowStore.setPayload(path, payload);
+  router.replace(path);
 });
 
 ipcRenderer.on('window-event', (_, args) => {

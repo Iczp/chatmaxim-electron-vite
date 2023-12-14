@@ -1,7 +1,6 @@
 import { Size } from './Size';
 
 export type WindowParams = {
-  
   /**
    * 父窗口名称
    *
@@ -80,4 +79,39 @@ export type WindowParams = {
    * @type {boolean}
    */
   isPreventClose?: boolean;
+
+  /**
+   *
+   *
+   * @type {('absolute' | 'fixed')}
+   */
+  position?: 'absolute' | 'fixed';
+
+  /**
+   *
+   *
+   * @type {number}
+   */
+  x?: number;
+
+  /**
+   *
+   *
+   * @type {number}
+   */
+  y?: number;
+
+  /**
+   * url#hash
+   *
+   * @type {string}
+   */
+  path?: string;
+
+  /**
+   * 窗口传参
+   *
+   * @type {*}
+   */
+  payload?: any;
 };

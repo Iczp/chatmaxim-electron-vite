@@ -1,9 +1,6 @@
 <script setup lang="ts">
 import { computed } from 'vue';
-import {
-  RouteLocationNormalizedLoaded,
-  useRoute,
-} from 'vue-router';
+import { RouteLocationNormalizedLoaded, useRoute } from 'vue-router';
 import {
   HomeOutlined,
   AndroidOutlined,
@@ -17,7 +14,6 @@ import {
   MoreOutlined,
 } from '@ant-design/icons-vue';
 
-
 import { navToChat } from '../commons/utils';
 import { router, chatHistorys } from '../routes';
 import { message } from 'ant-design-vue';
@@ -29,8 +25,6 @@ const route = useRoute();
 const { connectionText, connectionState, retryCount } = useWebsocket();
 const { badge, badgeItems } = useChatObjectList();
 // const router = useRouter();
-
-
 
 const navToChatHitory = (item: BadgeDto) => {
   const chatObjectId = item.chatObjectId!;
@@ -82,7 +76,7 @@ const getKey = (route: RouteLocationNormalizedLoaded): string | string[] => {
       <div class="side">
         <div class="side-top">
           <div class="nav-item" @click="goto('/')">
-            <a-badge :count="badge" :title="badge.toString()">
+            <a-badge :count="badge" :dot="true" :title="badge.toString()">
               <HomeOutlined />
             </a-badge>
           </div>
@@ -106,7 +100,7 @@ const getKey = (route: RouteLocationNormalizedLoaded): string | string[] => {
           <div class="nav-item" @click="goto('/login')">
             <AndroidOutlined />
           </div>
-          <div class="nav-item"><SketchOutlined /></div>
+          <div class="nav-item" @click="goto('/management/members/13/e52bacf4-c231-061a-6628-3a0b0cf571fb')"><SketchOutlined /></div>
           <div class="nav-item"><AppstoreOutlined /></div>
           <div class="nav-item"><ClockCircleOutlined /></div>
           <div class="nav-item"><MoreOutlined /></div>
