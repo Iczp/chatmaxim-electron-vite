@@ -4,8 +4,10 @@ import { useWindowStore } from '../stores/window';
 import { SessionUnitSenderDto } from '../apis/dtos';
 import ChatObject from '../components/ChatObject.vue';
 import LabelBox from '../components/LabelBox.vue';
+import LabelGroup from '../components/LabelGroup.vue';
 import TooBar from '../components/TooBar.vue';
 import { ChatOn, PersonAdd } from '../icons';
+import { HeartTwoTone, HeartFilled } from '@ant-design/icons-vue';
 const props = defineProps<{ sessionUnitId?: string }>();
 
 const windowStore = useWindowStore();
@@ -21,15 +23,33 @@ const a = Object.entries(sender);
     <page-header>
       <TooBar />
       <div class="header drag">
-        <chat-object :entity="sender?.owner" class="chat-object" :size="48"></chat-object>
+        <chat-object :entity="sender?.owner" class="chat-object" :size="48" sub>
+          <template #title-right>
+            <HeartFilled />
+          </template>
+          <template #sub>
+            <div>
+              {{ sender?.owner?.code }}
+            </div>
+            <div>
+              {{ sender?.owner?.gender }}
+            </div>
+          </template>
+        </chat-object>
       </div>
       <div class="h-line"></div>
     </page-header>
     <page-content>
       <scroll-view>
-        <LabelBox v-for="(value, key) in sender?.owner" :key="key" :title="`${key}:${value}`" sub>
-          <template #sub>{{ key }}:{{ value }}</template>
-        </LabelBox>
+        <LabelGroup title="ddd">
+          <LabelBox title="入群时间">20-23-3203</LabelBox>
+          <LabelBox title="邀请人">20-23-3203</LabelBox>
+        </LabelGroup>
+        <LabelGroup title="ddd">
+          <LabelBox v-for="(value, key) in sender?.owner" :key="key" :title="`${key}`" sub>
+            {{ value }}
+          </LabelBox>
+        </LabelGroup>
       </scroll-view>
     </page-content>
     <page-footer>
@@ -49,6 +69,9 @@ const a = Object.entries(sender);
 <style scoped>
 .header {
   padding: 0 20px;
+}
+:deep(.sub-left) {
+  flex-direction: column;
 }
 .h-line {
   width: 100%;

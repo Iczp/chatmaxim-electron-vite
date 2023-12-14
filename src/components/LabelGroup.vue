@@ -14,13 +14,9 @@ const inheritanceKeys = Object.keys(slots).filter(x => !ignoreSlots.some(d => d 
 </script>
 
 <template>
-  <div class="label-box">
-    <div class="title">
-      <slot name="title">
-        <span>{{ title }}</span>
-      </slot>
-    </div>
-    <div v-if="slots['default']" class="description">
+  <div class="label-group">
+    <div class="title">{{ title }}</div>
+    <div class="body">
       <slot name="default"></slot>
     </div>
   </div>
@@ -30,18 +26,17 @@ const inheritanceKeys = Object.keys(slots).filter(x => !ignoreSlots.some(d => d 
 /* :deep(.layout-item) {
   --spacing-size: 8px;
 } */
-.label-box {
-  padding: 6px 12px;
+.label-group {
+  margin: 20px 0;
   display: flex;
-  flex-direction: row;
+  flex-direction: column;
   justify-content: space-between;
-  border-bottom: 1px solid #666;
-  line-height: 150%;
 }
 .title {
   display: flex;
 }
-.description {
+.body {
   display: flex;
+  flex-direction: column;
 }
 </style>

@@ -17,5 +17,6 @@
   height: auto;
   padding: 0;
   background-color: unset;
+  line-height: unset;
 }
 </style>

@@ -56,7 +56,7 @@ export const createTipWindow = () => {
   win.on('blur', () => {
     console.log('blur');
     if (win.isVisible()) {
-      win.hide();
+      // win.hide();
     }
   });
   initWindowEvent(win);

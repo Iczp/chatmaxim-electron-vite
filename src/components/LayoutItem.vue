@@ -1,4 +1,5 @@
 <script setup lang="ts">
+import { useSlots } from 'vue';
 import { ArrowRight, ArrowDropDown, ArrowDropUp, ChevronRight } from '../icons';
 defineProps<{
   title?: string;
@@ -10,6 +11,8 @@ defineProps<{
   icon?: string | 'arrow';
   hover?: boolean;
 }>();
+const slots = useSlots();
+// console.log('slots', slots);
 </script>
 
 <template>
@@ -24,15 +27,15 @@ defineProps<{
           <div class="title-left object-name">
             <slot name="title"></slot>
           </div>
-          <div v-if="titleRight" class="title-right">
+          <div v-if="slots['title-right']" class="title-right">
             <slot name="title-right">{{ titleRight }}</slot>
           </div>
         </div>
-        <div v-if="sub" class="sub-container">
+        <div v-if="slots['sub']" class="sub-container">
           <div class="sub-left">
             <slot name="sub">{{ sub }}</slot>
           </div>
-          <div v-if="subRight" class="sub-right">
+          <div v-if="slots['sub-right']" class="sub-right">
             <slot name="sub-right">{{ subRight }}</slot>
           </div>
         </div>
