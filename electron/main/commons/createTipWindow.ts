@@ -9,10 +9,10 @@ const preload = join(__dirname, '../preload/index.js');
 export const createTipWindow = () => {
   const win = new BrowserWindow({
     title: 'Tip window',
-    minWidth: 240,
-    minHeight: 240,
-    width: 240,
-    height: 360,
+    // minWidth: 240,
+    // minHeight: 240,
+    width: 360,
+    height: 480,
     icon: join(process.env.VITE_PUBLIC, 'favicon.ico'),
 
     webPreferences: {

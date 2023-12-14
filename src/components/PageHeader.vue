@@ -5,16 +5,17 @@
 </script>
 
 <template>
-  <a-layout-footer class="page-footer">
+  <a-layout-header class="page-header">
     <slot></slot>
-  </a-layout-footer>
+  </a-layout-header>
 </template>
 
 <style scoped>
-.page-footer {
-  display: flex;
-  flex-direction: row;
-  justify-content: space-between;
-  padding: 0 12px;
+.page-header {
+  /* display: flex;
+  flex-direction: column; */
+  height: auto;
+  padding: 0;
+  background-color: unset;
 }
 </style>
