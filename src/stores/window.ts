@@ -55,7 +55,7 @@ export const useWindowStore = defineStore('window', {
       this.windowId = id;
     },
     setPayload(path: string, payload: any) {
-      console.log('setPayload', path, payload);
+      // console.log('setPayload', path, payload);
       this.path = path;
       this.payload = payload;
     },
@@ -92,7 +92,7 @@ export const useWindowStore = defineStore('window', {
           this.isFullScreen = false;
           break;
       }
-      console.log('update', this);
+      // console.log('update', this);
     },
   },
 });

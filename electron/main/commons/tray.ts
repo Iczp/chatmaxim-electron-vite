@@ -1,8 +1,15 @@
-import { app, Tray, Menu, nativeImage, Notification } from 'electron';
+import { app, Tray, Menu, nativeImage, Notification, screen, Rectangle, Point } from 'electron';
+import { windowManager } from './windowManager';
+import { BrowserWindow } from 'electron';
+import { join } from 'node:path';
+import { initWindowEvent, sendWindowInfo } from './initWindowEvent';
+import { preventClose } from './windowSettingHandle';
 
+const preload = join(__dirname, '../preload/index.js');
 // const { app, Tray, Menu, nativeImage } = require('electron/main')
 
 let tray;
+let trayWindow: BrowserWindow;
 
 app.whenReady().then(() => {
   // const icon = nativeImage.createFromPath('path/to/asset.png')
@@ -23,6 +30,7 @@ app.whenReady().then(() => {
   //   tray.setContextMenu(contextMenu);
 
   createTray();
+  trayWindow = createTrayWindow({});
 });
 
 const NOTIFICATION_TITLE = '日春茶业-桌面端';
@@ -44,21 +52,6 @@ function showNotification() {
   });
   return notice;
 }
-
-/**
- * trayClick
- * @param {*} event
- * @param {*} bounds
- * @param {*} position
- */
-const trayClick = (event, bounds, position) => {
-  console.log('tray-click', event, bounds, position);
-  // let wins = BrowserWindow.getAllWindows()
-  // let win = wins[0]
-  // win.show()
-  // console.log('wins', wins)
-  showNotification();
-};
 
 const createTray = () => {
   // const appIcon = new Tray('./src/assets/logo.png')
@@ -95,4 +88,91 @@ const createTray = () => {
   tray.on('mouse-move', () => {
     //console.log('mouse-move', arg)
   });
+};
+
+export const createTrayWindow = ({ path = '/tray' }: { path?: string }) => {
+  const win = new BrowserWindow({
+    title: 'Tray',
+    // minWidth: 240,
+    // minHeight: 240,
+    width: 240,
+    height: 560,
+    icon: join(process.env.VITE_PUBLIC, 'favicon.ico'),
+
+    webPreferences: {
+      preload,
+      // Warning: Enable nodeIntegration and disable contextIsolation is not secure in production
+      // Consider using contextBridge.exposeInMainWorld
+      // Read more on https://www.electronjs.org/docs/latest/tutorial/context-isolation
+      nodeIntegration: true,
+      contextIsolation: false,
+    },
+    autoHideMenuBar: true,
+    show: true,
+    frame: false,
+    thickFrame: false,
+    hasShadow: true,
+    maximizable: false,
+    minimizable: false,
+    resizable: false,
+    closable: false,
+    // transparent: true,
+  });
+
+  windowManager.set('tray', win);
+  win.on('close', () => windowManager.remove('tray'));
+  win.removeMenu();
+
+  if (process.env.VITE_DEV_SERVER_URL) {
+    win.loadURL(`${process.env.VITE_DEV_SERVER_URL}#${path}`);
+    // Open devTool if the app is not packaged
+    win.webContents.openDevTools({
+      mode: 'detach',
+    });
+  } else {
+    const indexHtml = join(process.env.DIST, 'index.html');
+    win.loadFile(indexHtml, { hash: path });
+  }
+  // Test actively push message to the Electron-Renderer
+  win.webContents.on('did-finish-load', () => {
+    sendWindowInfo(win);
+    // createChildWindow({ path: '/settings' });
+  });
+
+  initWindowEvent(win);
+  preventClose(win, true);
+  return win;
+};
+
+/**
+ * trayClick
+ * @param {*} event
+ * @param {*} rect
+ * @param {*} point
+ */
+const trayClick = (event: KeyboardEvent, rect: Rectangle, point: Point): void => {
+  // {
+  //   shiftKey: false,
+  //   ctrlKey: false,
+  //   altKey: false,
+  //   metaKey: false,
+  //   triggeredByAccelerator: true
+  // }
+  // { x: 2166, y: 1294, width: 41, height: 42 } { x: 2184, y: 1317 }
+  console.log('tray-click', event, rect, point);
+  const sessionHeight = 64;
+  const trayBounds = trayWindow.getBounds();
+
+  let width = trayBounds.width;
+  let height = trayBounds.height;
+
+  const data = {
+    x: rect.x - width / 2,
+    y: rect.y - height,
+    width,
+    height,
+  };
+  trayWindow.setBounds(data);
+  trayWindow.show();
+  // showNotification();
 };

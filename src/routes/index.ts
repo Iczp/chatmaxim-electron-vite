@@ -95,6 +95,13 @@ export const routes = <RouteRecordRaw[]>[
     component: () => import('../views/pops/Tip.vue'),
   },
   {
+    path: '/tray',
+    meta: {
+      windows: ['tray'],
+    },
+    component: () => import('../views/tray/Tray.vue'),
+  },
+  {
     path: '/profile/:chatObjectId(\\d+)/:sessionUnitId',
     meta: { keepAlive: true },
     component: () => import('../views/pops/Profile.vue'),

@@ -1,12 +1,40 @@
 import { BrowserWindow } from 'electron';
+import { WindowParams } from '../ipc-types';
 import { join } from 'node:path';
+import { addParamsToUrl } from './addParamsToUrl';
 import { windowManager } from './windowManager';
 import { initWindowEvent, sendWindowInfo } from './initWindowEvent';
+import { setWindow } from './windowSettingHandle';
 import { preventClose } from './windowSettingHandle';
 
 const preload = join(__dirname, '../preload/index.js');
 
-export const createPopWindow = () => {
+export const openPopWindowHandle = (
+  _: Electron.IpcMainInvokeEvent,
+  {
+    event,
+    window,
+  }: {
+    event: string;
+    window?: WindowParams;
+  },
+): any => {
+  return new Promise((resolve, reject) => {
+    console.log('openPopWindowHandle', { window });
+    const path = addParamsToUrl(window.path, { event, callerId: _.sender.id });
+    window.path = path;
+    console.warn('path', path);
+    let popWindow = windowManager.get(window.name);
+    if (!popWindow) {
+      popWindow = windowManager.set(window.name, createPopWindow({ path }));
+      popWindow.on('closed', e => windowManager.remove(window.name));
+    }
+    setWindow(popWindow, window, _);
+    resolve({});
+  });
+};
+
+export const createPopWindow = ({ path = '/pop' }: { path?: string }) => {
   const win = new BrowserWindow({
     title: 'Pop window',
     // minWidth: 240,
@@ -36,7 +64,6 @@ export const createPopWindow = () => {
 
   windowManager.set('pop', win);
   win.removeMenu();
-  const path = '/pop';
 
   if (process.env.VITE_DEV_SERVER_URL) {
     win.loadURL(`${process.env.VITE_DEV_SERVER_URL}#${path}`);

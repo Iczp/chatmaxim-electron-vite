@@ -59,6 +59,7 @@ export const showContextMenuForMessage = (args: MessageContextMenuInput & Contex
       console.log('event', params, event);
       const senderSessionUnit = entity.senderSessionUnit;
       showProfile({
+        name: 'pop',
         path: `/profile/${chatObjectId}/${senderSessionUnit?.id}`,
         position: 'absolute',
         x: event.clientX,
@@ -68,6 +69,9 @@ export const showContextMenuForMessage = (args: MessageContextMenuInput & Contex
           height: senderSessionUnit?.isFriendship || false ? 360 : 180,
         },
         payload: toRaw(senderSessionUnit),
+        refer: '$sender',
+        visiblity: true,
+        focus: true,
       });
       return;
     }

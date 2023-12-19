@@ -1,4 +1,4 @@
-import { app, BrowserWindow, ipcMain, webContents } from 'electron';
+import { app, BrowserWindow, ipcMain, webContents,screen } from 'electron';
 import { release } from 'node:os';
 import { join } from 'node:path';
 import Store from 'electron-store';
@@ -11,7 +11,8 @@ import { websocketHandle } from './commons/webscoketHandle';
 import { globalState } from './global';
 import './commons/logger';
 import './commons/tray';
-import { createPopWindow } from './commons/createPopWindow';
+import { createPopWindow, openPopWindowHandle } from './commons/openPopWindowHandle';
+
 
 //
 Store.initRenderer();
@@ -60,7 +61,7 @@ console.log('app.getPath', app.getAppPath(), app.getPath('userData'));
 
 app.whenReady().then(() => {
   win = createMainWindow();
-  pop = createPopWindow();
+  pop = createPopWindow({});
 });
 app.on('activate', () => {
   const allWindows = BrowserWindow.getAllWindows();
@@ -83,9 +84,7 @@ app.on('second-instance', () => {
   }
 });
 
-app.on('before-quit', e => {
-  globalState.isAppQuitting = true;
-});
 ipcMain.handle('open-child', openChildWindowHandle);
+ipcMain.handle('open-pop', openPopWindowHandle);
 ipcMain.handle('win-setting', windowSettingHandle);
 ipcMain.handle('websocket', websocketHandle);

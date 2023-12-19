@@ -26,7 +26,8 @@ ipcRenderer.on('websocket', websocketHandle);
 
 lstat(cwd())
   .then(stats => {
-    console.log('[fs.lstat]', stats);
+    const windowStore = useWindowStore();
+    console.log('[fs.lstat]', windowStore.name, stats);
   })
   .catch(err => {
     console.error(err);
@@ -37,7 +38,7 @@ ipcRenderer.on(WinEvents.resized, (_event, ...args) => {
 });
 
 ipcRenderer.on('navigate', (_event, { path, payload }) => {
-  console.log('[navigate]:', path, payload);
+  // console.log('[navigate]:', path, payload);
   const windowStore = useWindowStore();
   windowStore.setPayload(path, payload);
   router.replace(path);
