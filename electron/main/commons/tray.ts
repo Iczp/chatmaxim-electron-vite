@@ -160,19 +160,27 @@ const trayClick = (event: KeyboardEvent, rect: Rectangle, point: Point): void =>
   // }
   // { x: 2166, y: 1294, width: 41, height: 42 } { x: 2184, y: 1317 }
   console.log('tray-click', event, rect, point);
-  const sessionHeight = 64;
-  const trayBounds = trayWindow.getBounds();
+  try {
+    const sessionHeight = 64;
+    const trayBounds = trayWindow.getBounds();
 
-  let width = trayBounds.width;
-  let height = trayBounds.height;
+    let width = trayBounds.width;
+    let height = trayBounds.height;
+    let marginBottom = 10;
 
-  const data = {
-    x: rect.x - width / 2,
-    y: rect.y - height,
-    width,
-    height,
-  };
-  trayWindow.setBounds(data);
-  trayWindow.show();
+    const data = {
+      x: Math.floor(rect.x - width / 2),
+      y: Math.floor(rect.y - height - marginBottom),
+      width,
+      height,
+    };
+    console.log(data);
+
+    trayWindow.setBounds(data);
+    trayWindow.show();
+  } catch (err) {
+    console.error(err);
+  }
+
   // showNotification();
 };

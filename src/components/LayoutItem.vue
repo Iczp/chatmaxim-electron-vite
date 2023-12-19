@@ -41,8 +41,8 @@ const slots = useSlots();
         </div>
       </slot>
     </main>
-    <footer v-if="footer || icon" class="footer">
-      <slot v-if="footer" name="footer">
+    <footer v-if="slots['footer'] || icon" class="footer">
+      <slot v-if="slots['footer']" name="footer">
         {{ footer }}
       </slot>
       <slot name="icon">

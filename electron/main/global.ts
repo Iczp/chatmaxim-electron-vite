@@ -2,6 +2,7 @@ import { app, screen } from 'electron';
 
 export interface GlobalState {
   isAppQuitting?: boolean;
+  trayTitleHeight: number;
   sessionItemHeight: number;
   sessionItemCount: number;
   badge: 0;
@@ -10,7 +11,8 @@ export interface GlobalState {
 
 export const globalState: GlobalState = {
   isAppQuitting: false,
-  sessionItemHeight: 64,
+  trayTitleHeight: 32,
+  sessionItemHeight: 48,
   badge: 0,
   sessionItemCount: 0,
   // displays: [],

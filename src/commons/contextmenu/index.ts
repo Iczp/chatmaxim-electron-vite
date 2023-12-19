@@ -3,7 +3,7 @@ import { MessageDto, SessionUnitOwnerDto, SessionUnitSenderDto } from '../../api
 import { showContextMenuForMessageAvatar } from './showContextMenuForMessageAvatar';
 import { showContextMenuForMessageContent } from './showContextMenuForMessageContent';
 import { showContextMenuForMessageSelect } from './showContextMenuForMessageSelect';
-import { showProfile } from '../showProfile';
+import { setProfile } from '../setProfile';
 export { showContextMenuForSession } from './showContextMenuForSession';
 export { showContextMenuForMessageContent } from './showContextMenuForMessageContent';
 export { showContextMenuForMessageAvatar } from './showContextMenuForMessageAvatar';
@@ -58,7 +58,7 @@ export const showContextMenuForMessage = (args: MessageContextMenuInput & Contex
       };
       console.log('event', params, event);
       const senderSessionUnit = entity.senderSessionUnit;
-      showProfile({
+      setProfile({
         name: 'pop',
         path: `/profile/${chatObjectId}/${senderSessionUnit?.id}`,
         position: 'absolute',
