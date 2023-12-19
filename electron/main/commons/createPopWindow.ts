@@ -6,9 +6,9 @@ import { preventClose } from './windowSettingHandle';
 
 const preload = join(__dirname, '../preload/index.js');
 
-export const createTipWindow = () => {
+export const createPopWindow = () => {
   const win = new BrowserWindow({
-    title: 'Tip window',
+    title: 'Pop window',
     // minWidth: 240,
     // minHeight: 240,
     width: 360,
@@ -24,7 +24,7 @@ export const createTipWindow = () => {
       contextIsolation: false,
     },
     autoHideMenuBar: true,
-    show: true,
+    show: false,
     frame: false,
     thickFrame: false,
     hasShadow: true,
@@ -34,9 +34,9 @@ export const createTipWindow = () => {
     // transparent: true,
   });
 
-  windowManager.set('tip', win);
+  windowManager.set('pop', win);
   win.removeMenu();
-  const path = '/tip';
+  const path = '/pop';
 
   if (process.env.VITE_DEV_SERVER_URL) {
     win.loadURL(`${process.env.VITE_DEV_SERVER_URL}#${path}`);
@@ -53,6 +53,7 @@ export const createTipWindow = () => {
     sendWindowInfo(win);
     // createChildWindow({ path: '/settings' });
   });
+
   win.on('blur', () => {
     console.log('blur');
     if (win.isVisible()) {

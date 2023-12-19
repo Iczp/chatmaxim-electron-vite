@@ -3,7 +3,7 @@ import { MessageDto, SessionUnitOwnerDto, SessionUnitSenderDto } from '../../api
 import { showContextMenuForMessageAvatar } from './showContextMenuForMessageAvatar';
 import { showContextMenuForMessageContent } from './showContextMenuForMessageContent';
 import { showContextMenuForMessageSelect } from './showContextMenuForMessageSelect';
-import { setWindow } from '../setWindow';
+import { showProfile } from '../showProfile';
 export { showContextMenuForSession } from './showContextMenuForSession';
 export { showContextMenuForMessageContent } from './showContextMenuForMessageContent';
 export { showContextMenuForMessageAvatar } from './showContextMenuForMessageAvatar';
@@ -46,7 +46,7 @@ export type ContextmenuInput = ContextmenuParams & ContextmenuLabel;
 export const iconClass: HtmlHTMLAttributes = { class: 'svg-icon s16' };
 
 export const showContextMenuForMessage = (args: MessageContextMenuInput & ContextmenuInput) => {
-  const { event, entity, selectable, mouseButton, labelType } = args;
+  const { event, entity, selectable, mouseButton, labelType, chatObjectId } = args;
   console.log('click', mouseButton, labelType);
   if (mouseButton == MouseButton.Click) {
     // console.log('click', entity);
@@ -57,15 +57,17 @@ export const showContextMenuForMessage = (args: MessageContextMenuInput & Contex
         clientY: event.clientY,
       };
       console.log('event', params, event);
-      setWindow({
-        name: 'tip',
-        path: `/profile/${entity.senderSessionUnit?.id}`,
+      const senderSessionUnit = entity.senderSessionUnit;
+      showProfile({
+        path: `/profile/${chatObjectId}/${senderSessionUnit?.id}`,
         position: 'absolute',
         x: event.clientX,
         y: event.clientY,
-        visiblity: true,
-        focus: true,
-        payload: toRaw(entity.senderSessionUnit),
+        size: {
+          width: 280,
+          height: senderSessionUnit?.isFriendship || false ? 360 : 180,
+        },
+        payload: toRaw(senderSessionUnit),
       });
       return;
     }

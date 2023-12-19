@@ -15,16 +15,16 @@ export type PickerInput = {
 };
 
 export const openChildWindow = (args: {
-  url: string;
+  // url: string;
   event?: string;
-  payload?: any;
+  // payload?: any;
   window?: WindowParams;
 }) =>
   new Promise((resolve: (value: PickerResult) => void, reject: (reason?: any) => void) => {
     args.event = args.event || `e-${new Date().getTime()}`;
     // args.payload = args.payload || {};
-    if (args.payload) {
-      localStorage.setItem(args.event, JSON.stringify(args.payload));
+    if (args.window?.payload) {
+      localStorage.setItem(args.event, JSON.stringify(args.window.payload));
     }
     args = JSON.parse(JSON.stringify(args));
     ipcRenderer
@@ -44,7 +44,7 @@ export const openChildWindow = (args: {
           message: err?.message || '取消',
         });
       })
-      .finally(() => args.payload && localStorage.removeItem(args.event!));
+      .finally(() => args.window?.payload && localStorage.removeItem(args.event!));
   });
 
 // export const sendPickerResult = ({ event, result }: { event: string; result: PickerResult }) =>

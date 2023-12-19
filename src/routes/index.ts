@@ -88,16 +88,16 @@ export const routes = <RouteRecordRaw[]>[
     props: true,
   },
   {
-    path: '/tip',
+    path: '/pop',
     meta: {
-      windows: ['tip'],
+      windows: ['pop'],
     },
-    component: () => import('../views/tips/Tip.vue'),
+    component: () => import('../views/pops/Tip.vue'),
   },
   {
-    path: '/profile/:sessionUnitId',
-    meta: {},
-    component: () => import('../views/Profile.vue'),
+    path: '/profile/:chatObjectId(\\d+)/:sessionUnitId',
+    meta: { keepAlive: true },
+    component: () => import('../views/pops/Profile.vue'),
     props: true,
   },
   {

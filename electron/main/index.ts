@@ -11,7 +11,8 @@ import { websocketHandle } from './commons/webscoketHandle';
 import { globalState } from './global';
 import './commons/logger';
 import './commons/tray';
-import { createTipWindow } from './commons/createTipWindow';
+import { createPopWindow } from './commons/createPopWindow';
+
 //
 Store.initRenderer();
 
@@ -50,7 +51,7 @@ if (!app.requestSingleInstanceLock()) {
 // process.env['ELECTRON_DISABLE_SECURITY_WARNINGS'] = 'true'
 
 let win: BrowserWindow | null = null;
-let tip: BrowserWindow | null = null;
+let pop: BrowserWindow | null = null;
 // Here, you can also use other preload
 const preload = join(__dirname, '../preload/index.js');
 const url = process.env.VITE_DEV_SERVER_URL;
@@ -59,7 +60,7 @@ console.log('app.getPath', app.getAppPath(), app.getPath('userData'));
 
 app.whenReady().then(() => {
   win = createMainWindow();
-  tip = createTipWindow();
+  pop = createPopWindow();
 });
 app.on('activate', () => {
   const allWindows = BrowserWindow.getAllWindows();

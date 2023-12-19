@@ -19,23 +19,23 @@ export const openChildWindowHandle = (
   _: Electron.IpcMainInvokeEvent,
   {
     event,
-    url,
-    payload,
+    // url,
+    // payload,
     window,
   }: {
     event: string;
-    url: string;
+    // url: string;
     payload: any;
     window?: WindowParams;
   },
 ): any => {
   return new Promise((resolve, reject) => {
-    console.log('open-child', { payload, window });
+    console.log('open-child', { window });
 
     const parent = windowManager.get(window.parent);
     // || BrowserWindow.fromWebContents(webContents.fromId(_.sender.id)) || windowManager.getMain();
-    const path = addParamsToUrl(url, { event, callerId: _.sender.id });
-    console.warn('args.url', url);
+    const path = addParamsToUrl(window.path, { event, callerId: _.sender.id });
+    window.path = path;
     console.warn('path', path);
     let childWindow = windowManager.get(window.name);
     if (!childWindow) {
@@ -45,12 +45,11 @@ export const openChildWindowHandle = (
           parent,
           path,
           isModel: window.isModel || false,
-          isPreventClose: true,
         }),
       );
       childWindow.on('closed', e => windowManager.remove(window.name));
     }
-    childWindow.webContents.send('navigate', { path, payload: window.payload });
+    // childWindow.webContents.send('navigate', { path, payload: window.payload });
     // args.callerId = _.sender.id;
     let isSuccess = false;
 
@@ -71,24 +70,22 @@ export const openChildWindowHandle = (
     childWindow.once('close', rejectFunc);
     ipcMain.once(event, resolveFunc);
 
-    setWindow(childWindow, window);
+    setWindow(childWindow, window, _);
     // navTo(childWindow, url);
 
     // childWindow.setContentSize(500, 800);
     // childWindow.center();
-    childWindow.show();
+    // childWindow.show();
   });
 };
 
 export const createChildWindow = ({
   path,
   isModel,
-  isPreventClose,
   parent,
 }: {
   path: string;
   isModel: boolean;
-  isPreventClose?: boolean;
   parent?: BrowserWindow;
 }): BrowserWindow => {
   console.log('createChildWindow', path);

@@ -3,6 +3,7 @@ import { WindowParams } from '../ipc-types';
 import { ifArrayNumber, ifBoolean, ifTrue } from './ifBoolean';
 import { globalState } from '../global';
 import { windowManager } from './windowManager';
+import { addParamsToUrl } from './addParamsToUrl';
 // import { preventClose } from './openChildWindowHandle';
 
 export const windowSettingHandle = (_: Electron.IpcMainInvokeEvent, params: WindowParams): any => {
@@ -17,16 +18,19 @@ export const windowSettingHandle = (_: Electron.IpcMainInvokeEvent, params: Wind
     } else {
       targetWindow = BrowserWindow.fromWebContents(webContents.fromId(_.sender.id));
     }
-    setWindow(targetWindow, params);
+    setWindow(targetWindow, params, _);
     resolve({ message: 'ok' });
   });
 };
 
-export const setWindow = (win: BrowserWindow, params: WindowParams) => {
-  setWindowProperties(win, params);
-  setWindowBounds(win, params?.size);
-  setPosition(win, params);
-  setWindowMethods(win, params);
+export const setWindow = (
+  win: BrowserWindow,
+  params: WindowParams,
+  _: Electron.IpcMainInvokeEvent,
+) => {
+  setWindowProperties(win, params, _);
+  setWindowBounds(win, params, _);
+  setWindowMethods(win, params, _);
 };
 
 /**
@@ -59,16 +63,21 @@ export const preventClose = (win: BrowserWindow, isListening: boolean) => {
  * @param {BrowserWindow} win
  * @param {WindowParams} params
  */
-export const setWindowProperties = (win: BrowserWindow, params: WindowParams) => {
+export const setWindowProperties = (
+  win: BrowserWindow,
+  params: WindowParams,
+  _: Electron.IpcMainInvokeEvent,
+) => {
   ifBoolean(params?.maximizable, x => (win.maximizable = x));
   ifBoolean(params?.minimizable, x => (win.minimizable = x));
   ifBoolean(params?.closable, x => (win.closable = x));
   ifBoolean(params?.movable, x => (win.movable = x));
   ifBoolean(params?.resizable, x => (win.resizable = x));
   ifBoolean(params?.focusable, x => (win.focusable = x));
-  ifTrue<string>(params?.path, path =>
-    win.webContents.send('navigate', { path, payload: params.payload }),
-  );
+  ifTrue<string>(params?.path, v => {
+    const path = addParamsToUrl(v, { callerId: _?.sender.id });
+    win.webContents.send('navigate', { path, payload: params.payload });
+  });
 };
 
 /**
@@ -77,7 +86,11 @@ export const setWindowProperties = (win: BrowserWindow, params: WindowParams) =>
  * @param {BrowserWindow} win
  * @param {WindowParams} params
  */
-export const setWindowMethods = (win: BrowserWindow, params: WindowParams) => {
+export const setWindowMethods = (
+  win: BrowserWindow,
+  params: WindowParams,
+  _: Electron.IpcMainInvokeEvent,
+) => {
   ifBoolean(params?.maximize, x => (win.isMaximized() ? win.restore() : win.maximize()));
   ifBoolean(params?.minimize, x => win.minimize());
   ifBoolean(params?.close, x => win.close());
@@ -97,54 +110,48 @@ export const setWindowMethods = (win: BrowserWindow, params: WindowParams) => {
   ifBoolean(params?.focus, x => win.focus());
 };
 
-/**
- *
- *
- * @param {BrowserWindow} win
- * @param {{
- *     width: number;
- *     height: number;
- *   }} size
- * @return {*}
- */
 export const setWindowBounds = (
   win: BrowserWindow,
-  size: {
-    width: number;
-    height: number;
-  },
+  params: WindowParams,
+  _: Electron.IpcMainInvokeEvent,
 ) => {
-  if (!size) {
-    return;
-  }
-  const parent = win.getParentWindow();
-  if (!parent) {
-    console.log('setWindowBounds: parent isnull');
-    win.hide();
-    win.setSize(size.width, size.height);
-    win.center();
-    setTimeout(() => {
-      win.show();
-    }, 800);
-    return;
-  }
-  const parentBounds = parent.getBounds();
-  const bounds = {
-    x: parentBounds.x + Math.floor((parentBounds.width - size.width) / 2),
-    y: parentBounds.y + Math.floor((parentBounds.height - size.height) / 2),
-    ...size,
-  };
-  console.log('bounds', bounds);
-  win.setBounds(bounds);
-};
-
-export const setPosition = (win: BrowserWindow, params: WindowParams, refer?: BrowserWindow) => {
   const { position, x, y } = params;
+
+  let refer: BrowserWindow | undefined = undefined;
+  let sender: BrowserWindow | undefined = BrowserWindow.fromWebContents(
+    webContents.fromId(_.sender.id),
+  );
+  const size = params.size;
   if (position == 'absolute') {
-    let rect: Electron.Rectangle = (refer || windowManager.getMain()).getBounds();
+    if (params.refer == '$sender') {
+      refer = sender;
+    } else if (params.refer == '$parent') {
+      refer = sender?.getParentWindow();
+    } else if (params.refer == '$main') {
+      refer = windowManager.getMain();
+    }
+
+    let rect = refer?.getBounds();
     win.setBounds({
-      x: rect.x + Math.floor(x),
-      y: rect.y + Math.floor(y),
+      x: Number(rect?.x || 0) + Math.floor(x),
+      y: Number(rect?.y || 0) + Math.floor(y),
+      ...size,
     });
+  } else if (size) {
+    const parent = win.getParentWindow();
+    if (!parent) {
+      console.log('setWindowBounds: parent isnull');
+      win.setSize(size.width, size.height);
+      win.center();
+      return;
+    }
+    const parentBounds = parent.getBounds();
+    const bounds = {
+      x: parentBounds.x + Math.floor((parentBounds.width - size.width) / 2),
+      y: parentBounds.y + Math.floor((parentBounds.height - size.height) / 2),
+      ...size,
+    };
+    console.log('bounds', bounds);
+    win.setBounds(bounds);
   }
 };

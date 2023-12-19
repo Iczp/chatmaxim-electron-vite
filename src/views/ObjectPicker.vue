@@ -18,7 +18,7 @@ const title = useTitle((route.query.title as string) ?? '转发');
 
 const props = defineProps<{
   title?: string;
-  chatObjectId: number;
+  chatObjectId: number | string;
   ticks?: number;
 }>();
 
@@ -39,13 +39,13 @@ const {
   toggleChecked,
   picker,
 } = useContacts({
-  input: { ownerId: props.chatObjectId! },
+  input: { ownerId: Number(props.chatObjectId!) },
 });
 
 watch(
   () => props.chatObjectId,
   v => {
-    query.value.ownerId = v;
+    query.value.ownerId = Number(v);
     list.value = [];
     fetchNext();
   },

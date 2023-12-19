@@ -79,7 +79,12 @@ export type WindowParams = {
    * @type {boolean}
    */
   isPreventClose?: boolean;
-
+  /**
+   * 窗口位置信息照物，如主窗口为:main,调用者窗口为:$sender,父窗口为:$parent
+   *
+   * @type {string}
+   */
+  refer?: string | '$sender' | 'main' | '$parent';
   /**
    *
    *

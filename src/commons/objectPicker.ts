@@ -5,7 +5,7 @@ import { PickerInput, PickerResult, openChildWindow, sendPickerResult } from './
 export type ObjectPickerResult = PickerResult & PickerInput;
 
 export type ObjectPickerPayLoad = PickerInput & {
-  chatObjectId: number;
+  chatObjectId: number | string;
 };
 
 export const objectPicker = ({
@@ -18,11 +18,13 @@ export const objectPicker = ({
   const ticks = new Date().getTime();
   const event = `${payload.chatObjectId}-${ticks}`;
   return openChildWindow({
-    url: `/object-picker/${payload.chatObjectId}`,
+    // url: `/object-picker/${payload.chatObjectId}`,
     event,
-    payload,
+    // payload,
     window: window || {
       name: 'object-picker',
+      path: `/object-picker/${payload.chatObjectId}`,
+      visiblity: true,
       parent: 'main',
       isModel: true,
       isPreventClose: true,
@@ -30,6 +32,7 @@ export const objectPicker = ({
         width: 480,
         height: 640,
       },
+      payload,
     },
   });
 };

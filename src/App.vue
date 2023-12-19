@@ -24,14 +24,14 @@ import {
 
 <template>
   <div class="top-bar drag"></div>
-  <router-view />
+  <!-- <router-view /> -->
 
-  <!-- <router-view v-slot="{ Component, route }">
-    <keep-alive>
+  <router-view v-slot="{ Component, route }">
+    <keep-alive v-if="route.meta.keepAlive">
       <component :is="Component" :key="route.fullPath" />
     </keep-alive>
-    <component v-else :is="Component" :key="route.path" />
-  </router-view> -->
+    <component v-else :is="Component" />
+  </router-view>
 </template>
 
 <style scoped>

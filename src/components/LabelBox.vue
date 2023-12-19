@@ -35,7 +35,7 @@ const inheritanceKeys = Object.keys(slots).filter(x => !ignoreSlots.some(d => d 
   display: flex;
   flex-direction: row;
   justify-content: space-between;
-  border-bottom: 1px solid #666;
+  /* border-bottom: 1px solid #666; */
   line-height: 150%;
 }
 .title {
