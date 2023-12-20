@@ -10,7 +10,7 @@ const { totalBadge, list, onItemClick, onHeaderClick, onIgnore, onMouseOver, onM
   <page class="page-tray" @mouseover="onMouseOver" @mouseleave="onMouseLeave">
     <!-- <page-title title="Tip" description="123" /> -->
     <page-header class="header">
-      <h3 @click="onHeaderClick">Tray（{{ totalBadge }}）</h3>
+      <h3 class="total-badge" @click="onHeaderClick">新消息（{{ totalBadge }}）</h3>
     </page-header>
     <page-content>
       <!-- <header class="header" >
@@ -24,7 +24,7 @@ const { totalBadge, list, onItemClick, onHeaderClick, onIgnore, onMouseOver, onM
             :entity="item.destination"
             :key="item.destination?.id"
             class="session-item"
-            @click="onItemClick(item)"
+            @click="onItemClick(item, index)"
           >
             <!-- <template #title>title-left</template> -->
             <!-- <template #title-right>title-right555</template> -->
@@ -48,6 +48,10 @@ const { totalBadge, list, onItemClick, onHeaderClick, onIgnore, onMouseOver, onM
 </template>
 
 <style scoped>
+:deep(.title-left.object-name) {
+  max-width: 136px;
+}
+
 .page-tray {
   background-color: white;
   user-select: none;
@@ -58,8 +62,14 @@ const { totalBadge, list, onItemClick, onHeaderClick, onIgnore, onMouseOver, onM
   box-sizing: border-box;
   align-items: center;
   padding: 0 12px;
-  /* border-bottom: 1px solid #ccc; */
-  font-size: 12px;
+  border-bottom: 1px solid #f0f0f0ac;
+}
+.total-badge {
+  padding: 0;
+  margin: 0;
+  display: flex;
+  align-items: center;
+  font-size: 14px;
 }
 .list {
   padding: 0;

@@ -1,10 +1,11 @@
-import { computed, ref, watch } from 'vue';
+import { computed, ref, toRaw, watch } from 'vue';
 
 import { SessionUnitOwnerDto } from '../../apis/dtos';
 import { setTray } from '../../commons/setTray';
 import { useWindowStore } from '../../stores/window';
 import { TrayPayload } from '../../ipc-types';
 import { sendCententOver } from './sendCententOver';
+import { setWindow } from '../../commons/setWindow';
 
 export const useTray = () => {
   const windowStore = useWindowStore();
@@ -36,24 +37,26 @@ export const useTray = () => {
     isOver => sendCententOver({ isOver }),
   );
 
-  const onItemClick = (item: SessionUnitOwnerDto): void => {
+  const onItemClick = (item: SessionUnitOwnerDto, index: number): void => {
     console.log('onItemClick', item);
+    totalBadge.value = Number(totalBadge.value) - Number(item.publicBadge);
+    list.value = list.value.splice(index, 0);
+    setTray({ totalBadge: totalBadge.value, items: list.value.map(x => toRaw(x)) });
+
+    setWindow({
+      name: 'main',
+      path: `/chat/${item.ownerId}/${item.id}`,
+      focus: true,
+      visiblity: true,
+    });
   };
 
   const onHeaderClick = (): void => {
     console.log('onHeaderClick');
-    setTray({
-      totalBadge: Math.floor(Math.random() * 100),
-      items: '000000'.split('').map(
-        (x, i) =>
-          <SessionUnitOwnerDto>{
-            publicBadge: i,
-            destination: {
-              id: i,
-              name: `name:${i}`,
-            },
-          },
-      ),
+    setWindow({
+      name: 'main',
+      focus: true,
+      visiblity: true,
     });
   };
 

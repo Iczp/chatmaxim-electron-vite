@@ -60,6 +60,7 @@ export const createPopWindow = ({ path = '/pop' }: { path?: string }) => {
     maximizable: false,
     minimizable: false,
     resizable: false,
+    skipTaskbar: false,
     // transparent: true,
   });
 

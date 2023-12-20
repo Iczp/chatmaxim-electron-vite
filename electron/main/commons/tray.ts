@@ -98,11 +98,11 @@ const createTray = () => {
     console.log('double-click', e);
     tray.popUpContextMenu();
   });
-  tray.on('mouse-enter', trayShow);
+  tray.on('mouse-enter', () => trayShow());
   tray.on('mouse-enter', e => {
     console.log('mouse-enter', e);
   });
-  tray.on('mouse-move', trayShow);
+  tray.on('mouse-move', () => trayShow());
   tray.on('mouse-leave', trayHide);
 };
 
@@ -133,6 +133,7 @@ export const createTrayWindow = ({ path = '/tray' }: { path?: string }) => {
     resizable: false,
     closable: false,
     alwaysOnTop: true,
+    skipTaskbar: false,
     // transparent: true,
   });
 
@@ -188,7 +189,7 @@ const trayHide = (): void => {
 /**
  * trayShow
  */
-const trayShow = (): void => {
+const trayShow = (force?: boolean): void => {
   // event: KeyboardEvent, point: Point
   // {
   //   shiftKey: false,
@@ -200,10 +201,10 @@ const trayShow = (): void => {
   // { x: 2166, y: 1294, width: 41, height: 42 } { x: 2184, y: 1317 }
 
   try {
-    const { windowWidth, items, headerHeight, footerHeight, itemHeight, margin } =
+    const { windowWidth, items, headerHeight, footerHeight, itemHeight, margin, totalBadge } =
       globalState.trayPayload;
-    if (trayWindow.isVisible() || isEnter) {
-      //|| items.length == 0
+    if (trayWindow.isVisible() || items.length == 0 || totalBadge == 0) {
+      //|| items.length == 0|| isEnter
       // console.log('trayWindow.isVisible', trayWindow.isVisible());
       return;
     }

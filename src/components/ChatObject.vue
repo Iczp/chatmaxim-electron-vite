@@ -29,7 +29,7 @@ const inheritanceKeys = Object.keys(slots).filter(x => !ignoreSlots.some(d => d 
     </template>
     <template #title>
       <slot name="title">
-        <span>{{ entity?.name }}</span>
+        <span class="text-ellipsis">{{ entity?.name }}performances/score-detail</span>
       </slot>
     </template>
     <template v-for="(slot, index) of inheritanceKeys" :key="index" v-slot:[slot]>
@@ -42,6 +42,9 @@ const inheritanceKeys = Object.keys(slots).filter(x => !ignoreSlots.some(d => d 
 /* :deep(.layout-item) {
   --spacing-size: 8px;
 } */
+:deep(.title-left.object-name) {
+  max-width: 120px;
+}
 .chat-object {
   padding: 6px 0px;
   --spacing-size: 8px;

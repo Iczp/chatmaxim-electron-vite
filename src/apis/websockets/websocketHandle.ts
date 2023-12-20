@@ -1,4 +1,6 @@
+import { toRaw } from 'vue';
 import { eventBus } from '../../commons/eventBus';
+import { setTray } from '../../commons/setTray';
 import { useImStore } from '../../stores/im';
 import { useWindowStore } from '../../stores/window';
 import { MessageDto } from '../dtos';
@@ -57,6 +59,7 @@ export const commandHandle = (args: ReceivedDto<any>) => {
       if (windowStore.isMain()) {
         store.fetchSessionUnitMany(idList).then(() => {
           eventBus.emit('IncrementCompleted', args);
+          store.updateTray();
         });
         store.getBadgeByCurrentUser();
       }

@@ -13,6 +13,9 @@ import {
 } from '../apis/dtos';
 import { ChatObjectService, SessionUnitService } from '../apis';
 import { mapToSessionItemDto, sortSessionItemDto } from '../commons/utils';
+import { TrayPayload } from '../ipc-types';
+import { toRaw } from 'vue';
+import { setTray } from '../commons/setTray';
 
 interface State {
   chatObjects: Map<number, BadgeDetialDto>;
@@ -395,6 +398,17 @@ export const useImStore = defineStore('im', {
         'clearBadge',
       );
       //
+    },
+
+    /**
+     * 更新托盘
+     */
+    updateTray() {
+      const items = [...this.sessionUnitMap.values()]
+        .filter(x => Number(x.publicBadge) > 0)
+        .map(x => toRaw(x) as any);
+      const totalBadge = items.reduce((partialSum, x) => partialSum + Number(x.publicBadge), 0);
+      setTray({ items, totalBadge });
     },
   },
 });
