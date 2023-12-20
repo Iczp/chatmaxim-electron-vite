@@ -33,6 +33,7 @@ const defaultValue: WindowState = {
   isPreventClose: undefined,
   payload: undefined,
   path: undefined,
+  isAlwaysOnTop: undefined,
 };
 
 export const useWindowStore = defineStore('window', {
@@ -90,6 +91,9 @@ export const useWindowStore = defineStore('window', {
           break;
         case 'leave-full-screen':
           this.isFullScreen = false;
+          break;
+        case 'always-on-top-changed':
+          this.isAlwaysOnTop = args[0] as boolean;
           break;
       }
       // console.log('update', this);

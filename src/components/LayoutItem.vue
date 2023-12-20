@@ -27,22 +27,22 @@ const slots = useSlots();
           <div class="title-left object-name">
             <slot name="title"></slot>
           </div>
-          <div v-if="slots['title-right']" class="title-right">
+          <div v-if="slots['title-right'] || titleRight" class="title-right">
             <slot name="title-right">{{ titleRight }}</slot>
           </div>
         </div>
-        <div v-if="slots['sub']" class="sub-container">
+        <div v-if="slots['sub'] || sub" class="sub-container">
           <div class="sub-left">
             <slot name="sub">{{ sub }}</slot>
           </div>
-          <div v-if="slots['sub-right']" class="sub-right">
+          <div v-if="slots['sub-right'] || subRight" class="sub-right">
             <slot name="sub-right">{{ subRight }}</slot>
           </div>
         </div>
       </slot>
     </main>
-    <footer v-if="slots['footer'] || icon" class="footer">
-      <slot v-if="slots['footer']" name="footer">
+    <footer v-if="slots['footer'] || footer || icon" class="footer">
+      <slot v-if="slots['footer'] || footer" name="footer">
         {{ footer }}
       </slot>
       <slot name="icon">

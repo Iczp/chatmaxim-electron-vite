@@ -216,9 +216,9 @@ onMounted(() => {
               <!-- <template #title>title-left</template> -->
               <!-- <template #title-right>title-right555</template> -->
               <!-- <template #sub>sub-left555</template> -->
-              <template #footer>
-                <!-- <a-button @click="addFriend(item)">添加/关注</a-button> -->
-              </template>
+              <!-- <template #footer>
+                <a-button @click="addFriend(item)">添加/关注</a-button>
+              </template> -->
             </chat-object>
           </div>
           <Loading v-if="isPending" :height="48" />

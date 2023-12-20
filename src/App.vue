@@ -23,7 +23,7 @@ import {
 </script>
 
 <template>
-  <div class="top-bar drag"></div>
+  <!-- <div class="top-bar drag"></div> -->
   <!-- <router-view /> -->
 
   <router-view v-slot="{ Component, route }">

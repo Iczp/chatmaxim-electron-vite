@@ -1,24 +1,9 @@
 <script setup lang="ts">
-import { ref, watch } from 'vue';
 import ChatObject from '../../components/ChatObject.vue';
 import { useTray } from './useTray';
-import { sendCententOver } from './sendCententOver';
 
-const { totalBadge, list, onItemClick, onHeaderClick, onIgnore } = useTray();
-
-const isOver = ref<boolean | undefined>();
-const onMouseOver = (e: MouseEvent) => {
-  isOver.value = true;
-  // console.log('onMouseOver', e);
-};
-const onMouseLeave = (e: MouseEvent) => {
-  isOver.value = false;
-  // console.log('onMouseLeave', e);
-};
-watch(
-  () => isOver.value,
-  isOver => sendCententOver({ isOver }),
-);
+const { totalBadge, list, onItemClick, onHeaderClick, onIgnore, onMouseOver, onMouseLeave } =
+  useTray();
 </script>
 
 <template>

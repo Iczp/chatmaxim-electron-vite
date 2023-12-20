@@ -11,6 +11,7 @@ export const initWindowEvent = (win: BrowserWindow) => {
   win.on('restore', (_: any, ...args: any[]) => send('restore', args));
   win.on('focus', (_: any, ...args: any[]) => send('focus', args));
   win.on('blur', (_: any, ...args: any[]) => send('blur', args));
+  win.on('always-on-top-changed', (_: any, ...args: any[]) => send('always-on-top-changed', args));
   // win.on('move', (_, ...args) => sendEvent('move', args));
   win.on('enter-full-screen', (_: any, ...args: any[]) => send('enter-full-screen', args));
   win.on('leave-full-screen', (_: any, ...args: any[]) => send('leave-full-screen', args));

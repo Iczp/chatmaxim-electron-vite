@@ -11,6 +11,11 @@ import {
   VerifiedOutlined,
 } from '@ant-design/icons-vue';
 import ToolBar from './TooBar.vue';
+import { setWindow } from '../commons/setWindow';
+import { useWindowStore } from '../stores/window';
+import { computed } from 'vue';
+
+const windowStore = useWindowStore();
 const props = withDefaults(
   defineProps<{
     title?: string;
@@ -25,6 +30,12 @@ const props = withDefaults(
 );
 const onTitleClick = () => {
   console.log('onTitleClick');
+};
+const isAlwaysOnTop = computed(() => windowStore.isAlwaysOnTop);
+const toggleAlwayOnTop = () => {
+  setWindow({
+    isAlwaysOnTop: !windowStore.isAlwaysOnTop,
+  });
 };
 </script>
 
@@ -51,8 +62,14 @@ const onTitleClick = () => {
     </div>
     <div class="page-title-right no-drag">
       <tool-bar>
-        <a-button v-if="top" type="text" class="btn" title="置顶">
-          <PushpinOutlined />
+        <a-button
+          v-if="top"
+          type="text"
+          class="btn"
+          @click="toggleAlwayOnTop"
+          :title="`${isAlwaysOnTop ? '取消置顶' : '置顶'}`"
+        >
+          <PushpinOutlined class="pin" :class="{ 'alway-on-top': isAlwaysOnTop }" />
         </a-button>
         <a-button v-if="search" type="text" class="btn" title="搜索">
           <SearchOutlined />
@@ -131,5 +148,14 @@ const onTitleClick = () => {
   margin: 0;
   color: #ccc;
   height: 20px;
+}
+
+.pin {
+  color: #666;
+  transition: all 0.3s linear;
+}
+.pin.alway-on-top {
+  color: deepskyblue;
+  transform: rotate(-45deg);
 }
 </style>

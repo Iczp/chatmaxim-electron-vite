@@ -108,6 +108,8 @@ export const setWindowMethods = (
 
   ifBoolean(params?.visiblity, x => (x ? win.show() : win.hide()));
   ifBoolean(params?.focus, x => win.focus());
+
+  ifBoolean(params?.isAlwaysOnTop, x => win.setAlwaysOnTop(x));
 };
 
 export const setWindowBounds = (

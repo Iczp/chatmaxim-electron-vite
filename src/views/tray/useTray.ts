@@ -4,6 +4,7 @@ import { SessionUnitOwnerDto } from '../../apis/dtos';
 import { setTray } from '../../commons/setTray';
 import { useWindowStore } from '../../stores/window';
 import { TrayPayload } from '../../ipc-types';
+import { sendCententOver } from './sendCententOver';
 
 export const useTray = () => {
   const windowStore = useWindowStore();
@@ -19,19 +20,30 @@ export const useTray = () => {
     },
   );
 
+  const isOver = ref<boolean | undefined>();
+
+  const onMouseOver = (e: MouseEvent) => {
+    isOver.value = true;
+    // console.log('onMouseOver', e);
+  };
+
+  const onMouseLeave = (e: MouseEvent) => {
+    isOver.value = false;
+    // console.log('onMouseLeave', e);
+  };
+  watch(
+    () => isOver.value,
+    isOver => sendCententOver({ isOver }),
+  );
+
   const onItemClick = (item: SessionUnitOwnerDto): void => {
     console.log('onItemClick', item);
   };
 
   const onHeaderClick = (): void => {
     console.log('onHeaderClick');
-  };
-
-  const onIgnore = (): void => {
-    console.log('onIgnore');
-
     setTray({
-      totalBadge: Math.random() * 100,
+      totalBadge: Math.floor(Math.random() * 100),
       items: '000000'.split('').map(
         (x, i) =>
           <SessionUnitOwnerDto>{
@@ -42,9 +54,22 @@ export const useTray = () => {
             },
           },
       ),
-      
     });
   };
 
-  return { totalBadge, list, onItemClick, onHeaderClick, onIgnore };
+  const onIgnore = (): void => {
+    console.log('onIgnore');
+    setTray({ totalBadge: 0, items: [] });
+  };
+
+  return {
+    totalBadge,
+    list,
+    onItemClick,
+    onHeaderClick,
+    onIgnore,
+    onMouseOver,
+    onMouseLeave,
+    isOver,
+  };
 };

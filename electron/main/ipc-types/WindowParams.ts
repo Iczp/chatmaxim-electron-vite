@@ -119,4 +119,11 @@ export type WindowParams = {
    * @type {*}
    */
   payload?: any;
+
+  /**
+   * 窗口置顶
+   *
+   * @type {*}
+   */
+  isAlwaysOnTop?: boolean;
 };
