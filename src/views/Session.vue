@@ -71,12 +71,11 @@ const onItemDbClick = (item: SessionItemDto) => {
   item.isSeparated = true;
   router.push({ name: 'chat-empty' });
   openChildWindow({
-    url: `/separate-chat/${item.ownerId}/${item.id}`,
-    // event,
-    payload: { sessionUnit: store.getSessionUnit(item.id!) },
     window: {
-      focus: true,
       name: `chat-${item.id}`,
+      path: `/separate-chat/${item.ownerId}/${item.id}`,
+      payload: { sessionUnit: store.getSessionUnit(item.id!) },
+      focus: true,
       size: {
         width: 480,
         height: 640,

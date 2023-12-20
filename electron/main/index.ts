@@ -1,4 +1,4 @@
-import { app, BrowserWindow, ipcMain, webContents,screen } from 'electron';
+import { app, BrowserWindow, ipcMain, webContents, screen } from 'electron';
 import { release } from 'node:os';
 import { join } from 'node:path';
 import Store from 'electron-store';
@@ -12,7 +12,7 @@ import { globalState } from './global';
 import './commons/logger';
 import './commons/tray';
 import { createPopWindow, openPopWindowHandle } from './commons/openPopWindowHandle';
-
+import { setTrayHandle } from './commons/setTrayHandle';
 
 //
 Store.initRenderer();
@@ -88,3 +88,5 @@ ipcMain.handle('open-child', openChildWindowHandle);
 ipcMain.handle('open-pop', openPopWindowHandle);
 ipcMain.handle('win-setting', windowSettingHandle);
 ipcMain.handle('websocket', websocketHandle);
+ipcMain.handle('set-tray', setTrayHandle);
+

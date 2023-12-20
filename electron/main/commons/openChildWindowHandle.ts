@@ -6,6 +6,7 @@ import { windowManager } from './windowManager';
 import { sendEvent, initWindowEvent, sendWindowInfo } from './initWindowEvent';
 import { setWindow } from './windowSettingHandle';
 import { globalState } from '../global';
+import { loadUrl } from './loadUrl';
 
 // process.env.DIST_ELECTRON = join(__dirname, '..');
 // process.env.DIST = join(process.env.DIST_ELECTRON, '../dist');
@@ -120,17 +121,7 @@ export const createChildWindow = ({
 
   initWindowEvent(win);
 
-  if (process.env.VITE_DEV_SERVER_URL) {
-    win.loadURL(`${process.env.VITE_DEV_SERVER_URL}#${path}`);
-    // Open devTool if the app is not packaged
-
-    win.webContents.openDevTools({
-      mode: 'detach',
-    });
-  } else {
-    const indexHtml = join(process.env.DIST, 'index.html');
-    win.loadFile(indexHtml, { hash: path });
-  }
+  loadUrl(win, { path });
 
   return win;
 };

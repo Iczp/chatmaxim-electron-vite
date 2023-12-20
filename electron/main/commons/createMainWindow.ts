@@ -2,6 +2,7 @@ import { BrowserWindow } from 'electron';
 import { join } from 'node:path';
 import { windowManager } from './windowManager';
 import { initWindowEvent, sendWindowInfo } from './initWindowEvent';
+import { loadUrl } from './loadUrl';
 
 const preload = join(__dirname, '../preload/index.js');
 
@@ -28,19 +29,7 @@ export const createMainWindow = () => {
   });
   windowManager.set('main', win);
   win.removeMenu();
-  if (process.env.VITE_DEV_SERVER_URL) {
-    // electron-vite-vue#298
-    const url = process.env.VITE_DEV_SERVER_URL;
-    win.loadURL(url);
-    // Open devTool if the app is not packaged
-    win.webContents.openDevTools({
-      mode: 'detach',
-    });
-  } else {
-    const indexHtml = join(process.env.DIST, 'index.html');
-    win.loadFile(indexHtml);
-  }
-
+  loadUrl(win, { path: '/' });
   // Test actively push message to the Electron-Renderer
   win.webContents.on('did-finish-load', () => {
     sendWindowInfo(win);

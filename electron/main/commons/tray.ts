@@ -1,14 +1,16 @@
-import { app, Tray, Menu, nativeImage, Notification, screen, Rectangle, Point } from 'electron';
+import { app, Tray, Menu, nativeImage, Notification, Rectangle, Point, ipcMain } from 'electron';
 import { windowManager } from './windowManager';
 import { BrowserWindow } from 'electron';
 import { join } from 'node:path';
 import { initWindowEvent, sendWindowInfo } from './initWindowEvent';
 import { preventClose } from './windowSettingHandle';
+import { globalState } from '../global';
+import { loadUrl } from './loadUrl';
 
 const preload = join(__dirname, '../preload/index.js');
 // const { app, Tray, Menu, nativeImage } = require('electron/main')
 
-let tray;
+let tray: Tray;
 let trayWindow: BrowserWindow;
 
 app.whenReady().then(() => {
@@ -58,9 +60,14 @@ const createTray = () => {
   // console.log('appIcon', appIcon)
   // let iconUrl = path.join(__dirname, `./static/logo.png`)
   const icon = nativeImage.createFromPath(`./static/logo.png`);
-  console.log('icon', icon);
+  // console.log('icon', icon);
   tray = new Tray(icon);
   // tray = new Tray('./static/logo.png')
+
+  const productName = import.meta.env.VITE_APP_NAME;
+  tray.setToolTip(`${productName}`);
+  tray.setTitle(`${productName}`);
+
   const contextMenu = Menu.buildFromTemplate([
     {
       label: '设置',
@@ -78,16 +85,25 @@ const createTray = () => {
       type: 'normal',
     },
   ]);
-  tray.setToolTip(`数字日春 v1.0 `);
-  tray.setTitle(`数字日春 v1.0 `);
   tray.setContextMenu(contextMenu);
-  tray.on('click', trayClick);
-  tray.on('mouse-enter', arg => {
-    console.log('mouse-enter', arg);
+  tray.on('click', () => {
+    windowManager.getMain().show();
+    //
+    tray.displayBalloon({
+      title: '7777',
+      content: '0000000000',
+    });
   });
-  tray.on('mouse-move', () => {
-    //console.log('mouse-move', arg)
+  tray.on('double-click', e => {
+    console.log('double-click', e);
+    tray.popUpContextMenu();
   });
+  tray.on('mouse-enter', trayShow);
+  tray.on('mouse-enter', e => {
+    console.log('mouse-enter', e);
+  });
+  tray.on('mouse-move', trayShow);
+  tray.on('mouse-leave', trayHide);
 };
 
 export const createTrayWindow = ({ path = '/tray' }: { path?: string }) => {
@@ -116,23 +132,15 @@ export const createTrayWindow = ({ path = '/tray' }: { path?: string }) => {
     minimizable: false,
     resizable: false,
     closable: false,
+    alwaysOnTop: true,
     // transparent: true,
   });
 
   windowManager.set('tray', win);
-  win.on('close', () => windowManager.remove('tray'));
+  win.on('closed', () => windowManager.remove('tray'));
   win.removeMenu();
-
-  if (process.env.VITE_DEV_SERVER_URL) {
-    win.loadURL(`${process.env.VITE_DEV_SERVER_URL}#${path}`);
-    // Open devTool if the app is not packaged
-    win.webContents.openDevTools({
-      mode: 'detach',
-    });
-  } else {
-    const indexHtml = join(process.env.DIST, 'index.html');
-    win.loadFile(indexHtml, { hash: path });
-  }
+  win.on('blur', e => win.hide());
+  loadUrl(win, { path });
   // Test actively push message to the Electron-Renderer
   win.webContents.on('did-finish-load', () => {
     sendWindowInfo(win);
@@ -144,13 +152,44 @@ export const createTrayWindow = ({ path = '/tray' }: { path?: string }) => {
   return win;
 };
 
+let isEnter: boolean = false;
+let isContentOver: boolean = false;
+
 /**
- * trayClick
- * @param {*} event
- * @param {*} rect
- * @param {*} point
+ *
+ * @param {Electron.IpcMainInvokeEvent} _
+ * @param {{ isOver?: boolean }} payload
+ * @return {*}  {*}
  */
-const trayClick = (event: KeyboardEvent, rect: Rectangle, point: Point): void => {
+export const contentOverHandle = (
+  _: Electron.IpcMainInvokeEvent,
+  payload: { isOver?: boolean },
+): any => {
+  return new Promise((resolve, reject) => {
+    globalState.trayContent = payload;
+    isContentOver = payload.isOver;
+    if (payload.isOver === false) {
+      trayHide();
+    }
+    resolve({});
+  });
+};
+ipcMain.handle('content-over', contentOverHandle);
+
+/**
+ * trayHide
+ */
+const trayHide = (): void => {
+  console.log('trayHide');
+  isEnter = false;
+  trayWindow.hide();
+};
+
+/**
+ * trayShow
+ */
+const trayShow = (): void => {
+  // event: KeyboardEvent, point: Point
   // {
   //   shiftKey: false,
   //   ctrlKey: false,
@@ -159,18 +198,25 @@ const trayClick = (event: KeyboardEvent, rect: Rectangle, point: Point): void =>
   //   triggeredByAccelerator: true
   // }
   // { x: 2166, y: 1294, width: 41, height: 42 } { x: 2184, y: 1317 }
-  console.log('tray-click', event, rect, point);
+
   try {
-    const sessionHeight = 64;
-    const trayBounds = trayWindow.getBounds();
+    const { windowWidth, items, headerHeight, footerHeight, itemHeight, margin } =
+      globalState.trayPayload;
+    if (trayWindow.isVisible() || isEnter) {
+      //|| items.length == 0
+      // console.log('trayWindow.isVisible', trayWindow.isVisible());
+      return;
+    }
+    // isEnter = true;
+    // console.log('trayShow', event, point);
+    const rect = tray.getBounds();
 
-    let width = trayBounds.width;
-    let height = trayBounds.height;
-    let marginBottom = 10;
-
+    const itemCount: number = items?.length || 0;
+    let width = windowWidth;
+    let height = itemHeight * itemCount + headerHeight + footerHeight; // trayBounds.height;
     const data = {
       x: Math.floor(rect.x - width / 2),
-      y: Math.floor(rect.y - height - marginBottom),
+      y: Math.floor(rect.y - height - margin),
       width,
       height,
     };
@@ -178,6 +224,7 @@ const trayClick = (event: KeyboardEvent, rect: Rectangle, point: Point): void =>
 
     trayWindow.setBounds(data);
     trayWindow.show();
+    trayWindow.focus();
   } catch (err) {
     console.error(err);
   }

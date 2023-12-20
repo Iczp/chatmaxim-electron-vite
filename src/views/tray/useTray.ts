@@ -1,8 +1,9 @@
 import { computed, ref, watch } from 'vue';
 
 import { SessionUnitOwnerDto } from '../../apis/dtos';
-import { TrayPayload, setTray } from '../../commons/setTray';
+import { setTray } from '../../commons/setTray';
 import { useWindowStore } from '../../stores/window';
+import { TrayPayload } from '../../ipc-types';
 
 export const useTray = () => {
   const windowStore = useWindowStore();
@@ -30,7 +31,7 @@ export const useTray = () => {
     console.log('onIgnore');
 
     setTray({
-      totalBadge: 5,
+      totalBadge: Math.random() * 100,
       items: '000000'.split('').map(
         (x, i) =>
           <SessionUnitOwnerDto>{
@@ -41,6 +42,7 @@ export const useTray = () => {
             },
           },
       ),
+      
     });
   };
 

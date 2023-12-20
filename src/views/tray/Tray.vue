@@ -1,12 +1,28 @@
 <script setup lang="ts">
+import { ref, watch } from 'vue';
 import ChatObject from '../../components/ChatObject.vue';
 import { useTray } from './useTray';
+import { sendCententOver } from './sendCententOver';
 
 const { totalBadge, list, onItemClick, onHeaderClick, onIgnore } = useTray();
+
+const isOver = ref<boolean | undefined>();
+const onMouseOver = (e: MouseEvent) => {
+  isOver.value = true;
+  // console.log('onMouseOver', e);
+};
+const onMouseLeave = (e: MouseEvent) => {
+  isOver.value = false;
+  // console.log('onMouseLeave', e);
+};
+watch(
+  () => isOver.value,
+  isOver => sendCententOver({ isOver }),
+);
 </script>
 
 <template>
-  <page>
+  <page class="page-tray" @mouseover="onMouseOver" @mouseleave="onMouseLeave">
     <!-- <page-title title="Tip" description="123" /> -->
     <page-header class="header">
       <h3 @click="onHeaderClick">Tray（{{ totalBadge }}）</h3>
@@ -47,13 +63,17 @@ const { totalBadge, list, onItemClick, onHeaderClick, onIgnore } = useTray();
 </template>
 
 <style scoped>
+.page-tray {
+  background-color: white;
+  user-select: none;
+}
 .header {
   display: flex;
   height: 32px;
   box-sizing: border-box;
   align-items: center;
   padding: 0 12px;
-  border-bottom: 1px solid #ccc;
+  /* border-bottom: 1px solid #ccc; */
   font-size: 12px;
 }
 .list {

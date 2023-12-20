@@ -6,6 +6,7 @@ import { windowManager } from './windowManager';
 import { initWindowEvent, sendWindowInfo } from './initWindowEvent';
 import { setWindow } from './windowSettingHandle';
 import { preventClose } from './windowSettingHandle';
+import { loadUrl } from './loadUrl';
 
 const preload = join(__dirname, '../preload/index.js');
 
@@ -65,16 +66,8 @@ export const createPopWindow = ({ path = '/pop' }: { path?: string }) => {
   windowManager.set('pop', win);
   win.removeMenu();
 
-  if (process.env.VITE_DEV_SERVER_URL) {
-    win.loadURL(`${process.env.VITE_DEV_SERVER_URL}#${path}`);
-    // Open devTool if the app is not packaged
-    win.webContents.openDevTools({
-      mode: 'detach',
-    });
-  } else {
-    const indexHtml = join(process.env.DIST, 'index.html');
-    win.loadFile(indexHtml, { hash: path });
-  }
+  loadUrl(win, { path });
+  
   // Test actively push message to the Electron-Renderer
   win.webContents.on('did-finish-load', () => {
     sendWindowInfo(win);
