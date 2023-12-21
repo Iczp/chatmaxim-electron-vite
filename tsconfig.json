@@ -17,6 +17,6 @@
       "vite-svg-loader"
     ]
   },
-  "include": ["src", "src/ipc/index.ts"],
+  "include": ["src"],
   "references": [{ "path": "./tsconfig.node.json" }]
 }
