@@ -1,4 +1,14 @@
-import { app, Tray, Menu, nativeImage, Notification, Rectangle, Point, ipcMain } from 'electron';
+import {
+  app,
+  Tray,
+  Menu,
+  nativeImage,
+  Notification,
+  Rectangle,
+  Point,
+  ipcMain,
+  MenuItem,
+} from 'electron';
 import { windowManager } from './windowManager';
 import { BrowserWindow } from 'electron';
 import { join } from 'node:path';
@@ -9,10 +19,30 @@ import { loadUrl } from './loadUrl';
 
 const preload = join(__dirname, '../preload/index.js');
 // const { app, Tray, Menu, nativeImage } = require('electron/main')
-
+const trayIconUrl = join(__dirname, `../../public/tray.png`);
+const trayIconEmptyUrl = join(__dirname, `../../public/tray-empty.png`);
 let tray: Tray;
 let trayWindow: BrowserWindow;
+let trayTimer: NodeJS.Timeout;
+let trayTimes: number = 0;
+const startFlash = (flashIconUrl?: string) => {
+  stopFlash();
+  trayTimer = setInterval(() => {
+    trayTimes++;
+    let iconUrl = trayTimes % 2 == 1 ? flashIconUrl || trayIconUrl : trayIconEmptyUrl;
+    const trayIcon = nativeImage.createFromPath(iconUrl);
+    tray.setImage(trayIcon);
+  }, 500);
+};
 
+const stopFlash = () => {
+  trayTimes = 0;
+  if (trayTimer) {
+    clearInterval(trayTimer);
+  }
+  const trayIcon = nativeImage.createFromPath(trayIconUrl);
+  tray.setImage(trayIcon);
+};
 app.whenReady().then(() => {
   // const icon = nativeImage.createFromPath('path/to/asset.png')
   //   const icon = nativeImage.createFromDataURL(
@@ -33,18 +63,19 @@ app.whenReady().then(() => {
 
   createTray();
   trayWindow = createTrayWindow({});
+  startFlash();
 });
 
 const NOTIFICATION_TITLE = '日春茶业-桌面端';
 const NOTIFICATION_BODY = '你有新的消息---Iczp.Net';
 app.setAppUserModelId(import.meta.env.VITE_APP_ID);
 function showNotification() {
-  const notice = new Notification({
+  const notice = new Notification(<Electron.NotificationConstructorOptions>{
     title: NOTIFICATION_TITLE,
     body: NOTIFICATION_BODY,
     subtitle: 'subtitle',
     silent: true,
-    // icon: './static/logo.png',
+    icon: trayIconUrl,
     timeoutType: 'default',
     closeButtonText: '关闭（close）',
   });
@@ -58,24 +89,47 @@ function showNotification() {
 const createTray = () => {
   // const appIcon = new Tray('./src/assets/logo.png')
   // console.log('appIcon', appIcon)
-  // let iconUrl = path.join(__dirname, `./static/logo.png`)
-  const icon = nativeImage.createFromPath(`./static/logo.png`);
-  // console.log('icon', icon);
-  tray = new Tray(icon);
-  // tray = new Tray('./static/logo.png')
 
+  const trayIcon = nativeImage.createFromPath(trayIconUrl);
+  // console.log('icon', icon);
+  tray = new Tray(trayIcon);
+  // tray = new Tray('./static/logo.png')
+  // tray.setImage()
   const productName = import.meta.env.VITE_APP_NAME;
   tray.setToolTip(`${productName}`);
   tray.setTitle(`${productName}`);
 
-  const contextMenu = Menu.buildFromTemplate([
+  const contextMenu = Menu.buildFromTemplate(<Electron.MenuItemConstructorOptions[]>[
     {
       label: '设置',
       type: 'normal',
+      click(menuItem: MenuItem, browserWindow: BrowserWindow | undefined, event: KeyboardEvent) {
+        console.log('', menuItem);
+        setTimeout(() => {
+          tray.displayBalloon(<Electron.DisplayBalloonOptions>{
+            icon: trayIconUrl,
+            iconType: 'custom',
+            title: '7777',
+            content: '0000000000',
+          });
+          showNotification();
+        }, 3000);
+      },
     },
     {
-      label: '意见反馈',
+      label: '关于',
       type: 'normal',
+      click(menuItem, browserWindow, event) {
+        app.setAboutPanelOptions({
+          applicationName: import.meta.env.VITE_APP_NAME,
+          applicationVersion: 'sss',
+          copyright: 'copyright',
+          version: '0.225',
+          website: 'http://www.chatmaxim.com',
+          authors: ['chatmaxim', 'iczpnet'],
+        });
+        app.showAboutPanel();
+      },
     },
     {
       type: 'separator',
@@ -83,20 +137,20 @@ const createTray = () => {
     {
       label: '退出数字日春',
       type: 'normal',
+      click(menuItem, browserWindow, event) {
+        startFlash();
+      },
     },
   ]);
   tray.setContextMenu(contextMenu);
   tray.on('click', () => {
     windowManager.getMain().show();
     //
-    tray.displayBalloon({
-      title: '7777',
-      content: '0000000000',
-    });
   });
   tray.on('double-click', e => {
     console.log('double-click', e);
     tray.popUpContextMenu();
+    stopFlash();
   });
   tray.on('mouse-enter', () => trayShow());
   tray.on('mouse-enter', e => {
@@ -113,7 +167,7 @@ export const createTrayWindow = ({ path = '/tray' }: { path?: string }) => {
     // minHeight: 240,
     width: 240,
     height: 560,
-    icon: join(process.env.VITE_PUBLIC, 'favicon.ico'),
+    icon: join(process.env.VITE_PUBLIC, 'tray.ico'),
 
     webPreferences: {
       preload,
@@ -167,7 +221,7 @@ export const contentOverHandle = (
   payload: { isOver?: boolean },
 ): any => {
   return new Promise((resolve, reject) => {
-    globalState.trayContent = payload;
+    globalState.trayWebContent = payload;
     isContentOver = payload.isOver;
     if (payload.isOver === false) {
       trayHide();

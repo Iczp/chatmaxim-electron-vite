@@ -1,4 +1,4 @@
-import { app, BrowserWindow, ipcMain, webContents, screen } from 'electron';
+import { app, BrowserWindow, ipcMain, webContents, screen, dialog, protocol } from 'electron';
 import { release } from 'node:os';
 import { join } from 'node:path';
 import Store from 'electron-store';
@@ -13,6 +13,9 @@ import './commons/logger';
 import './commons/tray';
 import { createPopWindow, openPopWindowHandle } from './commons/openPopWindowHandle';
 import { setTrayHandle } from './commons/setTrayHandle';
+import setAppProtocol from './commons/setAppProtocol';
+
+setAppProtocol('chatmaxim');
 
 //
 Store.initRenderer();
@@ -62,6 +65,7 @@ console.log('app.getPath', app.getAppPath(), app.getPath('userData'));
 app.whenReady().then(() => {
   win = createMainWindow();
   pop = createPopWindow({});
+  app.setBadgeCount(12);
 });
 app.on('activate', () => {
   const allWindows = BrowserWindow.getAllWindows();
@@ -90,3 +94,8 @@ ipcMain.handle('win-setting', windowSettingHandle);
 ipcMain.handle('websocket', websocketHandle);
 ipcMain.handle('set-tray', setTrayHandle);
 
+//
+
+app.on('open-url', (event, url) => {
+  dialog.showErrorBox('Welcome Back', `You arrived from: ${url}`);
+});
