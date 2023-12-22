@@ -56,6 +56,7 @@ export const routes = <RouteRecordRaw[]>[
   {
     path: '/separate-chat/:chatObjectId(\\d+)/:sessionUnitId',
     name: 'separate-chat',
+    meta: { windows: '^profile-[\\w-]+$' },
     component: () => import('../views/Chat.vue'),
     props: true,
   },
@@ -95,17 +96,17 @@ export const routes = <RouteRecordRaw[]>[
     component: () => import('../views/pops/Tip.vue'),
   },
   {
+    path: '/profile/:chatObjectId(\\d+)/:sessionUnitId',
+    meta: { keepAlive: true, windows: ['pop'] },
+    component: () => import('../views/pops/Profile.vue'),
+    props: true,
+  },
+  {
     path: '/tray',
     meta: {
       windows: ['tray'],
     },
     component: () => import('../views/tray/Tray.vue'),
-  },
-  {
-    path: '/profile/:chatObjectId(\\d+)/:sessionUnitId',
-    meta: { keepAlive: true },
-    component: () => import('../views/pops/Profile.vue'),
-    props: true,
   },
   {
     path: '/login',
@@ -138,14 +139,28 @@ export const chatHistorys: {
 } = {};
 
 router.beforeEach((to, from) => {
-  if (to.meta.windows) {
-    const windows = (to.meta.windows || []) as Array<string>;
-    const store = useWindowStore();
-    console.log('windows', to.meta.windows, store.name);
-    if (store.name && !windows.some(x => x == store.name)) {
-      console.error('windows', to.meta.windows, store.name);
-      // 返回 false 以取消导航
-      return false;
+  const store = useWindowStore();
+  const currentWindowName = store.name;
+
+  if (to.meta.windows && currentWindowName) {
+    console.log('windows', to.meta.windows, currentWindowName);
+    // Array
+    if (Array.isArray(to.meta.windows)) {
+      const windows = (to.meta.windows || []) as Array<string>;
+      if (!windows.some(x => x == currentWindowName)) {
+        console.error('windows array', to.meta.windows, currentWindowName);
+        // 返回 false 以取消导航
+        return false;
+      }
+    }
+    // regex
+    else if (typeof to.meta.windows == 'string') {
+      const regex = new RegExp(to.meta.windows as string, 'i');
+      if (!regex.test(currentWindowName)) {
+        console.error('windows regex', to.meta.windows, currentWindowName);
+        // 返回 false 以取消导航
+        return false;
+      }
     }
   }
   if (to.meta.size) {

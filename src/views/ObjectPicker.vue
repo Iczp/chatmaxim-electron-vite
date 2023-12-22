@@ -192,7 +192,7 @@ onMounted(() => {
     <page-content>
       <div class="search-section">
         <a-input-search
-          v-model:value="keyword"
+          v-model:value="query.keyword"
           placeholder="搜索"
           enter-button
           @search="onSearch"
