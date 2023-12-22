@@ -43,6 +43,15 @@ export default defineConfig(({ command }) => {
             if (process.env.VSCODE_DEBUG) {
               console.log(/* For `.vscode/.debug.script.mjs` */ '[startup] Electron App');
             } else {
+              import('tree-kill')
+                .then(({ default: kill }) => {
+                  console.warn('tree-kill', process.pid, process.electronApp);
+                  // kill(process.electronApp?.pid);
+                  // kill(process.pid);
+                })
+                .catch(err => {
+                  console.error('tree-kill', err);
+                });
               startup();
             }
           },

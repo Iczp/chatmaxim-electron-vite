@@ -58,6 +58,7 @@ export const useTray = () => {
       focus: true,
       visiblity: true,
     });
+    setTray({ totalBadge: 0, items: [] });
   };
 
   const onIgnore = (): void => {

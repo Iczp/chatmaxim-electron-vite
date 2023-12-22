@@ -152,7 +152,11 @@ export const useImStore = defineStore('im', {
      * @param {string} [caller]
      * @return {*}
      */
-    ifMap(sessionUnitId: string, callback: (item: SessionUnitOwnerDto) => void, caller?: string) {
+    ifMap(
+      sessionUnitId: string,
+      callback: (item: SessionUnitOwnerDto) => void,
+      caller?: string,
+    ): void {
       const item = this.sessionUnitMap.get(sessionUnitId);
       if (!item) {
         console.warn('ifMap: sessionUnitMap undefined,sessionUnitId:', sessionUnitId, caller);
@@ -311,6 +315,7 @@ export const useImStore = defineStore('im', {
         .then(items => {
           console.log('getApiChatSessionUnitBadgeByCurrentUser', items);
           this.setChatObjects(items);
+          this.updateTray();
         })
         .finally(() => (this.isPendingForGetBadgeByCurrentUser = false));
     },
@@ -407,7 +412,8 @@ export const useImStore = defineStore('im', {
       const items = [...this.sessionUnitMap.values()]
         .filter(x => Number(x.publicBadge) > 0)
         .map(x => toRaw(x) as any);
-      const totalBadge = items.reduce((partialSum, x) => partialSum + Number(x.publicBadge), 0);
+      const totalBadge =
+        items.reduce((partialSum, x) => partialSum + Number(x.publicBadge), 0) || this.badge;
       setTray({ items, totalBadge });
     },
   },

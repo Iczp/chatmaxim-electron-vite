@@ -25,7 +25,7 @@ let tray: Tray;
 let trayWindow: BrowserWindow;
 let trayTimer: NodeJS.Timeout;
 let trayTimes: number = 0;
-const startFlash = (flashIconUrl?: string) => {
+export const startFlash = (flashIconUrl?: string) => {
   stopFlash();
   trayTimer = setInterval(() => {
     trayTimes++;
@@ -35,7 +35,7 @@ const startFlash = (flashIconUrl?: string) => {
   }, 500);
 };
 
-const stopFlash = () => {
+export const stopFlash = () => {
   trayTimes = 0;
   if (trayTimer) {
     clearInterval(trayTimer);
@@ -63,7 +63,6 @@ app.whenReady().then(() => {
 
   createTray();
   trayWindow = createTrayWindow({});
-  startFlash();
 });
 
 const NOTIFICATION_TITLE = '日春茶业-桌面端';
@@ -86,7 +85,7 @@ function showNotification() {
   return notice;
 }
 
-const createTray = () => {
+export const createTray = () => {
   // const appIcon = new Tray('./src/assets/logo.png')
   // console.log('appIcon', appIcon)
 
@@ -138,7 +137,7 @@ const createTray = () => {
       label: '退出数字日春',
       type: 'normal',
       click(menuItem, browserWindow, event) {
-        startFlash();
+        stopFlash();
       },
     },
   ]);
@@ -257,7 +256,7 @@ const trayShow = (force?: boolean): void => {
   try {
     const { windowWidth, items, headerHeight, footerHeight, itemHeight, margin, totalBadge } =
       globalState.trayPayload;
-    if (trayWindow.isVisible() || items.length == 0 || totalBadge == 0) {
+    if (trayWindow.isVisible() || items.length + totalBadge == 0) {
       //|| items.length == 0|| isEnter
       // console.log('trayWindow.isVisible', trayWindow.isVisible());
       return;

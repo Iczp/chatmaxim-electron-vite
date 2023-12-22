@@ -38,7 +38,7 @@ ipcRenderer.on(WinEvents.resized, (_event, ...args) => {
 });
 
 ipcRenderer.on('navigate', (_event, { path, payload }) => {
-  // console.log('[navigate]:', path, payload);
+  console.log('[navigate]:', path, payload);
   const windowStore = useWindowStore();
   windowStore.setPayload(path, payload);
   router.replace(path);

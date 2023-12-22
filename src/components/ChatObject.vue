@@ -29,7 +29,7 @@ const inheritanceKeys = Object.keys(slots).filter(x => !ignoreSlots.some(d => d 
     </template>
     <template #title>
       <slot name="title">
-        <span class="text-ellipsis">{{ entity?.name }}performances/score-detail</span>
+        <span class="text-ellipsis">{{ entity?.name }}</span>
       </slot>
     </template>
     <template v-for="(slot, index) of inheritanceKeys" :key="index" v-slot:[slot]>

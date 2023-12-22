@@ -3,7 +3,7 @@
  */
 {
   "$schema": "https://raw.githubusercontent.com/electron-userland/electron-builder/master/packages/app-builder-lib/scheme.json",
-  "appId": "chatmaxim.com",
+  "appId": "com.chatmaxim.electron",
   "asar": true,
   "productName": "ChatMaxim",
   "directories": {

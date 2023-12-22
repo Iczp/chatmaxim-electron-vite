@@ -1,6 +1,6 @@
 {
   "name": "chatmaxim",
-  "version": "2.0.1",
+  "version": "2.0.2",
   "main": "dist-electron/main/index.js",
   "description": "Really simple Electron + Vue + Vite boilerplate.",
   "author": "草鞋没号 <308487730@qq.com>",
@@ -40,6 +40,7 @@
     "openapi-typescript-codegen": "^0.25.0",
     "pinia": "^2.1.7",
     "qs": "^6.11.2",
+    "tree-kill": "^1.2.2",
     "typescript": "^5.1.6",
     "unplugin-vue-components": "^0.25.2",
     "vite": "^4.4.9",

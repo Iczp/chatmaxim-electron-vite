@@ -15,14 +15,18 @@ export type ScrollToArgs = {
   callback?: (() => void) | undefined;
 };
 const scrollbarRef = ref();
-const element = computed<HTMLElement>(() => scrollbarRef.value.ps.element);
+const element = computed<HTMLElement | undefined>(() => scrollbarRef.value.ps?.element);
 
 const scrollTo = (args?: ScrollToArgs): void => {
-  const el: HTMLElement = element.value;
+  const el: HTMLElement | undefined = element.value;
+  if (!el) {
+    console.warn('el', el);
+    return;
+  }
   console.log('scrollbarRef', el, scrollbarRef.value);
   const scrollTo = useScrollTo({
     el: ref(el),
-    to: element.value.scrollHeight,
+    to: element.value?.scrollHeight || 0,
     directions: 'scrollTop',
     ...args,
   });
@@ -34,7 +38,7 @@ const scrollTo = (args?: ScrollToArgs): void => {
 
 defineExpose({
   scrollTo,
-  getElement: (): HTMLElement => element.value,
+  getElement: (): HTMLElement | undefined => element.value,
 });
 </script>
 

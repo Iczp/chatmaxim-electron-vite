@@ -50,6 +50,7 @@ const { totalBadge, list, onItemClick, onHeaderClick, onIgnore, onMouseOver, onM
 <style scoped>
 :deep(.title-left.object-name) {
   max-width: 136px;
+  font-weight: bold;
 }
 
 .page-tray {
@@ -69,7 +70,8 @@ const { totalBadge, list, onItemClick, onHeaderClick, onIgnore, onMouseOver, onM
   margin: 0;
   display: flex;
   align-items: center;
-  font-size: 14px;
+  font-size: 12px;
+  font-weight: bold;
 }
 .list {
   padding: 0;

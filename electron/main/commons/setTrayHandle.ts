@@ -1,5 +1,6 @@
 import { globalState } from '../global';
 import { TrayPayload, WindowParams } from '../ipc-types';
+import { startFlash, stopFlash } from './tray';
 import { windowManager } from './windowManager';
 import { setWindow } from './windowSettingHandle';
 
@@ -11,6 +12,8 @@ export const setTrayHandle = (_: Electron.IpcMainInvokeEvent, payload: TrayPaylo
       payload,
     };
     globalState.trayPayload = payload;
+    const isFlash = Number(payload.totalBadge) > 0 || payload.items.length > 0;
+    isFlash ? startFlash() : stopFlash();
     const win = windowManager.get('tray');
     setWindow(win, windowParam, _);
     resolve({});
