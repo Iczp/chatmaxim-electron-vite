@@ -30,6 +30,12 @@ export const useContacts = ({
     selectedList.value = v?.selectedItems || [];
     disabledList.value = v?.disabledItems || [];
   });
+  watch(
+    () => query.value.keyword,
+    v => {
+      console.log('keyword', v);
+    },
+  );
 
   const fetchData = async (input?: ContactsGetListInput): Promise<ContactsDto[]> => {
     if (isEof.value) {

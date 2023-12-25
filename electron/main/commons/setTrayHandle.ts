@@ -8,7 +8,7 @@ export const setTrayHandle = (_: Electron.IpcMainInvokeEvent, payload: TrayPaylo
   return new Promise((resolve, reject) => {
     const windowParam: WindowParams = {
       name: 'tray',
-      path: '/tray',
+      path: `/tray?ticks=${new Date().getTime()}`,
       payload,
     };
     globalState.trayPayload = payload;

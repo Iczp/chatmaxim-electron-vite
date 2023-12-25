@@ -28,7 +28,6 @@ export const openPopWindowHandle = (
     let popWindow = windowManager.get(window.name);
     if (!popWindow) {
       popWindow = windowManager.set(window.name, createPopWindow({ path }));
-      popWindow.on('closed', e => windowManager.remove(window.name));
     }
     setWindow(popWindow, window, _);
     resolve({});

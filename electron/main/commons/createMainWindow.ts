@@ -3,6 +3,7 @@ import { join } from 'node:path';
 import { windowManager } from './windowManager';
 import { initWindowEvent, sendWindowInfo } from './initWindowEvent';
 import { loadUrl } from './loadUrl';
+import { preventClose } from './windowSettingHandle';
 
 const preload = join(__dirname, '../preload/index.js');
 
@@ -28,6 +29,7 @@ export const createMainWindow = () => {
     // transparent: true,
   });
   windowManager.set('main', win);
+  win.on('closed', () => windowManager.remove('main'));
   win.removeMenu();
   loadUrl(win, { path: '/' });
   // Test actively push message to the Electron-Renderer
@@ -45,7 +47,7 @@ export const createMainWindow = () => {
   });
 
   initWindowEvent(win);
-
+  preventClose(win, true);
   return win;
   // win.webContents.on('will-navigate', (event, url) => { }) #344
 

@@ -168,7 +168,7 @@ router.beforeEach((to, from) => {
     const [width, height] = size;
     setWindow({ size: { width, height } });
   }
-  if (to.path != '/login' && !isLogined()) {
+  if (currentWindowName == 'main' && to.path != '/login' && !isLogined()) {
     return '/login';
   }
   // ...

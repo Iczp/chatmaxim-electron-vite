@@ -191,7 +191,6 @@ export const createTrayWindow = ({ path = '/tray' }: { path?: string }) => {
   });
 
   windowManager.set('tray', win);
-  win.on('closed', () => windowManager.remove('tray'));
   win.removeMenu();
   win.on('blur', e => win.hide());
   loadUrl(win, { path });

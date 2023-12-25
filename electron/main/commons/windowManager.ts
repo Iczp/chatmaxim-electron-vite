@@ -7,7 +7,7 @@ export type Windows = {
 export type WindowsMap = {
   [key: number]: string;
 };
-
+// Map<string, BrowserWindow>
 class WindowManger {
   public windows: Windows = {};
   public windowsMap: WindowsMap = {};
@@ -15,6 +15,7 @@ class WindowManger {
   set(name: string, win: BrowserWindow): BrowserWindow {
     this.windowsMap[win.id] = name;
     this.windows[name] = win;
+    win.on('closed', () => this.remove(name));
     return win;
   }
   get(name: string): BrowserWindow | undefined {
@@ -44,6 +45,10 @@ class WindowManger {
   }
   isSeparatedChat(name: string) {
     return /^chat-.+$/.test(name);
+  }
+  closeAll(){
+
+    
   }
 }
 

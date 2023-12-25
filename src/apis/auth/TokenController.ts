@@ -27,7 +27,7 @@ export const isTokenUrl = (url?: string): boolean => {
  *
  * @return {*}  {boolean}
  */
-export const isLogined = (): boolean => getLocalToken() != null;
+export const isLogined = (): boolean => postToken() != null;
 
 /**
  * 登录
@@ -76,7 +76,7 @@ export const handleToken = (token: TokenDto): TokenDto => {
   token.creation_time = new Date();
   cacheToken = token;
   // console.log('handleToken', token);
-  storageToken(JSON.stringify(token));
+  setStorageToken(JSON.stringify(token));
   return token;
 };
 
@@ -86,7 +86,7 @@ export const handleToken = (token: TokenDto): TokenDto => {
  * @param {TokenDto} token
  * @return {*}
  */
-export const refreshToken = async (token: TokenDto) => {
+export const refreshToken = async (token: TokenDto): Promise<TokenDto> => {
   var newToken = await TokenService.RefreshToken({
     client_id: import.meta.env.VITE_APP_CLIENT_ID,
     client_secret: import.meta.env.VITE_APP_CLIENT_SECRET,
@@ -100,11 +100,11 @@ export const refreshToken = async (token: TokenDto) => {
 /**
  * 获取Token
  *
- * @param {number} [tryCount=100] 重试次数
+ * @param {number} [tryCount=10] 重试次数
  * @return {*}  {(Promise<TokenDto | null>)}
  */
 
-export const getToken = (tryCount: number = 100): Promise<TokenDto | null> => {
+export const getToken = (tryCount: number = 10): Promise<TokenDto | null> => {
   return new Promise(async (resolve, reject) => {
     if (isPostToken) {
       // console.log('isPostToken', isPostToken, tryCount);
@@ -137,15 +137,15 @@ export const postToken = async (): Promise<TokenDto | null> => {
     if (isTokenExpired(token)) {
       token = await refreshToken(token);
     }
-    return token;
   }
-  // console.log('postToken 2', token);
-  var ret = await login({
-    username: 'admin',
-    password: '1q2w3E*',
-  });
-  // console.log('postToken 3 cacheToken', cacheToken);
-  return ret.detail;
+  return token;
+  // // console.log('postToken 2', token);
+  // var ret = await login({
+  //   username: 'admin',
+  //   password: '********',
+  // });
+  // // console.log('postToken 3 cacheToken', cacheToken);
+  // return ret.detail;
 };
 
 /**
@@ -153,8 +153,18 @@ export const postToken = async (): Promise<TokenDto | null> => {
  *
  * @param {string} value
  */
-export const storageToken = (value: string): void => {
+export const setStorageToken = (value: string): void => {
   localStorage.setItem(TOKEN_KEY, value);
+};
+
+/**
+ * 获取存储Token
+ *
+ * @return {*}  {(string | null)}
+ */
+export const getStorageToken = (): string | null => {
+  const tokenValue = localStorage.getItem(TOKEN_KEY);
+  return tokenValue;
 };
 
 /**
@@ -188,7 +198,7 @@ export const getLocalToken = (): TokenDto | null => {
     token = cacheToken;
     // console.log('getLocalToken cacheToken');
   } else {
-    let tokenString = localStorage.getItem(TOKEN_KEY);
+    let tokenString = getStorageToken();
     if (tokenString) {
       token = JSON.parse(tokenString);
       if (token && token.creation_time) {

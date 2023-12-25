@@ -48,7 +48,6 @@ export const openChildWindowHandle = (
           isModel: window.isModel || false,
         }),
       );
-      childWindow.on('closed', e => windowManager.remove(window.name));
     }
     // childWindow.webContents.send('navigate', { path, payload: window.payload });
     // args.callerId = _.sender.id;

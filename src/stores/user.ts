@@ -1,5 +1,6 @@
 // @ts-check
 import { defineStore, acceptHMRUpdate } from 'pinia';
+import { TokenDto } from '../apis/auth/dto';
 
 /**
  * Simulate a login
@@ -11,14 +12,48 @@ function apiLogin(a: string, p: string) {
 }
 
 interface UserState {
-  id?: string | null;
-  name?: string | null;
+  /**
+   * 用户Id
+   *
+   * @type {string}
+   * @memberof UserState
+   */
+  id?: string;
+  /**
+   * 用户名
+   *
+   * @type {string}
+   * @memberof UserState
+   */
+  name?: string;
+  /**
+   * 是否管理员
+   *
+   * @type {boolean}
+   * @memberof UserState
+   */
   isAdmin: boolean;
+  /**
+   * Token
+   *
+   * @type {(TokenDto | undefined)}
+   * @memberof UserState
+   */
+  token?: TokenDto | undefined;
+  /**
+   * 是否身份发认证
+   *
+   * @type {boolean}
+   * @memberof UserState
+   */
+  isAuthorized: boolean;
 }
 const devaultValue: UserState = {
-  id: null,
-  name: null,
-  isAdmin: true,
+  id: undefined,
+  name: undefined,
+  isAdmin: false,
+  token: undefined,
+  isAuthorized: false,
 };
 export const useUserStore = defineStore({
   id: 'user',
