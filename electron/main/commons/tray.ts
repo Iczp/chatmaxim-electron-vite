@@ -67,10 +67,10 @@ app.whenReady().then(() => {
 
 const NOTIFICATION_TITLE = '日春茶业-桌面端';
 const NOTIFICATION_BODY = '你有新的消息---Iczp.Net';
-app.setAppUserModelId(import.meta.env.VITE_APP_ID);
+// app.setAppUserModelId(import.meta.env.VITE_APP_ID);
 function showNotification() {
   const notice = new Notification(<Electron.NotificationConstructorOptions>{
-    title: NOTIFICATION_TITLE,
+    title: app.getName(),
     body: NOTIFICATION_BODY,
     subtitle: 'subtitle',
     silent: true,
@@ -94,7 +94,7 @@ export const createTray = () => {
   tray = new Tray(trayIcon);
   // tray = new Tray('./static/logo.png')
   // tray.setImage()
-  const productName = import.meta.env.VITE_APP_NAME;
+  const productName = app.getName(); //import.meta.env.VITE_APP_NAME;
   tray.setToolTip(`${productName}`);
   tray.setTitle(`${productName}`);
 
@@ -120,7 +120,7 @@ export const createTray = () => {
       type: 'normal',
       click(menuItem, browserWindow, event) {
         app.setAboutPanelOptions({
-          applicationName: import.meta.env.VITE_APP_NAME,
+          applicationName: app.getName(),
           applicationVersion: 'sss',
           copyright: 'copyright',
           version: '0.225',

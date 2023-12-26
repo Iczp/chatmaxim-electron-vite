@@ -27,7 +27,7 @@ export const globalState: GlobalState = {
     isOver: undefined,
   },
   appInfo: {
-    appName: import.meta.env.VITE_APP_NAME,
+    appName: app.getName(), //import.meta.env.VITE_APP_NAME,
     appVersion: version,
     copyright: import.meta.env.VITE_APP_COPYRIGHT,
     version: version,

@@ -29,7 +29,6 @@ export const createMainWindow = () => {
     // transparent: true,
   });
   windowManager.set('main', win);
-  win.on('closed', () => windowManager.remove('main'));
   win.removeMenu();
   loadUrl(win, { path: '/' });
   // Test actively push message to the Electron-Renderer
@@ -37,38 +36,19 @@ export const createMainWindow = () => {
     sendWindowInfo(win);
     // createChildWindow({ path: '/settings' });
   });
-  win.on('resized', (e: any) => {
-    const a: any = {
-      size: win.getSize(),
-      getMaximumSize: win.getMaximumSize(),
-      getMinimumSize: win.getMinimumSize(),
-    };
-    win?.webContents.send('resized', `resized:${JSON.stringify(a)}`);
-  });
+  // win.on('resized', (e: any) => {
+  //   const a: any = {
+  //     size: win.getSize(),
+  //     getMaximumSize: win.getMaximumSize(),
+  //     getMinimumSize: win.getMinimumSize(),
+  //   };
+  //   win?.webContents.send('resized', `resized:${JSON.stringify(a)}`);
+  // });
+
+  win.on('close', () => win.setSkipTaskbar(true));
+  win.on('show', () => win.setSkipTaskbar(false));
 
   initWindowEvent(win);
   preventClose(win, true);
   return win;
-  // win.webContents.on('will-navigate', (event, url) => { }) #344
-
-  // // Renderer others
-  // const nodeTrue = new BrowserWindow({
-  //   webPreferences: {
-  //     contextIsolation: false,
-  //     nodeIntegration: true,
-  //   },
-  //   width: 700,
-  //   height: 500,
-  // });
-  // if (process.env.VITE_DEV_SERVER_URL) {
-  //   console.log('process.env.VITE_DEV_SERVER_UR', process.env.VITE_DEV_SERVER_URL);
-
-  //   nodeTrue.loadURL(`${process.env.VITE_DEV_SERVER_URL}others/index.html`);
-  //   nodeTrue.webContents.openDevTools({
-  //     mode: 'right',
-  //   });
-  // } else {
-  //   nodeTrue.loadFile(join(__dirname, '../dist/others/index.html'));
-  // }
-  // //end Renderer others
 };
