@@ -1,13 +1,12 @@
 <script setup lang="ts">
-import { CSSProperties, computed, reactive, ref, watch } from 'vue';
-import { SessionUnitOwnerDto, SessionUnitSettingDto } from '../apis/dtos';
-import { SettingService } from '../apis';
-
-import { useImStore } from '../stores/im';
 import { h } from 'vue';
 import { SearchOutlined, PlusOutlined, MinusOutlined, RightOutlined } from '@ant-design/icons-vue';
-import { ChatObjectTypeEnumText, ChatObjectTypeEnums } from '../apis/enums';
 import { message } from 'ant-design-vue';
+import { CSSProperties, computed, reactive, ref, watch } from 'vue';
+import { SessionUnitOwnerDto, SessionUnitSettingDto } from '../../../apis/dtos';
+import { ChatObjectTypeEnumText, ChatObjectTypeEnums } from '../../../apis/enums';
+import { SettingService } from '../../../apis';
+import { useImStore } from '../../../stores/im';
 
 const store = useImStore();
 
@@ -229,7 +228,7 @@ const iconStyle: CSSProperties = {
   user-select: none;
 }
 .section {
-  padding: 8px  16px;
+  padding: 8px 16px;
   margin: 16px 0;
   background-color: white;
 }

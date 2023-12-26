@@ -11,27 +11,32 @@ import {
   watch,
 } from 'vue';
 import { useRoute } from 'vue-router';
-import { MessageSenderService, ApiError } from '../apis';
+import { MessageSenderService, ApiError } from '../../apis';
 
-import ChatSetting from './ChatSetting.vue';
-import Loading from '../components/Loading.vue';
-import MessageItem from '../components/MessageItem.vue';
-import ScrollView from '../components/ScrollView.vue';
-import ChatInput from '../components/ChatInput.vue';
-import EmptyData from '../components/EmptyData.vue';
+import ChatSetting from './widget/ChatSetting.vue';
+import Loading from '../../components/Loading.vue';
+import MessageItem from '../../components/MessageItem.vue';
+import ScrollView from '../../components/ScrollView.vue';
+import ChatInput from '../../components/ChatInput.vue';
+import ChatObject from '../../components/ChatObject.vue';
+
+import DropViewer from './widget/DropViewer.vue';
+
+import EmptyData from '../../components/EmptyData.vue';
 import { message } from 'ant-design-vue';
-import { useImStore } from '../stores/im';
-import { MessageDto } from '../apis/dtos';
-import { ContextmenuInput, showContextMenuForMessage } from '../commons/contextmenu';
-import QuoteMessage from '../components/QuoteMessage.vue';
-import { useSessionUnitId } from '../commons/useSessionUnit';
-import { useMessageList } from '../commons/useMessageList';
-import { MessageStateEnums } from '../apis/enums/MessageStateEnums';
-import { MessageTypeEnums } from '../apis/enums/MessageTypeEnums';
-import { useSessionUnitDetail } from '../commons/useSessionUnitDetail';
-import { setReadedMessageId } from '../commons/setting';
-import { formatMessage } from '../commons/utils';
-import { sendMessage } from '../commons/sendMessage';
+import { useImStore } from '../../stores/im';
+import { MessageDto } from '../../apis/dtos';
+import { ContextmenuInput, showContextMenuForMessage } from '../../commons/contextmenu';
+import QuoteMessage from '../../components/QuoteMessage.vue';
+import { useSessionUnitId } from '../../commons/useSessionUnit';
+import { useMessageList } from '../../commons/useMessageList';
+import { MessageStateEnums } from '../../apis/enums/MessageStateEnums';
+import { MessageTypeEnums } from '../../apis/enums/MessageTypeEnums';
+import { useSessionUnitDetail } from '../../commons/useSessionUnitDetail';
+import { setReadedMessageId } from '../../commons/setting';
+import { formatMessage } from '../../commons/utils';
+import { sendMessage } from '../../commons/sendMessage';
+import { useDrop } from '../../commons/useDrop';
 
 const store = useImStore();
 
@@ -350,38 +355,62 @@ const bodyStyle: CSSProperties = {
 //     e.stopPropagation();
 //   });
 // });
-const isDrag = ref(false);
-const dragenter = (e: DragEvent) => {
-  console.log('dragenter', e);
-  isDrag.value = true;
+
+const files = ref<Array<any>>([]);
+const dropHandle = (ev: DragEvent) => {
+  console.log('dropHandle', ev);
+  const data = ev.dataTransfer?.getData('text');
+
+  console.log('data', data);
+  // ev.target?.appendChild(document.getElementById(data));
+
+  // Print each format type
+  for (let i = 0; i < (ev.dataTransfer?.types || []).length; i++) {
+    console.log(`… types[${i}] = ${ev.dataTransfer?.types[i]}`);
+  }
+  files.value = [];
+  // Print each format files
+  for (let i = 0; i < (ev.dataTransfer?.files || []).length; i++) {
+    console.log(`files[${i}] = ${ev.dataTransfer?.files[i]}`);
+    files.value.push(ev.dataTransfer?.files[i]);
+  }
+
+  // Print each item's "kind" and "type"
+  for (let i = 0; i < (ev.dataTransfer?.items || []).length; i++) {
+    console.log(
+      `… items[${i}].kind = ${ev.dataTransfer?.items[i].kind}; type = ${ev.dataTransfer?.items[i].type}`,
+    );
+  }
+  var efile = ev.dataTransfer?.files[0];
+  console.log(efile, 'utf8');
+  showModal();
+  // var formData = new FormData();
+  // var imagefile = document.querySelector('#file');
+  // formData.append('image', imagefile.files[0]);
+  // axios.post('upload_file', formData, {
+  //   headers: {
+  //     'Content-Type': 'multipart/form-data',
+  //   },
+  // });
 };
-const dragleave = (e: DragEvent) => {
-  console.log('dragleave', e);
-};
-const dragover = (e: DragEvent) => {
-  // console.log('dragover', e);
-};
-const drop = (e: DragEvent) => {
-  console.log('drop', e);
-  isDrag.value = false;
+const { vDrop, isDrag } = useDrop();
+const isModelOpen = ref(false);
+const showModal = () => {
+  isModelOpen.value = true;
 };
 
-const mouseleave = (e: MouseEvent) => {
-  // console.log('mouseleave', e);
-  isDrag.value = false;
+const handleOk = (e: MouseEvent) => {
+  console.log(e);
+  isModelOpen.value = false;
 };
 </script>
-
-<template>
-  <page
-    class="chat"
-    :class="{ dragenter: isDrag }"
-    @dragenter="dragenter"
+<!-- @dragenter="dragenter"
     @dragleave="dragleave"
     @dragover="dragover"
     @drop="drop"
-    @mouseleave="mouseleave"
-  >
+    @mouseleave="mouseleave" -->
+<template>
+  <page class="chat" v-drop="dropHandle">
     <PageTitle
       :title="destinationName"
       :description="`code${destination?.code}:memberCount(${detail?.sessionUnitCount}) readedMessageId:${readedMessageId}`"
@@ -396,6 +425,9 @@ const mouseleave = (e: MouseEvent) => {
     </PageTitle>
 
     <page-content :style="contentStyle" class="layout-content">
+      <a-modal v-model:open="isModelOpen" title="发送给" @ok="handleOk">
+        <DropViewer :destination="destination" :files="files" />
+      </a-modal>
       <a-drawer
         width="320"
         v-model:open="open"

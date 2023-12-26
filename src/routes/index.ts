@@ -32,12 +32,12 @@ export const routes = <RouteRecordRaw[]>[
           {
             path: '',
             name: 'chat-empty',
-            component: () => import('../views/ChatEmpty.vue'),
+            component: () => import('../views/chat/ChatEmpty.vue'),
           },
           {
             path: ':sessionUnitId',
             name: 'chat',
-            component: () => import('../views/Chat.vue'),
+            component: () => import('../views/chat/Chat.vue'),
             props: true,
           },
         ],
@@ -57,7 +57,7 @@ export const routes = <RouteRecordRaw[]>[
     path: '/separate-chat/:chatObjectId(\\d+)/:sessionUnitId',
     name: 'separate-chat',
     meta: { windows: '^profile-[\\w-]+$' },
-    component: () => import('../views/Chat.vue'),
+    component: () => import('../views/chat/Chat.vue'),
     props: true,
   },
   {

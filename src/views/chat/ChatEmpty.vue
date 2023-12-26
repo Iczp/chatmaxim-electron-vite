@@ -1,7 +1,7 @@
 <script setup lang="ts">
-import { router } from '../routes';
+import { router } from '../../routes';
 import { SettingOutlined, EditOutlined, EllipsisOutlined } from '@ant-design/icons-vue';
-import { ChatOn,Chating } from '../icons';
+import { ChatOn,Chating } from '../../icons';
 </script>
 
 <template>
