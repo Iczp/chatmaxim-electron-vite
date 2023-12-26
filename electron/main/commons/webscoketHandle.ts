@@ -6,7 +6,9 @@ export const websocketHandle = (_: Electron.IpcMainInvokeEvent, payload: any): a
   var senderWindow: BrowserWindow = BrowserWindow.fromWebContents(webContents.fromId(_.sender.id));
   console.log('[websocket]', _.sender.id, senderWindow?.id);
   const wins = windowManager.getWindows();
-  Object.entries(wins)
+  console.log('wins:', wins.size);
+
+  [...wins]
     //ignore sender window
     .filter(([name, win]) => win.id != _.sender.id && windowManager.isSeparatedChat(name))
     .map(([name, win]) => {
