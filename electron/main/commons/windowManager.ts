@@ -1,20 +1,22 @@
 import { BrowserWindow } from 'electron';
 
-export type Windows = {
-  [key: 'main' | 'child' | string]: BrowserWindow;
-};
+// export type Windows = {
+//   [key: 'main' | 'child' | string]: BrowserWindow;
+// };
 
-export type WindowsMap = {
-  [key: number]: string;
-};
+// export type WindowsMap = {
+//   [key: number]: string;
+// };
 // Map<string, BrowserWindow>
 class WindowManger {
-  public windows: Windows = {};
-  public windowsMap: WindowsMap = {};
+  public windows: Map<string, BrowserWindow> = new Map<string, BrowserWindow>();
+  public windowsMap: Map<number, string> = new Map<number, string>();
   constructor() {}
   set(name: string, win: BrowserWindow): BrowserWindow {
-    this.windowsMap[win.id] = name;
-    this.windows[name] = win;
+    // this.windowsMap[win.id] = name;
+    // this.windows[name] = win;
+    this.windowsMap.set(win.id, name);
+    this.windows.set(name, win);
     win.on('closed', () => this.remove(name));
     return win;
   }
@@ -22,34 +24,35 @@ class WindowManger {
     if (!name) {
       return undefined;
     }
-    return this.windows[name];
+    return this.windows.get(name);
   }
   getName(win: BrowserWindow): string {
     return this.getNameById(win.id);
   }
   getNameById(id: number): string {
-    return this.windowsMap[id];
+    // return this.windowsMap[id];
+    return this.windowsMap.get(id);
   }
   getMain(): BrowserWindow | undefined {
-    return this.windows['main'];
+    // return this.windows['main'];
+    return this.windows.get('main');
   }
-  getWindows(): Windows {
+  getWindows(): Map<string, BrowserWindow> {
     return this.windows;
   }
-  getMap(): WindowsMap {
+  getMap(): Map<number, string> {
     return this.windowsMap;
   }
   remove(name: string): void {
-    delete this.windowsMap[this.windows[name].id];
-    delete this.windows[name];
+    this.windowsMap.delete(this.windows.get(name).id);
+    this.windows.delete(name);
+    // delete this.windowsMap[this.windows[name].id];
+    // delete this.windows[name];
   }
   isSeparatedChat(name: string) {
     return /^chat-.+$/.test(name);
   }
-  closeAll(){
-
-    
-  }
+  closeAll() {}
 }
 
 export const windowManager = new WindowManger();

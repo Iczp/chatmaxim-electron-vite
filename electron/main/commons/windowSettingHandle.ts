@@ -76,7 +76,10 @@ export const setWindowProperties = (
   ifBoolean(params?.focusable, x => (win.focusable = x));
   ifTrue<string>(params?.path, v => {
     const path = addParamsToUrl(v, { callerId: _?.sender.id });
-    win.webContents.send('navigate', { path, payload: params.payload });
+    if (!win) {
+      console.warn('win is undefined');
+    }
+    win?.webContents.send('navigate', { path, payload: params.payload });
   });
 };
 

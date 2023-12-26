@@ -14,7 +14,7 @@ export const setTrayHandle = (_: Electron.IpcMainInvokeEvent, payload: TrayPaylo
     globalState.trayPayload = payload;
     const isFlash = Number(payload.totalBadge) > 0 || payload.items.length > 0;
     isFlash ? startFlash() : stopFlash();
-    const win = windowManager.get('tray');
+    const win = windowManager.get(windowParam.name);
     setWindow(win, windowParam, _);
     resolve({});
   });
