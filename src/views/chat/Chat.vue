@@ -94,6 +94,8 @@ const scroll = ref<InstanceType<typeof ScrollView> | null>(null);
 
 const dropViewer = ref<InstanceType<typeof DropViewer> | null>(null);
 
+const chatSetting = ref<InstanceType<typeof ChatSetting> | null>(null);
+
 const scrollElement = computed(() => scroll.value?.getElement());
 
 // const scroll = ref();
@@ -118,15 +120,11 @@ watch(
 
 const textValue = ref('669+++');
 
-const open = ref<boolean>(false);
 const showDrawer = () => {
-  open.value = true;
+  chatSetting.value?.open();
 };
 const scrollTo = (duration: number = 1500) => {
   scroll.value?.scrollTo({ duration });
-};
-const afterOpenChange = (bool: boolean) => {
-  // console.log('open', bool);
 };
 
 const _onDeactivated = () => {
@@ -389,19 +387,7 @@ const { vDrop } = useDrop();
 
     <page-content :style="contentStyle" class="layout-content">
       <DropViewer ref="dropViewer" />
-      <a-drawer
-        width="320"
-        v-model:open="open"
-        class="chat-setting"
-        :bodyStyle="bodyStyle"
-        root-class-name="root-class-name"
-        :root-style="{ color: 'blue' }"
-        title="聊天设置"
-        placement="right"
-        @after-open-change="afterOpenChange"
-      >
-        <ChatSetting :entity="sessionUnit!" :sessionUnitId="sessionUnitId" />
-      </a-drawer>
+      <ChatSetting v-if="sessionUnitId" ref="chatSetting" :entity="sessionUnit!" :sessionUnitId="sessionUnitId" />
 
       <scroll-view
         class="message-container"

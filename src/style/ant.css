@@ -7,3 +7,10 @@
   background-color: rgba(0, 0, 0, 0.686);
   font-size: 12px;
 }
+
+.ant-drawer .ant-drawer-body {
+  padding: 0;
+}
+.ant-drawer .ant-drawer-header {
+  padding: 16px 0;
+}
