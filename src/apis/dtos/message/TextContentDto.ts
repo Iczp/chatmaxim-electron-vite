@@ -1,7 +1,7 @@
 /**
  * 文本消息
  */
-export type TextDto = {
+export type TextContentDto = {
   /**
    * id
    *

@@ -1,6 +1,5 @@
 <script setup lang="ts">
 import {
-  CSSProperties,
   computed,
   nextTick,
   onActivated,
@@ -11,18 +10,15 @@ import {
   watch,
 } from 'vue';
 import { useRoute } from 'vue-router';
-import { MessageSenderService, ApiError } from '../../apis';
 
 import ChatSetting from './widget/ChatSetting.vue';
 import Loading from '../../components/Loading.vue';
 import MessageItem from '../../components/MessageItem.vue';
 import ScrollView from '../../components/ScrollView.vue';
 import ChatInput from '../../components/ChatInput.vue';
-import ChatObject from '../../components/ChatObject.vue';
 
 import DropViewer from './widget/DropViewer.vue';
 
-import EmptyData from '../../components/EmptyData.vue';
 import { message } from 'ant-design-vue';
 import { useImStore } from '../../stores/im';
 import { MessageDto } from '../../apis/dtos';
@@ -34,7 +30,6 @@ import { MessageStateEnums } from '../../apis/enums/MessageStateEnums';
 import { MessageTypeEnums } from '../../apis/enums/MessageTypeEnums';
 import { useSessionUnitDetail } from '../../commons/useSessionUnitDetail';
 import { setReadedMessageId } from '../../commons/setting';
-import { formatMessage } from '../../commons/utils';
 import { sendMessage } from '../../commons/sendMessage';
 import { useDrop } from '../../commons/useDrop';
 
@@ -325,51 +320,24 @@ const onReachEnd = (event: CustomEvent) => {
   }
 };
 
-const contentStyle: CSSProperties = {
-  // display: 'flex',
-  // textAlign: 'center',
-  // minHeight: '100%',
-  // lineHeight: '120px',
-  // color: '#fff',
-  // backgroundColor: '#108ee9',
-};
-
-const bodyStyle: CSSProperties = {
-  display: 'flex',
-  backgroundColor: '#f6f6f6',
-  margin: 0,
-  padding: 0,
-};
-
-// onMounted(() => {
-//   document.addEventListener('drop', (e: any) => {
-//     e.preventDefault();
-//     e.stopPropagation();
-
-//     for (const f of e.dataTransfer.files) {
-//       console.log('File(s) you dragged here: ', f.path);
-//     }
-//   });
-//   document.addEventListener('dragover', e => {
-//     e.preventDefault();
-//     e.stopPropagation();
-//   });
-// });
-
-const dropHandle = (ev: DragEvent, output: any) => {
-  console.log('dropHandle', ev, output);
+const dropHandle = (ev: DragEvent, { files, text }: { files?: any[]; text?: string }) => {
+  console.log('dropHandle', ev, files, text);
+  if (!(files || text)) {
+    return;
+  }
   dropViewer.value?.open({
     destination: destination.value,
-    ...output,
+    files,
+    text,
+    onConfirm(files, text) {
+      console.log('onDropToSend', files, text);
+    },
   });
 };
+
 const { vDrop } = useDrop();
 </script>
-<!-- @dragenter="dragenter"
-    @dragleave="dragleave"
-    @dragover="dragover"
-    @drop="drop"
-    @mouseleave="mouseleave" -->
+
 <template>
   <page class="chat" v-drop="dropHandle">
     <PageTitle
@@ -385,9 +353,14 @@ const { vDrop } = useDrop();
       </template>
     </PageTitle>
 
-    <page-content :style="contentStyle" class="layout-content">
+    <page-content class="layout-content">
       <DropViewer ref="dropViewer" />
-      <ChatSetting v-if="sessionUnitId" ref="chatSetting" :entity="sessionUnit!" :sessionUnitId="sessionUnitId" />
+      <ChatSetting
+        v-if="sessionUnitId"
+        ref="chatSetting"
+        :entity="sessionUnit!"
+        :sessionUnitId="sessionUnitId"
+      />
 
       <scroll-view
         class="message-container"

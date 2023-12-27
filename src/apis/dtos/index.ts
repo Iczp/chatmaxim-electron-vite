@@ -26,10 +26,14 @@ export type { MessageDto } from './MessageDto';
 export type { MessageOwnerDto } from './MessageOwnerDto';
 export type { MessageSimpleDto } from './MessageSimpleDto';
 
-export type { ContactsDto } from './ContactsDto';
 
-export type { TextDto } from './TextDto';
-export type { CmdDto } from './CmdDto';
+
+export type { MessageInput } from './message/MessageInput';
+export type { ContactsDto } from './ContactsDto';
+export type { TextContentDto as TextDto } from './message/TextContentDto';
+export type { CmdContentDto as CmdDto } from './message/CmdContentDto';
+
+
 
 export type { BadgeDto } from './BadgeDto';
 export type { BadgeDetialDto } from './BadgeDetialDto';

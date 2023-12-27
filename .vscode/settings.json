@@ -12,5 +12,9 @@
   ],
   "files.watcherExclude": {
     "**/win-unpacked/**": true
-  }
+  },
+  "debug.javascript.debugByLinkOptions": "on",
+  "javascript.updateImportsOnFileMove.enabled": "always",
+  "typescript.updateImportsOnFileMove.enabled": "always",
+  "vue.updateImportsOnFileMove.enabled": true
 }

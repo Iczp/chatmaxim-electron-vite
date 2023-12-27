@@ -14,7 +14,7 @@ defineProps<{
 }>();
 
 const emits = defineEmits<{
-  confirm: [{ files?: Array<any>; text?: string }];
+  // confirm: [{ files?: Array<any>; text?: string }];
   cancel: [];
 }>();
 
@@ -25,29 +25,37 @@ const isOpen = ref(false);
 const okText = computed(
   () => `发送` + (files.value.length == 0 ? '' : `( ${files.value.length} )`),
 );
+
+const confirm = ref<(files?: Array<any>, text?: string) => void>();
+const cancel = ref<() => void>();
 const open = (args: {
   destination?: ChatObjectDto;
   files?: Array<any>;
   text?: string;
-  // onConfirm?: () => void;
+  onConfirm?: (files?: Array<any>, text?: string) => void;
+  onCancel?: () => void;
 }) => {
   destination.value = args.destination;
   files.value = args.files || [];
   text.value = args.text;
   isOpen.value = true;
+  confirm.value = args.onConfirm;
+  cancel.value = args.onCancel;
 };
 const close = () => {
   isOpen.value = false;
 };
 
-const cancel = (e: MouseEvent) => {
-  emits('cancel');
+const handleCancel = (e: MouseEvent) => {
+  // emits('cancel');
+  cancel.value?.call(this);
 };
 
 const handleOk = (e: MouseEvent) => {
   console.log(e);
   isOpen.value = false;
-  emits('confirm', { files: files.value, text: text.value });
+  confirm.value?.call(this, files.value, text.value);
+  // emits('confirm', { files: files.value, text: text.value });
 };
 const onDelete = (index: number): void => {
   files.value.splice(index, 1);
@@ -72,7 +80,7 @@ defineExpose({
     :ok-text="okText"
     cancel-text="取消"
     @ok="handleOk"
-    @cancel="cancel"
+    @cancel="handleCancel"
   >
     <page class="page">
       <page-content>

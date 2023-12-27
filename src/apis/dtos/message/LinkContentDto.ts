@@ -1,12 +1,7 @@
-/* generated using openapi-typescript-codegen -- do no edit */
-/* istanbul ignore file */
-/* tslint:disable */
-/* eslint-disable */
-
 /**
  * 分享链接消息
  */
-export type IczpNet_Chat_MessageSections_Templates_LinkContentInfo = {
+export type LinkContentDto = {
     id?: string | null;
     /**
      * Url

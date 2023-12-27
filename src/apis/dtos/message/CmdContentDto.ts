@@ -1,9 +1,9 @@
-import { TextDto } from './TextDto';
+import { TextContentDto } from './TextContentDto';
 
 /**
  * 系统命令（）
  */
-export type CmdDto = TextDto & {
+export type CmdContentDto = TextContentDto & {
   /**
    * 执行的命令（需要与前端一致）
    */
