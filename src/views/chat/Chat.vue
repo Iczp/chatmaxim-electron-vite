@@ -346,6 +346,14 @@ const dropHandle = (ev: DragEvent, { files, text }: { files?: any[]; text?: stri
     files,
     text,
     onConfirm(files, text) {
+      if (text) {
+        sendMessageContent({
+          messageType: MessageTypeEnums.Text,
+          content: {
+            text,
+          },
+        });
+      }
       console.log('onDropToSend', files, text);
     },
   });
@@ -442,6 +450,7 @@ const { vDrop } = useDrop();
   overflow: hidden;
   display: flex;
   flex: 1;
+  transition: all 0.3s linear;
 }
 .dragenter {
   background-color: #1584e57c;

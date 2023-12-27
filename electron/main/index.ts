@@ -11,6 +11,7 @@ import { websocketHandle } from './commons/webscoketHandle';
 import { globalState } from './global';
 import './commons/logger';
 import './commons/tray';
+import './commons/keyboardShortcuts';
 import { createPopWindow, openPopWindowHandle } from './commons/openPopWindowHandle';
 import { setTrayHandle } from './commons/setTrayHandle';
 import setAppProtocol from './commons/setAppProtocol';

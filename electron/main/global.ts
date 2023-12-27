@@ -9,6 +9,10 @@ export interface GlobalState {
     isOver?: boolean;
   };
   appInfo: AppInfo;
+  accelerator: {
+    main: string;
+  };
+  globalShortcuts: string;
 }
 
 export const globalState: GlobalState = {
@@ -34,6 +38,10 @@ export const globalState: GlobalState = {
     website: import.meta.env.VITE_APP_WEBSIZE,
     author: import.meta.env.VITE_APP_AUTHOR,
   },
+  accelerator: {
+    main: 'CommandOrControl+D',
+  },
+  globalShortcuts: 'CommandOrControl+D',
 };
 
 // app.whenReady().then(() => {
