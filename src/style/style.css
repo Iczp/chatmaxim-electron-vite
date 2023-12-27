@@ -175,7 +175,7 @@ code {
   display: -webkit-box;
   -webkit-box-orient: vertical;
 }
-.text-ellipsis2 {
+.text-ellipsis1 {
   -webkit-line-clamp: 1;
 }
 .text-ellipsis2 {

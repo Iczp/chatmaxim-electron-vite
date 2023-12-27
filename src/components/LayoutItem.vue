@@ -17,7 +17,7 @@ const slots = useSlots();
 
 <template>
   <div class="layout-item">
-    <aside v-if="header" class="header" :class="{ hover }">
+    <aside v-if="slots['header']" class="header" :class="{ hover }">
       <slot name="header"></slot>
     </aside>
 

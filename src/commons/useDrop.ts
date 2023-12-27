@@ -2,7 +2,7 @@ import { ref, watch } from 'vue';
 
 export const useDrop = (
   args: {
-    dropHandle?: (e: DragEvent) => void;
+    dropHandle?: (e: DragEvent, args: { files?: Array<any>; text?: string }) => void;
     class?: string;
   } = {
     class: 'dragenter',
@@ -24,7 +24,7 @@ export const useDrop = (
   const vDrop = {
     mounted: (el: HTMLElement, binding: any) => {
       console.log('vDrop mounted', el.className);
-    //   ['drag', 'dragstart', 'dragend', 'dragover', 'dragenter', 'dragleave', 'drop']
+      //   ['drag', 'dragstart', 'dragend', 'dragover', 'dragenter', 'dragleave', 'drop']
       el.addEventListener('dragenter', dragenter);
       el.addEventListener('dragover', dragenter);
       el.addEventListener('dragleave', dragleave);
@@ -32,11 +32,17 @@ export const useDrop = (
         // e.preventDefault();
         // console.log('drop', e, e.dataTransfer);
         isDrag.value = false;
-        var efile = e.dataTransfer?.files[0];
-        // console.log(efile?.path, 'utf8');
-        args?.dropHandle?.call(el, e);
+
+        const files = [];
+        // Print each format files
+        for (let i = 0; i < (e.dataTransfer?.files || []).length; i++) {
+          files.push(e.dataTransfer?.files[i]);
+        }
+        const text = e.dataTransfer?.getData('text');
+
+        args?.dropHandle?.call(el, e, { files, text });
         // console.log('vDrop binding', typeof binding, binding);
-        binding.value?.call(el, e);
+        binding.value?.call(el, e, { files, text });
         // (binding.value as ((e: DragEvent) => void) | undefined)?.call(el, e);
       });
 

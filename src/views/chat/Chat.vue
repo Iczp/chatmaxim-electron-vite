@@ -92,6 +92,8 @@ const chatInput = ref<InstanceType<typeof ChatInput> | null>(null);
 
 const scroll = ref<InstanceType<typeof ScrollView> | null>(null);
 
+const dropViewer = ref<InstanceType<typeof DropViewer> | null>(null);
+
 const scrollElement = computed(() => scroll.value?.getElement());
 
 // const scroll = ref();
@@ -356,53 +358,14 @@ const bodyStyle: CSSProperties = {
 //   });
 // });
 
-const files = ref<Array<any>>([]);
-const dropHandle = (ev: DragEvent) => {
-  console.log('dropHandle', ev);
-  const data = ev.dataTransfer?.getData('text');
-
-  console.log('data', data);
-  // ev.target?.appendChild(document.getElementById(data));
-
-  // Print each format type
-  for (let i = 0; i < (ev.dataTransfer?.types || []).length; i++) {
-    console.log(`… types[${i}] = ${ev.dataTransfer?.types[i]}`);
-  }
-  files.value = [];
-  // Print each format files
-  for (let i = 0; i < (ev.dataTransfer?.files || []).length; i++) {
-    console.log(`files[${i}] = ${ev.dataTransfer?.files[i]}`);
-    files.value.push(ev.dataTransfer?.files[i]);
-  }
-
-  // Print each item's "kind" and "type"
-  for (let i = 0; i < (ev.dataTransfer?.items || []).length; i++) {
-    console.log(
-      `… items[${i}].kind = ${ev.dataTransfer?.items[i].kind}; type = ${ev.dataTransfer?.items[i].type}`,
-    );
-  }
-  var efile = ev.dataTransfer?.files[0];
-  console.log(efile, 'utf8');
-  showModal();
-  // var formData = new FormData();
-  // var imagefile = document.querySelector('#file');
-  // formData.append('image', imagefile.files[0]);
-  // axios.post('upload_file', formData, {
-  //   headers: {
-  //     'Content-Type': 'multipart/form-data',
-  //   },
-  // });
+const dropHandle = (ev: DragEvent, output: any) => {
+  console.log('dropHandle', ev, output);
+  dropViewer.value?.open({
+    destination: destination.value,
+    ...output,
+  });
 };
-const { vDrop, isDrag } = useDrop();
-const isModelOpen = ref(false);
-const showModal = () => {
-  isModelOpen.value = true;
-};
-
-const handleOk = (e: MouseEvent) => {
-  console.log(e);
-  isModelOpen.value = false;
-};
+const { vDrop } = useDrop();
 </script>
 <!-- @dragenter="dragenter"
     @dragleave="dragleave"
@@ -425,9 +388,7 @@ const handleOk = (e: MouseEvent) => {
     </PageTitle>
 
     <page-content :style="contentStyle" class="layout-content">
-      <a-modal v-model:open="isModelOpen" title="发送给" @ok="handleOk">
-        <DropViewer :destination="destination" :files="files" />
-      </a-modal>
+      <DropViewer ref="dropViewer" />
       <a-drawer
         width="320"
         v-model:open="open"
