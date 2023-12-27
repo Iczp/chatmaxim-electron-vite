@@ -9,17 +9,17 @@ import { SettingService } from '../../../apis';
 import { useImStore } from '../../../stores/im';
 
 const store = useImStore();
-
-const props = defineProps<{
+type PropArgs = {
   chatObjectId?: number | number;
   sessionUnitId: string;
-  entity: SessionUnitOwnerDto;
-}>();
+  entity?: SessionUnitOwnerDto;
+};
+const props = defineProps<PropArgs>();
 
 // const setting = reactive<SessionUnitSettingDto>(store.getItem(props.sessionUnitId!)?.setting!);
 // const entity = store.getItem(props.sessionUnitId!);
 
-const setting = props.entity.setting;
+const setting = props.entity?.setting;
 
 watch(
   () => props.entity,
@@ -36,14 +36,14 @@ const onChange = (v: boolean | string | number, e: Event) => {
 
 // const entity = reactive<SessionUnitOwnerDto>({});
 
-const isTopping = ref(Number(props.entity.sorting) > 0);
+const isTopping = ref(Number(props.entity?.sorting) > 0);
 const isImmersed = ref(setting?.isImmersed);
 const isContacts = ref(setting?.isContacts);
 const isShowMemberName = ref(setting?.isShowMemberName);
 const memberName = ref(setting?.memberName || '');
 const rename = ref(setting?.rename || '');
 
-const objectType = computed(() => props.entity.destination?.objectType);
+const objectType = computed(() => props.entity?.destination?.objectType);
 
 const setTopping = (v: boolean) => {
   console.log('setTopping', isTopping.value);
@@ -108,7 +108,7 @@ const iconStyle: CSSProperties = {
 
 const isOpen = ref<boolean>(false);
 
-const open = () => {
+const open = (args: PropArgs) => {
   isOpen.value = true;
 };
 const close = () => {
@@ -153,7 +153,7 @@ defineExpose({
 
         <section class="section">
           <a-form-item label="名称">
-            {{ entity.destination?.name }}
+            {{ entity?.destination?.name }}
           </a-form-item>
           <a-divider></a-divider>
           <a-form-item v-if="objectType == ChatObjectTypeEnums.Personal" label="备注名称">
@@ -162,7 +162,7 @@ defineExpose({
           <a-divider></a-divider>
 
           <a-form-item label="类型">
-            {{ ChatObjectTypeEnumText[entity.destination?.objectType!] }}
+            {{ ChatObjectTypeEnumText[entity?.destination?.objectType!] }}
           </a-form-item>
           <a-divider></a-divider>
         </section>
@@ -253,7 +253,7 @@ defineExpose({
 </template>
 
 <style scoped>
-:deep(.ant-drawer .ant-drawer-header){
+:deep(.ant-drawer .ant-drawer-header) {
   height: var(--page-title-height);
 }
 :deep(.ant-drawer .ant-drawer-body) {
@@ -292,5 +292,4 @@ defineExpose({
 /* .form-item {
   margin: 0;
 } */
-
 </style>

@@ -84,6 +84,10 @@ const useComputedSessionUnit = (computedEntity: ComputedRef<SessionUnitOwnerDto 
 
   const memberName = computed(() => entity.value?.setting?.memberName);
 
+  const isShowMemberName = computed(() => entity.value?.setting?.isShowMemberName);
+
+  const isContacts = computed(() => entity.value?.setting?.isContacts);
+
   const isSelfSender = computed(
     () => entity.value?.id == entity.value?.lastMessage?.senderSessionUnit?.id,
   );
@@ -113,6 +117,8 @@ const useComputedSessionUnit = (computedEntity: ComputedRef<SessionUnitOwnerDto 
     isInputEnabled,
     setting,
     memberName,
+    isShowMemberName,
+    isContacts,
     lastMessageId,
     isSelfSender,
     displaySenderName,

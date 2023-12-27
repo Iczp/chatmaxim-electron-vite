@@ -62,6 +62,7 @@ export const showContextMenuForMessage = (args: MessageContextMenuInput & Contex
         name: 'pop',
         path: `/profile/${chatObjectId}/${senderSessionUnit?.id}`,
         position: 'absolute',
+        isAlwaysOnTop: true,
         x: event.clientX,
         y: event.clientY,
         size: {

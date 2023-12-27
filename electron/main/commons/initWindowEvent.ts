@@ -5,6 +5,12 @@ import { machine } from './machine';
 
 export const initWindowEvent = (win: BrowserWindow) => {
   const send = (event: string, args: any[]) => sendEvent(win, event, args);
+  // const events = ['maximize', 'unmaximize', 'minimize', 'restore'];
+  // events.map(x => {
+  //   // tslint:disable-block
+  //   win.addListener(x, (_: any, ...args: any[]) => send(x, args));
+  // });
+
   win.on('maximize', (_: any, ...args: any[]) => send('maximize', args));
   win.on('unmaximize', (_: any, ...args: any[]) => send('unmaximize', args));
   win.on('minimize', (_: any, ...args: any[]) => send('minimize', args));

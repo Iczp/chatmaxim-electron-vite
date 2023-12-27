@@ -121,6 +121,9 @@ defineExpose({
 </template>
 
 <style scoped>
+:deep(.ant-mentions){
+  background-color: #ffffff00;
+}
 .chat-input {
   display: flex;
   flex-direction: column;
@@ -129,7 +132,7 @@ defineExpose({
   width: 100%;
 }
 .input-body {
-  background-color: white;
+  background-color: rgba(255, 255, 255, 0.474);
 }
 .input-area {
   display: flex;

@@ -164,7 +164,7 @@ defineExpose({
   background-color: #e2e2e2c9;
   height: 1px;
   transform: translateY(0.25);
-  z-index: 1;
+  /* z-index: 1; */
 }
 .hover:hover {
   background-color: #eaeaea;

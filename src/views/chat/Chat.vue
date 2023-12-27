@@ -116,7 +116,11 @@ watch(
 const textValue = ref('669+++');
 
 const showDrawer = () => {
-  chatSetting.value?.open();
+  chatSetting.value?.open({
+    chatObjectId: chatObjectId,
+    sessionUnitId: sessionUnitId,
+    entity: sessionUnit.value,
+  });
 };
 const scrollTo = (duration: number = 1500) => {
   scroll.value?.scrollTo({ duration });
@@ -182,8 +186,22 @@ if (isSeparated) {
   onActivated(_onActivated);
   onDeactivated(_onDeactivated);
 }
-
 const onSend = async ({ event, value }: any) => {
+  sendMessageContent({
+    messageType: MessageTypeEnums.Text,
+    content: {
+      text: value,
+    },
+  });
+};
+
+const sendMessageContent = async ({
+  content,
+  messageType,
+}: {
+  messageType: MessageTypeEnums;
+  content: any;
+}) => {
   const removeItem = (autoId?: number) => {
     const findIndex = list.value?.findIndex(x => x.autoId == autoId);
     console.log('findIndex', findIndex);
@@ -195,12 +213,10 @@ const onSend = async ({ event, value }: any) => {
   sendMessage({
     sessionUnitId,
     senderSessionUnit: detail.value,
-    messageType: MessageTypeEnums.Text,
+    messageType,
     lastItem: list.value.length > 0 ? list.value[list.value.length - 1] : undefined,
     quoteMessageId: quoteMessage.value?.id,
-    content: {
-      text: value,
-    },
+    content,
     onBefore(input) {
       isSendBtnEnabled.value = false;
       list.value.push(input);
@@ -208,7 +224,7 @@ const onSend = async ({ event, value }: any) => {
     onSuccess(entity, input) {
       chatInput.value?.clear();
       quoteMessage.value = null;
-      fetchLatest({ caller: 'onSend' })
+      fetchLatest({ caller: 'sendMessageContent' })
         .then(({ items, list }) => {
           removeItem(input.autoId);
           list.value = list.value.concat(items);
@@ -321,8 +337,8 @@ const onReachEnd = (event: CustomEvent) => {
 };
 
 const dropHandle = (ev: DragEvent, { files, text }: { files?: any[]; text?: string }) => {
-  console.log('dropHandle', ev, files, text);
-  if (!(files || text)) {
+  console.log('dropHandle', ev, { files, text });
+  if (!(Number(files?.length) > 0 || text)) {
     return;
   }
   dropViewer.value?.open({
@@ -358,7 +374,7 @@ const { vDrop } = useDrop();
       <ChatSetting
         v-if="sessionUnitId"
         ref="chatSetting"
-        :entity="sessionUnit!"
+        :entity="sessionUnit"
         :sessionUnitId="sessionUnitId"
       />
 
@@ -420,10 +436,6 @@ const { vDrop } = useDrop();
 :deep(.main-title-text) {
   font-size: 16px;
 }
-.chat-setting {
-  background-color: #d70c0c;
-  color: red;
-}
 .chat {
   width: 100%;
   height: 100%;
@@ -432,7 +444,7 @@ const { vDrop } = useDrop();
   flex: 1;
 }
 .dragenter {
-  background-color: #15e53b2a;
+  background-color: #1584e57c;
 }
 .layout {
   background-color: unset;
