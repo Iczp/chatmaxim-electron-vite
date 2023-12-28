@@ -2,15 +2,11 @@ import { BrowserWindow, shell } from 'electron';
 import { windowManager } from './windowManager';
 import { WindowState } from '../ipc-types/WindowState';
 import { machine } from './machine';
+import { shortcutDevaultValue } from '../ipc-types/ShortcutState';
 
 export const initWindowEvent = (win: BrowserWindow) => {
   const send = (event: string, args: any[]) => sendEvent(win, event, args);
   // const events = ['maximize', 'unmaximize', 'minimize', 'restore'];
-  // events.map(x => {
-  //   // tslint:disable-block
-  //   win.addListener(x, (_: any, ...args: any[]) => send(x, args));
-  // });
-
   win.on('maximize', (_: any, ...args: any[]) => send('maximize', args));
   win.on('unmaximize', (_: any, ...args: any[]) => send('unmaximize', args));
   win.on('minimize', (_: any, ...args: any[]) => send('minimize', args));
@@ -25,6 +21,21 @@ export const initWindowEvent = (win: BrowserWindow) => {
   win.webContents.setWindowOpenHandler(({ url }) => {
     if (url.startsWith('https:')) shell.openExternal(url);
     return { action: 'deny' };
+  });
+
+  registShortcutEvent(win);
+};
+
+export const registShortcutEvent = (win: BrowserWindow) => {
+  const electronLocalshortcut = require('electron-localshortcut');
+  const shortcutState = shortcutDevaultValue();
+  Object.keys(shortcutState).forEach(x => {
+    electronLocalshortcut.register(win, x, () => {
+      console.log(`shortcut:'${x}' is pressed`);
+      sendEvent(win, 'shortcut', [x]);
+    });
+    const isRegistered = electronLocalshortcut.isRegistered(win, x);
+    console.log(`win id:${win.id} shortcut:'${x}' isRegistered:${isRegistered}`);
   });
 };
 

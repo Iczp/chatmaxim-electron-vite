@@ -30,6 +30,7 @@ export const messageShortcutHandle = () => {
         name: isSeparatedChat ? chatWinName : 'main',
         path,
         visiblity: true,
+        focus: true,
       };
       console.log('params', params);
       setWindow(chatWin, params, null);
@@ -38,11 +39,16 @@ export const messageShortcutHandle = () => {
       trayPayload.totalBadge -= Number(publicBadge || 0);
       setTrayHandle(null, trayPayload);
     } else if (totalBadge > 0) {
-      setWindow(win, { name: 'main', visiblity: true }, null);
+      setWindow(win, { name: 'main', visiblity: true, focus: true }, null);
       trayPayload.totalBadge = 0;
       setTrayHandle(null, trayPayload);
     } else {
-      win.isVisible() ? win.hide() : win.show();
+      if (win.isVisible() && win.isFocused()) {
+        win.hide();
+      } else {
+        win.show();
+        win.focus();
+      }
     }
   } catch (error) {
     console.error('error', error);

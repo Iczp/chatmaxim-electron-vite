@@ -47,5 +47,5 @@ ipcRenderer.on('navigate', (_event, { path, payload }) => {
 ipcRenderer.on('window-event', (_, args) => {
   console.log('[window-event]:', _, args);
   const winStore = useWindowStore();
-  winStore.update(args);
+  winStore.handle(args);
 });

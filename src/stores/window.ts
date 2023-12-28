@@ -1,5 +1,6 @@
 import { acceptHMRUpdate, defineStore } from 'pinia';
 import { WindowState } from '../ipc-types';
+import { useShortcutStore } from './shortcut';
 
 const defaultValue: WindowState = {
   machineId: undefined,
@@ -60,13 +61,18 @@ export const useWindowStore = defineStore('window', {
       this.path = path;
       this.payload = payload;
     },
-    update({ event, args }: { event: string; args: Array<any> }) {
-      console.log('update', event, args);
+    handle({ event, args }: { event: string; args: Array<any> }) {
+      console.log('handle', event, args);
       switch (event) {
         case 'init':
           const state = <WindowState>args[0];
           console.log('init', state);
           this.$patch(state);
+          break;
+        case 'shortcut':
+          // console.log('shortcut', args);
+          const shortcutStore = useShortcutStore();
+          shortcutStore.pressed(args[0] as string, (args[1] || new Date().getTime()) as number);
           break;
         case 'focus':
           this.focus = true;

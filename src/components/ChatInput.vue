@@ -109,7 +109,13 @@ defineExpose({
           <slot></slot>
         </div>
         <div class="footer-right">
-          <a-button type="primary" @click="send" :disabled="disabled" class="btn-send">
+          <a-button
+            type="primary"
+            @click="send"
+            :disabled="disabled"
+            class="btn-send"
+            title="Alt+S 或 Ctrl+Enter 发送消息"
+          >
             发送(
             <u>S</u>
             )
@@ -121,7 +127,7 @@ defineExpose({
 </template>
 
 <style scoped>
-:deep(.ant-mentions){
+:deep(.ant-mentions) {
   background-color: #ffffff00;
 }
 .chat-input {

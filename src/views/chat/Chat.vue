@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import {
+  WatchStopHandle,
   computed,
   nextTick,
   onActivated,
@@ -32,6 +33,7 @@ import { useSessionUnitDetail } from '../../commons/useSessionUnitDetail';
 import { setReadedMessageId } from '../../commons/setting';
 import { sendMessage } from '../../commons/sendMessage';
 import { useDrop } from '../../commons/useDrop';
+import { useShortcutStore } from '../../stores/shortcut';
 
 const store = useImStore();
 
@@ -126,13 +128,29 @@ const scrollTo = (duration: number = 1500) => {
   scroll.value?.scrollTo({ duration });
 };
 
+const shortcutStore = useShortcutStore();
+
+let stopShortcutWatch: WatchStopHandle | undefined;
+let startShortcutWatch = () => {
+  stopShortcutWatch = watch(
+    () => shortcutStore['CommandOrControl+Enter'] + shortcutStore['Alt+S'],
+    ticks => {
+      const inputValue = chatInput.value?.inputValue;
+      console.warn('CommandOrControl+Enter', ticks, inputValue);
+      onSend({ value: inputValue });
+    },
+  );
+};
+
 const _onDeactivated = () => {
   // activeLastMessageId.value = lastMessageId.value;
+  stopShortcutWatch?.call(this);
   localReadedMessageId.value = readedMessageId.value;
   selectable.value = false;
   cancelChecked();
 };
 const _onActivated = () => {
+  startShortcutWatch();
   scrollTo(0);
   fetchLatest({
     caller: 'onActivated',
@@ -186,7 +204,12 @@ if (isSeparated) {
   onActivated(_onActivated);
   onDeactivated(_onDeactivated);
 }
+
 const onSend = async ({ event, value }: any) => {
+  if (!value) {
+    message.error({ content: '请输入', key: 'send-message' });
+    return;
+  }
   sendMessageContent({
     messageType: MessageTypeEnums.Text,
     content: {
