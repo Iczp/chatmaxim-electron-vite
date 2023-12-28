@@ -66,7 +66,7 @@ export const preventClose = (win: BrowserWindow, isListening: boolean) => {
 export const setWindowProperties = (
   win: BrowserWindow,
   params: WindowParams,
-  _: Electron.IpcMainInvokeEvent,
+  _: Electron.IpcMainInvokeEvent | undefined,
 ) => {
   ifBoolean(params?.maximizable, x => (win.maximizable = x));
   ifBoolean(params?.minimizable, x => (win.minimizable = x));
@@ -92,7 +92,7 @@ export const setWindowProperties = (
 export const setWindowMethods = (
   win: BrowserWindow,
   params: WindowParams,
-  _: Electron.IpcMainInvokeEvent,
+  _: Electron.IpcMainInvokeEvent | undefined,
 ) => {
   ifBoolean(params?.maximize, x => (win.isMaximized() ? win.restore() : win.maximize()));
   ifBoolean(params?.minimize, x => win.minimize());
@@ -118,14 +118,15 @@ export const setWindowMethods = (
 export const setWindowBounds = (
   win: BrowserWindow,
   params: WindowParams,
-  _: Electron.IpcMainInvokeEvent,
+  _: Electron.IpcMainInvokeEvent | undefined,
 ) => {
   const { position, x, y } = params;
 
   let refer: BrowserWindow | undefined = undefined;
-  let sender: BrowserWindow | undefined = BrowserWindow.fromWebContents(
-    webContents.fromId(_.sender.id),
-  );
+  let sender: BrowserWindow | undefined = undefined;
+  if (_?.sender) {
+    sender = BrowserWindow.fromWebContents(webContents.fromId(_?.sender.id));
+  }
   const size = params.size;
   if (position == 'absolute') {
     if (params.refer == '$sender') {
