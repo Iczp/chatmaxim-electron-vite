@@ -62,7 +62,7 @@ app.whenReady().then(() => {
   //   tray.setContextMenu(contextMenu);
 
   createTray();
-  trayWindow = createTrayWindow({});
+  createTrayWindow({});
 });
 
 const NOTIFICATION_TITLE = '日春茶业-桌面端';
@@ -80,7 +80,7 @@ function showNotification() {
   });
   notice.show();
   notice.on('click', arg => {
-    console.log(JSON.stringify(arg));
+    console.log('Notification click', JSON.stringify(arg));
   });
   return notice;
 }
@@ -138,6 +138,13 @@ export const createTray = () => {
       type: 'normal',
       click(menuItem, browserWindow, event) {
         stopFlash();
+        // console.log('logout');
+        // windowManager.closeAll();
+        tray.destroy();
+        app.quit();
+        BrowserWindow.getAllWindows().forEach(x => {
+          console.log('win:', x.id);
+        });
       },
     },
   ]);
@@ -160,7 +167,7 @@ export const createTray = () => {
 };
 
 export const createTrayWindow = ({ path = '/tray' }: { path?: string }) => {
-  const win = new BrowserWindow({
+  trayWindow = new BrowserWindow({
     title: 'Tray',
     // minWidth: 240,
     // minHeight: 240,
@@ -189,20 +196,10 @@ export const createTrayWindow = ({ path = '/tray' }: { path?: string }) => {
     skipTaskbar: false,
     // transparent: true,
   });
-
-  windowManager.set('tray', win);
-  win.removeMenu();
-  win.on('blur', e => win.hide());
-  loadUrl(win, { path });
-  // Test actively push message to the Electron-Renderer
-  win.webContents.on('did-finish-load', () => {
-    sendWindowInfo(win);
-    // createChildWindow({ path: '/settings' });
-  });
-
-  initWindowEvent(win);
-  preventClose(win, true);
-  return win;
+  trayWindow.on('blur', () => trayWindow.hide());
+  initWindowEvent(trayWindow, 'tray', path);
+  preventClose(trayWindow, true);
+  return trayWindow;
 };
 
 let isEnter: boolean = false;

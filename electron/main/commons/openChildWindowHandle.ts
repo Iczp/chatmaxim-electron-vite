@@ -1,11 +1,10 @@
-import { BrowserWindow, ipcMain, webContents } from 'electron';
+import { BrowserWindow, ipcMain } from 'electron';
 import { WindowParams } from '../ipc-types';
 import { join } from 'node:path';
 import { addParamsToUrl } from './addParamsToUrl';
 import { windowManager } from './windowManager';
-import { sendEvent, initWindowEvent, sendWindowInfo } from './initWindowEvent';
+import { initWindowEvent } from './initWindowEvent';
 import { setWindow } from './windowSettingHandle';
-import { globalState } from '../global';
 import { loadUrl } from './loadUrl';
 
 // process.env.DIST_ELECTRON = join(__dirname, '..');
@@ -43,6 +42,7 @@ export const openChildWindowHandle = (
       childWindow = windowManager.set(
         window.name,
         createChildWindow({
+          name: window.name,
           parent,
           path,
           isModel: window.isModel || false,
@@ -80,10 +80,12 @@ export const openChildWindowHandle = (
 };
 
 export const createChildWindow = ({
+  name,
   path,
   isModel,
   parent,
 }: {
+  name: string;
   path: string;
   isModel: boolean;
   parent?: BrowserWindow;
@@ -105,22 +107,8 @@ export const createChildWindow = ({
     frame: false,
     hasShadow: false,
   });
-
-  const contents: Electron.WebContents = win.webContents;
-  contents.on('did-finish-load', () => {
-    sendWindowInfo(win);
-  });
-  contents.on('did-navigate-in-page', (_, ...args) => {
-    console.log('did-navigate-in-page', _, ...args);
-  });
-
-  // preventClose(win, isPreventClose);
-
-  win.removeMenu();
-
-  initWindowEvent(win);
-
+  initWindowEvent(win, name, path);
   loadUrl(win, { path });
-
+  // preventClose(win, isPreventClose);
   return win;
 };

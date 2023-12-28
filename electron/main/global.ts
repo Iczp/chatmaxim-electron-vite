@@ -12,7 +12,7 @@ export interface GlobalState {
   accelerator: {
     main: string;
   };
-  globalShortcuts: string;
+  globalShortcut: string;
 }
 
 export const globalState: GlobalState = {
@@ -41,7 +41,7 @@ export const globalState: GlobalState = {
   accelerator: {
     main: 'CommandOrControl+D',
   },
-  globalShortcuts: 'CommandOrControl+D',
+  globalShortcut: 'CommandOrControl+D',
 };
 
 // app.whenReady().then(() => {

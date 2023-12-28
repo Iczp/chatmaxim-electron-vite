@@ -1,16 +1,11 @@
-import { BrowserWindow, app, globalShortcut } from 'electron';
+import { app, globalShortcut } from 'electron';
 import { windowManager } from './windowManager';
-import { electronLocalshortcut } from 'electron-localshortcut';
 import { globalState } from '../global';
 import { WindowParams } from '../ipc-types';
 import { setWindow } from './windowSettingHandle';
 import { setTrayHandle } from './setTrayHandle';
 
-app.whenReady().then(() => {
-  //   const electronLocalshortcut = require('electron-localshortcut');
-});
-
-const accelerator = 'CommandOrControl+D';
+const accelerator = globalState.globalShortcut;
 
 export const messageShortcutHandle = () => {
   try {
@@ -18,6 +13,10 @@ export const messageShortcutHandle = () => {
     const trayPayload = globalState.trayPayload;
     const { items, totalBadge } = trayPayload;
     const win = windowManager.getMain();
+    if (!win) {
+      console.warn('win is null');
+      return;
+    }
     if (items.length > 0) {
       // items[0].
       console.log(`item 0`, items[0]);
@@ -68,5 +67,6 @@ app.on('will-quit', () => {
   // Unregister a shortcut.
   // globalShortcut.unregister(accelerator);
   // Unregister all shortcuts.
+  console.log('will-quit');
   globalShortcut.unregisterAll();
 });

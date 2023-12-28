@@ -6,7 +6,6 @@ import { windowManager } from './windowManager';
 import { initWindowEvent, sendWindowInfo } from './initWindowEvent';
 import { setWindow } from './windowSettingHandle';
 import { preventClose } from './windowSettingHandle';
-import { loadUrl } from './loadUrl';
 
 const preload = join(__dirname, '../preload/index.js');
 
@@ -62,25 +61,13 @@ export const createPopWindow = ({ path = '/pop' }: { path?: string }) => {
     skipTaskbar: false,
     // transparent: true,
   });
-
-  windowManager.set('pop', win);
-  win.removeMenu();
-
-  loadUrl(win, { path });
-  
-  // Test actively push message to the Electron-Renderer
-  win.webContents.on('did-finish-load', () => {
-    sendWindowInfo(win);
-    // createChildWindow({ path: '/settings' });
-  });
-
   win.on('blur', () => {
     console.log('blur');
     if (win.isVisible()) {
       // win.hide();
     }
   });
-  initWindowEvent(win);
+  initWindowEvent(win, 'pop', path);
   preventClose(win, true);
   return win;
 };

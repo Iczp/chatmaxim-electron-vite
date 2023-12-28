@@ -1,13 +1,5 @@
 import { BrowserWindow } from 'electron';
 
-// export type Windows = {
-//   [key: 'main' | 'child' | string]: BrowserWindow;
-// };
-
-// export type WindowsMap = {
-//   [key: number]: string;
-// };
-// Map<string, BrowserWindow>
 class WindowManger {
   public windows: Map<string, BrowserWindow> = new Map<string, BrowserWindow>();
   public windowsMap: Map<number, string> = new Map<number, string>();
@@ -17,7 +9,11 @@ class WindowManger {
     // this.windows[name] = win;
     this.windowsMap.set(win.id, name);
     this.windows.set(name, win);
-    win.on('closed', () => this.remove(name));
+    win.on('closed', () => {
+      win.destroy();
+      this.remove(name);
+      console.log(`win '${name}' closed`);
+    });
     return win;
   }
   get(name: string): BrowserWindow | undefined {
@@ -52,7 +48,13 @@ class WindowManger {
   isSeparatedChat(name: string) {
     return /^chat-.+$/.test(name) && this.windows.has(name);
   }
-  closeAll() {}
+  closeAll() {
+    [...this.windows].map(([name, win]) => {
+      console.log(`window name:`, name, win.id);
+      win.close();
+      // win.removeAllListeners();
+    });
+  }
 }
 
 export const windowManager = new WindowManger();

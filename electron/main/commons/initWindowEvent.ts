@@ -3,8 +3,11 @@ import { windowManager } from './windowManager';
 import { WindowState } from '../ipc-types/WindowState';
 import { machine } from './machine';
 import { shortcutDevaultValue } from '../ipc-types/ShortcutState';
+import { loadUrl } from './loadUrl';
 
-export const initWindowEvent = (win: BrowserWindow) => {
+export const initWindowEvent = (win: BrowserWindow, name: string, path: string) => {
+  windowManager.set(name, win);
+  loadUrl(win, { path });
   const send = (event: string, args: any[]) => sendEvent(win, event, args);
   // const events = ['maximize', 'unmaximize', 'minimize', 'restore'];
   win.on('maximize', (_: any, ...args: any[]) => send('maximize', args));
@@ -21,6 +24,15 @@ export const initWindowEvent = (win: BrowserWindow) => {
   win.webContents.setWindowOpenHandler(({ url }) => {
     if (url.startsWith('https:')) shell.openExternal(url);
     return { action: 'deny' };
+  });
+
+  win.removeMenu();
+  win.webContents.on('did-finish-load', () => {
+    sendWindowInfo(win);
+  });
+
+  win.webContents.on('did-navigate-in-page', (_, ...args) => {
+    console.log(`did-navigate-in-page [${windowManager.getName(win)}]`, _, ...args);
   });
 
   registShortcutEvent(win);

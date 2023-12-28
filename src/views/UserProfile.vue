@@ -42,7 +42,7 @@ onMounted(() => {
 
               <a-card-meta :title="item.name" :description="item.code">
                 <template #avatar>
-                  <a-avatar />
+                  <a-avatar src="https://m.rctea.com/mobile/images/precomposed.png" />
                 </template>
               </a-card-meta>
 
@@ -74,8 +74,9 @@ onMounted(() => {
 
 .div-image {
   height: 240px;
-  background-image: url('https://gw.alipayobjects.com/zos/rmsportal/JiqGstEfoWAOHiTxclqi.png');
-  background-size: cover;
+  background-image: url('https://m.rctea.com/mobile/images/precomposed.png');
+  background-size: inherit;
   background-position: center center;
+  background-repeat: no-repeat;
 }
 </style>
