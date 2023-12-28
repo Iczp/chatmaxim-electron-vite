@@ -67,6 +67,6 @@ app.on('will-quit', () => {
   // Unregister a shortcut.
   // globalShortcut.unregister(accelerator);
   // Unregister all shortcuts.
-  console.log('will-quit');
+  console.log('will-quit', 'globalShortcut.unregisterAll');
   globalShortcut.unregisterAll();
 });

@@ -10,6 +10,7 @@ export const initWindowEvent = (win: BrowserWindow, name: string, path: string) 
   loadUrl(win, { path });
   const send = (event: string, args: any[]) => sendEvent(win, event, args);
   // const events = ['maximize', 'unmaximize', 'minimize', 'restore'];
+
   win.on('maximize', (_: any, ...args: any[]) => send('maximize', args));
   win.on('unmaximize', (_: any, ...args: any[]) => send('unmaximize', args));
   win.on('minimize', (_: any, ...args: any[]) => send('minimize', args));
@@ -20,6 +21,8 @@ export const initWindowEvent = (win: BrowserWindow, name: string, path: string) 
   // win.on('move', (_, ...args) => sendEvent('move', args));
   win.on('enter-full-screen', (_: any, ...args: any[]) => send('enter-full-screen', args));
   win.on('leave-full-screen', (_: any, ...args: any[]) => send('leave-full-screen', args));
+  win.on('page-title-updated', (_: any, ...args: any[]) => send('page-title-updated', args));
+  win.on('system-context-menu', (_: any, ...args: any[]) => send('system-context-menu', args));
   // Make all links open with the browser, not with the application
   win.webContents.setWindowOpenHandler(({ url }) => {
     if (url.startsWith('https:')) shell.openExternal(url);
@@ -84,7 +87,7 @@ export const sendWindowInfo = (win: BrowserWindow) => {
       hasShadow: win.hasShadow(),
       opacity: win.getOpacity(),
       isKiosk: win.isKiosk(),
-      isSkipTaskbar: win.isKiosk(),
+      // isSkipTaskbar: undefined,
     },
   ]);
 };

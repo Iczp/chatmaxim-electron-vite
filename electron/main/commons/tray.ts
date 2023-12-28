@@ -137,13 +137,14 @@ export const createTray = () => {
       label: '退出数字日春',
       type: 'normal',
       click(menuItem, browserWindow, event) {
-        stopFlash();
+        // stopFlash();
         // console.log('logout');
         // windowManager.closeAll();
         tray.destroy();
+        trayWindow.destroy();
         app.quit();
         BrowserWindow.getAllWindows().forEach(x => {
-          console.log('win:', x.id);
+          console.log('win id:', x.id);
         });
       },
     },
