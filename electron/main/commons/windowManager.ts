@@ -50,7 +50,7 @@ class WindowManger {
     // delete this.windows[name];
   }
   isSeparatedChat(name: string) {
-    return /^chat-.+$/.test(name);
+    return /^chat-.+$/.test(name) && this.windows.has(name);
   }
   closeAll() {}
 }
