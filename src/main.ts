@@ -1,4 +1,5 @@
 import { createApp } from 'vue';
+// import './commons/logger';
 import './style/style.css';
 import App from './App.vue';
 import './ipc';

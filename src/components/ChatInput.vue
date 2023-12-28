@@ -94,6 +94,7 @@ defineExpose({
             v-model:value="inputValue"
             rows="5"
             placeholder="说点什么..."
+            :focus="true"
             :options="mentions"
             :autofocus="false"
             :disabled="disabled"
