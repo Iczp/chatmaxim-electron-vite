@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import Bubble from './Bubble.vue';
+import Bubble from '../../../components/Bubble.vue';
 import { ExclamationCircleOutlined } from '@ant-design/icons-vue';
 
 defineProps<{

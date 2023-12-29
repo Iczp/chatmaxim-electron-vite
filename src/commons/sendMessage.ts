@@ -47,7 +47,7 @@ export const sendMessage = async ({
     lastItem,
   })[0];
   onBefore?.call(this, input);
-
+  return;
   MessageSenderService.postApiChatMessageSenderSendText({
     sessionUnitId: sessionUnitId,
     requestBody: {

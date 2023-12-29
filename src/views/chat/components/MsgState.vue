@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { Modal, message } from 'ant-design-vue';
-import { MessageDto, MessageSimpleDto } from '../apis/dtos';
-import { MessageStateEnums } from '../apis/enums';
+import { MessageDto, MessageSimpleDto } from '../../../apis/dtos';
+import { MessageStateEnums } from '../../../apis/enums';
 import { InfoCircleOutlined } from '@ant-design/icons-vue';
 import { ExclamationCircleOutlined } from '@ant-design/icons-vue';
 import { createVNode } from 'vue';

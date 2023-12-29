@@ -13,27 +13,30 @@ import {
 import { useRoute } from 'vue-router';
 
 import ChatSetting from './widget/ChatSetting.vue';
-import Loading from '../../components/Loading.vue';
-import MessageItem from '../../components/MessageItem.vue';
-import ScrollView from '../../components/ScrollView.vue';
-import ChatInput from '../../components/ChatInput.vue';
-
 import DropViewer from './widget/DropViewer.vue';
+import MessageItem from './components/MessageItem.vue';
+
+import Loading from '../../components/Loading.vue';
+
+import ScrollView from '../../components/ScrollView.vue';
+import ChatInput from './widget/ChatInput.vue';
+
+
 
 import { message } from 'ant-design-vue';
 import { useImStore } from '../../stores/im';
 import { MessageDto } from '../../apis/dtos';
 import { ContextmenuInput, showContextMenuForMessage } from '../../commons/contextmenu';
-import QuoteMessage from '../../components/QuoteMessage.vue';
+import QuoteMessage from './components/QuoteMessage.vue';
 import { useSessionUnitId } from '../../commons/useSessionUnit';
 import { useMessageList } from '../../commons/useMessageList';
-import { MessageStateEnums } from '../../apis/enums/MessageStateEnums';
-import { MessageTypeEnums } from '../../apis/enums/MessageTypeEnums';
+import { MessageStateEnums, MessageTypeEnums } from '../../apis/enums';
 import { useSessionUnitDetail } from '../../commons/useSessionUnitDetail';
 import { setReadedMessageId } from '../../commons/setting';
 import { sendMessage } from '../../commons/sendMessage';
 import { useDrop } from '../../commons/useDrop';
 import { useShortcutStore } from '../../stores/shortcut';
+import { FileContentDto } from '../../apis/dtos/message/FileContentDto';
 
 const store = useImStore();
 
@@ -369,6 +372,7 @@ const dropHandle = (ev: DragEvent, { files, text }: { files?: any[]; text?: stri
     files,
     text,
     onConfirm(files, text) {
+      console.log('onDropToSend', files, text);
       if (text) {
         sendMessageContent({
           messageType: MessageTypeEnums.Text,
@@ -376,8 +380,17 @@ const dropHandle = (ev: DragEvent, { files, text }: { files?: any[]; text?: stri
             text,
           },
         });
+      } else if (files?.length != 0) {
+        files!.forEach(file => {
+          sendMessageContent({
+            messageType: MessageTypeEnums.File,
+            content: <FileContentDto>{
+              text: file.name,
+              url: file.path,
+            },
+          });
+        });
       }
-      console.log('onDropToSend', files, text);
     },
   });
 };

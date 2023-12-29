@@ -9,7 +9,7 @@ import {
   MoreOutlined,
   EllipsisOutlined,
 } from '@ant-design/icons-vue';
-import { MessageDto } from '../apis/dtos';
+import { MessageDto } from '../../../apis/dtos';
 
 const props = withDefaults(
   defineProps<{

@@ -1,29 +1,29 @@
 <script setup lang="ts">
 import { computed, ref, useSlots, watch } from 'vue';
 
-import { MessageDto } from '../apis/dtos';
-import { MessageTypeEnums } from '../apis/enums';
+import { MessageDto } from '../../../apis/dtos';
+import { MessageTypeEnums } from '../../../apis/enums';
 import { HeartTwoTone } from '@ant-design/icons-vue';
-import Avatar from './Avatar.vue';
-import { FavoriteFilled, FavoriteOutline } from '../icons';
+import Avatar from '../../../components/Avatar.vue';
+import { FavoriteFilled, FavoriteOutline } from '../../../icons';
 
 import MsgText from './MsgText.vue';
 import MsgCmd from './MsgCmd.vue';
-import MsgImage from './MsgText.vue';
-import MsgLocation from './MsgText.vue';
-import MsgContacts from './MsgText.vue';
-import MsgLink from './MsgText.vue';
-import MsgSound from './MsgText.vue';
-import MsgVideo from './MsgText.vue';
-import MsgRedEnvelope from './MsgText.vue';
+import MsgImage from './MsgImage.vue';
+import MsgLocation from './MsgLocation.vue';
+import MsgContacts from './MsgContacts.vue';
+import MsgLink from './MsgLink.vue';
+import MsgSound from './MsgSound.vue';
+import MsgVideo from './MsgVideo.vue';
+import MsgRedEnvelope from './MsgRedEnvelope.vue';
 import MsgUnsupported from './MsgUnsupported.vue';
 import MsgState from './MsgState.vue';
 import QuoteMessage from './QuoteMessage.vue';
 import MsgRollback from './MsgRollback.vue';
 
-import { SelfImprovement, PersonPin } from '../icons';
-import { ContextmenuInput, LabelType as LabelType, MouseButton } from '../commons/contextmenu';
-import { useMessage } from '../commons/useMessage';
+import { SelfImprovement, PersonPin } from '../../../icons';
+import { ContextmenuInput, LabelType as LabelType, MouseButton } from '../../../commons/contextmenu';
+import { useMessage } from '../../../commons/useMessage';
 
 const props = defineProps<{
   sessionUnitId: string;
@@ -133,6 +133,7 @@ const onMessageClick = (event: MouseEvent, mouseButton: MouseButton) => {
           >
             <!-- <p>{{ item }}</p> -->
             <!-- 消息 Start -->
+            <!-- messageType:{{ messageType }} -->
             <MsgImage v-if="messageType == MessageTypeEnums.Image" :item="entity" />
             <MsgSound
               v-else-if="messageType == MessageTypeEnums.Sound"

@@ -47,7 +47,7 @@ export const iconClass: HtmlHTMLAttributes = { class: 'svg-icon s16' };
 
 export const showContextMenuForMessage = (args: MessageContextMenuInput & ContextmenuInput) => {
   const { event, entity, selectable, mouseButton, labelType, chatObjectId } = args;
-  console.log('click', mouseButton, labelType);
+  console.log('click', mouseButton, labelType, entity);
   if (mouseButton == MouseButton.Click) {
     // console.log('click', entity);
 
