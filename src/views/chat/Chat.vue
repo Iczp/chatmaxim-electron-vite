@@ -98,13 +98,13 @@ const scrollElement = computed(() => scroll.value?.getElement());
 
 // const scroll = ref();
 
-const quoteMessage = ref<MessageDto | null | undefined>();
+const quoteMessage = ref<MessageDto>();
 
 const selectable = ref(false);
 
 const isSendBtnEnabled = ref(true);
 
-const playMessageId = ref<number | undefined>();
+const playMessageId = ref<number>();
 
 const { detail } = useSessionUnitDetail({ sessionUnitId });
 
@@ -239,7 +239,7 @@ const sendMessageContent = async ({
     senderSessionUnit: detail.value,
     messageType,
     lastItem: list.value.length > 0 ? list.value[list.value.length - 1] : undefined,
-    quoteMessageId: quoteMessage.value?.id,
+    quoteMessage: quoteMessage.value,
     content,
     onBefore(input) {
       isSendBtnEnabled.value = false;
@@ -248,7 +248,7 @@ const sendMessageContent = async ({
     },
     onSuccess(entity, input) {
       chatInput.value?.clear();
-      quoteMessage.value = null;
+      quoteMessage.value = undefined;
       fetchLatest({ caller: 'sendMessageContent' })
         .then(({ items, list }) => {
           setTimeout(() => {

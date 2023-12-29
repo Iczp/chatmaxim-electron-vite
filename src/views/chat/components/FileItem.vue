@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import {} from 'vue';
+import { useSlots } from 'vue';
 import prettyBytes from 'pretty-bytes';
 import LayoutItem from '../../../components/LayoutItem.vue';
 import { FileOutlined, CloseCircleOutlined } from '@ant-design/icons-vue';
@@ -9,7 +9,7 @@ defineProps<{
   suffix?: string | null;
   del?: boolean;
 }>();
-
+const slots = useSlots();
 const emits = defineEmits<{
   delete: [];
 }>();
@@ -23,8 +23,8 @@ const emits = defineEmits<{
     <template #title>
       <div class="file-name text-ellipsis2">{{ name }}</div>
     </template>
-    <template v-if="size" #sub>
-      <div class="file-info">{{ prettyBytes(size || 0) }}</div>
+    <template v-if="slots['default']" #sub>
+      <slot></slot>
     </template>
     <template v-if="del" #footer>
       <div class="delete" title="删除" @click="emits('delete')">
@@ -55,9 +55,7 @@ const emits = defineEmits<{
 .file-name {
   max-width: 220px;
 }
-.file-info {
-  color: gray;
-}
+
 .delete {
   /* opacity: 0; */
   cursor: pointer;

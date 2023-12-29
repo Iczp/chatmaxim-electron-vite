@@ -5,6 +5,7 @@ import ChatObject from '../../../components/ChatObject.vue';
 import FileItem from '../components/FileItem.vue';
 import { computed, ref } from 'vue';
 import { FileOutlined, CloseCircleOutlined } from '@ant-design/icons-vue';
+import prettyBytes from 'pretty-bytes';
 defineProps<{
   destination?: ChatObjectDto;
   files?: Array<any>;
@@ -97,7 +98,9 @@ defineExpose({
                 :size="item.size"
                 :del="true"
                 @delete="onDelete(index)"
-              ></file-item>
+              >
+                <div class="file-info">{{ prettyBytes(item.size || 0) }}</div>
+              </file-item>
             </div>
           </div>
         </scroll-view>
@@ -142,7 +145,9 @@ defineExpose({
   user-select: text;
   background-color: var(--background-color);
 }
-
+.file-info {
+  color: gray;
+}
 .hover {
   position: relative;
 }

@@ -6,7 +6,7 @@ import { formatMessage } from './utils';
 
 export const sendMessage = async ({
   sessionUnitId,
-  quoteMessageId,
+  quoteMessage,
   messageType,
   content,
   senderSessionUnit,
@@ -21,7 +21,7 @@ export const sendMessage = async ({
   content: any;
   senderSessionUnit?: SessionUnitSenderDto;
   lastItem?: MessageDto;
-  quoteMessageId?: number;
+  quoteMessage?: MessageOwnerDto;
   onBefore?: (input: MessageDto) => void;
   onSuccess?: (entity: MessageOwnerDto, input: MessageDto) => void;
   onError?: (error: ApiError, input: MessageDto) => void;
@@ -39,6 +39,7 @@ export const sendMessage = async ({
         messageType,
         senderName: senderSessionUnit?.owner?.name,
         senderSessionUnit,
+        quoteMessage,
         content,
         state: MessageStateEnums.Sending,
         creationTime: new Date().toUTCString(),
@@ -55,7 +56,7 @@ export const sendMessage = async ({
     messageType,
     sessionUnitId: sessionUnitId,
     requestBody: {
-      quoteMessageId,
+      quoteMessageId: quoteMessage?.id,
       ignoreConnections: null,
       remindList: [],
       content,
