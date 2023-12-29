@@ -244,9 +244,13 @@ const sendMessageContent = async ({
     onBefore(input) {
       isSendBtnEnabled.value = false;
       list.value.push(input);
+      setTimeout(() => {
+        input.state = 3;
+      }, 1000);
       nextTick(() => scroll.value?.scrollTo({ duration: 1500 }));
     },
     onSuccess(entity, input) {
+      // return;
       chatInput.value?.clear();
       quoteMessage.value = undefined;
       fetchLatest({ caller: 'sendMessageContent' })

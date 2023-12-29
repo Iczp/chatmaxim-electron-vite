@@ -41,6 +41,7 @@ const content = computed(() => props.item.content as FileContentDto);
   min-height: 40px;
   line-height: 24px;
   max-width: var(--message-max-width);
+  user-select: none;
 }
 .footer {
   position: relative;
