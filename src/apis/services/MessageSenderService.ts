@@ -1,7 +1,7 @@
 import type { CancelablePromise } from '../core/CancelablePromise';
 import { OpenAPI } from '../core/OpenAPI';
 import { request as __request } from '../core/request';
-import { MessageOwnerDto } from '../dtos';
+import { MessageInput, MessageOwnerDto } from '../dtos';
 import { MessageInputTyped } from '../dtos/message/MessageInputTyped';
 import { TextContentDto } from '../dtos/message/TextContentDto';
 import { CmdContentDto } from '../dtos/message/CmdContentDto';
@@ -15,6 +15,7 @@ import { HistoryContentInput } from '../dtos/message/HistoryContentInput';
 import { FileContentDto } from '../dtos/message/FileContentDto';
 import { ContactsContentDto } from '../dtos/message/ContactsContentDto';
 import { ImageContentDto } from '../dtos/message/ImageContentDto';
+import { MessageTypeEnums } from '../enums';
 
 export class MessageSenderService {
   /**
@@ -384,5 +385,39 @@ export class MessageSenderService {
       body: requestBody,
       mediaType: 'application/json',
     });
+  }
+
+  public static send(args: {
+    /**
+     * 会话单元Id
+     */
+    sessionUnitId: string;
+    /**
+     * 消息类型
+     *
+     * @type {MessageTypeEnums}
+     */
+    messageType: MessageTypeEnums;
+    requestBody?: MessageInput;
+  }): CancelablePromise<MessageOwnerDto> {
+    const { messageType, sessionUnitId, requestBody } = args;
+    const _args = { sessionUnitId, requestBody };
+    switch (messageType) {
+      case MessageTypeEnums.Text:
+        return this.postApiChatMessageSenderSendText(_args);
+      case MessageTypeEnums.Image:
+        return this.postApiChatMessageSenderSendImage(_args);
+      case MessageTypeEnums.File:
+        return this.postApiChatMessageSenderSendFile(_args);
+      case MessageTypeEnums.Sound:
+        return this.postApiChatMessageSenderSendSound(_args);
+      case MessageTypeEnums.Video:
+        return this.postApiChatMessageSenderSendVideo(_args);
+      case MessageTypeEnums.Contacts:
+        return this.postApiChatMessageSenderSendContacts(_args);
+      case MessageTypeEnums.History:
+        return this.postApiChatMessageSenderSendHistory(_args);
+    }
+    throw new Error(`messageType error;${messageType}`);
   }
 }

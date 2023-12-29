@@ -47,8 +47,12 @@ export const sendMessage = async ({
     lastItem,
   })[0];
   onBefore?.call(this, input);
-  return;
-  MessageSenderService.postApiChatMessageSenderSendText({
+
+  // upload file
+  // ...
+
+  MessageSenderService.send({
+    messageType,
     sessionUnitId: sessionUnitId,
     requestBody: {
       quoteMessageId,

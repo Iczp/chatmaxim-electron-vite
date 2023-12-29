@@ -1,12 +1,11 @@
 <script setup lang="ts">
 import { computed } from 'vue';
-import { MessageDto, CmdDto } from '../../../apis/dtos';
-import Bubble from '../../../components/Bubble.vue';
+import { MessageDto, CmdContentDto } from '../../../apis/dtos';
 import TextViewer from '../../../components/TextViewer.vue';
 const props = defineProps<{
   item: MessageDto;
 }>();
-const content = computed(() => props.item.content as CmdDto);
+const content = computed(() => props.item.content as CmdContentDto);
 </script>
 
 <template>

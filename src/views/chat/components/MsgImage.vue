@@ -1,12 +1,14 @@
 <script setup lang="ts">
 import { computed } from 'vue';
-import { MessageDto, TextDto } from '../../../apis/dtos';
+import { MessageDto, FileContentDto } from '../../../apis/dtos';
 import Bubble from '../../../components/Bubble.vue';
 import TextViewer from '../../../components/TextViewer.vue';
+import { ImageContentDto } from '../../../apis/dtos/message/ImageContentDto';
+
 const props = defineProps<{
   item: MessageDto;
 }>();
-const content = computed(() => props.item.content as TextDto);
+const content = computed(() => props.item.content as ImageContentDto);
 </script>
 
 <template>
@@ -17,7 +19,7 @@ const content = computed(() => props.item.content as TextDto);
     indexOf:{{ content?.text?.indexOf('\n') }}
     <br /> -->
     image
-    <TextViewer :value="content?.text!" />
+    <TextViewer :value="content?.url!" />
   </Bubble>
 </template>
 

@@ -1,9 +1,8 @@
 <script setup lang="ts">
 import {} from 'vue';
-import prettyBytes from 'pretty-bytes';
 import { ChatObjectDto } from '../../../apis/dtos';
 import ChatObject from '../../../components/ChatObject.vue';
-import LayoutItem from '../../../components/LayoutItem.vue';
+import FileItem from '../components/FileItem.vue';
 import { computed, ref } from 'vue';
 import { FileOutlined, CloseCircleOutlined } from '@ant-design/icons-vue';
 defineProps<{
@@ -92,22 +91,13 @@ defineExpose({
           </div>
           <div v-if="files.length != 0" class="file-list">
             <div v-for="(item, index) in files">
-              <layout-item class="file-item hover">
-                <template #header>
-                  <FileOutlined class="file-icon" />
-                </template>
-                <template #title>
-                  <div class="file-name text-ellipsis2">{{ item?.name }}</div>
-                </template>
-                <template #sub>
-                  <div class="file-info">{{ prettyBytes(item.size) }}</div>
-                </template>
-                <template #footer>
-                  <div class="delete" title="删除" @click="onDelete(index)">
-                    <CloseCircleOutlined />
-                  </div>
-                </template>
-              </layout-item>
+              <file-item
+                class="hover"
+                :name="item?.name"
+                :size="item.size"
+                :del="true"
+                @delete="onDelete(index)"
+              ></file-item>
             </div>
           </div>
         </scroll-view>
@@ -120,6 +110,9 @@ defineExpose({
 :deep(.ant-modal-title),
 :deep(.ant-modal-content) {
   user-select: none;
+}
+:deep(.file-name) {
+  max-width: 180px;
 }
 .drop-viewer {
   user-select: none;
@@ -149,9 +142,7 @@ defineExpose({
   user-select: text;
   background-color: var(--background-color);
 }
-.file-item {
-  padding: 8px 12px;
-}
+
 .hover {
   position: relative;
 }
@@ -169,28 +160,10 @@ defineExpose({
 .hover:hover {
   background-color: #eaeaea;
 }
-.file-icon {
-  color: rgb(14, 105, 162);
-  font-size: 28px;
-}
-.file-name {
-  /* display: inline-block; */
-  /* font-weight: bold; */
-  max-width: 220px;
-}
-.file-info {
-  color: gray;
-}
-.delete {
+:deep(.delete) {
   opacity: 0;
-  cursor: pointer;
-  width: 24px;
-  display: flex;
-  justify-content: center;
-  font-size: 16px;
-  transition: all 0.3s linear;
 }
-.hover:hover .delete {
+.hover:hover :deep(.delete) {
   opacity: 1;
 }
 </style>

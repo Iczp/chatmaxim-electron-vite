@@ -21,8 +21,6 @@ import Loading from '../../components/Loading.vue';
 import ScrollView from '../../components/ScrollView.vue';
 import ChatInput from './widget/ChatInput.vue';
 
-
-
 import { message } from 'ant-design-vue';
 import { useImStore } from '../../stores/im';
 import { MessageDto } from '../../apis/dtos';
@@ -246,15 +244,20 @@ const sendMessageContent = async ({
     onBefore(input) {
       isSendBtnEnabled.value = false;
       list.value.push(input);
+      nextTick(() => scroll.value?.scrollTo({ duration: 1500 }));
     },
     onSuccess(entity, input) {
       chatInput.value?.clear();
       quoteMessage.value = null;
       fetchLatest({ caller: 'sendMessageContent' })
         .then(({ items, list }) => {
-          removeItem(input.autoId);
-          list.value = list.value.concat(items);
-          scroll.value?.scrollTo({ duration: 1500 });
+          setTimeout(() => {
+            removeItem(input.autoId);
+            list.value = list.value.concat(items);
+          }, 1000);
+
+          // scroll.value?.scrollTo({ duration: 1500 });
+          // nextTick(() => scroll.value?.scrollTo({ duration: 1500 }));
         })
         .catch(err => {
           removeItem(input.autoId);
@@ -268,7 +271,7 @@ const sendMessageContent = async ({
         state: MessageStateEnums.Error,
         error: err.body.error.message,
       });
-      scroll.value?.scrollTo({ duration: 1500 });
+      // scroll.value?.scrollTo({ duration: 1500 });
       console.error('sendRet', err);
       message.error({
         key: 'vm-chat',
@@ -385,8 +388,11 @@ const dropHandle = (ev: DragEvent, { files, text }: { files?: any[]; text?: stri
           sendMessageContent({
             messageType: MessageTypeEnums.File,
             content: <FileContentDto>{
-              text: file.name,
+              fileName: file.name,
+              contentType: file.type,
+              contentLength: file.size,
               url: file.path,
+              suffix: `.${file.name.split('.').pop()}`,
             },
           });
         });

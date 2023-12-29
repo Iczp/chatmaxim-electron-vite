@@ -24,7 +24,7 @@ const slots = useSlots();
     <main class="main-content">
       <slot name="default">
         <div class="title-container">
-          <div class="title-left object-name">
+          <div class="title-left">
             <slot name="title"></slot>
           </div>
           <div v-if="slots['title-right'] || titleRight" class="title-right">

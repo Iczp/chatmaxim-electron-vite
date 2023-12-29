@@ -10,6 +10,7 @@ import { FavoriteFilled, FavoriteOutline } from '../../../icons';
 import MsgText from './MsgText.vue';
 import MsgCmd from './MsgCmd.vue';
 import MsgImage from './MsgImage.vue';
+import MsgFile from './MsgFile.vue';
 import MsgLocation from './MsgLocation.vue';
 import MsgContacts from './MsgContacts.vue';
 import MsgLink from './MsgLink.vue';
@@ -133,8 +134,9 @@ const onMessageClick = (event: MouseEvent, mouseButton: MouseButton) => {
           >
             <!-- <p>{{ item }}</p> -->
             <!-- 消息 Start -->
-            <!-- messageType:{{ messageType }} -->
+            <!-- messageType:{{ messageType }} / {{ messageType == MessageTypeEnums.Image }} {{ MessageTypeEnums.Image }} -->
             <MsgImage v-if="messageType == MessageTypeEnums.Image" :item="entity" />
+            <MsgFile v-else-if="messageType == MessageTypeEnums.File" :item="entity" />
             <MsgSound
               v-else-if="messageType == MessageTypeEnums.Sound"
               :item="entity"

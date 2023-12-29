@@ -26,14 +26,22 @@ export type { MessageDto } from './MessageDto';
 export type { MessageOwnerDto } from './MessageOwnerDto';
 export type { MessageSimpleDto } from './MessageSimpleDto';
 
-
-
 export type { MessageInput } from './message/MessageInput';
 export type { ContactsDto } from './ContactsDto';
-export type { TextContentDto as TextDto } from './message/TextContentDto';
-export type { CmdContentDto as CmdDto } from './message/CmdContentDto';
-
-
+export type { TextContentDto } from './message/TextContentDto';
+export type { CmdContentDto } from './message/CmdContentDto';
+export type { FileContentDto } from './message/FileContentDto';
+export type { ImageContentDto } from './message/ImageContentDto';
+export type { SoundContentDto } from './message/SoundContentDto';
+export type { VideoContentDto } from './message/VideoContentDto';
+export type { ContactsContentDto } from './message/ContactsContentDto';
+export type { LinkContentDto } from './message/LinkContentDto';
+export type { LocationContentDto } from './message/LocationContentDto';
+export type { HistoryContentInput } from './message/HistoryContentInput';
+export type { HistoryContentOutput } from './message/HistoryContentOutput';
+export type { RedEnvelopeContentInput } from './message/RedEnvelopeContentInput';
+export type { RedEnvelopeContentOutput } from './message/RedEnvelopeContentOutput';
+export type { HtmlContentDto } from './message/HtmlContentDto';
 
 export type { BadgeDto } from './BadgeDto';
 export type { BadgeDetialDto } from './BadgeDetialDto';

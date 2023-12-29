@@ -2,17 +2,21 @@ import moment from 'moment';
 import { useRouter } from 'vue-router';
 import { router, chatHistorys } from '../routes';
 import {
-  CmdDto,
+  CmdContentDto,
+  FileContentDto,
   MessageDto,
   MessageSimpleDto,
   SessionItemDto,
   SessionUnitOwnerDto,
-  TextDto,
+  TextContentDto,
 } from '../apis/dtos';
 import { MessageStateEnums, MessageTypeEnums } from '../apis/enums';
 import { formatText } from './formatWords';
 import { useWindowStore } from '../stores/window';
 import { message } from 'ant-design-vue';
+import { SoundContentDto } from '../apis/dtos/message/SoundContentDto';
+import { LinkContentDto } from '../apis/dtos/message/LinkContentDto';
+import { HistoryContentOutput } from '../apis/dtos/message/HistoryContentOutput';
 /**
  * toQueryString
  *
@@ -104,7 +108,7 @@ export const navToChat = ({
     message.error({ content: '独立窗口未实现', duration: 2 });
     return;
   }
- 
+
   router.push({
     name: 'chat',
     params: {
@@ -164,26 +168,31 @@ export const formatMessageContent = (
       break;
     case MessageTypeEnums.File:
       contentType = '[文件]';
+      contentText = formatText((content as FileContentDto).fileName!);
       break;
     case MessageTypeEnums.Sound:
       contentType = '[语音]';
+      contentText = formatText((content as SoundContentDto).time!.toString());
       break;
     case MessageTypeEnums.Link:
       contentType = '[链接]';
+      contentText = formatText((content as LinkContentDto).url!);
       break;
     case MessageTypeEnums.History:
       contentType = '[聊天记录]';
+      contentText = formatText((content as HistoryContentOutput).title!);
       break;
     case MessageTypeEnums.Html:
-      contentType = '[语音]';
+      contentType = '[Html]';
+      contentText = formatText((content as HistoryContentOutput).title!);
       break;
     case MessageTypeEnums.Cmd:
       contentType = '[系统]';
-      contentText = formatText((content as CmdDto).text!);
+      contentText = formatText((content as CmdContentDto).text!);
       break;
     case MessageTypeEnums.Text:
       contentType = '';
-      contentText = formatText((content as TextDto).text!);
+      contentText = formatText((content as TextContentDto).text!);
       break;
     default:
       contentText = '[不支持的类型]';
@@ -248,64 +257,63 @@ export const mapToSessionItemDto = (x: SessionUnitOwnerDto): SessionItemDto => {
   return { id, ownerId, sorting, lastMessageId };
 };
 
-
 /**
  * 格式化消息
  *
  * @param {{
-*   sessionUnitId: string;
-*   items: MessageDto[];
-*   timespan?: number;
-*   lastItem?: MessageDto;
-* }} {
-*   sessionUnitId,
-*   items,
-*   timespan = 1000 * 60 * 3,
-*   lastItem = undefined,
-* }
-* @return {*}  {MessageDto[]}
-*/
+ *   sessionUnitId: string;
+ *   items: MessageDto[];
+ *   timespan?: number;
+ *   lastItem?: MessageDto;
+ * }} {
+ *   sessionUnitId,
+ *   items,
+ *   timespan = 1000 * 60 * 3,
+ *   lastItem = undefined,
+ * }
+ * @return {*}  {MessageDto[]}
+ */
 export const formatMessage = ({
- sessionUnitId,
- items,
- timespan = 1000 * 60 * 3,
- lastItem = undefined,
+  sessionUnitId,
+  items,
+  timespan = 1000 * 60 * 3,
+  lastItem = undefined,
 }: {
- sessionUnitId: string;
- items: MessageDto[];
- timespan?: number;
- lastItem?: MessageDto;
+  sessionUnitId: string;
+  items: MessageDto[];
+  timespan?: number;
+  lastItem?: MessageDto;
 }): MessageDto[] => {
- // 3分钟
- // const Split_Time = 1000 * 60 * 3
- // 时间分组
- let splitTime = timespan || 1000 * 60 * 3;
- let getTmpSendTime = (item: MessageDto): Date | undefined => new Date(item?.creationTime!);
- let tmpTime: Date | undefined = lastItem ? getTmpSendTime(lastItem) : undefined;
+  // 3分钟
+  // const Split_Time = 1000 * 60 * 3
+  // 时间分组
+  let splitTime = timespan || 1000 * 60 * 3;
+  let getTmpSendTime = (item: MessageDto): Date | undefined => new Date(item?.creationTime!);
+  let tmpTime: Date | undefined = lastItem ? getTmpSendTime(lastItem) : undefined;
 
- items.map(item => {
-   // console.error('item.isReverse', item.isReverse)
+  items.map(item => {
+    // console.error('item.isReverse', item.isReverse)
 
-   item.isSelf = sessionUnitId == item.senderSessionUnit?.id;
-   // item.sendTime = getTmpSendTime(item);
-   if (typeof item.state == 'undefined') {
-     item.state = MessageStateEnums.Ok;
-   }
+    item.isSelf = sessionUnitId == item.senderSessionUnit?.id;
+    // item.sendTime = getTmpSendTime(item);
+    if (typeof item.state == 'undefined') {
+      item.state = MessageStateEnums.Ok;
+    }
 
-   //时间分组
-   if (tmpTime == null) {
-     item.isShowTime = true;
-     tmpTime = getTmpSendTime(item);
-   } else {
-     let sp = new Date(item.creationTime!).getTime() - tmpTime.getTime();
-     // console.error(sp);
-     if (sp > splitTime) {
-       item.isShowTime = true;
-       tmpTime = getTmpSendTime(item);
-     } else {
-       item.isShowTime = false;
-     }
-   }
- });
- return items;
+    //时间分组
+    if (tmpTime == null) {
+      item.isShowTime = true;
+      tmpTime = getTmpSendTime(item);
+    } else {
+      let sp = new Date(item.creationTime!).getTime() - tmpTime.getTime();
+      // console.error(sp);
+      if (sp > splitTime) {
+        item.isShowTime = true;
+        tmpTime = getTmpSendTime(item);
+      } else {
+        item.isShowTime = false;
+      }
+    }
+  });
+  return items;
 };
