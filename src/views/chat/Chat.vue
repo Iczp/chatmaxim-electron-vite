@@ -35,7 +35,7 @@ import { sendMessage } from '../../commons/sendMessage';
 import { useDrop } from '../../commons/useDrop';
 import { useShortcutStore } from '../../stores/shortcut';
 import { FileContentDto } from '../../apis/dtos/message/FileContentDto';
-import { mapToFileContentDto } from '../../commons/utils';
+import { mapToFileContentDto, mapToImageContentDtoAsync } from '../../commons/utils';
 
 const store = useImStore();
 
@@ -256,21 +256,22 @@ const sendMessageContent = async ({
     onBefore(input) {
       isSendBtnEnabled.value = false;
       list.value.push(input);
-      setTimeout(() => {
-        input.state = 3;
-      }, 1000);
+      // setTimeout(() => {
+      //   input.state = 3;
+      // }, 1000);
+      // scroll.value?.scrollTo({ duration: 1500 })
       nextTick(() => scroll.value?.scrollTo({ duration: 1500 }));
     },
     onSuccess(entity, input) {
       clearChatInput(isClear);
       fetchLatest({ caller: 'sendMessageContent' })
         .then(({ items, list }) => {
-          setTimeout(() => {
-            _removeItem(input.autoId);
-            list.value = list.value.concat(items);
-          }, 1000);
+          // setTimeout(() => {
+          _removeItem(input.autoId);
+          list.value = list.value.concat(items);
+          // }, 1000);
 
-          // scroll.value?.scrollTo({ duration: 1500 });
+          scroll.value?.scrollTo({ duration: 0 });
           // nextTick(() => scroll.value?.scrollTo({ duration: 1500 }));
         })
         .catch(err => {
@@ -397,13 +398,30 @@ const dropHandle = (ev: DragEvent, { files, text }: { files?: any[]; text?: stri
           content: { text },
         });
       } else if (files?.length != 0) {
-        files!.forEach(file => {
-          // const suffix = `.${file.name.split('.').pop()}`;
-          sendMessageContent({
-            isClear: false,
-            messageType: MessageTypeEnums.File,
-            content: mapToFileContentDto(file),
-          });
+        files!.forEach(async file => {
+          const suffix = `.${file.name.split('.').pop().toLowerCase()}`;
+          switch (suffix) {
+            case '.jpg':
+            case '.jpeg':
+            case '.gif':
+            case '.png':
+            case '.tiff':
+              const content = await mapToImageContentDtoAsync(file);
+              sendMessageContent({
+                isClear: false,
+                messageType: MessageTypeEnums.Image,
+                content: content,
+              });
+              break;
+
+            default:
+              sendMessageContent({
+                isClear: false,
+                messageType: MessageTypeEnums.File,
+                content: mapToFileContentDto(file),
+              });
+              break;
+          }
         });
       }
     },

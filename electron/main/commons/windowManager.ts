@@ -40,7 +40,7 @@ class WindowManger {
     return this.windowsMap;
   }
   remove(name: string): void {
-    this.windowsMap.delete(this.windows.get(name).id);
+    this.windowsMap.delete(this.windows.get(name)?.id);
     this.windows.delete(name);
     // delete this.windowsMap[this.windows[name].id];
     // delete this.windows[name];

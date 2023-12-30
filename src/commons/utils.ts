@@ -4,6 +4,7 @@ import { router, chatHistorys } from '../routes';
 import {
   CmdContentDto,
   FileContentDto,
+  ImageContentDto,
   MessageDto,
   MessageSimpleDto,
   SessionItemDto,
@@ -327,4 +328,33 @@ export const mapToFileContentDto = (file: File): FileContentDto => {
     suffix: `.${file.name.split('.').pop()}`,
     lastModifiedDate: file.lastModified,
   };
+};
+export const mapToImageContentDtoAsync = (file: File): Promise<ImageContentDto> => {
+  return new Promise<ImageContentDto>((resolve, reject) => {
+    const blob = URL.createObjectURL(file);
+    console.log('blob', file.name, blob);
+    let img = new Image();
+    img.src = blob;
+    img.onload = () => {
+      console.log({ height: img.height, width: img.width });
+      resolve(<ImageContentDto>{
+        text: file.name,
+        contentType: file.type,
+        size: file.size,
+        path: file.path,
+        suffix: `.${file.name.split('.').pop()}`,
+        lastModifiedDate: file.lastModified,
+        width: img.width,
+        height: img.height,
+        // qrcode: '',
+        // orientation: '',
+        // thumbnailActionUrl: '',
+        // thumbnailUrl: '',
+      });
+    };
+    img.onerror = err => {
+      console.error('load image error:', file.path, err);
+      reject(err);
+    };
+  });
 };

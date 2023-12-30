@@ -6,6 +6,10 @@ export type ImageContentDto = {
   /**
    * 图片地址
    */
+  text?: string | null;
+  /**
+   * 图片地址
+   */
   url?: string | null;
   /**
    * MinIO控制器URL
