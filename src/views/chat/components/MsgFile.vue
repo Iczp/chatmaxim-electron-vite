@@ -4,7 +4,7 @@ import { MessageDto, FileContentDto } from '../../../apis/dtos';
 import Bubble from '../../../components/Bubble.vue';
 import TextViewer from '../../../components/TextViewer.vue';
 import prettyBytes from 'pretty-bytes';
-import FileItem from './FileItem.vue';
+import FileItem from '../../../components/FileItem.vue';
 const props = defineProps<{
   item: MessageDto;
 }>();

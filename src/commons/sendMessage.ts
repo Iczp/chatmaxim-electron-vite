@@ -2,7 +2,39 @@ import { ApiError, MessageSenderService } from '../apis';
 import { MessageDto, MessageOwnerDto, SessionUnitSenderDto } from '../apis/dtos';
 import { MessageStateEnums, MessageTypeEnums } from '../apis/enums';
 import { useImStore } from '../stores/im';
+import { useProgressStore } from '../stores/progress';
 import { formatMessage } from './utils';
+
+export const uploadFile = ({
+  path,
+  onProgress,
+}: {
+  path?: string;
+  onProgress?: (percent: number) => void;
+}): Promise<void> => {
+  return new Promise<void>((resolve, reject) => {
+    if (!path) {
+      resolve();
+      return;
+    }
+    let percent = 0;
+    const exec = () => {
+      setTimeout(() => {
+        percent += Math.floor(Math.random() * 10);
+        console.log('percent', percent);
+        onProgress?.call(this, percent);
+        if (percent > 100) {
+          percent = 100;
+          resolve();
+        } else {
+          exec();
+        }
+      }, 300);
+    };
+
+    exec();
+  });
+};
 
 export const sendMessage = async ({
   sessionUnitId,
@@ -12,6 +44,7 @@ export const sendMessage = async ({
   senderSessionUnit,
   lastItem,
   onBefore,
+  onProgress,
   onSuccess,
   onError,
   onAfter,
@@ -23,6 +56,7 @@ export const sendMessage = async ({
   lastItem?: MessageDto;
   quoteMessage?: MessageOwnerDto;
   onBefore?: (input: MessageDto) => void;
+  onProgress?: (percent: number) => void;
   onSuccess?: (entity: MessageOwnerDto, input: MessageDto) => void;
   onError?: (error: ApiError, input: MessageDto) => void;
   onAfter?: (input: MessageDto) => void;
@@ -49,6 +83,14 @@ export const sendMessage = async ({
   })[0];
   onBefore?.call(this, input);
 
+  const progressStore = useProgressStore();
+  const path = content.path;
+  await uploadFile({
+    path,
+    onProgress(percent) {
+      progressStore.set(`${autoId}`, { percent, sessionUnitId }, true, 1500);
+    },
+  });
   // upload file
   // ...
 

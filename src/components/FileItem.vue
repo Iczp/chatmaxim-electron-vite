@@ -1,8 +1,9 @@
 <script setup lang="ts">
 import { useSlots } from 'vue';
 import prettyBytes from 'pretty-bytes';
-import LayoutItem from '../../../components/LayoutItem.vue';
-import { FileOutlined, CloseCircleOutlined } from '@ant-design/icons-vue';
+import LayoutItem from './LayoutItem.vue';
+import FileIcon from './FileIcon.vue';
+import { FileFilled, CloseCircleOutlined } from '@ant-design/icons-vue';
 defineProps<{
   name?: string | null;
   size?: number | null;
@@ -18,7 +19,7 @@ const emits = defineEmits<{
 <template>
   <layout-item class="file-item">
     <template #header>
-      <div class="file-icon"><FileOutlined class="suffix-icon" /></div>
+      <file-icon :suffix="suffix" />
     </template>
     <template #title>
       <div class="file-name text-ellipsis2">{{ name }}</div>
@@ -39,21 +40,10 @@ const emits = defineEmits<{
   padding: 8px 12px;
   --icon-size: 44px;
 }
-.file-icon {
-  font-size: 28px;
-  background-color: rgb(228, 228, 228);
-  width: var(--icon-size);
-  height: var(--icon-size);
-  display: flex;
-  justify-content: center;
-  align-items: center;
-}
-.suffix-icon {
-  color: rgb(14, 105, 162);
-  font-size: 28px;
-}
+
 .file-name {
   max-width: 220px;
+  word-break: break-all;
 }
 
 .delete {

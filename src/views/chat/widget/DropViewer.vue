@@ -2,7 +2,7 @@
 import {} from 'vue';
 import { ChatObjectDto } from '../../../apis/dtos';
 import ChatObject from '../../../components/ChatObject.vue';
-import FileItem from '../components/FileItem.vue';
+import FileItem from '../../../components/FileItem.vue';
 import { computed, ref } from 'vue';
 import { FileOutlined, CloseCircleOutlined } from '@ant-design/icons-vue';
 import prettyBytes from 'pretty-bytes';
@@ -96,6 +96,7 @@ defineExpose({
                 class="hover"
                 :name="item?.name"
                 :size="item.size"
+                :suffix="`.${item?.name.split('.').pop()}`"
                 :del="true"
                 @delete="onDelete(index)"
               >

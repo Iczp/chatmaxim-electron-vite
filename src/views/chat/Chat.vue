@@ -35,6 +35,7 @@ import { sendMessage } from '../../commons/sendMessage';
 import { useDrop } from '../../commons/useDrop';
 import { useShortcutStore } from '../../stores/shortcut';
 import { FileContentDto } from '../../apis/dtos/message/FileContentDto';
+import { mapToFileContentDto } from '../../commons/utils';
 
 const store = useImStore();
 
@@ -212,6 +213,7 @@ const onSend = async ({ event, value }: any) => {
     return;
   }
   sendMessageContent({
+    isClear: true,
     messageType: MessageTypeEnums.Text,
     content: {
       text: value,
@@ -219,14 +221,24 @@ const onSend = async ({ event, value }: any) => {
   });
 };
 
+const clearChatInput = (isClear: boolean): void => {
+  if (!isClear) {
+    return;
+  }
+  chatInput.value?.clear();
+  quoteMessage.value = undefined;
+};
+
 const sendMessageContent = async ({
   content,
   messageType,
+  isClear,
 }: {
   messageType: MessageTypeEnums;
   content: any;
+  isClear: boolean;
 }) => {
-  const removeItem = (autoId?: number) => {
+  const _removeItem = (autoId?: number) => {
     const findIndex = list.value?.findIndex(x => x.autoId == autoId);
     console.log('findIndex', findIndex);
     if (findIndex != -1) {
@@ -250,13 +262,11 @@ const sendMessageContent = async ({
       nextTick(() => scroll.value?.scrollTo({ duration: 1500 }));
     },
     onSuccess(entity, input) {
-      // return;
-      chatInput.value?.clear();
-      quoteMessage.value = undefined;
+      clearChatInput(isClear);
       fetchLatest({ caller: 'sendMessageContent' })
         .then(({ items, list }) => {
           setTimeout(() => {
-            removeItem(input.autoId);
+            _removeItem(input.autoId);
             list.value = list.value.concat(items);
           }, 1000);
 
@@ -264,12 +274,12 @@ const sendMessageContent = async ({
           // nextTick(() => scroll.value?.scrollTo({ duration: 1500 }));
         })
         .catch(err => {
-          removeItem(input.autoId);
+          _removeItem(input.autoId);
           console.error(err);
         });
     },
     onError(err, input) {
-      removeItem(input.autoId);
+      _removeItem(input.autoId);
       list.value.push({
         ...input,
         state: MessageStateEnums.Error,
@@ -382,22 +392,17 @@ const dropHandle = (ev: DragEvent, { files, text }: { files?: any[]; text?: stri
       console.log('onDropToSend', files, text);
       if (text) {
         sendMessageContent({
+          isClear: false,
           messageType: MessageTypeEnums.Text,
-          content: {
-            text,
-          },
+          content: { text },
         });
       } else if (files?.length != 0) {
         files!.forEach(file => {
+          // const suffix = `.${file.name.split('.').pop()}`;
           sendMessageContent({
+            isClear: false,
             messageType: MessageTypeEnums.File,
-            content: <FileContentDto>{
-              fileName: file.name,
-              contentType: file.type,
-              contentLength: file.size,
-              url: file.path,
-              suffix: `.${file.name.split('.').pop()}`,
-            },
+            content: mapToFileContentDto(file),
           });
         });
       }

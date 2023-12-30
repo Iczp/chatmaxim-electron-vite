@@ -1,5 +1,17 @@
 import { ref, watch } from 'vue';
 
+export type FileInfo = {
+  name: string;
+  path: string;
+  size: number;
+  lastModified?: number;
+  lastModifiedDate?: Date;
+  type?: string;
+  webkitRelativePath?: string;
+  width?: number;
+  height?: number;
+};
+
 export const useDrop = (
   args: {
     dropHandle?: (e: DragEvent, args: { files?: Array<any>; text?: string }) => void;
@@ -33,10 +45,22 @@ export const useDrop = (
         // console.log('drop', e, e.dataTransfer);
         isDrag.value = false;
 
-        const files = [];
+        const files: File[] = [];
         // Print each format files
         for (let i = 0; i < (e.dataTransfer?.files || []).length; i++) {
-          files.push(e.dataTransfer?.files[i]);
+          const file = e.dataTransfer?.files[i];
+          files.push(file!);
+          // files.push(<FileInfo>{
+          //   name: file?.name,
+          //   path: file?.path,
+          //   size: file?.size,
+          //   lastModified: file?.lastModified,
+          //   // lastModifiedDate: file?.lastModifiedDate,
+          //   type: file?.type,
+          //   webkitRelativePath: file?.webkitRelativePath,
+          //   // width:file?.width,
+          //   // height: file?.height,
+          // });
         }
         const text = e.dataTransfer?.getData('text');
 

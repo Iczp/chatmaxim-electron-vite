@@ -1,17 +1,20 @@
 <script setup lang="ts">
-import { createVNode, ref } from 'vue';
+import { computed, createVNode, ref } from 'vue';
 import { Modal, message } from 'ant-design-vue';
 import { MessageDto, MessageSimpleDto } from '../../../apis/dtos';
 import { MessageStateEnums } from '../../../apis/enums';
 import { InfoCircleOutlined } from '@ant-design/icons-vue';
 import { ExclamationCircleOutlined } from '@ant-design/icons-vue';
+import { useProgressStore } from '../../../stores/progress';
 
 const props = defineProps<{
   entity?: MessageDto;
   state?: MessageStateEnums;
 }>();
 
-const percent = ref<number>(65);
+const progressStore = useProgressStore();
+const uploadProgress = computed(() => progressStore.get(`${props.entity?.autoId}`));
+const percent = computed(() => uploadProgress.value?.percent);
 const status = ref<'success' | 'exception' | 'normal' | 'active'>('active');
 
 const showError = () => {
@@ -33,14 +36,14 @@ const showError = () => {
   // message.error({ content: props.entity?.error, key: 'error' });
 };
 
-const format = (number: number) => `进行中，已完成${number}%`;
+const format = (number: number) => `发送中 ${number}%`;
 </script>
 
 <template>
   <div v-if="state != MessageStateEnums.Ok" class="msg-state">
     <template v-if="state == MessageStateEnums.Sending">
-      <a-spin size="small" />
       <a-progress
+        v-if="uploadProgress"
         class="progress"
         type="circle"
         :size="16"
@@ -53,6 +56,7 @@ const format = (number: number) => `进行中，已完成${number}%`;
         :percent="percent"
         :format="format"
       />
+      <a-spin v-else size="small" />
     </template>
 
     <span v-else-if="state == MessageStateEnums.Error" class="error" @click="showError">

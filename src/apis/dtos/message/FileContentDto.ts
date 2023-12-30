@@ -12,6 +12,10 @@ export type FileContentDto = {
    */
   url?: string | null;
   /**
+   * 本地地址
+   */
+  path?: string;
+  /**
    * 文件地址
    */
   actionUrl?: string | null;
@@ -27,4 +31,12 @@ export type FileContentDto = {
    * 大小 ContentLength(Size)
    */
   contentLength?: number | null;
+  /**
+   * 文件创建时间
+   */
+  creationDate?: number;
+  /**
+   * 文件最后修改时间
+   */
+  lastModifiedDate?: number;
 };
