@@ -54,25 +54,25 @@ export function formatMessageTime(datetime: Date | string): any {
   var weekday = ['日', '一', '二', '三', '四', '五', '六'];
   // 同年
   if (now.getFullYear() == datetime.getFullYear()) {
-    fmt = 'M月DD日 hh:mm';
+    fmt = 'M月DD日 HH:mm';
     // 同月
     if (now.getMonth() == datetime.getMonth()) {
-      fmt = 'M月DD日 hh时';
+      fmt = 'M月DD日 HH时';
       let spanTime = now.getTime() - datetime.getTime();
       // 同一天
       if (now.getDate() == datetime.getDate()) {
-        fmt = 'hh:mm';
+        fmt = `${formatHourStr(datetime)} HH:mm`;
         if (spanTime < 1000 * 60) {
-          fmt = '刚刚 hh:mm';
+          fmt = '刚刚 HH:mm';
         }
       } else if (spanTime < 1000 * 60 * 60 * 24) {
-        fmt = `昨天 hh:mm`;
+        fmt = `昨天 ${formatHourStr(datetime)} HH:mm`;
       } else if (spanTime < 1000 * 60 * 60 * 24 * 7) {
         let week = weekday[datetime.getDay()];
         if (datetime.getDay() > now.getDay()) {
-          fmt = `上周${week} hh:mm`;
+          fmt = `上周${week} HH:mm`;
         } else {
-          fmt = `星期${week} hh:mm`;
+          fmt = `星期${week} HH:mm`;
         }
       }
     }
@@ -81,6 +81,21 @@ export function formatMessageTime(datetime: Date | string): any {
   //fmt = "yyyy年MM月dd日"'YYYY-MM-DD'
   return moment(datetime).format(fmt);
 }
+
+export const formatHourStr = (date: Date) => {
+  const hours = date.getHours();
+  let ret = '';
+  if (hours < 6) {
+    ret = '凌晨';
+  } else if (hours < 12) {
+    ret = '上午';
+  } else if (hours < 18) {
+    ret = '下午';
+  } else if (hours < 24) {
+    ret = '晚上';
+  }
+  return ret;
+};
 /**
  *
  *
