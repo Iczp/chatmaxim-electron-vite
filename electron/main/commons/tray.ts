@@ -99,7 +99,8 @@ export const createTray = () => {
   tray = new Tray(trayIcon);
   // tray = new Tray('./static/logo.png')
   // tray.setImage()
-  const productName = app.getName(); //import.meta.env.VITE_APP_NAME;
+  const productName = import.meta.env.VITE_APP_NAME;
+  // const productName = app.getName();
   tray.setToolTip(`${productName}`);
   tray.setTitle(`${productName}`);
 

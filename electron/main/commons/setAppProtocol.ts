@@ -1,6 +1,9 @@
-import { app, protocol } from 'electron';
+import { app, dialog, protocol } from 'electron';
 import path from 'node:path';
-export default function setAppProtocol(scheme: string) {
+
+const url_scheme = import.meta.env.VITE_APP_URL_SCHEME;
+
+export default function setAppProtocol(scheme: string = url_scheme) {
   if (process.env.VITE_DEV_SERVER_URL) {
     app.setAsDefaultProtocolClient(scheme, process.execPath, [path.resolve(process.argv[1])]);
   } else {
@@ -11,7 +14,7 @@ export default function setAppProtocol(scheme: string) {
   // 此方法只能在 app 的 ready 事件触发前调用，且只能调用一次
   protocol.registerSchemesAsPrivileged([
     {
-      scheme: 'chatmaxim',
+      scheme: scheme,
       privileges: {
         secure: true,
         standard: true,
@@ -29,7 +32,10 @@ export default function setAppProtocol(scheme: string) {
 }
 
 app.whenReady().then(() => {
-  protocol.handle('chatmaxim', req => {
+  protocol.handle(url_scheme, req => {
+
+    dialog.showErrorBox('protocol.handle chatmaxim', `req: ${req}`);
+    
     const { host, pathname } = new URL(req.url);
     if (host === 'bundle') {
       if (pathname === '/') {

@@ -14,7 +14,6 @@ process.env.VITE_PUBLIC = process.env.VITE_DEV_SERVER_URL
   ? join(process.env.DIST_ELECTRON, '../public')
   : process.env.DIST;
 
-
 import { app, BrowserWindow, ipcMain, webContents, screen, dialog, protocol } from 'electron';
 import { release } from 'node:os';
 import { join } from 'node:path';
@@ -32,15 +31,13 @@ import './commons/keyboardShortcuts';
 import { createPopWindow, openPopWindowHandle } from './commons/openPopWindowHandle';
 import { setTrayHandle } from './commons/setTrayHandle';
 import setAppProtocol from './commons/setAppProtocol';
-
-setAppProtocol('chatmaxim');
+const url_scheme = import.meta.env.VITE_APP_URL_SCHEME;
+setAppProtocol(url_scheme);
 
 //
 Store.initRenderer();
 
 initMachine();
-
-
 
 // Disable GPU Acceleration for Windows 7
 if (release().startsWith('6.1')) app.disableHardwareAcceleration();
@@ -84,13 +81,26 @@ app.on('window-all-closed', () => {
   if (process.platform !== 'darwin') app.quit();
 });
 
-app.on('second-instance', () => {
+app.on('second-instance', (event, argv) => {
   if (win) {
     // Focus on the main window if the user tried to open another
-    if (win.isMinimized()) win.restore();
+    win.show();
     win.focus();
   }
+  // Windows 下通过协议URL启动时，URL会作为参数，所以需要在这个事件里处理
+  if (process.platform === 'win32') {
+    handleArgv(argv);
+  }
 });
+const handleArgv = (argv: any[]) => {
+  const url = argv.find(x => x.startsWith(url_scheme));
+  if (url) {
+    handleUrl(url);
+  }
+};
+const handleUrl = (url: string) => {
+  dialog.showErrorBox('handleUrl', url);
+};
 
 ipcMain.handle('open-child', openChildWindowHandle);
 ipcMain.handle('open-pop', openPopWindowHandle);
@@ -99,7 +109,7 @@ ipcMain.handle('websocket', websocketHandle);
 ipcMain.handle('set-tray', setTrayHandle);
 
 //
-
+// macOS
 app.on('open-url', (event, url) => {
   dialog.showErrorBox('Welcome Back', `You arrived from: ${url}`);
 });

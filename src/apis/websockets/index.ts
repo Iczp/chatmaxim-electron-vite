@@ -5,6 +5,8 @@ import { ConnectionState, ConnectionStateText } from './ConnectionState';
 import { useWebsocketStore } from '../../stores/websocket';
 export type { ConnectionDto } from './ConnectionDto';
 
+import websocket from 'websocket';
+
 export let isConnected: boolean = false;
 export let connectionState: ConnectionState = ConnectionState.None;
 export let heartbeatRunning: boolean = false;
@@ -26,8 +28,8 @@ export const isCanReConnect = () => {
   ].some(x => x == connectionState);
 };
 
-export const connect = (wsUrl: string): void => {
-  var W3CWebSocket = require('websocket').w3cwebsocket;
+export const connect = (wsUrl: string): any => {
+  var W3CWebSocket = websocket.w3cwebsocket;
 
   setState(ConnectionState.Connecting);
   var client = new W3CWebSocket(wsUrl);
@@ -95,6 +97,8 @@ export const generateTickect = () => {
       websocketClient = connect(res.webSocketUrl);
     })
     .catch(err => {
+      console.log('TicketService.generate error', err);
+
       setState(ConnectionState.SignFail);
     });
 };
