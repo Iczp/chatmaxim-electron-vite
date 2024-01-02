@@ -121,7 +121,7 @@ export default defineConfig(({ command }) => {
       emptyOutDir: false,
       minify: false,
       rollupOptions: {
-        input: join(__dirname, 'others/index.html'),
+        input: join(__dirname, 'index.html'),
         // input: {
         //   main: resolve(__dirname, 'index.html'),
         //   other: resolve(__dirname, 'others/others.html'),

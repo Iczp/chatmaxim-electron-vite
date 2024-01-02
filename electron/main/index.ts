@@ -1,3 +1,20 @@
+// The built directory structure
+//
+// ├─┬ dist-electron
+// │ ├─┬ main
+// │ │ └── index.js    > Electron-Main
+// │ └─┬ preload
+// │   └── index.js    > Preload-Scripts
+// ├─┬ dist
+// │ └── index.html    > Electron-Renderer
+//
+process.env.DIST_ELECTRON = join(__dirname, '..');
+process.env.DIST = join(process.env.DIST_ELECTRON, '../dist');
+process.env.VITE_PUBLIC = process.env.VITE_DEV_SERVER_URL
+  ? join(process.env.DIST_ELECTRON, '../public')
+  : process.env.DIST;
+
+
 import { app, BrowserWindow, ipcMain, webContents, screen, dialog, protocol } from 'electron';
 import { release } from 'node:os';
 import { join } from 'node:path';
@@ -23,21 +40,7 @@ Store.initRenderer();
 
 initMachine();
 
-// The built directory structure
-//
-// ├─┬ dist-electron
-// │ ├─┬ main
-// │ │ └── index.js    > Electron-Main
-// │ └─┬ preload
-// │   └── index.js    > Preload-Scripts
-// ├─┬ dist
-// │ └── index.html    > Electron-Renderer
-//
-process.env.DIST_ELECTRON = join(__dirname, '..');
-process.env.DIST = join(process.env.DIST_ELECTRON, '../dist');
-process.env.VITE_PUBLIC = process.env.VITE_DEV_SERVER_URL
-  ? join(process.env.DIST_ELECTRON, '../public')
-  : process.env.DIST;
+
 
 // Disable GPU Acceleration for Windows 7
 if (release().startsWith('6.1')) app.disableHardwareAcceleration();

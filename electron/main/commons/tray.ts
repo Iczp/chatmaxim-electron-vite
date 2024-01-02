@@ -18,9 +18,14 @@ import { globalState } from '../global';
 import { loadUrl } from './loadUrl';
 
 const preload = join(__dirname, '../preload/index.js');
-// const { app, Tray, Menu, nativeImage } = require('electron/main')
-const trayIconUrl = join(__dirname, `../../public/tray.png`);
-const trayIconEmptyUrl = join(__dirname, `../../public/tray-empty.png`);
+process.env.DIST_ELECTRON = join(__dirname, '..');
+process.env.DIST = join(process.env.DIST_ELECTRON, '../dist');
+process.env.VITE_PUBLIC = process.env.VITE_DEV_SERVER_URL
+  ? join(process.env.DIST_ELECTRON, '../public')
+  : process.env.DIST;
+
+const trayIconUrl = `${process.env.DIST}/tray.png`;
+const trayIconEmptyUrl = `${process.env.DIST}/tray-empty.png`;
 let tray: Tray;
 let trayWindow: BrowserWindow;
 let trayTimer: NodeJS.Timeout;

@@ -1,7 +1,11 @@
 import { app, protocol } from 'electron';
-
+import path from 'node:path';
 export default function setAppProtocol(scheme: string) {
-  app.setAsDefaultProtocolClient(scheme);
+  if (process.env.VITE_DEV_SERVER_URL) {
+    app.setAsDefaultProtocolClient(scheme, process.execPath, [path.resolve(process.argv[1])]);
+  } else {
+    app.setAsDefaultProtocolClient(scheme);
+  }
 
   // Scheme must be registered before the app is ready
   // 此方法只能在 app 的 ready 事件触发前调用，且只能调用一次
