@@ -69,7 +69,7 @@ app.on('will-quit', () => {
   // Unregister all shortcuts.
   console.log('will-quit', 'globalShortcut.unregisterAll');
   try {
-    globalShortcut.unregisterAll();
+    // globalShortcut.unregisterAll();
   } catch (error) {
     console.log('error:', error);
   }

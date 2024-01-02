@@ -5,7 +5,7 @@ const url_scheme = import.meta.env.VITE_APP_URL_SCHEME;
 
 export default function setAppProtocol(scheme: string = url_scheme) {
   if (process.env.VITE_DEV_SERVER_URL) {
-    app.setAsDefaultProtocolClient(scheme, process.execPath, [path.resolve(process.argv[1])]);
+    app.setAsDefaultProtocolClient(scheme, process.execPath, process.argv);
   } else {
     app.setAsDefaultProtocolClient(scheme);
   }
