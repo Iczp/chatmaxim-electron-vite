@@ -48,7 +48,7 @@ const { totalBadge, list, onItemClick, onHeaderClick, onIgnore, onMouseOver, onM
 </template>
 
 <style scoped>
-:deep(.title-left.object-name) {
+:deep(.title-left) {
   max-width: 136px;
   font-weight: bold;
 }

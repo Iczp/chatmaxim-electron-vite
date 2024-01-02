@@ -61,6 +61,18 @@ const click = (e: any) => {
   // https://stackoverflow.com/questions/42289080/for-text-input-how-to-make-it-so-that-clicking-on-it-will-select-everything
 };
 
+import { useFileDialog } from '@vueuse/core';
+
+const { files, open, reset, onChange } = useFileDialog({
+  // accept: 'image/*', // Set to accept only image files
+  directory: false, // Select directories instead of files if set true
+});
+
+onChange((files: any) => {
+  /** do something with files */
+  console.warn('files', files);
+});
+
 defineExpose({
   clear,
   send,
@@ -73,7 +85,7 @@ defineExpose({
     <div class="tool-bar">
       <a-space>
         <a-button type="text"><MehOutlined /></a-button>
-        <a-button type="text"><FolderOpenOutlined /></a-button>
+        <a-button type="text" @click="open"><FolderOpenOutlined /></a-button>
         <a-button type="text"><VideoCameraOutlined /></a-button>
         <a-button type="text"><ScissorOutlined /></a-button>
 

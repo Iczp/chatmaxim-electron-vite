@@ -1,6 +1,6 @@
 //
 
-import { ComputedRef, computed, watch } from 'vue';
+import { ComputedRef, computed, onUnmounted, ref, watch } from 'vue';
 import {
   formatMessageTime,
   getDestinationNameForSessionUnit,
@@ -57,9 +57,31 @@ const useComputedSessionUnit = (computedEntity: ComputedRef<SessionUnitOwnerDto 
 
   const objectType = computed(() => entity.value?.destination?.objectType);
 
-  const sendTime = computed(() =>
-    formatMessageTime(new Date(entity.value?.lastMessage?.creationTime!)),
+  // const sendTime = computed(() =>
+  //   formatMessageTime(new Date(entity.value?.lastMessage?.creationTime!)),
+  // );
+  const sendTime = ref(
+    entity.value?.lastMessage?.creationTime
+      ? formatMessageTime(new Date(entity.value?.lastMessage?.creationTime!))
+      : '',
   );
+
+  const timer = setInterval(() => {
+    const creationTime = new Date(entity.value?.lastMessage?.creationTime!);
+    const s = (new Date().getTime() - creationTime.getTime()) / 1000;
+    if (s > 60 * 60 * 24 * 7) {
+      clearInterval(timer);
+      // console.log('clearInterval(timer)', s);
+      return;
+    }
+    sendTime.value = formatMessageTime(creationTime);
+  }, 1000);
+  onUnmounted(() => {
+    if (timer) {
+      clearInterval(timer);
+    }
+  });
+
   const badge = computed(() => entity.value?.publicBadge || 0);
 
   const senderName = computed(() => getSenderNameForMessage(entity.value?.lastMessage));

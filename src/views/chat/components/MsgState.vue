@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { computed, createVNode, ref } from 'vue';
+import { computed, createVNode, ref, watch } from 'vue';
 import { Modal, message } from 'ant-design-vue';
 import { MessageDto, MessageSimpleDto } from '../../../apis/dtos';
 import { MessageStateEnums } from '../../../apis/enums';
@@ -15,7 +15,12 @@ const props = defineProps<{
 const progressStore = useProgressStore();
 const uploadProgress = computed(() => progressStore.get(`${props.entity?.autoId}`));
 const percent = computed(() => uploadProgress.value?.percent);
-const status = ref<'success' | 'exception' | 'normal' | 'active'>('active');
+const status = ref<'success' | 'exception' | 'normal' | 'active'>('success');
+watch(percent, p => {
+  if (Number(p) == 100) {
+    status.value = 'success';
+  }
+});
 
 const showError = () => {
   Modal.confirm({

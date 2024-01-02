@@ -20,7 +20,7 @@ export const uploadFile = ({
     let percent = 0;
     const exec = () => {
       setTimeout(() => {
-        percent += Math.floor(Math.random() * 10);
+        percent += Math.floor(Math.random() * 30);
         console.log('percent', percent);
         onProgress?.call(this, percent);
         if (percent > 100) {

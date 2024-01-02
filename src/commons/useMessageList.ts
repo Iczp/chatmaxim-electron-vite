@@ -61,7 +61,7 @@ export const useMessageList = ({
       lastItem:
         list.value.length > 0
           ? isLast
-            ? list.value[list.value.length - 1]
+            ? list.value.findLast(x => x.state == MessageStateEnums.Ok)
             : list.value[0]
           : undefined,
     });
@@ -75,11 +75,13 @@ export const useMessageList = ({
   const fetchLatest = async ({ caller }: { caller?: string }): Promise<FetchMessageResult> =>
     new Promise(async (resolve, reject) => {
       if (isPendingOfFetchLatest.value) {
-        reject(`caller:${caller},isPendingForFetchLatest:${isPendingOfFetchLatest.value}`);
+        reject(
+          `fetchLatest caller:${caller},isPendingForFetchLatest:${isPendingOfFetchLatest.value}`,
+        );
         return;
       }
       isPendingOfFetchLatest.value = true;
-      console.warn('caller', caller);
+      console.warn('fetchLatest caller', caller);
       fetchItems({ minMessageId: maxMessageId.value }, true)
         .then(items => {
           console.log(

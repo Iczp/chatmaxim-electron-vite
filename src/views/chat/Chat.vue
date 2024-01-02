@@ -151,6 +151,8 @@ const _onDeactivated = () => {
   selectable.value = false;
   cancelChecked();
 };
+
+const isSendPending = ref(false);
 const _onActivated = () => {
   startShortcutWatch();
   scrollTo(0);
@@ -175,14 +177,14 @@ const _onActivated = () => {
     );
     // store.clearBadge(chatObjectId, sessionUnitId);
     // setReadedMessageId({ sessionUnitId, messageId: receivedMessage!.id! });
-    if (isLatestMessage) {
+    if (isLatestMessage && !isSendPending.value) {
       fetchLatest({
         caller: 'onMessage',
       })
         .then(({ items, list, maxResultCount }) => {
           console.warn('[chat] fetchLatest');
           list.value = items.length == maxResultCount ? items : list.value.concat(items);
-          scroll.value?.scrollTo({ duration: 1500 });
+          nextTick(() => scroll.value?.scrollTo({ duration: 1500 }));
         })
         .catch(err => {
           console.error(err);
@@ -238,13 +240,18 @@ const sendMessageContent = async ({
   content: any;
   isClear: boolean;
 }) => {
-  const _removeItem = (autoId?: number) => {
+  const _spliceItem = (autoId: number | undefined, arr: MessageDto[]) => {
     const findIndex = list.value?.findIndex(x => x.autoId == autoId);
     console.log('findIndex', findIndex);
     if (findIndex != -1) {
-      list.value.splice(findIndex, 1);
+      // if (arr.length > 0) {
+      //   arr[0].isShowTime = list.value[0].isShowTime;
+      // }
+      list.value.splice(findIndex, 1, ...arr);
     }
   };
+
+  isSendPending.value = true;
 
   sendMessage({
     sessionUnitId,
@@ -259,42 +266,47 @@ const sendMessageContent = async ({
       // setTimeout(() => {
       //   input.state = 3;
       // }, 1000);
-      // scroll.value?.scrollTo({ duration: 1500 })
-      nextTick(() => scroll.value?.scrollTo({ duration: 1500 }));
+      scroll.value?.scrollTo({ duration: 1500 });
+      // nextTick(() => scroll.value?.scrollTo({ duration: 1500 }));
     },
     onSuccess(entity, input) {
       clearChatInput(isClear);
+
       fetchLatest({ caller: 'sendMessageContent' })
         .then(({ items, list }) => {
           // setTimeout(() => {
-          _removeItem(input.autoId);
-          list.value = list.value.concat(items);
+          _spliceItem(input.autoId, items);
+          // list.value = list.value.concat(items);
           // }, 1000);
 
-          scroll.value?.scrollTo({ duration: 0 });
+          // scroll.value?.scrollTo({ duration: 0 });
           // nextTick(() => scroll.value?.scrollTo({ duration: 1500 }));
         })
         .catch(err => {
-          _removeItem(input.autoId);
+          _spliceItem(input.autoId, []);
           console.error(err);
+        })
+        .finally(() => {
+          isSendPending.value = false;
         });
     },
     onError(err, input) {
-      _removeItem(input.autoId);
+      _spliceItem(input.autoId, []);
       list.value.push({
         ...input,
         state: MessageStateEnums.Error,
-        error: err.body.error.message,
+        error: err.body.error?.message,
       });
       // scroll.value?.scrollTo({ duration: 1500 });
       console.error('sendRet', err);
       message.error({
         key: 'vm-chat',
-        content: err.body.error.message,
+        content: err.body.error?.message,
       });
     },
     onAfter(input) {
       isSendBtnEnabled.value = true;
+      // isSendPending.value = false;
     },
   });
 };
