@@ -1,5 +1,6 @@
 import { RouteRecordRaw } from 'vue-router';
 import { WindowParams } from '../ipc-types';
+import { appSettingsChildren } from './appSettingsChildren';
 
 export const routes = <RouteRecordRaw[]>[
   {
@@ -47,7 +48,11 @@ export const routes = <RouteRecordRaw[]>[
         props: true,
       },
 
-      { path: '/about', component: () => import('../views/app-settings/widget/About.vue'), props: true },
+      {
+        path: '/about',
+        component: () => import('../views/app-settings/widget/About.vue'),
+        props: true,
+      },
     ],
   },
   {
@@ -72,8 +77,10 @@ export const routes = <RouteRecordRaw[]>[
 
   {
     path: '/settings',
+    name: 'app-settings',
     component: () => import('../views/app-settings/AppSettings.vue'),
     props: true,
+    children: appSettingsChildren,
   },
   {
     path: '/object-picker/:chatObjectId(\\d+)',

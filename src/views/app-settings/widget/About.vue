@@ -40,14 +40,15 @@ const copyContent = () => {
     message.success({ content: '复制成功!', duration: 2 });
   });
 };
+const title = ref('')
 </script>
 
 <template>
   <page>
+    <page-title :title="title"></page-title>
     <page-content>
-      <scroll-view>
+      <scroll-view class="scroll-view">
         <!-- {{ versions }} -->
-
         <a-descriptions :title="appName" size="small" :column="2">
           <template #extra>
             <!-- <ContentCopy class="svg-icon-14" /> -->
@@ -71,6 +72,9 @@ const copyContent = () => {
 </template>
 
 <style scoped>
+.scroll-view {
+  padding: 0 20px;
+}
 .ps {
   height: 100%;
 }
