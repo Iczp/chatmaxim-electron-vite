@@ -1,6 +1,6 @@
 import { app, globalShortcut } from 'electron';
 import { windowManager } from './windowManager';
-import { globalState } from '../global';
+import { globalState, isAuthorized } from '../global';
 import { WindowParams } from '../ipc-types';
 import { setWindow } from './windowSettingHandle';
 import { setTrayHandle } from './setTrayHandle';
@@ -10,8 +10,15 @@ const accelerator = globalState.globalShortcut;
 export const messageShortcutHandle = () => {
   try {
     console.log(`messageShortcutHandle:'${accelerator}' is pressed`);
+
+    if (!isAuthorized()) {
+      const login = windowManager.getLogin();
+      login.isVisible() ? login.hide() : login.show();
+      return;
+    }
     const trayPayload = globalState.trayPayload;
     const { items, totalBadge } = trayPayload;
+
     const win = windowManager.getMain();
     if (!win) {
       console.warn('win is null');
@@ -44,7 +51,9 @@ export const messageShortcutHandle = () => {
     } else {
       if (win.isVisible() && win.isFocused()) {
         win.hide();
+        windowManager.getSeparatedChatWindows().map(([name, win]) => win.hide());
       } else {
+        windowManager.getSeparatedChatWindows().map(([name, win]) => win.show());
         win.show();
         win.focus();
       }

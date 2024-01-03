@@ -32,6 +32,7 @@ import { createPopWindow, openPopWindowHandle } from './commons/openPopWindowHan
 import { setTrayHandle } from './commons/setTrayHandle';
 import setAppProtocol from './commons/setAppProtocol';
 import { setAuthorizehandle } from './commons/setAuthorizehandle';
+import { createLoginWindow } from './commons/createLoginWindow';
 const url_scheme = import.meta.env.VITE_APP_URL_SCHEME;
 setAppProtocol(url_scheme);
 
@@ -67,15 +68,16 @@ const indexHtml = join(process.env.DIST, 'index.html');
 console.log('app.getPath', app.getAppPath(), app.getPath('userData'));
 
 app.whenReady().then(() => {
-  win = createMainWindow();
-  pop = createPopWindow({});
+  createLoginWindow();
+  // win = createMainWindow();
+  // pop = createPopWindow({});
 });
 app.on('activate', () => {
   const allWindows = BrowserWindow.getAllWindows();
   if (allWindows.length) {
     allWindows[0].focus();
   } else {
-    win = createMainWindow();
+    win = createMainWindow({ path: '/' });
   }
 });
 app.on('window-all-closed', () => {

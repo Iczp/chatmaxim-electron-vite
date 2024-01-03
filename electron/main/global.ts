@@ -7,7 +7,7 @@ export const TOKEN_KEY: string = import.meta.env.VITE_APP_TOKEN_KEY;
 
 export const preload = join(__dirname, '../preload/index.js');
 
-export const icon = join(process.env.VITE_PUBLIC, 'favicon.ico')
+export const icon = join(process.env.VITE_PUBLIC, 'favicon.ico');
 
 export const store = new Store();
 
@@ -23,7 +23,7 @@ export interface GlobalState {
     main: string;
   };
   globalShortcut: string;
-
+  isAuthorized: boolean;
   token: any;
   tokenKey: string;
 }
@@ -55,9 +55,8 @@ export const globalState: GlobalState = {
     main: 'CommandOrControl+D',
   },
   globalShortcut: 'CommandOrControl+D',
-  token: {
-    access_token: store.get(TOKEN_KEY),
-  },
+  isAuthorized: false,
+  token: store.get(TOKEN_KEY),
   tokenKey: TOKEN_KEY,
 };
 
@@ -68,3 +67,5 @@ export const globalState: GlobalState = {
 app.on('before-quit', e => {
   globalState.isAppQuitting = true;
 });
+
+export const isAuthorized = (): boolean => globalState.isAuthorized;

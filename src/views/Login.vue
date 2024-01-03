@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { app, ipcRenderer } from 'electron';
+import { ipcRenderer } from 'electron';
 // // const electron = require('electron');
 // const path = require('path');
 // const fs = require('fs');
@@ -21,8 +21,6 @@ import { router } from '../routes';
 
 import { message } from 'ant-design-vue';
 import { UserOutlined, LockOutlined } from '@ant-design/icons-vue';
-import { ref } from 'vue';
-import { setWindow } from '../commons/setWindow';
 import { TokenDto } from '../apis/auth/dto';
 import { setAuthorize } from '../commons/setAuthorize';
 const key = 'updatable';
@@ -41,11 +39,6 @@ const formState = reactive<FormState>({
 const onFinish = (values: any) => {
   console.log('Success:', values, message);
   message.loading({ content: 'Loading...', key });
-
-  ipcRenderer.send('login', 'ping');
-
-  // window.electronAPI.setTitle(title)
-  // window.electron?.ping();
   login({
     username: formState.username,
     password: formState.password,
@@ -53,7 +46,7 @@ const onFinish = (values: any) => {
     .then(res => {
       console.log('登录成功！', res);
       message.success({ content: '欢迎回来!', key, duration: 2 });
-      setWindow({ size: { width: 1080, height: 760 } });
+      // setWindow({ size: { width: 1080, height: 760 } });
       setAuthorize(res.detail as TokenDto);
       router.push('/');
     })
@@ -69,7 +62,7 @@ const onFinishFailed = (errorInfo: any) => {
 
 <template>
   <page>
-    <page-title title="登录"></page-title>
+    <page-title class="header" title="登录"></page-title>
     <page-content>
       <div class="page drag">
         <div class="login-page no-drag">
@@ -116,10 +109,23 @@ const onFinishFailed = (errorInfo: any) => {
         </div>
       </div>
     </page-content>
+    <page-footer class="footer">v1.023</page-footer>
   </page>
 </template>
 
 <style scoped>
+.header {
+  background-color: unset;
+  border: none;
+}
+.footer {
+  background-color: unset;
+  border: none;
+  color: #ccc;
+  font-size: 12px;
+  align-items: center;
+  justify-content: center;
+}
 .page {
   width: 100%;
   height: 100%;
@@ -136,7 +142,7 @@ const onFinishFailed = (errorInfo: any) => {
   border-radius: 5px; */
 }
 .login-page:hover {
-  box-shadow: 0 0 10px #cccccc89;
+  /* box-shadow: 0 0 10px #cccccc89; */
 }
 .login-form {
   /* display: flex;

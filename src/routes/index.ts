@@ -111,8 +111,8 @@ export const routes = <RouteRecordRaw[]>[
   {
     path: '/login',
     meta: {
-      windows: ['main'],
-      size: [320, 560],
+      windows: ['login'],
+      // size: [320, 560],
       options: <WindowParams>{
         maximizable: true,
         size: { width: 320, height: 560 },
@@ -148,7 +148,10 @@ router.beforeEach((to, from) => {
     if (Array.isArray(to.meta.windows)) {
       const windows = (to.meta.windows || []) as Array<string>;
       if (!windows.some(x => x == currentWindowName)) {
-        console.error('windows array', to.meta.windows, currentWindowName);
+        console.error(
+          `current window['${currentWindowName}'] cannot be navigated to' ${to.fullPath}',allow windowns: `,
+          to.meta.windows,
+        );
         // 返回 false 以取消导航
         return false;
       }

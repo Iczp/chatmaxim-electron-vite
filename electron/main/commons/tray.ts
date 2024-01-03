@@ -14,7 +14,7 @@ import { BrowserWindow } from 'electron';
 import { join } from 'node:path';
 import { initWindowEvent, sendWindowInfo } from './initWindowEvent';
 import { preventClose } from './windowSettingHandle';
-import { globalState } from '../global';
+import { globalState, isAuthorized } from '../global';
 import { loadUrl } from './loadUrl';
 
 import { icon, preload } from '../global';
@@ -158,7 +158,9 @@ export const createTray = () => {
   ]);
   tray.setContextMenu(contextMenu);
   tray.on('click', () => {
-    windowManager.getMain().show();
+    const win = isAuthorized() ? windowManager.getMain() : windowManager.getLogin();
+    win.show();
+    win.focus();
     //
   });
   tray.on('double-click', e => {

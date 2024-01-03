@@ -30,8 +30,10 @@ class WindowManger {
     return this.windowsMap.get(id);
   }
   getMain(): BrowserWindow | undefined {
-    // return this.windows['main'];
     return this.windows.get('main');
+  }
+  getLogin(): BrowserWindow | undefined {
+    return this.windows.get('login');
   }
   getWindows(): Map<string, BrowserWindow> {
     return this.windows;
@@ -48,8 +50,18 @@ class WindowManger {
   isSeparatedChat(name: string) {
     return /^chat-.+$/.test(name) && this.windows.has(name);
   }
+  getSeparatedChatWindows(): [string, BrowserWindow][] {
+    return (
+      this.getAllWindows()
+        //ignore sender window
+        .filter(([name, win]) => windowManager.isSeparatedChat(name))
+    );
+  }
+  getAllWindows(): [string, BrowserWindow][] {
+    return [...this.windows];
+  }
   closeAll() {
-    [...this.windows].map(([name, win]) => {
+    this.getAllWindows().map(([name, win]) => {
       console.log(`window name:`, name, win.id);
       win.close();
       // win.removeAllListeners();
