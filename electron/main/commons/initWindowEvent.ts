@@ -5,6 +5,7 @@ import { machine } from './machine';
 import { shortcutDevaultValue } from '../ipc-types/ShortcutState';
 import { loadUrl } from './loadUrl';
 import { globalState } from '../global';
+import electronLocalshortcut from 'electron-localshortcut';
 
 export const initWindowEvent = (win: BrowserWindow, name: string, path: string) => {
   windowManager.set(name, win);
@@ -43,7 +44,7 @@ export const initWindowEvent = (win: BrowserWindow, name: string, path: string) 
 };
 
 export const registShortcutEvent = (win: BrowserWindow) => {
-  const electronLocalshortcut = require('electron-localshortcut');
+  // const electronLocalshortcut = require('electron-localshortcut');
   const shortcutState = shortcutDevaultValue();
   Object.keys(shortcutState).forEach(x => {
     electronLocalshortcut.register(win, x, () => {
@@ -51,7 +52,11 @@ export const registShortcutEvent = (win: BrowserWindow) => {
       sendEvent(win, 'shortcut', [x]);
     });
     const isRegistered = electronLocalshortcut.isRegistered(win, x);
-    console.log(`win id:${win.id} shortcut:'${x}' isRegistered:${isRegistered}`);
+    console.log(
+      `win [name:'${windowManager.getNameById(win.id)}',id:${
+        win.id
+      }] shortcut:'${x}' isRegistered:${isRegistered}`,
+    );
   });
 };
 

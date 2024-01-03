@@ -18,6 +18,7 @@ import { globalState, isAuthorized } from '../global';
 import { loadUrl } from './loadUrl';
 
 import { icon, preload } from '../global';
+import { createSettingWindow } from './createSettingWindow';
 
 process.env.DIST_ELECTRON = join(__dirname, '..');
 process.env.DIST = join(process.env.DIST_ELECTRON, '../dist');
@@ -111,15 +112,17 @@ export const createTray = () => {
       type: 'normal',
       click(menuItem: MenuItem, browserWindow: BrowserWindow | undefined, event: KeyboardEvent) {
         console.log('', menuItem);
-        setTimeout(() => {
-          tray.displayBalloon(<Electron.DisplayBalloonOptions>{
-            icon: trayIconUrl,
-            iconType: 'custom',
-            title: '7777',
-            content: '0000000000',
-          });
-          showNotification();
-        }, 3000);
+
+        createSettingWindow();
+        // setTimeout(() => {
+        //   tray.displayBalloon(<Electron.DisplayBalloonOptions>{
+        //     icon: trayIconUrl,
+        //     iconType: 'custom',
+        //     title: '7777',
+        //     content: '0000000000',
+        //   });
+        //   showNotification();
+        // }, 3000);
       },
     },
     {

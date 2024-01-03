@@ -67,8 +67,16 @@ const url = process.env.VITE_DEV_SERVER_URL;
 const indexHtml = join(process.env.DIST, 'index.html');
 console.log('app.getPath', app.getAppPath(), app.getPath('userData'));
 
-
-
+//应用是否打包
+if (app.isPackaged) {
+  //设置开机启动
+  app.setLoginItemSettings({
+    openAtLogin: true,
+  });
+  //获取是否开机启动
+  const appSetting = app.getLoginItemSettings();
+  console.log('getLoginItemSettings', appSetting);
+}
 
 app.whenReady().then(() => {
   createLoginWindow();

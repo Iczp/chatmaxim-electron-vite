@@ -20,6 +20,7 @@ import { message } from 'ant-design-vue';
 import { BadgeDto } from '../apis/dtos';
 import { useChatObjectList } from '../commons/useChatObjectList';
 import { useWebsocket } from '../commons/useWebsocket';
+import { setWindow } from '../commons/setWindow';
 
 const route = useRoute();
 const { connectionText, connectionState, retryCount } = useWebsocket();
@@ -56,8 +57,10 @@ const isNavActive = (pattern: string | RegExp, flags?: string | undefined): bool
 };
 
 const gotoSetting = () => {
-  router.push({
+  setWindow({
+    name: 'settings',
     path: `/settings`,
+    visiblity: true,
   });
   message.info({ content: '设置' });
 };
@@ -100,7 +103,12 @@ const getKey = (route: RouteLocationNormalizedLoaded): string | string[] => {
           <div class="nav-item" @click="goto('/login')">
             <AndroidOutlined />
           </div>
-          <div class="nav-item" @click="goto('/management/members/13/e52bacf4-c231-061a-6628-3a0b0cf571fb')"><SketchOutlined /></div>
+          <div
+            class="nav-item"
+            @click="goto('/management/members/13/e52bacf4-c231-061a-6628-3a0b0cf571fb')"
+          >
+            <SketchOutlined />
+          </div>
           <div class="nav-item"><AppstoreOutlined /></div>
           <div class="nav-item"><ClockCircleOutlined /></div>
           <div class="nav-item"><MoreOutlined /></div>

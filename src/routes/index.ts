@@ -1,126 +1,8 @@
-import { createRouter, createWebHistory, createWebHashHistory, RouteRecordRaw } from 'vue-router';
+import { createRouter, createWebHashHistory } from 'vue-router';
 import { isLogined } from '../apis/auth/TokenController';
 import { useWindowStore } from '../stores/window';
 import { setWindow } from '../commons/setWindow';
-import { WindowParams } from '../ipc-types';
-
-export const routes = <RouteRecordRaw[]>[
-  {
-    path: '/',
-    component: () => import('../views/Home.vue'),
-    props: true,
-    meta: {
-      windows: ['main'],
-      options: <WindowParams>{
-        maximizable: true,
-        size: { width: 1080, height: 760 },
-      },
-    },
-    children: [
-      {
-        path: '',
-        name: 'im-empty',
-        component: () => import('../views/UserProfile.vue'),
-      },
-      {
-        path: 'chat/:chatObjectId(\\d+)',
-        component: () => import('../views/Session.vue'),
-        // props: r => ({ query: r.query.m }),
-        name: 'im',
-        props: true,
-        children: [
-          {
-            path: '',
-            name: 'chat-empty',
-            component: () => import('../views/chat/ChatEmpty.vue'),
-          },
-          {
-            path: ':sessionUnitId',
-            name: 'chat',
-            component: () => import('../views/chat/Chat.vue'),
-            props: true,
-          },
-        ],
-      },
-
-      {
-        path: 'user',
-        name: 'user',
-        component: () => import('../views/UserProfile.vue'),
-        props: true,
-      },
-
-      { path: '/about', component: () => import('../views/About.vue'), props: true },
-    ],
-  },
-  {
-    path: '/separate-chat/:chatObjectId(\\d+)/:sessionUnitId',
-    name: 'separate-chat',
-    meta: { windows: '^profile-[\\w-]+$' },
-    component: () => import('../views/chat/Chat.vue'),
-    props: true,
-  },
-  {
-    path: '/contacts/:chatObjectId(\\d+)',
-    name: 'contacts',
-    component: () => import('../views/Contacts.vue'),
-    props: true,
-  },
-  {
-    path: '/management/members/:chatObjectId(\\d+)/:sessionUnitId',
-    name: 'management-members',
-    component: () => import('../views/management/MemberList.vue'),
-    props: true,
-  },
-
-  { path: '/settings', component: () => import('../views/Settings.vue'), props: true },
-  {
-    path: '/object-picker/:chatObjectId(\\d+)',
-    name: 'object-picker',
-    meta: { keep: true },
-    component: () => import('../views/ObjectPicker.vue'),
-    props: true,
-  },
-  {
-    path: '/session-request/:chatObjectId(\\d+)',
-    name: 'session-request',
-    meta: { keep: true },
-    component: () => import('../views/SessionRequest.vue'),
-    props: true,
-  },
-  {
-    path: '/pop',
-    meta: {
-      windows: ['pop'],
-    },
-    component: () => import('../views/pops/Tip.vue'),
-  },
-  {
-    path: '/profile/:chatObjectId(\\d+)/:sessionUnitId',
-    meta: { keepAlive: true, windows: ['pop'] },
-    component: () => import('../views/pops/Profile.vue'),
-    props: true,
-  },
-  {
-    path: '/tray',
-    meta: {
-      windows: ['tray'],
-    },
-    component: () => import('../views/tray/Tray.vue'),
-  },
-  {
-    path: '/login',
-    meta: {
-      windows: ['login'],
-      // size: [320, 560],
-      options: <WindowParams>{
-        maximizable: true,
-        size: { width: 320, height: 560 },
-      },
-    },
-    component: () => import('../views/Login.vue'),
-  },
-];
+import { routes } from './routes';
 
 // 3、创建一个路由的对象
 export const router = createRouter({
@@ -131,12 +13,15 @@ export const router = createRouter({
    */
   history: createWebHashHistory(),
   // 下面这个 可以写成ES6的简写 routers
-  routes: routes,
+  routes,
 });
-/** asdff @type {*} */
+
+
+/** chatHistorys @type {*} */
 export const chatHistorys: {
   [key: string]: { chatObjectId: string; sessionUnitId: string; title: string };
 } = {};
+
 
 router.beforeEach((to, from) => {
   const store = useWindowStore();
