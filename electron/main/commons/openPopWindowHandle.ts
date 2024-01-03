@@ -7,8 +7,7 @@ import { initWindowEvent, sendWindowInfo } from './initWindowEvent';
 import { setWindow } from './windowSettingHandle';
 import { preventClose } from './windowSettingHandle';
 
-const preload = join(__dirname, '../preload/index.js');
-
+import { icon, preload } from '../global';
 export const openPopWindowHandle = (
   _: Electron.IpcMainInvokeEvent,
   {
@@ -40,8 +39,7 @@ export const createPopWindow = ({ path = '/pop' }: { path?: string }) => {
     // minHeight: 240,
     width: 360,
     height: 480,
-    icon: join(process.env.VITE_PUBLIC, 'favicon.ico'),
-
+    icon,
     webPreferences: {
       preload,
       // Warning: Enable nodeIntegration and disable contextIsolation is not secure in production

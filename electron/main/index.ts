@@ -31,8 +31,11 @@ import './commons/keyboardShortcuts';
 import { createPopWindow, openPopWindowHandle } from './commons/openPopWindowHandle';
 import { setTrayHandle } from './commons/setTrayHandle';
 import setAppProtocol from './commons/setAppProtocol';
+import { setAuthorizehandle } from './commons/setAuthorizehandle';
 const url_scheme = import.meta.env.VITE_APP_URL_SCHEME;
 setAppProtocol(url_scheme);
+
+// import {Test} from '../../public/Test.ts'
 
 //
 Store.initRenderer();
@@ -66,7 +69,6 @@ console.log('app.getPath', app.getAppPath(), app.getPath('userData'));
 app.whenReady().then(() => {
   win = createMainWindow();
   pop = createPopWindow({});
-  app.setBadgeCount(12);
 });
 app.on('activate', () => {
   const allWindows = BrowserWindow.getAllWindows();
@@ -107,7 +109,7 @@ ipcMain.handle('open-pop', openPopWindowHandle);
 ipcMain.handle('win-setting', windowSettingHandle);
 ipcMain.handle('websocket', websocketHandle);
 ipcMain.handle('set-tray', setTrayHandle);
-
+ipcMain.handle('authorize', setAuthorizehandle);
 //
 // macOS
 app.on('open-url', (event, url) => {

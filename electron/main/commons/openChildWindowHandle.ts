@@ -6,14 +6,7 @@ import { windowManager } from './windowManager';
 import { initWindowEvent } from './initWindowEvent';
 import { setWindow } from './windowSettingHandle';
 import { loadUrl } from './loadUrl';
-
-// process.env.DIST_ELECTRON = join(__dirname, '..');
-// process.env.DIST = join(process.env.DIST_ELECTRON, '../dist');
-// process.env.VITE_PUBLIC = process.env.VITE_DEV_SERVER_URL
-//   ? join(process.env.DIST_ELECTRON, '../public')
-//   : process.env.DIST;
-
-const preload = join(__dirname, '../preload/index.js');
+import { icon, preload } from '../global';
 
 export const openChildWindowHandle = (
   _: Electron.IpcMainInvokeEvent,
@@ -59,7 +52,6 @@ export const openChildWindowHandle = (
       childWindow.close();
       resolve(arg);
     };
-
     const rejectFunc = (e: any) => {
       console.log(`window will close`, childWindow.id, e);
       if (!isSuccess) {
@@ -69,13 +61,7 @@ export const openChildWindowHandle = (
     };
     childWindow.once('close', rejectFunc);
     ipcMain.once(event, resolveFunc);
-
     setWindow(childWindow, window, _);
-    // navTo(childWindow, url);
-
-    // childWindow.setContentSize(500, 800);
-    // childWindow.center();
-    // childWindow.show();
   });
 };
 
@@ -97,6 +83,7 @@ export const createChildWindow = ({
     modal: isModel,
     maximizable: false,
     minimizable: false,
+    icon,
     // show: true,
     webPreferences: {
       preload,

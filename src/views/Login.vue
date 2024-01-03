@@ -23,6 +23,8 @@ import { message } from 'ant-design-vue';
 import { UserOutlined, LockOutlined } from '@ant-design/icons-vue';
 import { ref } from 'vue';
 import { setWindow } from '../commons/setWindow';
+import { TokenDto } from '../apis/auth/dto';
+import { setAuthorize } from '../commons/setAuthorize';
 const key = 'updatable';
 
 interface FormState {
@@ -52,6 +54,7 @@ const onFinish = (values: any) => {
       console.log('登录成功！', res);
       message.success({ content: '欢迎回来!', key, duration: 2 });
       setWindow({ size: { width: 1080, height: 760 } });
+      setAuthorize(res.detail as TokenDto);
       router.push('/');
     })
     .catch(err => {

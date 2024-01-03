@@ -126,4 +126,11 @@ export type WindowParams = {
    * @type {*}
    */
   isAlwaysOnTop?: boolean;
+
+  /**
+   * authorize token
+   *
+   * @type {*}
+   */
+  token?: any;
 };

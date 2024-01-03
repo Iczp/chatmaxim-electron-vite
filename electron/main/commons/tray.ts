@@ -17,7 +17,8 @@ import { preventClose } from './windowSettingHandle';
 import { globalState } from '../global';
 import { loadUrl } from './loadUrl';
 
-const preload = join(__dirname, '../preload/index.js');
+import { icon, preload } from '../global';
+
 process.env.DIST_ELECTRON = join(__dirname, '..');
 process.env.DIST = join(process.env.DIST_ELECTRON, '../dist');
 process.env.VITE_PUBLIC = process.env.VITE_DEV_SERVER_URL
@@ -180,8 +181,7 @@ export const createTrayWindow = ({ path = '/tray' }: { path?: string }) => {
     // minHeight: 240,
     width: 240,
     height: 560,
-    icon: join(process.env.VITE_PUBLIC, 'tray.ico'),
-
+    icon,
     webPreferences: {
       preload,
       // Warning: Enable nodeIntegration and disable contextIsolation is not secure in production

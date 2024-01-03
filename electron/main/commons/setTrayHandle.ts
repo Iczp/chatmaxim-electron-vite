@@ -1,3 +1,4 @@
+import { app } from 'electron';
 import { globalState } from '../global';
 import { TrayPayload, WindowParams } from '../ipc-types';
 import { startFlash, stopFlash } from './tray';
@@ -9,12 +10,16 @@ export const setTrayHandle = (
   payload: TrayPayload,
 ): any => {
   return new Promise((resolve, reject) => {
+    // app badge count
+    app.setBadgeCount(payload.totalBadge);
+
     const windowParam: WindowParams = {
       name: 'tray',
       path: `/tray?ticks=${new Date().getTime()}`,
       payload,
     };
     globalState.trayPayload = payload;
+
     const isFlash = Number(payload.totalBadge) > 0 || payload.items.length > 0;
     isFlash ? startFlash() : stopFlash();
     const win = windowManager.get(windowParam.name);

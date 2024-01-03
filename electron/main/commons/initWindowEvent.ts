@@ -4,6 +4,7 @@ import { WindowState } from '../ipc-types/WindowState';
 import { machine } from './machine';
 import { shortcutDevaultValue } from '../ipc-types/ShortcutState';
 import { loadUrl } from './loadUrl';
+import { globalState } from '../global';
 
 export const initWindowEvent = (win: BrowserWindow, name: string, path: string) => {
   windowManager.set(name, win);
@@ -87,6 +88,7 @@ export const sendWindowInfo = (win: BrowserWindow) => {
       hasShadow: win.hasShadow(),
       opacity: win.getOpacity(),
       isKiosk: win.isKiosk(),
+      token: globalState.token,
       // isSkipTaskbar: undefined,
     },
   ]);

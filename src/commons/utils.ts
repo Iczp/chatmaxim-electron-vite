@@ -63,7 +63,7 @@ export function formatMessageTime(datetime: Date | string): any {
       if (now.getDate() == datetime.getDate()) {
         fmt = `${formatHourStr(datetime)} HH:mm`;
         if (spanTime < 1000 * 60) {
-          fmt = '刚刚 HH:mm';
+          fmt = '[刚刚] HH:mm';
         }
       } else if (spanTime < 1000 * 60 * 60 * 24) {
         fmt = `昨天 ${formatHourStr(datetime)} HH:mm`;

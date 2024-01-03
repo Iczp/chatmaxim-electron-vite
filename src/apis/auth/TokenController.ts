@@ -5,7 +5,7 @@ import { TokenService } from './TokenService';
 import { TokenDto, LoginResult, LoginInput } from './dto';
 import { GrantTypeEnum } from './dto/GrantTypeEnum';
 
-export const TOKEN_KEY: string = 'TOKEN-V2023';
+export const TOKEN_KEY: string = import.meta.env.VITE_APP_TOKEN_KEY;
 
 export const TOKEN_URL: string = '/connect/token';
 

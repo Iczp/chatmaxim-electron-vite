@@ -2,8 +2,7 @@ import { BrowserWindow } from 'electron';
 import { join } from 'node:path';
 import { initWindowEvent } from './initWindowEvent';
 import { preventClose } from './windowSettingHandle';
-
-const preload = join(__dirname, '../preload/index.js');
+import { icon, preload } from '../global';
 
 export const createMainWindow = () => {
   const win = new BrowserWindow({
@@ -12,7 +11,7 @@ export const createMainWindow = () => {
     // minHeight: 800,
     width: 1080,
     height: 750,
-    icon: join(process.env.VITE_PUBLIC, 'favicon.ico'),
+    icon: icon,
     hasShadow: true,
     webPreferences: {
       preload,
