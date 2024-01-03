@@ -4,12 +4,9 @@ import { ipcRenderer } from 'electron';
 import Store from 'electron-store';
 import { router } from '../routes';
 import { WinEvents } from '../ipc';
-import queryString from 'query-string';
 
 import { useWindowStore } from '../stores/window';
 
-import { toQueryString } from '../commons/utils';
-import { addParamsToUrl } from '../commons/addParamsToUrl';
 const store = new Store();
 
 store.set('unicorn', '🦄');

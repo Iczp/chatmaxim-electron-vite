@@ -67,6 +67,9 @@ const url = process.env.VITE_DEV_SERVER_URL;
 const indexHtml = join(process.env.DIST, 'index.html');
 console.log('app.getPath', app.getAppPath(), app.getPath('userData'));
 
+
+
+
 app.whenReady().then(() => {
   createLoginWindow();
   // win = createMainWindow();

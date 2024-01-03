@@ -7,4 +7,10 @@ export type WindowState = WindowParams & {
   isMaximized?: boolean;
   isMinimized?: boolean;
   isFullScreen?: boolean;
+    /**
+   * 应用是否打包
+   *
+   * @type {boolean}
+   */
+    isPackaged?: boolean;
 };

@@ -15,7 +15,7 @@ import { ipcRenderer } from 'electron';
 // win.setFullScreenable(false)
 // win.setResizable(false)
 
-import { reactive } from 'vue';
+import { reactive, ref } from 'vue';
 import { login, isLogined } from '../apis/auth/TokenController';
 import { router } from '../routes';
 
@@ -23,6 +23,7 @@ import { message } from 'ant-design-vue';
 import { UserOutlined, LockOutlined } from '@ant-design/icons-vue';
 import { TokenDto } from '../apis/auth/dto';
 import { setAuthorize } from '../commons/setAuthorize';
+import { useAppInfo } from '../commons/useAppInfo';
 const key = 'updatable';
 
 interface FormState {
@@ -58,6 +59,8 @@ const onFinish = (values: any) => {
 const onFinishFailed = (errorInfo: any) => {
   console.log('Failed:', errorInfo);
 };
+
+const { appId, appName, author, websize, version, copyright } = useAppInfo();
 </script>
 
 <template>
@@ -109,7 +112,7 @@ const onFinishFailed = (errorInfo: any) => {
         </div>
       </div>
     </page-content>
-    <page-footer class="footer">v1.023</page-footer>
+    <page-footer class="footer"><video src=""></video>{{ version }}</page-footer>
   </page>
 </template>
 

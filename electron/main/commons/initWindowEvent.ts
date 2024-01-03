@@ -1,4 +1,4 @@
-import { BrowserWindow, shell } from 'electron';
+import { BrowserWindow, app, shell } from 'electron';
 import { windowManager } from './windowManager';
 import { WindowState } from '../ipc-types/WindowState';
 import { machine } from './machine';
@@ -90,6 +90,7 @@ export const sendWindowInfo = (win: BrowserWindow) => {
       isKiosk: win.isKiosk(),
       token: globalState.token,
       // isSkipTaskbar: undefined,
+      isPackaged: app.isPackaged,
     },
   ]);
 };
