@@ -16,15 +16,15 @@ export const useSessionUnitDetail = ({ sessionUnitId }: { sessionUnitId: string 
         console.error(err);
       });
   };
-  onMounted(() => {
-    console.warn('onMounted fetchDetail', sessionUnitId);
-    fetchDetail();
-  });
+  // onMounted(() => {
+  //   console.warn('onMounted fetchDetail', sessionUnitId);
+  //   fetchDetail();
+  // });
 
   if (!detail.value) {
   } else {
     console.warn('detail is loaded', detail.value);
   }
 
-  return { detail };
+  return { detail, fetchDetail };
 };

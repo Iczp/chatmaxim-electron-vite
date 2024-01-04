@@ -107,7 +107,7 @@ const isSendBtnEnabled = ref(true);
 
 const playMessageId = ref<number>();
 
-const { detail } = useSessionUnitDetail({ sessionUnitId });
+const { detail, fetchDetail } = useSessionUnitDetail({ sessionUnitId });
 
 watch(
   () => sessionUnitId,
@@ -163,6 +163,10 @@ const isSendPending = ref(false);
 const _onActivated = () => {
   startShortcutWatch();
   scrollTo(0);
+  //fetchDetail
+  if (!detail.value) {
+    fetchDetail();
+  }
   fetchLatest({
     caller: 'onActivated',
   })
@@ -454,7 +458,9 @@ const { vDrop } = useDrop();
   <page class="chat" v-drop="dropHandle">
     <PageTitle
       :title="destinationName"
-      :description="`code${destination?.code}:memberCount(${detail?.sessionUnitCount}) readedMessageId:${readedMessageId}`"
+      :description="`code${destination?.code}:memberCount(${
+        detail?.sessionUnitCount || ''
+      }) readedMessageId:${readedMessageId}`"
       @more="showDrawer"
       :search="true"
       :top="true"
