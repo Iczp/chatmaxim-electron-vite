@@ -10,15 +10,15 @@ import { reactive, toRaw } from 'vue';
 import type { UnwrapRef } from 'vue';
 
 interface FormState {
-  name: string;
-  delivery: boolean;
+  colorTheme: string;
+  isOpenAtLogin: boolean;
   type: string[];
   resource: string;
   desc: string;
 }
 const formState: UnwrapRef<FormState> = reactive({
-  name: '',
-  delivery: false,
+  colorTheme: 'light',
+  isOpenAtLogin: false,
   type: [],
   resource: '',
   desc: '',
@@ -26,11 +26,11 @@ const formState: UnwrapRef<FormState> = reactive({
 const onSubmit = () => {
   console.log('submit!', toRaw(formState));
 };
-const labelCol = { style: { width: '150px' } };
+const labelCol = { style: { width: '100px' } };
 const wrapperCol = { span: 14 };
 
 const { appId, appName, author, websize, version, copyright } = useAppInfo();
-const title = ref('')
+const title = ref('');
 </script>
 
 <template>
@@ -39,11 +39,16 @@ const title = ref('')
     <page-content>
       <scroll-view>
         <a-form :model="formState" :label-col="labelCol" :wrapper-col="wrapperCol">
-          <a-form-item label="Activity name">
-            <a-input v-model:value="formState.name" />
+          <a-form-item label="颜色主题">
+            <a-radio-group  v-model:value="formState.colorTheme">
+              <a-radio-button value="light">明亮</a-radio-button>
+              <a-radio-button value="black">暗黑</a-radio-button>
+            </a-radio-group>
           </a-form-item>
+
+
           <a-form-item label="开机启动">
-            <a-switch v-model:checked="formState.delivery" />
+            <a-switch v-model:checked="formState.isOpenAtLogin" />
           </a-form-item>
           <a-form-item label="Activity type">
             <a-checkbox-group v-model:value="formState.type">

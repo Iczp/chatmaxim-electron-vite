@@ -5,7 +5,7 @@ import { icon, preload } from '../global';
 import { windowManager } from './windowManager';
 
 export const createSettingWindow = () => {
-  const winName = 'settings';
+  const winName = 'app-settings';
   let win = windowManager.get(winName);
   if (win) {
     win.show();
@@ -38,7 +38,7 @@ export const createSettingWindow = () => {
   });
   win.on('close', () => win.setSkipTaskbar(true));
   win.on('show', () => win.setSkipTaskbar(false));
-  initWindowEvent(win, winName, '/settings');
+  initWindowEvent(win, winName, '/app-settings');
   preventClose(win, true);
   return win;
 };

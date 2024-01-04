@@ -2,7 +2,11 @@
 import { useAppInfo } from '../../../commons/useAppInfo';
 import { reactive, ref, toRaw } from 'vue';
 import type { UnwrapRef } from 'vue';
+import { SettingOutlined } from '@ant-design/icons-vue';
 
+const value2 = ref<string>('+');
+const value3 = ref<string>('Ctrl');
+const value4 = ref<string>('N');
 interface FormState {
   fetchMessage: string;
   sendMessage: string;
@@ -32,7 +36,12 @@ const title = ref('');
     <page-title :title="title"></page-title>
     <page-content>
       <scroll-view>
-        <a-form :model="formState" :label-col="labelCol" :wrapper-col="wrapperCol">
+        <a-form
+          layout="horizontal"
+          :model="formState"
+          :label-col="labelCol"
+          :wrapper-col="wrapperCol"
+        >
           <a-form-item label="提取消息">
             <a-input v-model:value="formState.fetchMessage" />
           </a-form-item>
@@ -40,6 +49,25 @@ const title = ref('');
           <a-form-item label="发送消息">
             <a-input v-model:value="formState.sendMessage" />
           </a-form-item>
+
+          <a-form-item label="创建群">
+            <a-input v-model:value="value2">
+            <template #addonBefore>
+              <a-select v-model:value="value3" style="width: 80px">
+                <a-select-option value="Ctrl">Ctrl</a-select-option>
+                <a-select-option value="Alt">Alt</a-select-option>
+              </a-select>
+            </template>
+            <template #addonAfter>
+              <a-select v-model:value="value4" style="width: 60px">
+                <a-select-option value="D">D</a-select-option>
+                <a-select-option value="N">N</a-select-option>
+              </a-select>
+            </template>
+          </a-input>
+          </a-form-item>
+
+          
         </a-form>
       </scroll-view>
     </page-content>

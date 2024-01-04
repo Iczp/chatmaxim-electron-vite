@@ -1,30 +1,22 @@
 <script setup lang="ts">
 import { ref } from 'vue';
-import { TabsProps } from 'ant-design-vue/es/tabs';
 import { useAppInfo } from '../../commons/useAppInfo';
-// defineProps<{ msg: string }>();
 import { appSettingsChildren } from '../../routes/appSettingsChildren';
-import type { CSSProperties } from 'vue';
 import { useRouter, useRoute } from 'vue-router';
 const route = useRoute();
-const navItems = ref(Array.from(appSettingsChildren));
-const siderStyle: CSSProperties = {
-  width: 120,
-  minWidth: 120,
-  flexBasis: 120,
-  maxWidth: 120,
-};
-const { version } = useAppInfo();
 const router = useRouter();
+const navItems = ref(Array.from(appSettingsChildren));
+const { version } = useAppInfo();
 const onTabClick = (item: any, index: number) => {
   console.log(item, index);
-  router.push(`/settings/${item.path}`);
+  router.push({ name: item.name });
 };
 </script>
 
 <template>
   <page class="app-setting-page">
-    <aside :style="siderStyle" class="nav-sider">
+    <aside class="nav-sider">
+      <div class="version">v{{ version }}</div>
       <scroll-view>
         <div class="tabs">
           <div
@@ -37,7 +29,6 @@ const onTabClick = (item: any, index: number) => {
           </div>
         </div>
       </scroll-view>
-      <div class="version">v{{ version }}</div>
     </aside>
     <page-content class="page-content">
       <!-- <page-title></page-title> -->
@@ -51,6 +42,9 @@ const onTabClick = (item: any, index: number) => {
 </template>
 
 <style scoped>
+:deep(.page-title) {
+  height: 48px;
+}
 .app-setting-page {
   user-select: none;
   display: flex;
@@ -98,8 +92,9 @@ const onTabClick = (item: any, index: number) => {
 }
 .tab-item.active {
   color: rgb(10, 118, 226);
-  background-color: #f6f6f6d5;
+  background-color: #ffffff;
   box-sizing: border-box;
+  font-weight: bold;
 }
 .tab-item::after {
   content: '';
@@ -115,7 +110,7 @@ const onTabClick = (item: any, index: number) => {
   background-color: rgba(10, 118, 226, 0.93);
 }
 .tab-item:hover {
-  background-color: #fcfcfcd5;
+  background-color: #dedede98;
 }
 
 .version {

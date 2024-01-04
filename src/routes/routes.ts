@@ -76,7 +76,7 @@ export const routes = <RouteRecordRaw[]>[
   },
 
   {
-    path: '/settings',
+    path: '/app-settings',
     name: 'app-settings',
     component: () => import('../views/app-settings/AppSettings.vue'),
     props: true,

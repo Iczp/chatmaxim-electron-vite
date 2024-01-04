@@ -58,8 +58,8 @@ const isNavActive = (pattern: string | RegExp, flags?: string | undefined): bool
 
 const gotoSetting = () => {
   setWindow({
-    name: 'settings',
-    path: `/settings`,
+    name: 'app-settings',
+    path: `/app-settings`,
     visiblity: true,
   });
   message.info({ content: '设置' });
@@ -116,7 +116,7 @@ const getKey = (route: RouteLocationNormalizedLoaded): string | string[] => {
 
         <div class="side-bottom">
           <div class="nav-item" @click="gotoSetting()">
-            <!-- <router-link to="/settings"> -->
+            <!-- <router-link to="/app-settings"> -->
             <a-badge color="red" count="5">
               <SettingOutlined />
             </a-badge>

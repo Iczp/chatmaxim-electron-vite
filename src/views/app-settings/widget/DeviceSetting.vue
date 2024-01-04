@@ -10,6 +10,8 @@ const windowStore = useWindowStore();
 
 const machineId = ref(windowStore.machineId);
 const { copy, isSupported } = useClipboard();
+const platform = ref(process.platform);
+// console.log('process', process);
 
 const copyContent = () => {
   let contentText = machineId.value || '';
@@ -25,8 +27,8 @@ const title = ref('');
     <page-title :title="title"></page-title>
     <page-content>
       <scroll-view>
-        <a-form :label-col="labelCol" :wrapper-col="wrapperCol">
-          <a-divider orientation="left">server</a-divider>
+        <a-form :label-col="labelCol" layout="horizontal" :wrapper-col="wrapperCol">
+          <a-divider orientation="left">Device</a-divider>
           <!-- <a-divider dashed >aa</a-divider> -->
           <a-form-item label="MachineId">
             <!-- <a-input v-model:value="machineId" /> -->
@@ -35,6 +37,10 @@ const title = ref('');
                 <div @click="copyContent"><ContentCopy class="svg-icon-14" /></div>
               </template>
             </a-input>
+          </a-form-item>
+
+          <a-form-item label="Platform">
+            <div>{{ platform }}</div>
           </a-form-item>
         </a-form>
       </scroll-view>

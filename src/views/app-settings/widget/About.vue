@@ -40,7 +40,7 @@ const copyContent = () => {
     message.success({ content: '复制成功!', duration: 2 });
   });
 };
-const title = ref('')
+const title = ref('');
 </script>
 
 <template>
@@ -49,7 +49,12 @@ const title = ref('')
     <page-content>
       <scroll-view class="scroll-view">
         <!-- {{ versions }} -->
-        <a-descriptions :title="appName" size="small" :column="2">
+        <a-descriptions
+          class="descriptions"
+          :title="`${appName} v${version}`"
+          size="small"
+          :column="2"
+        >
           <template #extra>
             <!-- <ContentCopy class="svg-icon-14" /> -->
             <a-button type="text" @click="copyContent">
@@ -73,13 +78,16 @@ const title = ref('')
 
 <style scoped>
 .scroll-view {
-  padding: 0 20px;
+  padding: 0;
+}
+.descriptions {
+  padding: 0 24px;
 }
 .ps {
   height: 100%;
 }
 :deep(.ant-descriptions-small .ant-descriptions-row > td) {
-  padding: 2px 0;
+  padding: 0 0;
 }
 :deep(.ant-descriptions-item-label) {
   text-transform: capitalize;
