@@ -34,14 +34,7 @@ export class ChatObjectService {
       url: '/api/chat/chat-object',
       body: requestBody,
       mediaType: 'application/json',
-      errors: {
-        400: `Bad Request`,
-        401: `Unauthorized`,
-        403: `Forbidden`,
-        404: `Not Found`,
-        500: `Server Error`,
-        501: `Server Error`,
-      },
+      
     });
   }
 
@@ -145,14 +138,7 @@ export class ChatObjectService {
         SkipCount: skipCount,
         Sorting: sorting,
       },
-      errors: {
-        400: `Bad Request`,
-        401: `Unauthorized`,
-        403: `Forbidden`,
-        404: `Not Found`,
-        500: `Server Error`,
-        501: `Server Error`,
-      },
+      
     });
   }
 
@@ -172,14 +158,7 @@ export class ChatObjectService {
       query: {
         name: name,
       },
-      errors: {
-        400: `Bad Request`,
-        401: `Unauthorized`,
-        403: `Forbidden`,
-        404: `Not Found`,
-        500: `Server Error`,
-        501: `Server Error`,
-      },
+      
     });
   }
 
@@ -199,14 +178,7 @@ export class ChatObjectService {
       query: {
         name: name,
       },
-      errors: {
-        400: `Bad Request`,
-        401: `Unauthorized`,
-        403: `Forbidden`,
-        404: `Not Found`,
-        500: `Server Error`,
-        501: `Server Error`,
-      },
+      
     });
   }
 
@@ -231,14 +203,7 @@ export class ChatObjectService {
       query: {
         name: name,
       },
-      errors: {
-        400: `Bad Request`,
-        401: `Unauthorized`,
-        403: `Forbidden`,
-        404: `Not Found`,
-        500: `Server Error`,
-        501: `Server Error`,
-      },
+      
     });
   }
 
@@ -258,14 +223,7 @@ export class ChatObjectService {
       query: {
         name: name,
       },
-      errors: {
-        400: `Bad Request`,
-        401: `Unauthorized`,
-        403: `Forbidden`,
-        404: `Not Found`,
-        500: `Server Error`,
-        501: `Server Error`,
-      },
+      
     });
   }
 
@@ -287,14 +245,7 @@ export class ChatObjectService {
       url: '/api/chat/chat-object/delete-many',
       body: requestBody,
       mediaType: 'application/json',
-      errors: {
-        400: `Bad Request`,
-        401: `Unauthorized`,
-        403: `Forbidden`,
-        404: `Not Found`,
-        500: `Server Error`,
-        501: `Server Error`,
-      },
+      
     });
   }
 
@@ -317,14 +268,7 @@ export class ChatObjectService {
       path: {
         id: id,
       },
-      errors: {
-        400: `Bad Request`,
-        401: `Unauthorized`,
-        403: `Forbidden`,
-        404: `Not Found`,
-        500: `Server Error`,
-        501: `Server Error`,
-      },
+      
     });
   }
 
@@ -362,14 +306,7 @@ export class ChatObjectService {
         SkipCount: skipCount,
         MaxResultCount: maxResultCount,
       },
-      errors: {
-        400: `Bad Request`,
-        401: `Unauthorized`,
-        403: `Forbidden`,
-        404: `Not Found`,
-        500: `Server Error`,
-        501: `Server Error`,
-      },
+      
     });
   }
 
@@ -389,14 +326,7 @@ export class ChatObjectService {
       query: {
         code: code,
       },
-      errors: {
-        400: `Bad Request`,
-        401: `Unauthorized`,
-        403: `Forbidden`,
-        404: `Not Found`,
-        500: `Server Error`,
-        501: `Server Error`,
-      },
+      
     });
   }
 
@@ -419,14 +349,7 @@ export class ChatObjectService {
       path: {
         id: id,
       },
-      errors: {
-        400: `Bad Request`,
-        401: `Unauthorized`,
-        403: `Forbidden`,
-        404: `Not Found`,
-        500: `Server Error`,
-        501: `Server Error`,
-      },
+      
     });
   }
 
@@ -449,14 +372,7 @@ export class ChatObjectService {
       path: {
         id: id,
       },
-      errors: {
-        400: `Bad Request`,
-        401: `Unauthorized`,
-        403: `Forbidden`,
-        404: `Not Found`,
-        500: `Server Error`,
-        501: `Server Error`,
-      },
+      
     });
   }
 
@@ -497,14 +413,7 @@ export class ChatObjectService {
         SkipCount: skipCount,
         Sorting: sorting,
       },
-      errors: {
-        400: `Bad Request`,
-        401: `Unauthorized`,
-        403: `Forbidden`,
-        404: `Not Found`,
-        500: `Server Error`,
-        501: `Server Error`,
-      },
+      
     });
   }
 
@@ -553,14 +462,7 @@ export class ChatObjectService {
         SkipCount: skipCount,
         Sorting: sorting,
       },
-      errors: {
-        400: `Bad Request`,
-        401: `Unauthorized`,
-        403: `Forbidden`,
-        404: `Not Found`,
-        500: `Server Error`,
-        501: `Server Error`,
-      },
+      
     });
   }
 
@@ -583,14 +485,7 @@ export class ChatObjectService {
       query: {
         idList: idList,
       },
-      errors: {
-        400: `Bad Request`,
-        401: `Unauthorized`,
-        403: `Forbidden`,
-        404: `Not Found`,
-        500: `Server Error`,
-        501: `Server Error`,
-      },
+      
     });
   }
 
@@ -613,14 +508,7 @@ export class ChatObjectService {
       query: {
         idList: idList,
       },
-      errors: {
-        400: `Bad Request`,
-        401: `Unauthorized`,
-        403: `Forbidden`,
-        404: `Not Found`,
-        500: `Server Error`,
-        501: `Server Error`,
-      },
+      
     });
   }
 
@@ -649,14 +537,7 @@ export class ChatObjectService {
         maxResultCount: maxResultCount,
         skinCount: skinCount,
       },
-      errors: {
-        400: `Bad Request`,
-        401: `Unauthorized`,
-        403: `Forbidden`,
-        404: `Not Found`,
-        500: `Server Error`,
-        501: `Server Error`,
-      },
+      
     });
   }
 
@@ -687,14 +568,7 @@ export class ChatObjectService {
       query: {
         verificationMethod: verificationMethod,
       },
-      errors: {
-        400: `Bad Request`,
-        401: `Unauthorized`,
-        403: `Forbidden`,
-        404: `Not Found`,
-        500: `Server Error`,
-        501: `Server Error`,
-      },
+      
     });
   }
 
@@ -721,14 +595,7 @@ export class ChatObjectService {
       },
       body: requestBody,
       mediaType: 'application/json',
-      errors: {
-        400: `Bad Request`,
-        401: `Unauthorized`,
-        403: `Forbidden`,
-        404: `Not Found`,
-        500: `Server Error`,
-        501: `Server Error`,
-      },
+      
     });
   }
 
@@ -756,14 +623,7 @@ export class ChatObjectService {
       query: {
         name: name,
       },
-      errors: {
-        400: `Bad Request`,
-        401: `Unauthorized`,
-        403: `Forbidden`,
-        404: `Not Found`,
-        500: `Server Error`,
-        501: `Server Error`,
-      },
+      
     });
   }
 
@@ -792,14 +652,7 @@ export class ChatObjectService {
       },
       formData: formData,
       mediaType: 'multipart/form-data',
-      errors: {
-        400: `Bad Request`,
-        401: `Unauthorized`,
-        403: `Forbidden`,
-        404: `Not Found`,
-        500: `Server Error`,
-        501: `Server Error`,
-      },
+      
     });
   }
 }

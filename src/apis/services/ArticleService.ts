@@ -28,14 +28,7 @@ export class ArticleService {
       url: '/api/chat/article',
       body: requestBody,
       mediaType: 'application/json',
-      errors: {
-        400: `Bad Request`,
-        401: `Unauthorized`,
-        403: `Forbidden`,
-        404: `Not Found`,
-        500: `Server Error`,
-        501: `Server Error`,
-      },
+      
     });
   }
 
@@ -109,14 +102,7 @@ export class ArticleService {
         SkipCount: skipCount,
         Sorting: sorting,
       },
-      errors: {
-        400: `Bad Request`,
-        401: `Unauthorized`,
-        403: `Forbidden`,
-        404: `Not Found`,
-        500: `Server Error`,
-        501: `Server Error`,
-      },
+      
     });
   }
 
@@ -139,14 +125,7 @@ export class ArticleService {
       path: {
         id: id,
       },
-      errors: {
-        400: `Bad Request`,
-        401: `Unauthorized`,
-        403: `Forbidden`,
-        404: `Not Found`,
-        500: `Server Error`,
-        501: `Server Error`,
-      },
+      
     });
   }
 
@@ -168,14 +147,7 @@ export class ArticleService {
       url: '/api/chat/article/delete-many',
       body: requestBody,
       mediaType: 'application/json',
-      errors: {
-        400: `Bad Request`,
-        401: `Unauthorized`,
-        403: `Forbidden`,
-        404: `Not Found`,
-        500: `Server Error`,
-        501: `Server Error`,
-      },
+      
     });
   }
 
@@ -198,14 +170,7 @@ export class ArticleService {
       path: {
         id: id,
       },
-      errors: {
-        400: `Bad Request`,
-        401: `Unauthorized`,
-        403: `Forbidden`,
-        404: `Not Found`,
-        500: `Server Error`,
-        501: `Server Error`,
-      },
+      
     });
   }
 
@@ -228,14 +193,7 @@ export class ArticleService {
       query: {
         idList: idList,
       },
-      errors: {
-        400: `Bad Request`,
-        401: `Unauthorized`,
-        403: `Forbidden`,
-        404: `Not Found`,
-        500: `Server Error`,
-        501: `Server Error`,
-      },
+      
     });
   }
 
@@ -262,14 +220,7 @@ export class ArticleService {
       },
       body: requestBody,
       mediaType: 'application/json',
-      errors: {
-        400: `Bad Request`,
-        401: `Unauthorized`,
-        403: `Forbidden`,
-        404: `Not Found`,
-        500: `Server Error`,
-        501: `Server Error`,
-      },
+      
     });
   }
 }

@@ -28,14 +28,7 @@ export class SettingService {
       path: {
         sessionUnitId: sessionUnitId,
       },
-      errors: {
-        400: `Bad Request`,
-        401: `Unauthorized`,
-        403: `Forbidden`,
-        404: `Not Found`,
-        500: `Server Error`,
-        501: `Server Error`,
-      },
+      
     });
   }
 
@@ -64,14 +57,7 @@ export class SettingService {
         sessionUnitId: sessionUnitId,
         messageId: messageId,
       },
-      errors: {
-        400: `Bad Request`,
-        401: `Unauthorized`,
-        403: `Forbidden`,
-        404: `Not Found`,
-        500: `Server Error`,
-        501: `Server Error`,
-      },
+      
     });
   }
 
@@ -94,14 +80,7 @@ export class SettingService {
       path: {
         sessionUnitId: sessionUnitId,
       },
-      errors: {
-        400: `Bad Request`,
-        401: `Unauthorized`,
-        403: `Forbidden`,
-        404: `Not Found`,
-        500: `Server Error`,
-        501: `Server Error`,
-      },
+      
     });
   }
 
@@ -124,14 +103,7 @@ export class SettingService {
       path: {
         sessionUnitId: sessionUnitId,
       },
-      errors: {
-        400: `Bad Request`,
-        401: `Unauthorized`,
-        403: `Forbidden`,
-        404: `Not Found`,
-        500: `Server Error`,
-        501: `Server Error`,
-      },
+      
     });
   }
 
@@ -154,14 +126,7 @@ export class SettingService {
       path: {
         sessionUnitId: sessionUnitId,
       },
-      errors: {
-        400: `Bad Request`,
-        401: `Unauthorized`,
-        403: `Forbidden`,
-        404: `Not Found`,
-        500: `Server Error`,
-        501: `Server Error`,
-      },
+      
     });
   }
 
@@ -191,14 +156,7 @@ export class SettingService {
       },
       body: requestBody,
       mediaType: 'application/json',
-      errors: {
-        400: `Bad Request`,
-        401: `Unauthorized`,
-        403: `Forbidden`,
-        404: `Not Found`,
-        500: `Server Error`,
-        501: `Server Error`,
-      },
+      
     });
   }
 
@@ -226,14 +184,7 @@ export class SettingService {
       query: {
         isImmersed: isImmersed,
       },
-      errors: {
-        400: `Bad Request`,
-        401: `Unauthorized`,
-        403: `Forbidden`,
-        404: `Not Found`,
-        500: `Server Error`,
-        501: `Server Error`,
-      },
+      
     });
   }
 
@@ -318,14 +269,7 @@ export class SettingService {
       query: {
         memberName: memberName,
       },
-      errors: {
-        400: `Bad Request`,
-        401: `Unauthorized`,
-        403: `Forbidden`,
-        404: `Not Found`,
-        500: `Server Error`,
-        501: `Server Error`,
-      },
+      
     });
   }
 
@@ -360,14 +304,7 @@ export class SettingService {
         setterSessionUnitId: setterSessionUnitId,
         seconds: seconds,
       },
-      errors: {
-        400: `Bad Request`,
-        401: `Unauthorized`,
-        403: `Forbidden`,
-        404: `Not Found`,
-        500: `Server Error`,
-        501: `Server Error`,
-      },
+      
     });
   }
 
@@ -402,14 +339,7 @@ export class SettingService {
         isForce: isForce,
         messageId: messageId,
       },
-      errors: {
-        400: `Bad Request`,
-        401: `Unauthorized`,
-        403: `Forbidden`,
-        404: `Not Found`,
-        500: `Server Error`,
-        501: `Server Error`,
-      },
+      
     });
   }
 
@@ -440,14 +370,7 @@ export class SettingService {
       query: {
         rename: rename,
       },
-      errors: {
-        400: `Bad Request`,
-        401: `Unauthorized`,
-        403: `Forbidden`,
-        404: `Not Found`,
-        500: `Server Error`,
-        501: `Server Error`,
-      },
+      
     });
   }
 
@@ -478,14 +401,7 @@ export class SettingService {
       query: {
         isTopping: isTopping,
       },
-      errors: {
-        400: `Bad Request`,
-        401: `Unauthorized`,
-        403: `Forbidden`,
-        404: `Not Found`,
-        500: `Server Error`,
-        501: `Server Error`,
-      },
+      
     });
   }
 }
