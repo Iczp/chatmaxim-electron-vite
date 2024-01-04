@@ -18,7 +18,7 @@ import { globalState, isAuthorized } from '../global';
 import { loadUrl } from './loadUrl';
 
 import { icon, preload } from '../global';
-import { createSettingWindow } from './createSettingWindow';
+import { appSettingWindowName, createAppSettingsWindow } from './openAppSettingsWindowHandle';
 
 process.env.DIST_ELECTRON = join(__dirname, '..');
 process.env.DIST = join(process.env.DIST_ELECTRON, '../dist');
@@ -113,7 +113,11 @@ export const createTray = () => {
       click(menuItem: MenuItem, browserWindow: BrowserWindow | undefined, event: KeyboardEvent) {
         console.log('', menuItem);
 
-        createSettingWindow();
+        createAppSettingsWindow({
+          name: appSettingWindowName,
+          path: '/app-settings',
+          visiblity: true,
+        });
         // setTimeout(() => {
         //   tray.displayBalloon(<Electron.DisplayBalloonOptions>{
         //     icon: trayIconUrl,
@@ -129,22 +133,18 @@ export const createTray = () => {
       label: '关于',
       type: 'normal',
       click(menuItem, browserWindow, event) {
-        app.setAboutPanelOptions({
-          applicationName: app.getName(),
-          applicationVersion: 'sss',
-          copyright: 'copyright',
-          version: '0.225',
-          website: 'http://www.chatmaxim.com',
-          authors: ['chatmaxim', 'iczpnet'],
+        createAppSettingsWindow({
+          name: appSettingWindowName,
+          path: '/app-settings/about',
+          visiblity: true,
         });
-        app.showAboutPanel();
       },
     },
     {
       type: 'separator',
     },
     {
-      label: '退出数字日春',
+      label: `退出${productName}`,
       type: 'normal',
       click(menuItem, browserWindow, event) {
         // stopFlash();

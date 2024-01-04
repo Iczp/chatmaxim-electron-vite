@@ -8,7 +8,7 @@ const router = useRouter();
 const navItems = ref(Array.from(appSettingsChildren));
 const { version } = useAppInfo();
 const onTabClick = (item: any, index: number) => {
-  console.log(item, index);
+  // console.log(item, index);
   router.push({ name: item.name });
 };
 </script>
@@ -31,7 +31,7 @@ const onTabClick = (item: any, index: number) => {
       </scroll-view>
     </aside>
     <page-content class="page-content">
-      <!-- <page-title></page-title> -->
+      <!-- <ToolBar /> -->
       <router-view v-slot="{ Component, route }">
         <keep-alive>
           <component :is="Component" :key="route.path" />
@@ -42,9 +42,15 @@ const onTabClick = (item: any, index: number) => {
 </template>
 
 <style scoped>
-:deep(.page-title) {
-  height: 48px;
+:deep(.tool-bar) {
+  position: fixed;
 }
+
+.divider {
+  font-size: 12px;
+  color: #999;
+}
+
 .app-setting-page {
   user-select: none;
   display: flex;
@@ -80,6 +86,7 @@ const onTabClick = (item: any, index: number) => {
   /* height: 100%; */
   box-sizing: border-box;
   margin-top: 50px;
+  -webkit-app-region: drag;
 }
 .tab-item {
   display: flex;
@@ -87,7 +94,8 @@ const onTabClick = (item: any, index: number) => {
   align-items: center;
   height: 44px;
   position: relative;
-
+  transition: all 0.3s linear;
+  -webkit-app-region: no-drag;
   /* color: rgb(159, 100, 100); */
 }
 .tab-item.active {

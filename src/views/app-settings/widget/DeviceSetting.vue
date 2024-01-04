@@ -4,6 +4,7 @@ import { ContentCopy } from '../../../icons';
 import { useClipboard } from '@vueuse/core';
 import { message } from 'ant-design-vue';
 import { useWindowStore } from '../../../stores/window';
+import { useAppInfo } from '../../../commons/useAppInfo';
 const labelCol = { style: { width: '100px' } };
 const wrapperCol = { span: 14 };
 const windowStore = useWindowStore();
@@ -13,13 +14,17 @@ const { copy, isSupported } = useClipboard();
 const platform = ref(process.platform);
 // console.log('process', process);
 
-const copyContent = () => {
-  let contentText = machineId.value || '';
+const copyContent = (contentText: string | undefined) => {
+  // let contentText = machineId.value || '';
+  if (!contentText) {
+    return;
+  }
   copy(contentText).then(v => {
     message.success({ content: '复制成功!', duration: 2 });
   });
 };
 const title = ref('');
+const { appId, appName, author, websize, version, copyright } = useAppInfo();
 </script>
 
 <template>
@@ -27,20 +32,41 @@ const title = ref('');
     <page-title :title="title"></page-title>
     <page-content>
       <scroll-view>
-        <a-form :label-col="labelCol" layout="horizontal" :wrapper-col="wrapperCol">
-          <a-divider orientation="left">Device</a-divider>
-          <!-- <a-divider dashed >aa</a-divider> -->
-          <a-form-item label="MachineId">
-            <!-- <a-input v-model:value="machineId" /> -->
-            <a-input v-model:value="machineId" :read-only="true" readonly>
+        <a-form class="form" :label-col="labelCol" layout="horizontal" :wrapper-col="wrapperCol">
+          <a-divider class="divider" orientation="left">Device</a-divider>
+          <a-form-item label="AppId">
+            <a-input v-model:value="appId" readonly>
               <template #addonAfter>
-                <div @click="copyContent"><ContentCopy class="svg-icon-14" /></div>
+                <div @click="copyContent(appId)"><ContentCopy class="svg-icon-14" /></div>
+              </template>
+            </a-input>
+          </a-form-item>
+          <a-form-item label="MachineId">
+            <a-input v-model:value="machineId" readonly>
+              <template #addonAfter>
+                <div @click="copyContent(machineId)"><ContentCopy class="svg-icon-14" /></div>
+              </template>
+            </a-input>
+          </a-form-item>
+
+          <a-divider class="divider" orientation="left">Author</a-divider>
+
+          <a-form-item label="Websize">
+            <a-input v-model:value="websize" readonly>
+              <template #addonAfter>
+                <div @click="copyContent(websize)"><ContentCopy class="svg-icon-14" /></div>
               </template>
             </a-input>
           </a-form-item>
 
           <a-form-item label="Platform">
             <div>{{ platform }}</div>
+          </a-form-item>
+          <a-form-item label="Author">
+            <div>{{ author }}</div>
+          </a-form-item>
+          <a-form-item label="Copyright">
+            <div>{{ copyright }}</div>
           </a-form-item>
         </a-form>
       </scroll-view>
@@ -49,9 +75,15 @@ const title = ref('');
 </template>
 
 <style scoped>
-.ps {
-  height: 100%;
+.form {
+  padding: 0;
 }
+
+.divider {
+  font-size: 12px;
+  color: #999;
+}
+
 :deep(.ant-descriptions-small .ant-descriptions-row > td) {
   padding: 2px 0;
 }

@@ -21,6 +21,7 @@ import { BadgeDto } from '../apis/dtos';
 import { useChatObjectList } from '../commons/useChatObjectList';
 import { useWebsocket } from '../commons/useWebsocket';
 import { setWindow } from '../commons/setWindow';
+import { openAppSettings } from '../commons/openAppSettings';
 
 const route = useRoute();
 const { connectionText, connectionState, retryCount } = useWebsocket();
@@ -56,8 +57,8 @@ const isNavActive = (pattern: string | RegExp, flags?: string | undefined): bool
   return reg.test(router.currentRoute.value.path);
 };
 
-const gotoSetting = () => {
-  setWindow({
+const gotoAppSettings = () => {
+  openAppSettings({
     name: 'app-settings',
     path: `/app-settings`,
     visiblity: true,
@@ -87,11 +88,9 @@ const getKey = (route: RouteLocationNormalizedLoaded): string | string[] => {
             class="nav-item"
             v-for="(item, index) in badgeItems"
             :key="index"
-            @click="navToChatHitory(item)"
             :title="item.owner?.name"
-            :class="{
-              active: isChatActive(item.chatObjectId!),
-            }"
+            :class="{active: isChatActive(item.chatObjectId!)}"
+            @click="navToChatHitory(item)"
           >
             <a-badge :count="item.badge">
               <MessageOutlined />
@@ -115,16 +114,14 @@ const getKey = (route: RouteLocationNormalizedLoaded): string | string[] => {
         </div>
 
         <div class="side-bottom">
-          <div class="nav-item" @click="gotoSetting()">
-            <!-- <router-link to="/app-settings"> -->
-            <a-badge color="red" count="5">
-              <SettingOutlined />
-            </a-badge>
-            <!-- </router-link> -->
-          </div>
           <div class="nav-item" title="用户" @click="goto('/user')">
             <a-badge :dot="true">
               <UserOutlined />
+            </a-badge>
+          </div>
+          <div class="nav-item" @click="gotoAppSettings()">
+            <a-badge color="red" count="0">
+              <SettingOutlined />
             </a-badge>
           </div>
         </div>

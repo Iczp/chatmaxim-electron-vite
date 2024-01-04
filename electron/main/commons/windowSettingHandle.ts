@@ -13,7 +13,7 @@ export const windowSettingHandle = (_: Electron.IpcMainInvokeEvent, params: Wind
     if (params.name) {
       targetWindow = windowManager.get(params.name);
       if (!targetWindow) {
-        reject({ message: `未找到窗口:${params.name}` });
+        reject({ message: `No such window name:${params.name}` });
       }
     } else {
       targetWindow = BrowserWindow.fromWebContents(webContents.fromId(_.sender.id));

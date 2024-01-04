@@ -22,7 +22,7 @@ const formState: UnwrapRef<FormState> = reactive({
 const onSubmit = () => {
   console.log('submit!', toRaw(formState));
 };
-const labelCol = { style: { width: '150px' } };
+const labelCol = { style: { width: '100px' } };
 const wrapperCol = { span: 14 };
 
 const versions = ref(process.versions);
@@ -49,6 +49,7 @@ const title = ref('');
     <page-content>
       <scroll-view class="scroll-view">
         <!-- {{ versions }} -->
+        <a-divider class="divider" orientation="left">App</a-divider>
         <a-descriptions
           class="descriptions"
           :title="`${appName} v${version}`"
@@ -79,6 +80,10 @@ const title = ref('');
 <style scoped>
 .scroll-view {
   padding: 0;
+}
+.divider {
+  font-size: 12px;
+  color: #999;
 }
 .descriptions {
   padding: 0 24px;

@@ -33,6 +33,7 @@ import { setTrayHandle } from './commons/setTrayHandle';
 import setAppProtocol from './commons/setAppProtocol';
 import { setAuthorizehandle } from './commons/setAuthorizehandle';
 import { createLoginWindow } from './commons/createLoginWindow';
+import { openAppSettingsWindowHandle } from './commons/openAppSettingsWindowHandle';
 const url_scheme = import.meta.env.VITE_APP_URL_SCHEME;
 setAppProtocol(url_scheme);
 
@@ -119,6 +120,7 @@ const handleUrl = (url: string) => {
 
 ipcMain.handle('open-child', openChildWindowHandle);
 ipcMain.handle('open-pop', openPopWindowHandle);
+ipcMain.handle('open-app-settings', openAppSettingsWindowHandle);
 ipcMain.handle('win-setting', windowSettingHandle);
 ipcMain.handle('websocket', websocketHandle);
 ipcMain.handle('set-tray', setTrayHandle);

@@ -10,7 +10,7 @@ interface FormState {
   clientSecret: string;
 }
 const formState: UnwrapRef<FormState> = reactive({
-  server: import.meta.url,
+  server: import.meta.env.VITE_APP_BASEURL,
   authHost: import.meta.env.VITE_APP_AUTH_HOST,
   clientId: import.meta.env.VITE_APP_CLIENT_ID,
   clientSecret: import.meta.env.VITE_APP_CLIENT_SECRET,
@@ -19,10 +19,10 @@ const onSubmit = () => {
   console.log('submit!', toRaw(formState));
 };
 const labelCol = { style: { width: '100px' } };
-const wrapperCol = { span: 14 };
+const wrapperCol = { span: 16 };
 
 const { appId, appName, author, websize, version, copyright } = useAppInfo();
-const title = ref('')
+const title = ref('');
 </script>
 
 <template>
@@ -30,8 +30,14 @@ const title = ref('')
     <page-title :title="title"></page-title>
     <page-content>
       <scroll-view>
-        <a-form :model="formState" :label-col="labelCol" :wrapper-col="wrapperCol">
-          <a-divider orientation="left">server</a-divider>
+        <a-form
+          class="form"
+          layout="horizontal"
+          :model="formState"
+          :label-col="labelCol"
+          :wrapper-col="wrapperCol"
+        >
+          <a-divider class="divider" orientation="left">Server</a-divider>
           <!-- <a-divider dashed >aa</a-divider> -->
           <a-form-item label="服务器地址">
             <a-input v-model:value="formState.server" />
@@ -40,7 +46,7 @@ const title = ref('')
           <a-form-item label="授权地址">
             <a-input v-model:value="formState.authHost" />
           </a-form-item>
-          <a-divider orientation="left">client</a-divider>
+          <a-divider class="divider" orientation="left">Client</a-divider>
           <a-form-item label="client_id">
             <a-input v-model:value="formState.clientId" />
           </a-form-item>
@@ -54,4 +60,12 @@ const title = ref('')
   </page>
 </template>
 
-<style scoped></style>
+<style scoped>
+.form {
+  padding: 0 ;
+}
+.divider {
+  font-size: 12px;
+  color: #999;
+}
+</style>

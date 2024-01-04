@@ -1,14 +1,28 @@
 import { BrowserWindow } from 'electron';
 import { initWindowEvent } from './initWindowEvent';
-import { preventClose } from './windowSettingHandle';
+import { preventClose, setWindow } from './windowSettingHandle';
 import { icon, preload } from '../global';
 import { windowManager } from './windowManager';
+import { WindowParams } from '../ipc-types';
 
-export const createSettingWindow = () => {
-  const winName = 'app-settings';
-  let win = windowManager.get(winName);
+export const appSettingWindowName = 'app-settings';
+
+export const openAppSettingsWindowHandle = (
+  _: Electron.IpcMainInvokeEvent,
+  window: WindowParams,
+): any => {
+  return new Promise((resolve, reject) => {
+    console.log('openAppSettingsWindowHandle', { window });
+    createAppSettingsWindow(window);
+    resolve({});
+  });
+};
+
+export const createAppSettingsWindow = (window: WindowParams, _?: Electron.IpcMainInvokeEvent) => {
+  let win = windowManager.get(appSettingWindowName);
   if (win) {
-    win.show();
+    console.log('createAppSettingsWindow setWindow', window);
+    setWindow(win, window, _);
     return win;
   }
   win = new BrowserWindow({
@@ -38,7 +52,7 @@ export const createSettingWindow = () => {
   });
   win.on('close', () => win.setSkipTaskbar(true));
   win.on('show', () => win.setSkipTaskbar(false));
-  initWindowEvent(win, winName, '/app-settings');
+  initWindowEvent(win, appSettingWindowName, window.path);
   preventClose(win, true);
   return win;
 };

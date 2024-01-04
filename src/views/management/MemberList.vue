@@ -7,13 +7,18 @@ import { Ref, reactive, ref } from 'vue';
 
 <template>
   <page>
-    <page-title
-      title="Settings"
-      description="Lorem Ipsum is simply dummy text of the printing and typesetting industry."
-    />
+    <page-title title="Memeber Manager" description="managermemt" />
 
     <page-content>
-      <scroll-view>dfasfsadfasdf</scroll-view>
+      <a-page-header
+        style="border: 1px solid rgb(235, 237, 240)"
+        title="Title"
+        sub-title="This is a subtitle"
+      
+      />
+      <scroll-view>
+        <RouterLink to="/">返回主页</RouterLink>
+      </scroll-view>
     </page-content>
   </page>
 </template>

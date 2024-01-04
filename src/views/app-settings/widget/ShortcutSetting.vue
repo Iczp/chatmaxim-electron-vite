@@ -37,11 +37,14 @@ const title = ref('');
     <page-content>
       <scroll-view>
         <a-form
+          class="form"
           layout="horizontal"
           :model="formState"
           :label-col="labelCol"
           :wrapper-col="wrapperCol"
         >
+
+        <a-divider class="divider" orientation="left">Global</a-divider>
           <a-form-item label="提取消息">
             <a-input v-model:value="formState.fetchMessage" />
           </a-form-item>
@@ -52,26 +55,32 @@ const title = ref('');
 
           <a-form-item label="创建群">
             <a-input v-model:value="value2">
-            <template #addonBefore>
-              <a-select v-model:value="value3" style="width: 80px">
-                <a-select-option value="Ctrl">Ctrl</a-select-option>
-                <a-select-option value="Alt">Alt</a-select-option>
-              </a-select>
-            </template>
-            <template #addonAfter>
-              <a-select v-model:value="value4" style="width: 60px">
-                <a-select-option value="D">D</a-select-option>
-                <a-select-option value="N">N</a-select-option>
-              </a-select>
-            </template>
-          </a-input>
+              <template #addonBefore>
+                <a-select v-model:value="value3" style="width: 80px">
+                  <a-select-option value="Ctrl">Ctrl</a-select-option>
+                  <a-select-option value="Alt">Alt</a-select-option>
+                </a-select>
+              </template>
+              <template #addonAfter>
+                <a-select v-model:value="value4" style="width: 60px">
+                  <a-select-option value="D">D</a-select-option>
+                  <a-select-option value="N">N</a-select-option>
+                </a-select>
+              </template>
+            </a-input>
           </a-form-item>
-
-          
         </a-form>
       </scroll-view>
     </page-content>
   </page>
 </template>
 
-<style scoped></style>
+<style scoped>
+.form {
+  padding: 0 ;
+}
+.divider {
+  font-size: 12px;
+  color: #999;
+}
+</style>
