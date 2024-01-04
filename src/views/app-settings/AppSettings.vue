@@ -33,15 +33,30 @@ const onTabClick = (item: any, index: number) => {
     <page-content class="page-content">
       <!-- <ToolBar /> -->
       <router-view v-slot="{ Component, route }">
-        <keep-alive>
-          <component :is="Component" :key="route.path" />
-        </keep-alive>
+        <transition name="fade">
+          <keep-alive>
+            <component :is="Component" :key="route.path" />
+          </keep-alive>
+        </transition>
       </router-view>
     </page-content>
   </page>
 </template>
 
 <style scoped>
+
+.fade-enter-active{
+  transition: all 0.3s;
+}
+.fade-leave-active {
+  /* transition: opacity 0.1s; */
+  opacity: 0;
+}
+.fade-enter-from,
+.fade-leave-to {
+  opacity: 0;
+}
+
 :deep(.tool-bar) {
   position: fixed;
 }
