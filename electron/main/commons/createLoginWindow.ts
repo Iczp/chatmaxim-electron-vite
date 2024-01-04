@@ -1,10 +1,18 @@
 import { BrowserWindow } from 'electron';
 import { initWindowEvent } from './initWindowEvent';
-import { preventClose } from './windowSettingHandle';
+import { preventClose, setWindow } from './windowSettingHandle';
 import { icon, preload } from '../global';
+import { windowManager } from './windowManager';
+import { WindowParams } from '../ipc-types';
 
-export const createLoginWindow = () => {
-  const win = new BrowserWindow({
+export const createLoginWindow = (window: WindowParams, _?: Electron.IpcMainInvokeEvent) => {
+  let win = windowManager.getLogin();
+  if (win) {
+    console.log('createLoginWindow setWindow', window);
+    setWindow(win, window, _);
+    return win;
+  } 
+  win = new BrowserWindow({
     title: '登录',
     // minWidth: 1560,
     // minHeight: 800,

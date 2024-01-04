@@ -61,7 +61,6 @@ if (!app.requestSingleInstanceLock()) {
 // process.env['ELECTRON_DISABLE_SECURITY_WARNINGS'] = 'true'
 
 let win: BrowserWindow | null = null;
-let pop: BrowserWindow | null = null;
 // Here, you can also use other preload
 const preload = join(__dirname, '../preload/index.js');
 const url = process.env.VITE_DEV_SERVER_URL;
@@ -80,7 +79,7 @@ if (app.isPackaged) {
 }
 
 app.whenReady().then(() => {
-  createLoginWindow();
+  createLoginWindow({ path: 'login', visiblity: true });
   // win = createMainWindow();
   // pop = createPopWindow({});
 });
