@@ -23,7 +23,7 @@ const scrollTo = (args?: ScrollToArgs): void => {
     console.warn('el', el);
     return;
   }
-  console.log('scrollbarRef', el, scrollbarRef.value);
+  // console.log('scrollbarRef', el, scrollbarRef.value);
   const scrollTo = useScrollTo({
     el: ref(el),
     to: element.value?.scrollHeight || 0,

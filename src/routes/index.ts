@@ -16,14 +16,14 @@ export const router = createRouter({
   routes,
 });
 
-
 /** chatHistorys @type {*} */
 export const chatHistorys: {
   [key: string]: { chatObjectId: string; sessionUnitId: string; title: string };
 } = {};
 
-
 router.beforeEach((to, from) => {
+  // console.log('router.beforeEach', to.fullPath, from.fullPath);
+
   const store = useWindowStore();
   const currentWindowName = store.name;
 

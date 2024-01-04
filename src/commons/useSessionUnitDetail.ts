@@ -1,26 +1,30 @@
 //
 
-import { ComputedRef, computed, ref } from 'vue';
-import {
-  formatMessageTime,
-  getDestinationNameForSessionUnit,
-  getSenderNameForMessage,
-} from './utils';
-import { SessionUnitDetailDto, SessionUnitOwnerDto } from '../apis/dtos';
-import { MessageTypeEnums } from '../apis/enums';
-import { useImStore } from '../stores/im';
+import { onMounted, onUnmounted, ref } from 'vue';
+import { SessionUnitDetailDto } from '../apis/dtos';
 import { SessionUnitService } from '../apis';
 
 export const useSessionUnitDetail = ({ sessionUnitId }: { sessionUnitId: string }) => {
   const detail = ref<SessionUnitDetailDto | undefined>();
 
-  SessionUnitService.getApiChatSessionUnitDetail({ id: sessionUnitId })
-    .then(res => {
-      detail.value = res;
-    })
-    .catch(err => {
-      console.error(err);
-    });
+  const fetchDetail = () => {
+    SessionUnitService.getApiChatSessionUnitDetail({ id: sessionUnitId })
+      .then(res => {
+        detail.value = res;
+      })
+      .catch(err => {
+        console.error(err);
+      });
+  };
+  onMounted(() => {
+    console.warn('onMounted fetchDetail', sessionUnitId);
+    fetchDetail();
+  });
+
+  if (!detail.value) {
+  } else {
+    console.warn('detail is loaded', detail.value);
+  }
 
   return { detail };
 };

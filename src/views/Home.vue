@@ -66,10 +66,10 @@ const gotoAppSettings = () => {
   message.info({ content: '设置' });
 };
 
-const getKey = (route: RouteLocationNormalizedLoaded): string | string[] => {
+const getKey = (route: RouteLocationNormalizedLoaded, component: any): string | string[] => {
   const m = route.path.match(/^\/(chat|object)\/\d+/gi);
   const key = m != null ? m[0] : route.path;
-  // console.warn('key:', key);
+  // console.warn('key:', key, route, component);
   return key;
 };
 </script>
@@ -99,7 +99,7 @@ const getKey = (route: RouteLocationNormalizedLoaded): string | string[] => {
           <div class="nav-item" @click="goto('/about')">
             <CodepenCircleOutlined two-tone-color="#ff0000" />
           </div>
-          <div class="nav-item" @click="goto('/login')">
+          <div class="nav-item" @click="goto('/contacts/13')">
             <AndroidOutlined />
           </div>
           <div
@@ -129,17 +129,13 @@ const getKey = (route: RouteLocationNormalizedLoaded): string | string[] => {
       <!-- 路由出口 -->
       <!-- 路由匹配到的组件将渲染在这里 -->
       <div class="content-page">
+        <!-- <router-view ></router-view> -->
         <router-view v-slot="{ Component, route }">
-          <!-- <keep-alive v-if="route.path.startsWith('/chat')">
-            <component :is="Component" :key="route.params.chatObjectId" />
-          </keep-alive>
-          <keep-alive v-else>
-            <component :is="Component" :key="route.path" />
-          </keep-alive> -->
-
-          <keep-alive>
-            <component :is="Component" :key="getKey(route)" />
-          </keep-alive>
+          <transition>
+            <keep-alive>
+              <component :is="Component" :key="getKey(route, Component)" />
+            </keep-alive>
+          </transition>
         </router-view>
       </div>
     </div>
