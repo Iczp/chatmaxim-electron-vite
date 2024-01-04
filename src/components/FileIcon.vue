@@ -29,7 +29,7 @@ const className = computed(() => props.suffix?.replace('.', 'icon-').toLowerCase
   position: relative;
 }
 .suffix-icon::after {
-  /* content: ''; */
+  content: '?';
   position: absolute;
   top: 0;
   left: 0;

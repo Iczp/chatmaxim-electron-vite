@@ -131,11 +131,11 @@ const getKey = (route: RouteLocationNormalizedLoaded, component: any): string | 
       <div class="content-page">
         <!-- <router-view ></router-view> -->
         <router-view v-slot="{ Component, route }">
-          <transition>
+          <!-- <transition> -->
             <keep-alive>
               <component :is="Component" :key="getKey(route, Component)" />
             </keep-alive>
-          </transition>
+          <!-- </transition> -->
         </router-view>
       </div>
     </div>

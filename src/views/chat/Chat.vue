@@ -420,7 +420,8 @@ const dropHandle = (ev: DragEvent, { files, text }: { files?: any[]; text?: stri
           messageType: MessageTypeEnums.Text,
           content: { text },
         });
-      } else if (files?.length != 0) {
+      }
+      if (files?.length != 0) {
         files!.forEach(async file => {
           const suffix = `.${file.name.split('.').pop().toLowerCase()}`;
           switch (suffix) {
@@ -531,6 +532,7 @@ const { vDrop } = useDrop();
 <style scoped>
 :deep(.page-title) {
   height: 64px;
+  border-bottom: 1px solid rgba(213, 213, 213, 0.596);
 }
 :deep(.page-title-left) {
   padding: 0 20px;
