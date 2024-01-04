@@ -1,10 +1,19 @@
 import { BrowserWindow } from 'electron';
 import { initWindowEvent } from './initWindowEvent';
-import { preventClose } from './windowSettingHandle';
+import { preventClose, setWindow } from './windowSettingHandle';
 import { icon, preload } from '../global';
+import { windowManager } from './windowManager';
+import { WindowParams } from '../ipc-types';
 
-export const createMainWindow = ({ path = '/' }: { path: string }) => {
-  const win = new BrowserWindow({
+export const createMainWindow = (window: WindowParams, _?: Electron.IpcMainInvokeEvent) => {
+
+  let win = windowManager.getMain();
+  if (win) {
+    console.log('createMainWindow setWindow', window);
+    setWindow(win, window, _);
+    return win;
+  }
+   win = new BrowserWindow({
     title: 'Main window',
     // minWidth: 1560,
     // minHeight: 800,
@@ -26,7 +35,7 @@ export const createMainWindow = ({ path = '/' }: { path: string }) => {
   });
   win.on('close', () => win.setSkipTaskbar(true));
   win.on('show', () => win.setSkipTaskbar(false));
-  initWindowEvent(win, 'main', path);
+  initWindowEvent(win, 'main', window.path);
   preventClose(win, true);
   return win;
 };

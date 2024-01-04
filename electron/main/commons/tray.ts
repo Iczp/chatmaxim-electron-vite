@@ -13,12 +13,13 @@ import { windowManager } from './windowManager';
 import { BrowserWindow } from 'electron';
 import { join } from 'node:path';
 import { initWindowEvent, sendWindowInfo } from './initWindowEvent';
-import { preventClose } from './windowSettingHandle';
+import { preventClose, setWindow } from './windowSettingHandle';
 import { globalState, isAuthorized } from '../global';
 import { loadUrl } from './loadUrl';
 
 import { icon, preload } from '../global';
 import { appSettingWindowName, createAppSettingsWindow } from './openAppSettingsWindowHandle';
+import { WindowParams } from '../ipc-types';
 
 process.env.DIST_ELECTRON = join(__dirname, '..');
 process.env.DIST = join(process.env.DIST_ELECTRON, '../dist');
@@ -179,7 +180,13 @@ export const createTray = () => {
   tray.on('mouse-leave', trayHide);
 };
 
-export const createTrayWindow = ({ path = '/tray' }: { path?: string }) => {
+export const createTrayWindow = (window: WindowParams, _?: Electron.IpcMainInvokeEvent) => {
+  trayWindow = windowManager.getTray();
+  if (trayWindow) {
+    console.log('createTrayWindow setWindow', window);
+    setWindow(trayWindow, window, _);
+    return trayWindow;
+  }
   trayWindow = new BrowserWindow({
     title: 'Tray',
     // minWidth: 240,
@@ -209,7 +216,7 @@ export const createTrayWindow = ({ path = '/tray' }: { path?: string }) => {
     // transparent: true,
   });
   trayWindow.on('blur', () => trayWindow.hide());
-  initWindowEvent(trayWindow, 'tray', path);
+  initWindowEvent(trayWindow, 'tray', window.path);
   preventClose(trayWindow, true);
   return trayWindow;
 };

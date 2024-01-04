@@ -1,9 +1,8 @@
 import { BrowserWindow } from 'electron';
 import { WindowParams } from '../ipc-types';
-import { join } from 'node:path';
 import { addParamsToUrl } from './addParamsToUrl';
 import { windowManager } from './windowManager';
-import { initWindowEvent, sendWindowInfo } from './initWindowEvent';
+import { initWindowEvent } from './initWindowEvent';
 import { setWindow } from './windowSettingHandle';
 import { preventClose } from './windowSettingHandle';
 
@@ -32,8 +31,14 @@ export const openPopWindowHandle = (
   });
 };
 
-export const createPopWindow = ({ path = '/pop' }: { path?: string }) => {
-  const win = new BrowserWindow({
+export const createPopWindow = (window: WindowParams, _?: Electron.IpcMainInvokeEvent) => {
+  let win = windowManager.getPop();
+  if (win) {
+    console.log('createPopWindow setWindow', window);
+    setWindow(win, window, _);
+    return win;
+  }
+   win = new BrowserWindow({
     title: 'Pop window',
     // minWidth: 240,
     // minHeight: 240,
@@ -65,7 +70,7 @@ export const createPopWindow = ({ path = '/pop' }: { path?: string }) => {
       // win.hide();
     }
   });
-  initWindowEvent(win, 'pop', path);
+  initWindowEvent(win, 'pop', window.path);
   preventClose(win, true);
   return win;
 };

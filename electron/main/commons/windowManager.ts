@@ -1,6 +1,7 @@
 import { BrowserWindow } from 'electron';
 
 class WindowManger {
+ 
   public windows: Map<string, BrowserWindow> = new Map<string, BrowserWindow>();
   public windowsMap: Map<number, string> = new Map<number, string>();
   constructor() {}
@@ -34,6 +35,12 @@ class WindowManger {
   }
   getLogin(): BrowserWindow | undefined {
     return this.windows.get('login');
+  }
+  getPop() {
+    return this.windows.get('pop');
+  }
+  getTray() {
+    return this.windows.get('tray');
   }
   getWindows(): Map<string, BrowserWindow> {
     return this.windows;
