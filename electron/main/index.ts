@@ -33,6 +33,7 @@ import setAppProtocol from './commons/setAppProtocol';
 import { setAuthorizehandle } from './commons/setAuthorizehandle';
 import { createLoginWindow } from './commons/createLoginWindow';
 import { openAppSettingsWindowHandle } from './commons/openAppSettingsWindowHandle';
+import { env } from './env';
 
 setAppProtocol();
 
@@ -107,7 +108,7 @@ app.on('second-instance', (event, argv) => {
   }
 });
 const handleArgv = (argv: any[]) => {
-  const url = argv.find(x => x.startsWith(url_scheme));
+  const url = argv.find(x => x.startsWith(env.url_scheme));
   if (url) {
     handleUrl(url);
   }
