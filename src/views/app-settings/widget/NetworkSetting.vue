@@ -2,18 +2,19 @@
 import { useAppInfo } from '../../../commons/useAppInfo';
 import { reactive, ref, toRaw } from 'vue';
 import type { UnwrapRef } from 'vue';
+import { env } from '../../../env';
 
 interface FormState {
   server: string;
   authHost: string;
   clientId: string;
-  clientSecret: string;
+  clientSecret: string | undefined;
 }
 const formState: UnwrapRef<FormState> = reactive({
-  server: import.meta.env.VITE_APP_BASEURL,
-  authHost: import.meta.env.VITE_APP_AUTH_HOST,
-  clientId: import.meta.env.VITE_APP_CLIENT_ID,
-  clientSecret: import.meta.env.VITE_APP_CLIENT_SECRET,
+  server: env.base_url,
+  authHost: env.auth_host,
+  clientId: env.client_id,
+  clientSecret: env.client_secret,
 });
 const onSubmit = () => {
   console.log('submit!', toRaw(formState));
@@ -62,7 +63,7 @@ const title = ref('');
 
 <style scoped>
 .form {
-  padding: 0 ;
+  padding: 0;
 }
 .divider {
   font-size: 12px;

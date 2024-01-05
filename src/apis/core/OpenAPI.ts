@@ -9,6 +9,7 @@ import { useWindowStore } from '../../stores/window';
 type Resolver<T> = (options: ApiRequestOptions) => Promise<T>;
 type Headers = Record<string, string>;
 import { version } from '../../../package.json';
+import { env } from '../../env';
 
 export type OpenAPIConfig = {
   BASE: string;
@@ -24,8 +25,8 @@ export type OpenAPIConfig = {
 };
 
 export const OpenAPI: OpenAPIConfig = {
-  BASE: import.meta.env.VITE_APP_BASEURL,
-  AUTH_HOST: import.meta.env.VITE_APP_AUTH_HOST,
+  BASE: env.base_url,
+  AUTH_HOST: env.auth_host,
   VERSION: packageVersion,
   WITH_CREDENTIALS: false,
   CREDENTIALS: 'include',
@@ -33,7 +34,7 @@ export const OpenAPI: OpenAPIConfig = {
   USERNAME: undefined,
   PASSWORD: undefined,
   HEADERS: {
-    'app-id': import.meta.env.VITE_APP_ID,
+    'app-id': env.app_id,
     'app-version': version,
     'app-platform': process.platform,
   },

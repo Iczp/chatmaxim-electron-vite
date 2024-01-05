@@ -1,9 +1,10 @@
 import { app, dialog, protocol } from 'electron';
 import path from 'node:path';
+import { env } from '../env';
 
-const url_scheme = import.meta.env.VITE_APP_URL_SCHEME;
 
-export default function setAppProtocol(scheme: string = url_scheme) {
+
+export default function setAppProtocol(scheme: string = env.url_scheme) {
   if (process.env.VITE_DEV_SERVER_URL) {
     app.setAsDefaultProtocolClient(scheme, process.execPath, process.argv);
   } else {
@@ -32,7 +33,7 @@ export default function setAppProtocol(scheme: string = url_scheme) {
 }
 
 app.whenReady().then(() => {
-  protocol.handle(url_scheme, req => {
+  protocol.handle(env.url_scheme, req => {
 
     dialog.showErrorBox('protocol.handle chatmaxim', `req: ${req}`);
     

@@ -20,6 +20,7 @@ import { loadUrl } from './loadUrl';
 import { icon, preload } from '../global';
 import { appSettingWindowName, createAppSettingsWindow } from './openAppSettingsWindowHandle';
 import { WindowParams } from '../ipc-types';
+import { env } from '../env';
 
 process.env.DIST_ELECTRON = join(__dirname, '..');
 process.env.DIST = join(process.env.DIST_ELECTRON, '../dist');
@@ -75,7 +76,7 @@ app.whenReady().then(() => {
 
 const NOTIFICATION_TITLE = '日春茶业-桌面端';
 const NOTIFICATION_BODY = '你有新的消息---Iczp.Net';
-// app.setAppUserModelId(import.meta.env.VITE_APP_ID);
+// app.setAppUserModelId(env.app_id);
 function showNotification() {
   const notice = new Notification(<Electron.NotificationConstructorOptions>{
     title: app.getName(),
@@ -103,7 +104,7 @@ export const createTray = () => {
   // tray = new Tray('./static/logo.png')
   // tray.setImage()
 
-  const productName = import.meta.env.VITE_APP_NAME;
+  const productName = env.app_name;
   // const productName = app.getName();
   tray.setToolTip(`${productName}`);
   tray.setTitle(`${productName}`);

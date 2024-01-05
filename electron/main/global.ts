@@ -3,7 +3,8 @@ import { AppInfo, TrayPayload } from './ipc-types';
 import { join } from 'node:path';
 import { version } from '../../package.json';
 import Store from 'electron-store';
-export const TOKEN_KEY: string = import.meta.env.VITE_APP_TOKEN_KEY;
+import { env } from './env';
+export const TOKEN_KEY: string = env.token_key;
 
 export const preload = join(__dirname, '../preload/index.js');
 
@@ -44,12 +45,12 @@ export const globalState: GlobalState = {
     isOver: undefined,
   },
   appInfo: {
-    appName: app.getName(), //import.meta.env.VITE_APP_NAME,
+    appName: env.app_name, 
     appVersion: version,
-    copyright: import.meta.env.VITE_APP_COPYRIGHT,
+    copyright: env.copyright,
     version: version,
-    website: import.meta.env.VITE_APP_WEBSIZE,
-    author: import.meta.env.VITE_APP_AUTHOR,
+    website: env.websize,
+    author: env.author,
   },
   accelerator: {
     main: 'CommandOrControl+D',

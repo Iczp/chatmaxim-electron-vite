@@ -43,15 +43,22 @@ export default defineConfig(({ command }) => {
             if (process.env.VSCODE_DEBUG) {
               console.log(/* For `.vscode/.debug.script.mjs` */ '[startup] Electron App');
             } else {
-              import('tree-kill')
-                .then(({ default: kill }) => {
-                  console.warn('tree-kill', process.pid, process.electronApp);
-                  // kill(process.electronApp?.pid);
-                  // kill(process.pid);
-                })
-                .catch(err => {
-                  console.error('tree-kill', err);
-                });
+              // import('tree-kill')
+              //   .then(({ default: kill }) => {
+              //     console.warn('tree-kill', process.pid, process.electronApp);
+              //     if(process?.pid){
+              //       kill(process?.pid);
+              //       console.warn('tree-kill process.pid', process.pid);
+              //     }
+              //     if(process.electronApp?.pid){
+              //       kill(process.electronApp?.pid);
+              //       console.warn('tree-kill process.electronApp?.pid', process.electronApp?.pid);
+              //     }
+              //     // startup();
+              //   })
+              //   .catch(err => {
+              //     console.error('tree-kill', err);
+              //   });
               startup();
             }
           },

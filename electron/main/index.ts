@@ -24,18 +24,17 @@ import { windowSettingHandle } from './commons/windowSettingHandle';
 import { initMachine } from './commons/machine';
 
 import { websocketHandle } from './commons/webscoketHandle';
-import { globalState } from './global';
 import './commons/logger';
 import './commons/tray';
 import './commons/keyboardShortcuts';
-import { createPopWindow, openPopWindowHandle } from './commons/openPopWindowHandle';
+import { openPopWindowHandle } from './commons/openPopWindowHandle';
 import { setTrayHandle } from './commons/setTrayHandle';
 import setAppProtocol from './commons/setAppProtocol';
 import { setAuthorizehandle } from './commons/setAuthorizehandle';
 import { createLoginWindow } from './commons/createLoginWindow';
 import { openAppSettingsWindowHandle } from './commons/openAppSettingsWindowHandle';
-const url_scheme = import.meta.env.VITE_APP_URL_SCHEME;
-setAppProtocol(url_scheme);
+
+setAppProtocol();
 
 // import {Test} from '../../public/Test.ts'
 

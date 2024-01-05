@@ -9,6 +9,7 @@ import ChatObject from '../components/ChatObject.vue';
 import MessageProview from '../components/MessageProview.vue';
 import { useSessionUnit, useSessionUnitId } from '../commons/useSessionUnit';
 import { useImStore } from '../stores/im';
+import { env } from '../env';
 
 const props = defineProps<{
   title?: string;
@@ -50,6 +51,13 @@ const {
   displaySenderName,
 } = useSessionUnitId(props.entity?.id!);
 // const isTopping = computed(() => Number(props.entity?.sorting) > 0);
+
+const ondragstart = (event: DragEvent) => {
+  event.preventDefault()
+
+  event.dataTransfer?.setData('text',`${env.url_scheme}`)
+  console.log('ondragstart', event);
+};
 </script>
 
 <template>
@@ -57,6 +65,7 @@ const {
     :entity="destination"
     class="session-item"
     draggable="true"
+    @dragstart="ondragstart"
     :badge="badge"
     :dot="isImmersed"
     :class="{ active, flash }"
@@ -220,7 +229,7 @@ const {
   margin-right: 4px;
   /* font-size: 12px; */
 }
-.following{
+.following {
   display: inline-flex;
   align-items: center;
   color: white;
@@ -228,9 +237,8 @@ const {
   border-radius: 4px;
   padding: 2px 4px;
   margin-right: 4px;
-
 }
-.mute{
+.mute {
   color: #ccc;
 }
 .sub-right :deep(.ant-space-item) {

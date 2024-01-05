@@ -1,18 +1,18 @@
 import { ref } from 'vue';
 
 import pkg from '../../package.json';
+import { env } from '../env';
 
 export const useAppInfo = () => {
-    
-  const appId = ref(import.meta.env.VITE_APP_ID);
+  const appId = ref(env.app_id);
 
-  const appName = ref(import.meta.env.VITE_APP_NAME);
+  const appName = ref(env.app_name);
 
-  const author = ref(import.meta.env.VITE_APP_AUTHOR);
+  const author = ref(env.author);
 
-  const websize = ref(import.meta.env.VITE_APP_WEBSIZE);
+  const websize = ref(env.websize);
 
-  const copyright = ref(import.meta.env.VITE_APP_COPYRIGHT);
+  const copyright = ref(env.copyright);
 
   const version = ref(pkg.version);
 

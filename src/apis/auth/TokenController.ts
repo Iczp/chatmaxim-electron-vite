@@ -4,8 +4,9 @@ import { AxiosError } from 'axios';
 import { TokenService } from './TokenService';
 import { TokenDto, LoginResult, LoginInput } from './dto';
 import { GrantTypeEnum } from './dto/GrantTypeEnum';
+import { env } from '../../env';
 
-export const TOKEN_KEY: string = import.meta.env.VITE_APP_TOKEN_KEY;
+export const TOKEN_KEY: string = env.token_key;
 
 export const TOKEN_URL: string = '/connect/token';
 
@@ -39,8 +40,8 @@ export const isLogined = (): boolean => postToken() != null;
 export const login = ({ username, password }: LoginInput): Promise<LoginResult> => {
   return new Promise((resolve, reject) => {
     TokenService.fetchToken({
-      client_id: import.meta.env.VITE_APP_CLIENT_ID,
-      client_secret: import.meta.env.VITE_APP_CLIENT_SECRET,
+      client_id: env.client_id,
+      client_secret: env.client_secret,
       grant_type: GrantTypeEnum.Password,
       username,
       password,
@@ -88,8 +89,8 @@ export const handleToken = (token: TokenDto): TokenDto => {
  */
 export const refreshToken = async (token: TokenDto): Promise<TokenDto> => {
   var newToken = await TokenService.RefreshToken({
-    client_id: import.meta.env.VITE_APP_CLIENT_ID,
-    client_secret: import.meta.env.VITE_APP_CLIENT_SECRET,
+    client_id: env.client_id,
+    client_secret: env.client_secret,
     refresh_token: token.refresh_token,
     grant_type: GrantTypeEnum.Refresh_token,
   });
