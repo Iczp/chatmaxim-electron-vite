@@ -36,6 +36,7 @@ import { useDrop } from '../../commons/useDrop';
 import { useShortcutStore } from '../../stores/shortcut';
 import { FileContentDto } from '../../apis/dtos/message/FileContentDto';
 import { mapToFileContentDto, mapToImageContentDtoAsync } from '../../commons/utils';
+import { ChatObjectService } from '../../apis';
 
 const store = useImStore();
 
@@ -246,10 +247,12 @@ const sendMessageContent = async ({
   content,
   messageType,
   isClear,
+  file,
 }: {
   messageType: MessageTypeEnums;
   content: any;
   isClear: boolean;
+  file?: Blob | File | any;
 }) => {
   const _spliceItem = (autoId: number | undefined, arr: MessageDto[]) => {
     const findIndex = list.value?.findIndex(x => x.autoId == autoId);
@@ -265,6 +268,7 @@ const sendMessageContent = async ({
   isSendPending.value = true;
 
   sendMessage({
+    file,
     sessionUnitId,
     senderSessionUnit: detail.value,
     messageType,
@@ -306,13 +310,13 @@ const sendMessageContent = async ({
       list.value.push({
         ...input,
         state: MessageStateEnums.Error,
-        error: err.body.error?.message,
+        error: err.message,
       });
       // scroll.value?.scrollTo({ duration: 1500 });
       console.error('sendRet', err);
       message.error({
         key: 'vm-chat',
-        content: err.body.error?.message,
+        content: err.message,
       });
     },
     onAfter(input) {
@@ -402,7 +406,17 @@ const onReachEnd = (event: CustomEvent) => {
     return;
   }
 };
-
+const uploadFile = (file: Blob) => {
+  ChatObjectService.postApiChatChatObjectUpdatePortrait({
+    id: 13,
+    formData: {
+      file,
+    },
+    onUploadProgress(progressEvent) {
+      console.log('uploadFile onUploadProgress', progressEvent);
+    },
+  });
+};
 const dropHandle = (ev: DragEvent, { files, text }: { files?: any[]; text?: string }) => {
   console.log('dropHandle', ev, { files, text });
   if (!(Number(files?.length) > 0 || text)) {
@@ -432,6 +446,7 @@ const dropHandle = (ev: DragEvent, { files, text }: { files?: any[]; text?: stri
             case '.tiff':
               const content = await mapToImageContentDtoAsync(file);
               sendMessageContent({
+                file,
                 isClear: false,
                 messageType: MessageTypeEnums.Image,
                 content: content,
@@ -440,6 +455,7 @@ const dropHandle = (ev: DragEvent, { files, text }: { files?: any[]; text?: stri
 
             default:
               sendMessageContent({
+                file,
                 isClear: false,
                 messageType: MessageTypeEnums.File,
                 content: mapToFileContentDto(file),

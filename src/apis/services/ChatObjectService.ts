@@ -17,6 +17,7 @@ import { request as __request } from '../core/request';
 import { PagedResultDto } from '../dtos/PagedResultDto';
 import { ChatObjectTypeEnums } from '../enums';
 import { ChatObjectDto } from '../dtos';
+import { AxiosProgressEvent } from 'axios';
 
 export class ChatObjectService {
   /**
@@ -34,7 +35,6 @@ export class ChatObjectService {
       url: '/api/chat/chat-object',
       body: requestBody,
       mediaType: 'application/json',
-      
     });
   }
 
@@ -138,7 +138,6 @@ export class ChatObjectService {
         SkipCount: skipCount,
         Sorting: sorting,
       },
-      
     });
   }
 
@@ -158,7 +157,6 @@ export class ChatObjectService {
       query: {
         name: name,
       },
-      
     });
   }
 
@@ -178,7 +176,6 @@ export class ChatObjectService {
       query: {
         name: name,
       },
-      
     });
   }
 
@@ -203,7 +200,6 @@ export class ChatObjectService {
       query: {
         name: name,
       },
-      
     });
   }
 
@@ -223,7 +219,6 @@ export class ChatObjectService {
       query: {
         name: name,
       },
-      
     });
   }
 
@@ -245,7 +240,6 @@ export class ChatObjectService {
       url: '/api/chat/chat-object/delete-many',
       body: requestBody,
       mediaType: 'application/json',
-      
     });
   }
 
@@ -268,7 +262,6 @@ export class ChatObjectService {
       path: {
         id: id,
       },
-      
     });
   }
 
@@ -306,7 +299,6 @@ export class ChatObjectService {
         SkipCount: skipCount,
         MaxResultCount: maxResultCount,
       },
-      
     });
   }
 
@@ -326,7 +318,6 @@ export class ChatObjectService {
       query: {
         code: code,
       },
-      
     });
   }
 
@@ -349,7 +340,6 @@ export class ChatObjectService {
       path: {
         id: id,
       },
-      
     });
   }
 
@@ -372,7 +362,6 @@ export class ChatObjectService {
       path: {
         id: id,
       },
-      
     });
   }
 
@@ -413,7 +402,6 @@ export class ChatObjectService {
         SkipCount: skipCount,
         Sorting: sorting,
       },
-      
     });
   }
 
@@ -462,7 +450,6 @@ export class ChatObjectService {
         SkipCount: skipCount,
         Sorting: sorting,
       },
-      
     });
   }
 
@@ -485,7 +472,6 @@ export class ChatObjectService {
       query: {
         idList: idList,
       },
-      
     });
   }
 
@@ -508,7 +494,6 @@ export class ChatObjectService {
       query: {
         idList: idList,
       },
-      
     });
   }
 
@@ -537,7 +522,6 @@ export class ChatObjectService {
         maxResultCount: maxResultCount,
         skinCount: skinCount,
       },
-      
     });
   }
 
@@ -568,7 +552,6 @@ export class ChatObjectService {
       query: {
         verificationMethod: verificationMethod,
       },
-      
     });
   }
 
@@ -595,7 +578,6 @@ export class ChatObjectService {
       },
       body: requestBody,
       mediaType: 'application/json',
-      
     });
   }
 
@@ -623,7 +605,6 @@ export class ChatObjectService {
       query: {
         name: name,
       },
-      
     });
   }
 
@@ -635,6 +616,7 @@ export class ChatObjectService {
   public static postApiChatChatObjectUpdatePortrait({
     id,
     formData,
+    onUploadProgress
   }: {
     /**
      * 主建Id
@@ -643,7 +625,8 @@ export class ChatObjectService {
     formData?: {
       file?: Blob;
     };
-  }): CancelablePromise<IczpNet_Chat_ChatObjects_Dtos_ChatObjectDto> {
+    onUploadProgress?: (progressEvent: AxiosProgressEvent) => void;
+  }): CancelablePromise<ChatObjectDto> {
     return __request(OpenAPI, {
       method: 'POST',
       url: '/api/chat/ChatObject/UpdatePortrait',
@@ -652,7 +635,7 @@ export class ChatObjectService {
       },
       formData: formData,
       mediaType: 'multipart/form-data',
-      
+      onUploadProgress,
     });
   }
 }

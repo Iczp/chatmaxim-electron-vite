@@ -53,9 +53,9 @@ const {
 // const isTopping = computed(() => Number(props.entity?.sorting) > 0);
 
 const ondragstart = (event: DragEvent) => {
-  event.preventDefault()
+  // event.preventDefault()
 
-  event.dataTransfer?.setData('text',`${env.url_scheme}`)
+  event.dataTransfer?.setData('text',`${env.url_scheme}://./to/${props.entity?.ownerId}/${props.entity?.id}`)
   console.log('ondragstart', event);
 };
 </script>

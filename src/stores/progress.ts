@@ -2,7 +2,7 @@ import { acceptHMRUpdate, defineStore } from 'pinia';
 type ProgressDto = {
   sessionUnitId: string;
   status?: string;
-  percent: number;
+  percent: number | undefined;
 };
 interface ProgressState {
   messages: Map<string, ProgressDto>;
@@ -19,7 +19,7 @@ export const useProgressStore = defineStore('progress', {
     set(key: string, value: ProgressDto, isRemoveIfCompleted?: boolean, delay?: number): void {
       this.messages.set(key, value);
       this.status.set(value.sessionUnitId, `${value.percent}`);
-      if (isRemoveIfCompleted && value.percent >= 100) {
+      if (isRemoveIfCompleted && Number(value.percent) >= 100) {
         this.removeStatus(value.sessionUnitId);
         setTimeout(() => this.remove(key), delay);
       }

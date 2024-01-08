@@ -1,11 +1,45 @@
-import { ApiError, MessageSenderService } from '../apis';
-import { MessageDto, MessageOwnerDto, SessionUnitSenderDto } from '../apis/dtos';
+import { AxiosProgressEvent } from 'axios';
+import { ApiError, CancelablePromise, ChatObjectService, MessageSenderService } from '../apis';
+import { ChatObjectDto, MessageDto, MessageOwnerDto, SessionUnitSenderDto } from '../apis/dtos';
 import { MessageStateEnums, MessageTypeEnums } from '../apis/enums';
 import { useImStore } from '../stores/im';
 import { useProgressStore } from '../stores/progress';
 import { formatMessage } from './utils';
+export type SendMessageError = {
+  message: string;
+  detail: ApiError | any;
+  success: boolean;
+};
+const uploadFile = ({
+  file,
+  onProgress,
+}: {
+  file: Blob;
+  onProgress?: (progressEvent: AxiosProgressEvent) => void;
+}): CancelablePromise<ChatObjectDto> => {
+  return new CancelablePromise<ChatObjectDto>((resolve, reject) => {
+    ChatObjectService.postApiChatChatObjectUpdatePortrait({
+      id: 13,
+      formData: {
+        file,
+      },
+      onUploadProgress(progressEvent) {
+        console.log('uploadFile onUploadProgress', progressEvent);
+        onProgress?.call(this, progressEvent);
+      },
+    })
+      .then(res => {
+        setTimeout(() => {
+          resolve(res);
+        }, 1500);
+      })
+      .catch(err => {
+        reject(err);
+      });
+  });
+};
 
-export const uploadFile = ({
+export const uploadFile1 = ({
   path,
   onProgress,
 }: {
@@ -17,6 +51,7 @@ export const uploadFile = ({
       resolve();
       return;
     }
+
     let percent = 0;
     const exec = () => {
       setTimeout(() => {
@@ -43,6 +78,7 @@ export const sendMessage = async ({
   content,
   senderSessionUnit,
   lastItem,
+  file,
   onBefore,
   onProgress,
   onSuccess,
@@ -55,10 +91,11 @@ export const sendMessage = async ({
   senderSessionUnit?: SessionUnitSenderDto;
   lastItem?: MessageDto;
   quoteMessage?: MessageOwnerDto;
+  file?: Blob | File | any;
   onBefore?: (input: MessageDto) => void;
   onProgress?: (percent: number) => void;
   onSuccess?: (entity: MessageOwnerDto, input: MessageDto) => void;
-  onError?: (error: ApiError, input: MessageDto) => void;
+  onError?: (error: SendMessageError, input: MessageDto) => void;
   onAfter?: (input: MessageDto) => void;
 }) => {
   const store = useImStore();
@@ -84,36 +121,71 @@ export const sendMessage = async ({
   onBefore?.call(this, input);
 
   const progressStore = useProgressStore();
-  const path = content.path;
-  await uploadFile({
-    path,
-    onProgress(percent) {
-      progressStore.set(`${autoId}`, { percent, sessionUnitId }, true, 1500);
-    },
-  });
+
+  const _send = () => {
+    MessageSenderService.send({
+      messageType,
+      sessionUnitId: sessionUnitId,
+      requestBody: {
+        quoteMessageId: quoteMessage?.id,
+        ignoreConnections: null,
+        remindList: [],
+        content,
+      },
+    })
+      .then(res => {
+        console.log('sendRet', res);
+        store.setMaxMessageId(res.id!);
+        store.setLastMessageForSender(res);
+        onSuccess?.call(this, res, input);
+      })
+      .catch((err: ApiError) => {
+        onError?.call(
+          this,
+          <SendMessageError>{
+            message: `发送失败:${err?.message||err?.body?.error?.message}`,
+            success: false,
+            detail: err,
+          },
+          input,
+        );
+      })
+      .finally(() => {
+        onAfter?.call(this, input);
+      });
+  };
+
+  if (!file) {
+    _send();
+    return;
+  }
+
   // upload file
   // ...
-
-  MessageSenderService.send({
-    messageType,
-    sessionUnitId: sessionUnitId,
-    requestBody: {
-      quoteMessageId: quoteMessage?.id,
-      ignoreConnections: null,
-      remindList: [],
-      content,
+  uploadFile({
+    file,
+    onProgress(progressEvent) {
+      progressStore.set(
+        `${autoId}`,
+        { percent: Math.floor(Number(progressEvent.progress) * 100), sessionUnitId },
+        true,
+        1500,
+      );
     },
   })
     .then(res => {
-      console.log('sendRet', res);
-      store.setMaxMessageId(res.id!);
-      store.setLastMessageForSender(res);
-      onSuccess?.call(this, res, input);
+      _send();
     })
-    .catch((err: ApiError) => {
-      onError?.call(this, err, input);
-    })
-    .finally(() => {
-      onAfter?.call(this, input);
+    .catch(err => {
+      console.error(err);
+      onError?.call(
+        this,
+        <SendMessageError>{
+          message: `上传失败:${err?.message||err?.body?.error?.message}`,
+          success: false,
+          detail: err,
+        },
+        input,
+      );
     });
 };
