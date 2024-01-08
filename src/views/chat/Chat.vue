@@ -227,7 +227,7 @@ const onSend = async ({ event, value }: any) => {
     return;
   }
   sendMessageContent({
-    isClear: true,
+    isClearInput: true,
     messageType: MessageTypeEnums.Text,
     content: {
       text: value,
@@ -243,28 +243,28 @@ const clearChatInput = (isClear: boolean): void => {
   quoteMessage.value = undefined;
 };
 
+const spliceItem = (autoId: number | undefined, arr: MessageDto[]) => {
+  const findIndex = list.value?.findIndex(x => x.autoId == autoId);
+  console.log('findIndex', findIndex);
+  if (findIndex != -1) {
+    // if (arr.length > 0) {
+    //   arr[0].isShowTime = list.value[0].isShowTime;
+    // }
+    list.value.splice(findIndex, 1, ...arr);
+  }
+};
+
 const sendMessageContent = async ({
   content,
   messageType,
-  isClear,
+  isClearInput,
   file,
 }: {
   messageType: MessageTypeEnums;
   content: any;
-  isClear: boolean;
+  isClearInput: boolean;
   file?: Blob | File | any;
 }) => {
-  const _spliceItem = (autoId: number | undefined, arr: MessageDto[]) => {
-    const findIndex = list.value?.findIndex(x => x.autoId == autoId);
-    console.log('findIndex', findIndex);
-    if (findIndex != -1) {
-      // if (arr.length > 0) {
-      //   arr[0].isShowTime = list.value[0].isShowTime;
-      // }
-      list.value.splice(findIndex, 1, ...arr);
-    }
-  };
-
   isSendPending.value = true;
 
   sendMessage({
@@ -272,7 +272,11 @@ const sendMessageContent = async ({
     sessionUnitId,
     senderSessionUnit: detail.value,
     messageType,
-    lastItem: list.value.length > 0 ? list.value[list.value.length - 1] : undefined,
+    lastItem:
+      list.value.length > 0
+        ? //list.value.findLast(x => x.state == MessageStateEnums.Ok) ||
+          list.value[list.value.length - 1]
+        : undefined,
     quoteMessage: quoteMessage.value,
     content,
     onBefore(input) {
@@ -285,12 +289,12 @@ const sendMessageContent = async ({
       // nextTick(() => scroll.value?.scrollTo({ duration: 1500 }));
     },
     onSuccess(entity, input) {
-      clearChatInput(isClear);
+      clearChatInput(isClearInput);
 
       fetchLatest({ caller: 'sendMessageContent' })
         .then(({ items, list }) => {
           // setTimeout(() => {
-          _spliceItem(input.autoId, items);
+          spliceItem(input.autoId, items);
           // list.value = list.value.concat(items);
           // }, 1000);
 
@@ -298,7 +302,7 @@ const sendMessageContent = async ({
           // nextTick(() => scroll.value?.scrollTo({ duration: 1500 }));
         })
         .catch(err => {
-          _spliceItem(input.autoId, []);
+          spliceItem(input.autoId, []);
           console.error(err);
         })
         .finally(() => {
@@ -306,7 +310,7 @@ const sendMessageContent = async ({
         });
     },
     onError(err, input) {
-      _spliceItem(input.autoId, []);
+      spliceItem(input.autoId, []);
       list.value.push({
         ...input,
         state: MessageStateEnums.Error,
@@ -430,7 +434,7 @@ const dropHandle = (ev: DragEvent, { files, text }: { files?: any[]; text?: stri
       console.log('onDropToSend', files, text);
       if (text) {
         sendMessageContent({
-          isClear: false,
+          isClearInput: false,
           messageType: MessageTypeEnums.Text,
           content: { text },
         });
@@ -447,7 +451,7 @@ const dropHandle = (ev: DragEvent, { files, text }: { files?: any[]; text?: stri
               const content = await mapToImageContentDtoAsync(file);
               sendMessageContent({
                 file,
-                isClear: false,
+                isClearInput: false,
                 messageType: MessageTypeEnums.Image,
                 content: content,
               });
@@ -456,7 +460,7 @@ const dropHandle = (ev: DragEvent, { files, text }: { files?: any[]; text?: stri
             default:
               sendMessageContent({
                 file,
-                isClear: false,
+                isClearInput: false,
                 messageType: MessageTypeEnums.File,
                 content: mapToFileContentDto(file),
               });
@@ -469,6 +473,21 @@ const dropHandle = (ev: DragEvent, { files, text }: { files?: any[]; text?: stri
 };
 
 const { vDrop } = useDrop();
+
+const onResend = (entity: MessageDto) => {
+  console.log('onResend', entity);
+  onRemove(entity);
+  sendMessageContent({
+    content: entity.content,
+    messageType: entity.messageType!,
+    isClearInput: false,
+    file: entity.file,
+  });
+};
+const onRemove = (entity: MessageDto) => {
+  console.log('onRemove', entity);
+  spliceItem(entity.autoId, []);
+};
 </script>
 
 <template>
@@ -512,6 +531,8 @@ const { vDrop } = useDrop();
           :entity="item"
           :sessionUnitId="sessionUnitId"
           v-model:selectable="selectable"
+          @resend="onResend(item)"
+          @remove="onRemove(item)"
           @contextmenu="showContextMenu"
         >
           <template v-if="index != list.length - 1 && localReadedMessageId == item.id" #footer>

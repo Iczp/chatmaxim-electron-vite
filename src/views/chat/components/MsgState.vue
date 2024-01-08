@@ -12,6 +12,11 @@ const props = defineProps<{
   state?: MessageStateEnums;
 }>();
 
+const emits = defineEmits<{
+  resend: [MessageDto?];
+  remove: [MessageDto?];
+}>();
+
 const progressStore = useProgressStore();
 const uploadProgress = computed(() => progressStore.get(`${props.entity?.autoId}`));
 const percent = computed(() => uploadProgress.value?.percent);
@@ -32,9 +37,11 @@ const showError = () => {
     cancelText: '删除',
     onOk() {
       console.log('OK');
+      emits('resend', props.entity);
     },
     onCancel() {
       console.log('Cancel');
+      emits('remove', props.entity);
     },
     class: 'send-error',
   });

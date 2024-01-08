@@ -93,7 +93,7 @@ export const sendMessage = async ({
   quoteMessage?: MessageOwnerDto;
   file?: Blob | File | any;
   onBefore?: (input: MessageDto) => void;
-  onProgress?: (percent: number) => void;
+  onProgress?: (progressEvent: AxiosProgressEvent) => void;
   onSuccess?: (entity: MessageOwnerDto, input: MessageDto) => void;
   onError?: (error: SendMessageError, input: MessageDto) => void;
   onAfter?: (input: MessageDto) => void;
@@ -118,6 +118,9 @@ export const sendMessage = async ({
     ],
     lastItem,
   })[0];
+
+  input.file = file;
+
   onBefore?.call(this, input);
 
   const progressStore = useProgressStore();
@@ -143,7 +146,7 @@ export const sendMessage = async ({
         onError?.call(
           this,
           <SendMessageError>{
-            message: `发送失败:${err?.message||err?.body?.error?.message}`,
+            message: `发送失败:${err?.body?.error?.message || err?.message}`,
             success: false,
             detail: err,
           },
@@ -171,6 +174,7 @@ export const sendMessage = async ({
         true,
         1500,
       );
+      onProgress?.call(this, progressEvent);
     },
   })
     .then(res => {
@@ -181,7 +185,7 @@ export const sendMessage = async ({
       onError?.call(
         this,
         <SendMessageError>{
-          message: `上传失败:${err?.message||err?.body?.error?.message}`,
+          message: `上传失败:${err?.body?.error?.message || err?.message}`,
           success: false,
           detail: err,
         },

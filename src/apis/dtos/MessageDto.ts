@@ -21,7 +21,7 @@ export type MessageDto = MessageOwnerDto & {
    *
    * @type {string}
    */
-  sendTime?:string;
+  sendTime?: string;
 
   /**
    * 是否选择中
@@ -50,4 +50,7 @@ export type MessageDto = MessageOwnerDto & {
    * @type {*}
    */
   error?: any;
+
+  //
+  file?: Blob | any;
 };

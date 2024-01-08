@@ -38,7 +38,11 @@ const emits = defineEmits<{
   contextmenu: [ContextmenuInput];
   remind: [string];
   'update:selectable': [selectable: boolean];
+  resend: [MessageDto?];
+  remove: [MessageDto?];
 }>();
+
+
 
 const { senderName, messageType, isRollbacked, sendTime, sendTimeTitle, state } = useMessage(
   props.entity,
@@ -156,7 +160,7 @@ const onMessageClick = (event: MouseEvent, mouseButton: MouseButton) => {
             <!-- 消息 End -->
             <div>
               <!-- messageState: {{ messageState }} -->
-              <MsgState :entity="entity" :state="messageState" />
+              <MsgState :entity="entity" :state="messageState" @resend="emits('resend',entity)" @remove="emits('remove',entity)" />
             </div>
           </main>
 
