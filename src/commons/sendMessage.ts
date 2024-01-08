@@ -14,7 +14,7 @@ const uploadFile = ({
   file,
   onProgress,
 }: {
-  file: Blob;
+  file?: File | Blob | any;
   onProgress?: (progressEvent: AxiosProgressEvent) => void;
 }): CancelablePromise<ChatObjectDto> => {
   return new CancelablePromise<ChatObjectDto>((resolve, reject) => {
@@ -39,15 +39,15 @@ const uploadFile = ({
   });
 };
 
-export const uploadFile1 = ({
-  path,
+export const uploadFileMork = ({
+  file: file,
   onProgress,
 }: {
-  path?: string;
+  file?: File | Blob | any;
   onProgress?: (percent: number) => void;
 }): Promise<void> => {
   return new Promise<void>((resolve, reject) => {
-    if (!path) {
+    if (!file) {
       resolve();
       return;
     }
