@@ -55,7 +55,10 @@ const {
 const ondragstart = (event: DragEvent) => {
   // event.preventDefault()
 
-  event.dataTransfer?.setData('text',`${env.url_scheme}://./to/${props.entity?.ownerId}/${props.entity?.id}`)
+  event.dataTransfer?.setData(
+    'text',
+    `${env.url_scheme}://./to/${props.entity?.ownerId}/${props.entity?.id}`,
+  );
   console.log('ondragstart', event);
 };
 </script>
@@ -153,7 +156,7 @@ const ondragstart = (event: DragEvent) => {
   position: absolute;
   transform: scaleY(0.5);
   overflow: hidden;
-  background-color: rgba(223, 223, 223, 0.41);
+  background-color: var(--divider-color);
 }
 .session-item:last-child::after {
   background-color: rgba(242, 20, 20, 0.41);
@@ -182,7 +185,9 @@ const ondragstart = (event: DragEvent) => {
 .session-item.active {
   /* background-color: rgba(255, 255, 255, 1); */
   /* background: linear-gradient(135deg, #79b4eb, #97d79c) border-box; */
-  background: linear-gradient(135deg, #ddefff, #e9ffeb) border-box;
+  /* background: linear-gradient(135deg, #ddefff, #e9ffeb) border-box; */
+  background: linear-gradient(135deg, #1a1d1f, #313e32) border-box;
+  background: var(--session-item-active-background);
 }
 .session-item.active:hover {
   background-color: rgba(255, 255, 255, 1);
@@ -191,7 +196,7 @@ const ondragstart = (event: DragEvent) => {
   background-color: rgba(26, 144, 255, 0.3);
 }
 .session-item:hover {
-  background-color: rgba(230, 230, 230, 0.813);
+  background-color: var(--session-item-background-color-hover);
 }
 
 .object-name {
@@ -211,11 +216,16 @@ const ondragstart = (event: DragEvent) => {
   box-sizing: border-box;
   border-radius: 4px;
 }
-
+.session-item.active .sendtime {
+  color: var(--session-item-active-sendtime-color);
+}
+.session-item:hover .sendtime {
+  color: var(--session-item-hover-sendtime-color);
+}
 .sendtime {
   display: flex;
   max-width: 120px;
-  color: #ccc;
+  color: var(--session-item-sendtime-color);
   font-size: 12px;
 }
 

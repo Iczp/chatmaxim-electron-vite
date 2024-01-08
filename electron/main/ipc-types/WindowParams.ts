@@ -133,4 +133,11 @@ export type WindowParams = {
    * @type {*}
    */
   token?: any;
+
+  /**
+   * color-scheme
+   *
+   * @type {'auto'}
+   */
+  colorScheme?: 'auto' | 'light' | 'dark' | 'green' | 'blue';
 };

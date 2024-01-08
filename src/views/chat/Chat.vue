@@ -491,7 +491,7 @@ const onRemove = (entity: MessageDto) => {
 </script>
 
 <template>
-  <page class="chat" v-drop="dropHandle">
+  <page class="chat-page" v-drop="dropHandle">
     <PageTitle
       :title="destinationName"
       :description="`code${destination?.code}:memberCount(${
@@ -524,7 +524,7 @@ const onRemove = (entity: MessageDto) => {
       >
         <Loading v-if="isPendingOfFetchHistorical" :height="loadingHeight" />
         <!-- <EmptyData v-if="isBof" text="没有了" :height="20" /> -->
-        <a-divider v-if="isBof" class="divider">美好的生活从这里开始</a-divider>
+        <a-divider v-if="isBof" class="message-divider">美好的生活从这里开始</a-divider>
         <MessageItem
           v-for="(item, index) in list"
           :key="item.id || item.autoId"
@@ -536,7 +536,7 @@ const onRemove = (entity: MessageDto) => {
           @contextmenu="showContextMenu"
         >
           <template v-if="index != list.length - 1 && localReadedMessageId == item.id" #footer>
-            <a-divider class="divider">以下是新消息</a-divider>
+            <a-divider class="message-divider">以下是新消息</a-divider>
           </template>
         </MessageItem>
 
@@ -569,7 +569,8 @@ const onRemove = (entity: MessageDto) => {
 <style scoped>
 :deep(.page-title) {
   height: 64px;
-  border-bottom: 1px solid rgba(213, 213, 213, 0.596);
+  border-bottom: 1px solid var(--divider-color);
+  color: var(--chat-page-main-title-color);
 }
 :deep(.page-title-left) {
   padding: 0 20px;
@@ -577,13 +578,18 @@ const onRemove = (entity: MessageDto) => {
 :deep(.main-title-text) {
   font-size: 16px;
 }
-.chat {
+:deep(.sub-title) {
+  color: var(--chat-page-sub-title-color);
+}
+.chat-page {
   width: 100%;
   height: 100%;
   overflow: hidden;
   display: flex;
   flex: 1;
   transition: all 0.3s linear;
+  color: var(--chat-page-color);
+  background-color: var(--chat-page-background-color);
 }
 .dragenter {
   background-color: #1584e57c;
@@ -595,7 +601,7 @@ const onRemove = (entity: MessageDto) => {
   display: flex;
   /* background-color: #f5f5f5ac; */
   background-color: unset;
-  border-left: 1px solid #ccc;
+  /* border-left: 1px solid var(--sider-border-color); */
 }
 .layout-content {
   display: flex;
@@ -628,7 +634,7 @@ const onRemove = (entity: MessageDto) => {
 .message-container {
   display: flex;
   flex-direction: column;
-  background-color: rgba(241, 241, 241, 0.485);
+  /* background-color: rgba(241, 241, 241, 0.485); */
   flex: 1;
   /* padding: 20px; */
   /* flex-wrap: wrap; */
@@ -638,7 +644,7 @@ const onRemove = (entity: MessageDto) => {
 .message-item {
   display: flex;
 }
-.divider {
+.message-divider {
   font-size: 12px;
   color: #999;
   padding: 0 50px;

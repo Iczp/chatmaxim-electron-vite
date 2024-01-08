@@ -26,11 +26,11 @@ import { ChatOn,Chating } from '../../icons';
   display: flex;
   flex-direction: column;
   flex: 1;
-  background-color: rgb(251, 251, 251);
+  background-color: var(--chat-empty-background-color);
   user-select: none;
   align-items: center;
   justify-content: center;
-  color: rgb(196, 196, 196);
+  color: var(--chat-empty-color);
 }
 .div-image {
   height: 300px;
@@ -45,6 +45,6 @@ import { ChatOn,Chating } from '../../icons';
 }
 .svg-icon{
   scale: 10;
-  color: rgba(236, 236, 236, 0.442);
+  /* color: rgba(124, 124, 124, 0.442); */
 }
 </style>

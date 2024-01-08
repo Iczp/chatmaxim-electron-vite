@@ -1,31 +1,43 @@
 <script setup lang="ts">
-import { Ref, onMounted, ref } from 'vue';
-import HelloWorld from './components/HelloWorld.vue';
-import {
-  HomeOutlined,
-  AndroidOutlined,
-  MessageOutlined,
-  CodepenCircleOutlined,
-  SettingOutlined,
-  UserOutlined,
-  ClockCircleOutlined,
-  SketchOutlined,
-  AppstoreOutlined,
-} from '@ant-design/icons-vue';
+import { BasicColorMode, UseColorModeOptions, useCssVar, useDark } from '@vueuse/core';
+import { useColorMode } from '@vueuse/core';
+import { ref, watch } from 'vue';
+import { useWindowStore } from './stores/window';
 
-// onMounted(() => {
-//   //
-//   SessionUnitService.getApiChatSessionUnitBadgeByCurrentUser({}).then(res => {
-//     console.log('', res);
-//     chatObjectItems.value = res;
-//   });
-// });
+const mode = useColorMode({
+  attribute: 'color-scheme',
+  modes: {
+    // custom colors
+    green: 'green',
+    blue: 'blue',
+  },
+}); // Ref<'dark' | 'light'>
+
+const windowStore = useWindowStore();
+watch(
+  () => windowStore.colorScheme,
+  colorScheme => {
+    console.log('windowStore.colorScheme', colorScheme);
+    mode.value = colorScheme!;
+  },
+  {
+    immediate: true,
+  },
+);
+const html = ref(null);
+const color1 = useCssVar('--color', html);
+
+const elv = ref(null);
+const key = ref('--color');
+const colorVal = useCssVar(key, elv);
+
+const someEl = ref(null);
+const color2 = useCssVar('--color', someEl, { initialValue: '#eee' });
 </script>
 
 <template>
   <!-- <div class="top-bar drag"></div> -->
   <!-- <router-view /> -->
-
   <router-view v-slot="{ Component, route }">
     <keep-alive v-if="route.meta.keepAlive">
       <component :is="Component" :key="route.fullPath" />

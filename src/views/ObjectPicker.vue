@@ -270,7 +270,7 @@ onMounted(() => {
 .search-section {
   display: flex;
   padding: 12px;
-  border-bottom: 1px solid #e3e3e3;
+  border-bottom: 1px solid var(--divider-color);
 }
 .contacts-list {
   display: flex;
@@ -284,11 +284,11 @@ onMounted(() => {
   padding: 4px 12px;
 }
 .contacts-item:hover {
-  background-color: rgba(248, 248, 248, 0.5);
+  background-color: var(--background-color-hover);
 }
 .checked,
 .checked:hover {
-  background: linear-gradient(135deg, #ddefff, #e9ffeb) border-box;
+  background: var(--checked-background);
 }
 .check-box {
   margin: 0 var(--split-size);
@@ -302,7 +302,7 @@ onMounted(() => {
   padding: 0 24px; */
 }
 .select-result {
-  color: gray;
+  /* color: gray; */
   font-size: 12px;
 }
 </style>

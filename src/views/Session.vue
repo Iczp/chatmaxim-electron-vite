@@ -384,18 +384,20 @@ const footerObserver = ref<HTMLElement | null>();
   left: 0;
   right: 0;
   z-index: 1;
+ 
 }
 .nav-side {
   display: flex;
   flex-direction: column;
   width: 280px;
   /* background-color: rgba(139, 139, 139, 0.097); */
-  border-right: 1px solid #ccc;
+  border-right: 1px solid var(--sider-border-color);
   flex-shrink: 0;
+  background-color: var(--sider-background-color);
 }
 .search-bar {
   display: flex;
-  border-bottom: 1px solid #cccccc8b;
+  border-bottom: 1px solid var(--divider-color);
   height: 64px;
   flex-shrink: 0;
   justify-content: center;

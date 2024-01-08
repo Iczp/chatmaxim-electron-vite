@@ -34,8 +34,8 @@ const svgClass = computed(() => 'svg-icon svg-icon-' + (Number(props.size) || 48
   /* height: 48px; */
   /* background-color: #ccc; */
   /* border-radius: 4px; */
-  /* background-color: #e4e4e4; */
-  /* color: #c6c6c6; */
+  background-color: var(--avatar-background-color);
+  color: var(--avatar-color);
   justify-content: center;
   align-items: center;
   /* font-size: 12px; */

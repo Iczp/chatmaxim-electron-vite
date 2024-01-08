@@ -15,14 +15,16 @@ const className = computed(() => props.suffix?.replace('.', 'icon-').toLowerCase
 
 <style scoped>
 .file-icon {
+  border-radius: 4px;
+
   font-size: 28px;
-  background-color: rgb(228, 228, 228);
+  background-color: var(--file-icon-background-color);
   width: var(--icon-size);
   height: var(--icon-size);
   display: flex;
   justify-content: center;
   align-items: center;
-  color: rgb(14, 105, 162);
+  color: var(--file-icon-color);
 }
 .suffix-icon {
   font-size: 32px;
@@ -38,7 +40,7 @@ const className = computed(() => props.suffix?.replace('.', 'icon-').toLowerCase
   display: flex;
   align-items: center;
   justify-content: center;
-  color: white;
+  color: var(--file-icon-suffix-color);
   font-size: 16px;
 }
 

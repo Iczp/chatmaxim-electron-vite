@@ -35,6 +35,7 @@ const defaultValue: WindowState = {
   payload: undefined,
   path: undefined,
   isAlwaysOnTop: undefined,
+  colorScheme: 'auto',
 };
 
 export const useWindowStore = defineStore('window', {
@@ -74,6 +75,11 @@ export const useWindowStore = defineStore('window', {
           const shortcutStore = useShortcutStore();
           shortcutStore.pressed(args[0] as string, (args[1] || new Date().getTime()) as number);
           break;
+        case 'color-scheme':
+          console.log('color-scheme', args);
+          this.setColorScheme(args[0]);
+          break;
+
         case 'focus':
           this.focus = true;
           break;
@@ -103,6 +109,9 @@ export const useWindowStore = defineStore('window', {
           break;
       }
       // console.log('update', this);
+    },
+    setColorScheme(colorScheme: 'auto' | 'light' | 'dark' | 'green' | 'blue') {
+      this.colorScheme = colorScheme;
     },
   },
 });

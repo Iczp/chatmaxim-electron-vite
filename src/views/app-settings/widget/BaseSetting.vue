@@ -8,16 +8,17 @@ import { useAppInfo } from '../../../commons/useAppInfo';
 
 import { reactive, toRaw } from 'vue';
 import type { UnwrapRef } from 'vue';
+import { setWindow } from '../../../commons/setWindow';
 
 interface FormState {
-  colorTheme: string;
+  colorScheme: string;
   isOpenAtLogin: boolean;
   type: string[];
   resource: string;
   desc: string;
 }
 const formState: UnwrapRef<FormState> = reactive({
-  colorTheme: 'light',
+  colorScheme: 'light',
   isOpenAtLogin: false,
   type: [],
   resource: '',
@@ -31,6 +32,12 @@ const wrapperCol = { span: 14 };
 
 const { appId, appName, author, websize, version, copyright } = useAppInfo();
 const title = ref('');
+
+const onColorSchemeChange = (e: any) => {
+  console.log('onColorSchemeChange', e);
+  const colorScheme = e.target.value;
+  setWindow({ name: '*', colorScheme });
+};
 </script>
 
 <template>
@@ -41,9 +48,11 @@ const title = ref('');
         <a-form class="form" :model="formState" :label-col="labelCol" :wrapper-col="wrapperCol">
           <a-divider class="divider" orientation="left">主题</a-divider>
           <a-form-item label="颜色">
-            <a-radio-group v-model:value="formState.colorTheme">
+            <a-radio-group v-model:value="formState.colorScheme" @change="onColorSchemeChange">
               <a-radio-button value="light">明亮</a-radio-button>
-              <a-radio-button value="black">暗黑</a-radio-button>
+              <a-radio-button value="dark">暗黑</a-radio-button>
+              <a-radio-button value="green">green</a-radio-button>
+              <a-radio-button value="blue">blue</a-radio-button>
             </a-radio-group>
           </a-form-item>
           <a-divider class="divider" orientation="left">系统</a-divider>

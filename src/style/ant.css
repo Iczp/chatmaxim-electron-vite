@@ -14,3 +14,13 @@
 .ant-drawer .ant-drawer-header {
   padding: 16px 0;
 }
+
+/* ant-modal */
+.ant-modal-wrap {
+  -webkit-app-region: drag;
+}
+
+.ant-modal-content {
+  user-select: none;
+  -webkit-app-region: no-drag;
+}

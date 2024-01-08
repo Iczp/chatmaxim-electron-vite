@@ -4,11 +4,20 @@ import { ifArrayNumber, ifBoolean, ifTrue } from './ifBoolean';
 import { globalState } from '../global';
 import { windowManager } from './windowManager';
 import { addParamsToUrl } from './addParamsToUrl';
+import { sendEvent } from './initWindowEvent';
 // import { preventClose } from './openChildWindowHandle';
 
 export const windowSettingHandle = (_: Electron.IpcMainInvokeEvent, params: WindowParams): any => {
   return new Promise((resolve, reject) => {
     console.log('win-setting', _.sender.id, params);
+    if (params.name == '*' && params.colorScheme) {
+      windowManager.getAllWindows().map(([name, win]) => {
+        sendEvent(win, 'color-scheme', [params.colorScheme]);
+      });
+      resolve({ message: 'ok' });
+      return;
+    }
+
     let targetWindow: BrowserWindow | undefined;
     if (params.name) {
       targetWindow = windowManager.get(params.name);

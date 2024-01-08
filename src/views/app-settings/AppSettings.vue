@@ -44,8 +44,11 @@ const onTabClick = (item: any, index: number) => {
 </template>
 
 <style scoped>
-
-.fade-enter-active{
+:deep(.ant-form) 
+:deep(.ant-form-item) {
+  color: var(--color);
+}
+.fade-enter-active {
   transition: all 0.3s;
 }
 .fade-leave-active {
@@ -70,6 +73,8 @@ const onTabClick = (item: any, index: number) => {
   user-select: none;
   display: flex;
   flex-direction: row;
+  color: var(--color);
+  background-color: var(--background-color);
 }
 .nav-sider {
   position: relative;
@@ -81,7 +86,7 @@ const onTabClick = (item: any, index: number) => {
 }
 
 .page-content {
-  border-left: 1px solid #cccccc69;
+  border-left: 1px solid var(--divider-color);
 }
 .header {
   background-color: unset;
@@ -114,8 +119,8 @@ const onTabClick = (item: any, index: number) => {
   /* color: rgb(159, 100, 100); */
 }
 .tab-item.active {
-  color: rgb(10, 118, 226);
-  background-color: #ffffff;
+  color: var(--tab-item-active-color);
+  background-color: var(--tab-item-active-background-color);
   box-sizing: border-box;
   font-weight: bold;
 }
@@ -125,15 +130,16 @@ const onTabClick = (item: any, index: number) => {
   right: 0;
   width: 2px;
   height: 0%;
+
   background-color: rgba(10, 118, 226, 0.458);
   transition: all 0.3s linear;
 }
 .tab-item.active::after {
   height: 100%;
-  background-color: rgba(10, 118, 226, 0.93);
+  background-color: var(--tab-item-active-bar-background-color);
 }
 .tab-item:hover {
-  background-color: #dedede98;
+  background-color: var(--tab-item-background-color-hover);
 }
 
 .version {
@@ -141,7 +147,7 @@ const onTabClick = (item: any, index: number) => {
   justify-content: center;
   position: absolute;
   bottom: 0;
-  color: #ccc;
+  color: #8787878c;
   font-size: 12px;
   width: 100%;
   height: 24px;

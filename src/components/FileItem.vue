@@ -42,6 +42,7 @@ const emits = defineEmits<{
 }
 
 .file-name {
+  color: var(--file-name-color);
   max-width: 220px;
   word-break: break-all;
 }

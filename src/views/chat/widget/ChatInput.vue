@@ -149,9 +149,11 @@ defineExpose({
   /* height: 200px; */
   /* border-top: 1px solid #ccc; */
   width: 100%;
+  
 }
 .input-body {
-  background-color: rgba(255, 255, 255, 0.474);
+  /* background-color: rgba(255, 255, 255, 0.474); */
+  background-color: var(--background-color);
 }
 .input-area {
   display: flex;

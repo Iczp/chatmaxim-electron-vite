@@ -65,7 +65,8 @@ body {
   /* place-items: center; */
   min-width: 240px;
   min-height: 100vh;
-  background-color: #f5f5f5 !important;
+  color: var(--color) !important;
+  background-color: var(--background-color) !important;
   overflow: hidden;
 }
 .ps {
@@ -116,21 +117,6 @@ code {
   /* text-align: center; */
 }
 
-@media (prefers-color-scheme: light) {
-  :root {
-    color: #213547;
-    background-color: #ffffff;
-  }
-  a:hover {
-    color: #747bff;
-  }
-  button {
-    background-color: #f9f9f9;
-  }
-  code {
-    background-color: #f9f9f9;
-  }
-}
 &::-webkit-scrollbar-thumb {
   border-radius: 8px;
 
@@ -210,9 +196,238 @@ code {
   flex-direction: column;
 }
 
+@media (prefers-color-scheme: light) {
+  /* :root {
+    --background-color: #f5f5f5;
+    color: #213547;
+  } */
+}
 @media (prefers-color-scheme: dark) {
-  :root {
+  /* :root {
     --background-color: #1b1b1b;
     color-scheme: light dark;
+  } */
+}
+
+[color-scheme='light']:root {
+  /* body */
+  --background-color: #f0f2f5;
+  --background-color-hover: rgba(248, 248, 248, 0.5);
+  --color: #383838;
+  --checked-background: linear-gradient(135deg, #ddefff, #e9ffeb) border-box;
+
+  --page-footer-border-top-color: rgba(179, 179, 179, 0.5);
+  /* file-icon */
+  --file-name-color: rgb(44, 44, 44);
+  --file-icon-color: rgb(14, 105, 162);
+  --file-icon-suffix-color: white;
+  --file-icon-background-color: rgb(232, 232, 232);
+
+  /* avatar */
+  --avatar-color: rgba(113, 113, 113, 0.877);
+  --avatar-background-color: rgba(228, 228, 228, 0.877);
+
+  --chat-empty-background-color: rgb(251, 251, 251, 1);
+  --chat-empty-color: rgba(196, 196, 196, 1);
+  /* 边栏线条颜色 */
+  --sider-border-color: #e0e0e0;
+  --sider-background-color: #f1f3f6;
+  /* 分隔线 */
+  --divider-color: rgba(203, 203, 203, 0.41);
+  /* session-item */
+  --session-item-sendtime-color: #d8d8d8;
+  --session-item-active-sendtime-color: #606060;
+  --session-item-hover-sendtime-color: #a6a6a6;
+  --session-item-active-background: linear-gradient(135deg, #ddefff, #e9ffeb) border-box;
+  --session-item-background-color-hover: rgba(230, 230, 230, 0.813);
+
+  /* preview-message */
+  --preview-message-type-color: #717171;
+  --preview-message-text-color: #aaaaaa;
+  /* chat-page */
+  --chat-page-color: #e6e6e6;
+  --chat-page-background-color: f0f2f5;
+  --chat-page-main-title-color: rgb(33, 33, 33);
+  --chat-page-sub-title-color: rgba(126, 126, 126, 0.921);
+
+  /* msg-file */
+  --msg-file-background: linear-gradient(135deg, rgb(255, 255, 255), rgb(255, 255, 255)) border-box;
+  --msg-file-background-hover: linear-gradient(135deg, rgb(201, 201, 201), rgb(193, 193, 193))
+    border-box;
+
+  /* tab */
+  --tab-item-active-color: rgb(10, 118, 226);
+  --tab-item-background-color-hover: #d2d2d298;
+  --tab-item-active-background-color: rgba(255, 255, 255, 0.93);
+
+  --tab-item-active-background-color-hover: rgba(231, 231, 231, 0.458);
+  --tab-item-active-bar-background-color: rgba(3, 127, 244, 0.93);
+}
+
+[color-scheme='dark']:root {
+  /* body */
+  --background-color: #1b1b1b;
+  --background-color-hover: rgba(57, 57, 57, 0.5);
+  --color: rgba(200, 200, 200, 0.904);
+  --border-color: rgba(55, 55, 55, 0.904);
+
+  --checked-background: linear-gradient(135deg, #0b0e12, #04172d) border-box;
+
+  --page-footer-border-top-color: rgb(55, 55, 55);
+  /* file-icon */
+  --file-name-color: rgb(184, 184, 184);
+  --file-icon-color: rgb(14, 105, 162);
+  --file-icon-suffix-color: white;
+  --file-icon-background-color: rgb(71 71 71);
+
+  /* avatar */
+  --avatar-color: rgba(115, 115, 115, 0.877);
+  --avatar-background-color: rgba(57, 57, 57, 0.927);
+  /* chat-empty */
+  --chat-empty-background-color: #1b1b1b;
+  --chat-empty-color: rgba(34, 34, 34, 0.74);
+  /* 边栏线条颜色 */
+  --sider-border-color: rgba(41, 41, 41, 0.919);
+  /* 分隔线 */
+  --divider-color: rgba(41, 41, 41, 0.919);
+  /* session-item */
+
+  --session-item-background-color-hover: rgba(50, 50, 50, 0.921);
+  --session-item-active-background: linear-gradient(135deg, #1a1d1f, #313e32) border-box;
+  --session-item-sendtime-color: #333333;
+  --session-item-active-sendtime-color: #626262;
+  --session-item-hover-sendtime-color: #626262;
+
+  /* preview-message */
+  --preview-message-type-color: #717171;
+  --preview-message-text-color: #434343;
+  /* chat-page */
+  --chat-page-color: #e6e6e6;
+  --chat-page-background-color: rgba(34, 34, 34, 0.907);
+  --chat-page-main-title-color: rgba(182, 182, 182, 0.858);
+  --chat-page-sub-title-color: rgba(73, 73, 73, 0.921);
+
+  /* msg-file */
+  --msg-file-background: linear-gradient(135deg, rgb(51 51 51), rgb(59 59 59)) border-box;
+  --msg-file-background-hover: linear-gradient(135deg, rgb(67, 67, 67), rgb(48, 48, 48)) border-box;
+
+  /* tab */
+  --tab-item-active-color: rgb(79, 167, 255);
+  --tab-item-background-color-hover: #35353598;
+  --tab-item-active-background-color-hover: rgba(29, 187, 244, 0.458);
+  --tab-item-active-background-color: rgba(57, 57, 57, 0.93);
+  --tab-item-active-bar-background-color: rgba(6, 182, 226, 0.93);
+
+  /* ant */
+  .ant-layout,
+  .ant-layout .ant-layout-footer {
+    color: var(--color);
+    background-color: var(--background-color);
+  }
+
+  .ant-radio-button-wrapper-checked:not(.ant-radio-button-wrapper-disabled) {
+    background-color: #656565;
+    border: 1px solid #195ef2;
+    color: #93c0fe;
+  }
+  .ant-radio-button-wrapper:not(:first-child)::before {
+    background-color: #313131;
+  }
+  .ant-radio-button-wrapper {
+    color: var(--color);
+    background-color: var(--background-color);
+    border: 1px solid #313131;
+  }
+
+  .ant-input-group .ant-input-group-addon,
+  .ant-form-item,
+  .ant-form-item .ant-form-item-label > label {
+    color: var(--color);
+  }
+  .ant-switch {
+    background: rgba(55, 55, 55, 0.612);
+  }
+  .ant-switch.ant-switch-checked {
+    background: #5498f6;
+  }
+  .ant-switch .ant-switch-handle::before {
+    background: rgb(84, 84, 84);
+  }
+  .ant-switch.ant-switch-checked .ant-switch-handle::before {
+    background: rgb(2, 79, 245);
+  }
+  .ant-input-affix-wrapper {
+    color: var(--border-color);
+    background-color: rgba(38, 38, 38, 0.361);
+    border-color: var(--border-color);
+  }
+  .ant-input-affix-wrapper .ant-input-clear-icon {
+    color: rgb(103 103 103);
+  }
+  .ant-btn {
+    border-color: var(--border-color);
+    background-color: #3a3a3a;
+  }
+  .ant-btn-text {
+    color: var(--color);
+    background-color: rgba(38, 38, 38, 0.361);
+    border-color: transparent;
+  }
+  .ant-btn-text:hover {
+    color: var(--color);
+    background-color: rgba(68, 68, 68, 0.581);
+  }
+
+  .ant-input {
+    color: var(--color);
+    /* background-color: var(--background-color); */
+    background-color: transparent;
+    border-color: var(--border-color);
+  }
+  .ant-input::placeholder {
+    color: rgba(100, 100, 100, 0.619);
+  }
+  .ant-mentions > textarea,
+  textarea::placeholder {
+    color: rgba(100, 100, 100, 0.619);
+  }
+  .ant-input-group .ant-input-group-addon {
+    border: 1px solid var(--border-color);
+  }
+  .ant-select,
+  .ant-select .ant-select-arrow,
+  .ant-select-single .ant-select-selector {
+    color: var(--color);
+  }
+  .ant-select.ant-select-open .ant-select-selector {
+    color: var(--color);
+  }
+
+  .ant-descriptions .ant-descriptions-extra {
+    color: var(--color);
+  }
+  .ant-descriptions .ant-descriptions-title {
+    color: var(--chat-page-main-title-color);
+  }
+
+  .ant-descriptions-item-label {
+    color: var(--chat-page-sub-title-color);
+  }
+  .ant-descriptions .ant-descriptions-item-content {
+    color: var(--chat-page-main-title-color);
+  }
+
+  .divider.ant-divider-horizontal.ant-divider-with-text-left::before,
+  .divider.ant-divider-horizontal.ant-divider-with-text-left::after {
+    background-color: var(--border-color);
+  }
+
+  .ant-checkbox:not(.ant-checkbox-checked, .ant-checkbox-disabled) .ant-checkbox-inner {
+    background-color: var(--background-color);
+    border-color: var(--border-color);
+  }
+  .ant-checkbox.ant-checkbox-disabled .ant-checkbox-inner {
+    background-color: black;
+    border-color: var(--background-color);
   }
 }

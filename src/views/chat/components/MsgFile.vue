@@ -26,15 +26,19 @@ const content = computed(() => props.item.content as FileContentDto);
 </template>
 
 <style scoped>
+
 .msg-file {
-  background: linear-gradient(135deg, rgb(255, 255, 255), rgb(255, 255, 255)) border-box;
+  
+  /* background: linear-gradient(135deg, rgb(255, 255, 255), rgb(255, 255, 255)) border-box; */
+  background: var(--msg-file-background);
 }
 .msg-file:hover {
-  background: linear-gradient(135deg, rgb(245, 245, 245), rgb(244, 244, 244)) border-box;
+  /* background: linear-gradient(135deg, rgb(245, 245, 245), rgb(244, 244, 244)) border-box; */
+  background: var(--msg-file-background-hover);
 }
-:deep(.file-icon) {
+/* :deep(.file-icon) {
   background: linear-gradient(135deg, rgb(245, 245, 245), rgba(230, 230, 230, 0.942)) border-box;
-}
+} */
 .msg-file {
   padding: 0px;
   width: 260px;

@@ -44,11 +44,11 @@ const content = computed(() => formatMessageContent(props.entity));
 }
 
 .message-type {
-  color: black;
+  color: var(--preview-message-type-color);
   margin-right: 4px;
 }
 .message-text {
-  color: gray;
+  color: var(--preview-message-text-color);
   overflow: hidden;
   white-space: nowrap;
   text-overflow: ellipsis;
