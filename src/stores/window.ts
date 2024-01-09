@@ -76,10 +76,10 @@ export const useWindowStore = defineStore('window', {
           shortcutStore.pressed(args[0] as string, (args[1] || new Date().getTime()) as number);
           break;
         case 'color-scheme':
-          console.log('color-scheme', args);
-          this.setColorScheme(args[0]);
+          const { colorScheme } = args[0];
+          console.log('color-scheme', colorScheme, args);
+          this.setColorScheme(colorScheme);
           break;
-
         case 'focus':
           this.focus = true;
           break;

@@ -27,6 +27,7 @@ export interface GlobalState {
   isAuthorized: boolean;
   token: any;
   tokenKey: string;
+  colorScheme: string;
 }
 
 export const globalState: GlobalState = {
@@ -45,7 +46,7 @@ export const globalState: GlobalState = {
     isOver: undefined,
   },
   appInfo: {
-    appName: env.app_name, 
+    appName: env.app_name,
     appVersion: version,
     copyright: env.copyright,
     version: version,
@@ -59,6 +60,7 @@ export const globalState: GlobalState = {
   isAuthorized: false,
   token: store.get(TOKEN_KEY),
   tokenKey: TOKEN_KEY,
+  colorScheme: 'auto',
 };
 
 // app.whenReady().then(() => {

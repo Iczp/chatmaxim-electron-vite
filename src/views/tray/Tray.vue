@@ -54,7 +54,7 @@ const { totalBadge, list, onItemClick, onHeaderClick, onIgnore, onMouseOver, onM
 }
 
 .page-tray {
-  background-color: white;
+  /* background-color: white; */
   user-select: none;
 }
 .header {
@@ -63,7 +63,7 @@ const { totalBadge, list, onItemClick, onHeaderClick, onIgnore, onMouseOver, onM
   box-sizing: border-box;
   align-items: center;
   padding: 0 12px;
-  border-bottom: 1px solid #f0f0f0ac;
+  border-bottom: 1px solid var(--divider-color);
 }
 .total-badge {
   padding: 0;
@@ -72,6 +72,7 @@ const { totalBadge, list, onItemClick, onHeaderClick, onIgnore, onMouseOver, onM
   align-items: center;
   font-size: 12px;
   font-weight: bold;
+  color: var(--color);
 }
 .list {
   padding: 0;
@@ -88,7 +89,7 @@ const { totalBadge, list, onItemClick, onHeaderClick, onIgnore, onMouseOver, onM
   /* height: 1px; */
 }
 .session-item:hover {
-  background-color: #e0e0e0;
+  background-color: var(--session-item-background-color-hover);
 }
 .badge {
   line-height: normal;

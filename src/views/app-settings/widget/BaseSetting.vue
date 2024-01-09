@@ -9,6 +9,7 @@ import { useAppInfo } from '../../../commons/useAppInfo';
 import { reactive, toRaw } from 'vue';
 import type { UnwrapRef } from 'vue';
 import { setWindow } from '../../../commons/setWindow';
+import { setColorScheme } from '../../../commons/setColorScheme';
 
 interface FormState {
   colorScheme: string;
@@ -36,7 +37,7 @@ const title = ref('');
 const onColorSchemeChange = (e: any) => {
   console.log('onColorSchemeChange', e);
   const colorScheme = e.target.value;
-  setWindow({ name: '*', colorScheme });
+  setColorScheme({ colorScheme });
 };
 </script>
 

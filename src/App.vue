@@ -21,7 +21,7 @@ watch(
     mode.value = colorScheme!;
   },
   {
-    immediate: true,
+    // immediate: true,
   },
 );
 const html = ref(null);

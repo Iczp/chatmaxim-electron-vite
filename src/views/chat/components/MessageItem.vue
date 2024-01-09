@@ -207,11 +207,13 @@ const onMessageClick = (event: MouseEvent, mouseButton: MouseButton) => {
   border-radius: 4px;
 }
 .selectable .msg-body-wraper:hover {
-  background-color: #efefef;
-  box-shadow: 0 0 6px 0 #bbbbbbc9;
+  
+  background-color: var(--message-body-wraper-selectable-background-color-hover);
+  box-shadow: var(--message-body-wraper-selectable-hover-box-shadow);
 }
 .selectable.checked .msg-body-wraper {
-  background-color: #e7e7e7;
+  
+  background-color: var(--message-body-wraper-selectable-checked-background-color);
 }
 .checkbox-container {
   display: flex;
@@ -289,7 +291,7 @@ const onMessageClick = (event: MouseEvent, mouseButton: MouseButton) => {
 .send-time {
   display: flex;
   justify-content: center;
-  color: #acacac;
+  color: var(--message-sendtime-color);
   font-size: 12px;
   width: 100%;
   padding: 4px;

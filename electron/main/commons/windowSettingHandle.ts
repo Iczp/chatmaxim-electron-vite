@@ -10,13 +10,13 @@ import { sendEvent } from './initWindowEvent';
 export const windowSettingHandle = (_: Electron.IpcMainInvokeEvent, params: WindowParams): any => {
   return new Promise((resolve, reject) => {
     console.log('win-setting', _.sender.id, params);
-    if (params.name == '*' && params.colorScheme) {
-      windowManager.getAllWindows().map(([name, win]) => {
-        sendEvent(win, 'color-scheme', [params.colorScheme]);
-      });
-      resolve({ message: 'ok' });
-      return;
-    }
+    // if (params.name == '*' && params.colorScheme) {
+    //   windowManager.getAllWindows().map(([name, win]) => {
+    //     sendEvent(win, 'color-scheme', [params.colorScheme]);
+    //   });
+    //   resolve({ message: 'ok' });
+    //   return;
+    // }
 
     let targetWindow: BrowserWindow | undefined;
     if (params.name) {

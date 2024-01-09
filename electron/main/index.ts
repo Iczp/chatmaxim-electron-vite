@@ -34,6 +34,7 @@ import { setAuthorizehandle } from './commons/setAuthorizehandle';
 import { createLoginWindow } from './commons/createLoginWindow';
 import { openAppSettingsWindowHandle } from './commons/openAppSettingsWindowHandle';
 import { env } from './env';
+import { setColorSchemeHandle } from './commons/setColorSchemeHandle';
 
 setAppProtocol();
 
@@ -124,6 +125,8 @@ ipcMain.handle('win-setting', windowSettingHandle);
 ipcMain.handle('websocket', websocketHandle);
 ipcMain.handle('set-tray', setTrayHandle);
 ipcMain.handle('authorize', setAuthorizehandle);
+ipcMain.handle('color-scheme', setColorSchemeHandle);
+
 //
 // macOS
 app.on('open-url', (event, url) => {
