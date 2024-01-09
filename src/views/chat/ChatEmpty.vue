@@ -5,7 +5,7 @@ import { ChatOn,Chating } from '../../icons';
 </script>
 
 <template>
-  <page class="empty drag">
+  <page class="chat-empty drag">
     <page-title />
     <!-- <h1>welcome...</h1>
     <h2>{{ router.currentRoute.value.params.chatObjectId }}</h2> -->
@@ -22,15 +22,14 @@ import { ChatOn,Chating } from '../../icons';
 :deep(.page-title-left) {
   display: none;
 }
-.empty {
+.chat-empty {
   display: flex;
   flex-direction: column;
   flex: 1;
-  background-color: var(--chat-empty-background-color);
   user-select: none;
   align-items: center;
   justify-content: center;
-  color: var(--chat-empty-color);
+  
 }
 .div-image {
   height: 300px;
@@ -42,6 +41,8 @@ import { ChatOn,Chating } from '../../icons';
   display: flex;
   align-items: center;
   justify-content: center;
+  color: var(--chat-empty-color);
+  background-color: var(--chat-empty-background-color);
 }
 .svg-icon{
   scale: 10;

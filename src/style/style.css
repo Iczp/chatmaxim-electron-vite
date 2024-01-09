@@ -272,7 +272,7 @@ code {
 
 [color-scheme='dark']:root {
   /* body */
-  --background-color: #1b1b1b;
+  --background-color: rgb(27, 27, 27);
   --background-color-hover: rgba(57, 57, 57, 0.5);
   --color: rgba(200, 200, 200, 0.904);
   --border-color: rgba(55, 55, 55, 0.904);
@@ -291,7 +291,7 @@ code {
   --avatar-background-color: rgba(57, 57, 57, 0.927);
   /* chat-empty */
   --chat-empty-background-color: #1b1b1b;
-  --chat-empty-color: rgba(34, 34, 34, 0.74);
+  --chat-empty-color: rgba(21, 21, 21, 0.74);
   /* 边栏线条颜色 */
   --sider-border-color: rgba(41, 41, 41, 0.919);
   /* 分隔线 */
@@ -382,7 +382,7 @@ code {
   }
   .ant-btn-text {
     color: var(--color);
-    background-color: rgba(38, 38, 38, 0.361);
+    background-color: var(--background-color);
     border-color: transparent;
   }
   .ant-btn-text:hover {
