@@ -23,7 +23,7 @@ const inheritanceKeys = Object.keys(slots).filter(x => !ignoreSlots.some(d => d 
 <template>
   <layout-item class="chat-object" v-bind="attrs" header>
     <template #header>
-      <a-badge :count="badge" :overflow-count="99" :dot="dot">
+      <a-badge :count="badge" :overflow-count="99" size="default" :dot="dot">
         <avatar :entity="entity" :size="size" />
       </a-badge>
     </template>

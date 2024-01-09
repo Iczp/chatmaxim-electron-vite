@@ -651,11 +651,12 @@ const onRemove = (entity: MessageDto) => {
 .message-divider {
   font-size: 12px;
   color: var(--message-divider-color);
-  padding: 0 50px;
+  justify-content: center;
 }
 .message-divider::before,
 .message-divider::after {
   background-color: var(--message-divider-others-color);
+  width: 20%;
 }
 .footer {
   padding: 0;
