@@ -322,6 +322,18 @@ code {
   /* msg-rollback */
   --msg-rollback-color: #ccc;
   --msg-rollback-background-color: transparent;
+
+  /* quote-message */
+  --quote-message-icon-color: #ccc;
+  --quote-message-background-color: rgba(234, 234, 234, 0.5);
+  --quote-message-border-color: rgba(212, 212, 212, 0.658);
+  --quote-message-sender-name-color: #333;
+  --quote-message-closable-hover-color: rgba(130, 130, 130, 0.9);
+  --quote-message-hover-background-color: rgba(234, 234, 234, 1);
+  --quote-message-hover-border-color: rgba(130, 130, 130, 0.9);
+  /* chat-input */
+  --chat-input-counter-color: #ccc;
+
   /* tab */
   --tab-item-active-color: rgb(10, 118, 226);
   --tab-item-background-color-hover: #d2d2d298;
@@ -400,7 +412,7 @@ code {
   --msg-cmd-object-color: #6c6c6c;
   --msg-cmd-object-hover-color: #c6c6c6;
   /* msg-text */
-  --msg-text-color: #a1b3a5;
+  --msg-text-color: #afb5b0;
   --msg-text-background-color: none;
   --msg-text-background: linear-gradient(135deg, rgba(47, 47, 47, 0.938), rgb(35, 35, 35))
     border-box;
@@ -430,6 +442,18 @@ code {
   /* msg-rollback */
   --msg-rollback-color: #454545;
   --msg-rollback-background-color: transparent;
+
+  /* quote-message */
+  --quote-message-icon-color: #343434;
+  --quote-message-background-color: rgba(28, 28, 28, 0.5);
+  --quote-message-border-color: rgba(62, 62, 62, 0.658);
+  --quote-message-sender-name-color: #707070;
+  --quote-message-closable-hover-color: rgba(76, 76, 76, 0.9);
+  --quote-message-hover-background-color: rgb(24, 24, 24);
+  --quote-message-hover-border-color: rgba(76, 76, 76, 0.9);
+
+  /* chat-input */
+  --chat-input-counter-color: #343434;
   /* tab */
   --tab-item-active-color: rgb(79, 167, 255);
   --tab-item-background-color-hover: #35353598;
@@ -538,6 +562,7 @@ code {
   .ant-input-affix-wrapper .ant-input-clear-icon {
     color: rgb(103 103 103);
   }
+
   .ant-btn {
     border-color: var(--border-color);
     background-color: #3a3a3a;
@@ -561,22 +586,40 @@ code {
   .ant-input::placeholder {
     color: rgba(100, 100, 100, 0.619);
   }
-  .ant-mentions > textarea,
+  .ant-mentions > textarea {
+    color: var(--color);
+    background-color: transparent;
+  }
+  .ant-mentions > textarea::placeholder,
   textarea::placeholder {
     color: rgba(100, 100, 100, 0.619);
   }
   .ant-input-group .ant-input-group-addon {
     border: 1px solid var(--border-color);
   }
+
+  /* .ant-select, */
   .ant-select,
   .ant-select .ant-select-arrow,
   .ant-select-single .ant-select-selector {
+    color: var(--color);
+    border-color: var(--border-color);
+  }
+  .ant-select .ant-select-selector {
+    background-color: var(--background-color);
+    color: var(--color);
+  }
+  .ant-select-single.ant-select-open .ant-select-selection-item {
     color: var(--color);
   }
   .ant-select.ant-select-open .ant-select-selector {
     color: var(--color);
   }
 
+  .ant-select-dropdown {
+    color: var(--color);
+    border-color: var(--border-color);
+  }
   .ant-descriptions .ant-descriptions-extra {
     color: var(--color);
   }

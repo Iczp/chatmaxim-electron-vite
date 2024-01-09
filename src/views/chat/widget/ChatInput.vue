@@ -141,7 +141,7 @@ defineExpose({
 
 <style scoped>
 :deep(.ant-mentions) {
-  background-color: #ffffff00;
+  background-color: transparent;
 }
 .chat-input {
   display: flex;
@@ -171,7 +171,7 @@ defineExpose({
 .footer-left {
   display: flex;
   font-size: 12px;
-  color: #ccc;
+  color: var(--chat-input-counter-color);
   padding-left: 12px;
   align-items: center;
   /* justify-content: space-between; */

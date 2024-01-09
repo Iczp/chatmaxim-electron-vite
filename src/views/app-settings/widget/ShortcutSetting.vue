@@ -43,14 +43,17 @@ const title = ref('');
           :label-col="labelCol"
           :wrapper-col="wrapperCol"
         >
-
-        <a-divider class="divider" orientation="left">Global</a-divider>
+          <a-divider class="divider" orientation="left">Global</a-divider>
           <a-form-item label="提取消息">
             <a-input v-model:value="formState.fetchMessage" />
           </a-form-item>
 
           <a-form-item label="发送消息">
-            <a-input v-model:value="formState.sendMessage" />
+            <!-- <a-input v-model:value="formState.sendMessage" /> -->
+            <a-select v-model:value="formState.sendMessage">
+              <a-select-option value="Ctrl + Enter">Ctrl + Enter</a-select-option>
+              <a-select-option value="Enter">Enter</a-select-option>
+            </a-select>
           </a-form-item>
 
           <a-form-item label="创建群">
@@ -77,7 +80,7 @@ const title = ref('');
 
 <style scoped>
 .form {
-  padding: 0 ;
+  padding: 0;
 }
 .divider {
   font-size: 12px;

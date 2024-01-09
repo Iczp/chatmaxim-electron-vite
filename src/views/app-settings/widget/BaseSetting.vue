@@ -8,7 +8,7 @@ import { useWindowStore } from '../../../stores/window';
 import { useColorMode } from '@vueuse/core';
 
 const { system, store } = useColorMode();
-
+const windowStore = useWindowStore();
 interface FormState {
   colorScheme: string;
   isOpenAtLogin: boolean;
@@ -17,7 +17,7 @@ interface FormState {
   desc: string;
 }
 const formState: UnwrapRef<FormState> = reactive({
-  colorScheme: 'light',
+  colorScheme: windowStore.colorScheme as string,
   isOpenAtLogin: false,
   type: [],
   resource: '',
@@ -35,7 +35,7 @@ const title = ref('');
 const onColorSchemeChange = (e: any) => {
   console.log('onColorSchemeChange', e);
   const colorScheme = e.target.value;
-  const windowStore = useWindowStore();
+
   windowStore.setColorScheme(colorScheme);
   setColorScheme({ colorScheme });
 };

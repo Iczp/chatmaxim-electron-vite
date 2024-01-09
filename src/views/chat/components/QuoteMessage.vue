@@ -36,21 +36,23 @@ const { senderName } = useMessage(props.entity);
 .quote-message {
   display: flex;
   flex-direction: row;
+
 }
 .quote-message-body {
   display: flex;
   padding: 2px 8px;
   border-radius: 12px;
-  background-color: rgba(234, 234, 234, 0.5);
+  
+  background-color: var(--quote-message-background-color);
   font-size: 12px;
   align-items: center;
   box-sizing: border-box;
-  border: 1px solid rgba(212, 212, 212, 0.658);
+  border: 1px solid var(--quote-message-border-color);
   position: relative;
 }
 
 .sender-name {
-  color: #333;
+  color:var(--quote-message-sender-name-color);
 }
 .sender-name::before {
   content: '[';
@@ -66,14 +68,15 @@ const { senderName } = useMessage(props.entity);
 }
 
 .closable:hover {
-  color: rgba(130, 130, 130, 0.9);
+  color: var(--quote-message-closable-hover-color);
 }
 .quote-message-body:hover {
-  background-color: rgba(234, 234, 234, 1);
-  border: 1px solid rgba(130, 130, 130, 0.9);
+
+  background-color: var(--quote-message-hover-background-color);
+  border: 1px solid var(--quote-message-hover-border-color);
 }
 .icon-quote {
-  color: #ccc;
+  color: var(--quote-message-icon-color);
   font-size: 14px;
 }
 </style>
