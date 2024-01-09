@@ -503,7 +503,8 @@ const onRemove = (entity: MessageDto) => {
       more
     >
       <template v-if="isImmersed" v-slot:title>
-        <icon type="mute" size="16" color="gray" />
+        <!-- <icon type="mute" size="14" /> -->
+        <icon type="mute" size="14" class="mute" />
       </template>
     </PageTitle>
 
@@ -580,6 +581,9 @@ const onRemove = (entity: MessageDto) => {
 }
 :deep(.sub-title) {
   color: var(--chat-page-sub-title-color);
+}
+.mute {
+  color: var(--mute-color);
 }
 .chat-page {
   width: 100%;

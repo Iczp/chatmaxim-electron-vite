@@ -10,6 +10,8 @@ import { reactive, toRaw } from 'vue';
 import type { UnwrapRef } from 'vue';
 import { setWindow } from '../../../commons/setWindow';
 import { setColorScheme } from '../../../commons/setColorScheme';
+import { useWindowFocus } from '@vueuse/core';
+import { useWindowStore } from '../../../stores/window';
 
 interface FormState {
   colorScheme: string;
@@ -37,6 +39,8 @@ const title = ref('');
 const onColorSchemeChange = (e: any) => {
   console.log('onColorSchemeChange', e);
   const colorScheme = e.target.value;
+  const windowStore = useWindowStore()
+  windowStore.setColorScheme(colorScheme)
   setColorScheme({ colorScheme });
 };
 </script>

@@ -134,6 +134,9 @@ const ondragstart = (event: DragEvent) => {
 :deep(.sub-container) {
   height: 20px;
 }
+:deep(.sub-left) {
+  color: #ccc;
+}
 .session-item {
   --spacing-size: 12px;
   height: var(--side-width);
@@ -249,7 +252,7 @@ const ondragstart = (event: DragEvent) => {
   margin-right: 4px;
 }
 .mute {
-  color: #ccc;
+  color: var(--mute-color);
 }
 .sub-right :deep(.ant-space-item) {
   display: flex;
@@ -262,11 +265,11 @@ const ondragstart = (event: DragEvent) => {
   min-width: var(--badge-size); */
 }
 .sender {
-  color: #999;
+  color: var(--session-item-sender-color);
 }
 .sender::after {
   content: ':';
-  color: #333;
+  color: var(--session-item-sender-after-color);
   margin: 0 2px;
 }
 

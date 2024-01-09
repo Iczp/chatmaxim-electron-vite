@@ -16,6 +16,7 @@ const content = computed(() => props.item.content as CmdContentDto);
 
 <style scoped>
 .msg-cmd {
+
   display: flex;
   justify-content: center;
   align-items: center;
@@ -26,22 +27,28 @@ const content = computed(() => props.item.content as CmdContentDto);
   margin: auto;
   text-align: center;
   border-radius: 4px;
-  color: #a1a1a1;
-  background-color: #e3e3e3bf;
+  color: var(--msg-cmd-color);
+  background-color: var(--msg-cmd-background-color);
+  border: 1px solid var(--msg-cmd-border-color);
   margin: 4px auto;
-  border: 1px solid #e3e3e3bf;
   box-sizing: border-box;
   /* user-select: none; */
+
+
 }
 .msg-cmd:hover {
-  border: 1px solid #cecece;
+  color: var(--msg-cmd-hover-color);
+  background-color: var(--msg-cmd-hover-background-color);
+  border: 1px solid var(--msg-cmd-hover-border-color);
+
+
 }
 :deep(.uid),
 :deep(.oid) {
-  color: #7f7f7f;
+  color: var(--msg-cmd-object-color);
 }
 :deep(.oid:hover),
 :deep(.uid:hover) {
-  color: #333;
+  color: var(--msg-cmd-object-hover-color);
 }
 </style>

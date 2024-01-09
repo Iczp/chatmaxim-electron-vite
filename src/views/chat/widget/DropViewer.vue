@@ -82,7 +82,7 @@ defineExpose({
     @ok="handleOk"
     @cancel="handleCancel"
   >
-    <page class="page">
+    <page class="drop-viewer">
       <page-content>
         <chat-object :entity="destination" class="chat-object" :size="32"></chat-object>
         <a-divider class="divider" />
@@ -91,9 +91,8 @@ defineExpose({
             {{ text }}
           </div>
           <div v-if="files.length != 0" class="file-list">
-            <div v-for="(item, index) in files">
+            <div v-for="(item, index) in files" class="hover">
               <file-item
-                class="hover"
                 :name="item?.name"
                 :size="item.size"
                 :suffix="`.${item?.name.split('.').pop()}`"
@@ -121,10 +120,10 @@ defineExpose({
 .drop-viewer {
   user-select: none;
 }
-.page {
+.drop-viewer {
   user-select: none;
-  background-color: white;
-  --background-color: #f5f5f5;
+  /* background-color: white;
+  --background-color: #f5f5f5; */
 }
 .divider {
   margin: 6px 0;
@@ -137,7 +136,7 @@ defineExpose({
 .text-viewer {
   user-select: text;
   padding: 12px;
-  background-color: var(--background-color);
+  background-color: #272727;
 }
 .file-list {
   display: flex;
@@ -147,24 +146,30 @@ defineExpose({
   background-color: var(--background-color);
 }
 .file-info {
-  color: gray;
+  color: rgba(128, 128, 128, 0.511);
 }
 .hover {
   position: relative;
+  /* background-color: #272727; */
+  background-color: var(--background-color-normal);
+}
+.hover:last-child::after {
+  content: unset;
 }
 .hover::after {
   content: '';
   position: absolute;
-  left: 52px;
+  left: 68px;
   right: 0;
   bottom: 0;
-  background-color: #e2e2e2c9;
+  /* background-color: #383838; */
+  background-color: var(--divider-color);
   height: 1px;
   transform: translateY(0.25);
   /* z-index: 1; */
 }
 .hover:hover {
-  background-color: #eaeaea;
+  background-color: var(--background-color-hover);
 }
 :deep(.delete) {
   opacity: 0;

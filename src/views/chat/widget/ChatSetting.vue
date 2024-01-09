@@ -7,6 +7,7 @@ import { SessionUnitOwnerDto, SessionUnitSettingDto } from '../../../apis/dtos';
 import { ChatObjectTypeEnumText, ChatObjectTypeEnums } from '../../../apis/enums';
 import { SettingService } from '../../../apis';
 import { useImStore } from '../../../stores/im';
+import ChatObject from '../../../components/ChatObject.vue';
 
 const store = useImStore();
 type PropArgs = {
@@ -140,7 +141,7 @@ defineExpose({
       <main>
         <section class="section">
           <a-space wrap>
-            <a-avatar v-for="(item, index) in 10" :key="index"></a-avatar>
+            <chat-object v-for="(item, index) in 10" :key="index"></chat-object>
             <a-button type="dashed" class="btn-item" :icon="h(PlusOutlined)"></a-button>
             <a-button
               type="dashed"
@@ -282,7 +283,7 @@ defineExpose({
 .section {
   padding: 8px 16px;
   margin: 16px 0;
-  background-color: white;
+  /* background-color: white; */
 }
 .btn-item {
   height: 48px;

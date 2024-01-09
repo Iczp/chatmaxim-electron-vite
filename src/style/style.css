@@ -212,11 +212,15 @@ code {
 [color-scheme='light']:root {
   /* body */
   --background-color: #f0f2f5;
+  --background-color-normal: rgba(248, 248, 248, 0.5);
   --background-color-hover: rgba(248, 248, 248, 0.5);
   --color: #383838;
   --checked-background: linear-gradient(135deg, #ddefff, #e9ffeb) border-box;
 
   --page-footer-border-top-color: rgba(179, 179, 179, 0.5);
+
+  --mute-color: #ccc;
+
   /* file-icon */
   --file-name-color: rgb(44, 44, 44);
   --file-icon-color: rgb(14, 105, 162);
@@ -224,22 +228,24 @@ code {
   --file-icon-background-color: rgb(232, 232, 232);
 
   /* avatar */
-  --avatar-color: rgba(113, 113, 113, 0.877);
-  --avatar-background-color: rgba(228, 228, 228, 0.877);
-
-  --chat-empty-background-color: rgb(251, 251, 251, 1);
-  --chat-empty-color: rgba(196, 196, 196, 1);
+  --avatar-color: rgba(191, 191, 191, 0.877);
+  --avatar-background-color: rgba(230, 230, 230, 0.554);
+/* chat-empty */
+  --chat-empty-background-color: rgb(249, 251, 255);
+  --chat-empty-color: rgb(240, 244, 249);
   /* 边栏线条颜色 */
   --sider-border-color: #e0e0e0;
   --sider-background-color: #f1f3f6;
   /* 分隔线 */
   --divider-color: rgba(203, 203, 203, 0.41);
   /* session-item */
-  --session-item-sendtime-color: #d8d8d8;
+  --session-item-sendtime-color: #bcbcbc;
   --session-item-active-sendtime-color: #606060;
   --session-item-hover-sendtime-color: #a6a6a6;
   --session-item-active-background: linear-gradient(135deg, #ddefff, #e9ffeb) border-box;
-  --session-item-background-color-hover: rgba(230, 230, 230, 0.813);
+  --session-item-background-color-hover: rgba(203, 203, 203, 0.651);
+  --session-item-sender-color:#999;
+  --session-item-sender-after-color:#333;
 
   /* preview-message */
   --preview-message-type-color: #717171;
@@ -249,9 +255,9 @@ code {
   --chat-page-background-color: f0f2f5;
   --chat-page-main-title-color: rgb(33, 33, 33);
   --chat-page-sub-title-color: rgba(126, 126, 126, 0.921);
-  --message-divider-color:#999;
-  --message-divider-others-color:rgba(222, 222, 222, 0.892);
-  --message-sendtime-color:#acacac;;
+  --message-divider-color: #999;
+  --message-divider-others-color: rgba(222, 222, 222, 0.892);
+  --message-sendtime-color: #acacac;
   /* message-item */
   --message-body-wraper-selectable-background-color-hover: #efefef;
   --message-body-wraper-selectable-checked-background-color: #e7e7e7;
@@ -260,7 +266,15 @@ code {
   --msg-file-background: linear-gradient(135deg, rgb(255, 255, 255), rgb(255, 255, 255)) border-box;
   --msg-file-background-hover: linear-gradient(135deg, rgb(201, 201, 201), rgb(193, 193, 193))
     border-box;
-
+  /* msg-cmd */
+  --msg-cmd-color: #a1a1a1;
+  --msg-cmd-background-color: #e3e3e3bf;
+  --msg-cmd-border-color: #d6d6d6bf;
+  --msg-cmd-hover-color: #a1a1a1;
+  --msg-cmd-hover-background-color: #e3e3e3bf;
+  --msg-cmd-hover-border-color: #ccccccbf;
+  --msg-cmd-object-color: #7f7f7f;
+  --msg-cmd-object-hover-color: #333;
   /* tab */
   --tab-item-active-color: rgb(10, 118, 226);
   --tab-item-background-color-hover: #d2d2d298;
@@ -273,6 +287,7 @@ code {
 [color-scheme='dark']:root {
   /* body */
   --background-color: rgb(27, 27, 27);
+  --background-color-normal: rgba(41, 41, 41, 0.5);
   --background-color-hover: rgba(57, 57, 57, 0.5);
   --color: rgba(200, 200, 200, 0.904);
   --border-color: rgba(55, 55, 55, 0.904);
@@ -280,6 +295,9 @@ code {
   --checked-background: linear-gradient(135deg, #0b0e12, #04172d) border-box;
 
   --page-footer-border-top-color: rgb(55, 55, 55);
+
+  --mute-color: #494949;
+  
   /* file-icon */
   --file-name-color: rgb(184, 184, 184);
   --file-icon-color: rgb(14, 105, 162);
@@ -303,6 +321,8 @@ code {
   --session-item-sendtime-color: #333333;
   --session-item-active-sendtime-color: #626262;
   --session-item-hover-sendtime-color: #626262;
+  --session-item-sender-color:#3c3c3c;
+  --session-item-sender-after-color:#6b6b6b;
 
   /* preview-message */
   --preview-message-type-color: #717171;
@@ -312,9 +332,9 @@ code {
   --chat-page-background-color: rgba(34, 34, 34, 0.907);
   --chat-page-main-title-color: rgba(182, 182, 182, 0.858);
   --chat-page-sub-title-color: rgba(73, 73, 73, 0.921);
-  --message-divider-color:#454545;
-  --message-divider-others-color:rgb(50, 50, 50);
-  --message-sendtime-color:#3d3d3d;
+  --message-divider-color: #454545;
+  --message-divider-others-color: rgb(50, 50, 50);
+  --message-sendtime-color: #3d3d3d;
   /* message-item */
   --message-body-wraper-selectable-background-color-hover: #1f1f1f;
   --message-body-wraper-selectable-checked-background-color: #3a3a3a;
@@ -322,7 +342,15 @@ code {
   /* msg-file */
   --msg-file-background: linear-gradient(135deg, rgb(51 51 51), rgb(59 59 59)) border-box;
   --msg-file-background-hover: linear-gradient(135deg, rgb(67, 67, 67), rgb(48, 48, 48)) border-box;
-
+  /* msg-cmd */
+  --msg-cmd-color: #454545;
+  --msg-cmd-background-color: #222222c9;
+  --msg-cmd-border-color: #252525bf;
+  --msg-cmd-hover-color: #141414;
+  --msg-cmd-hover-background-color: #262626bf;
+  --msg-cmd-hover-border-color: #2f2f2fbf;
+  --msg-cmd-object-color: #6c6c6c;
+  --msg-cmd-object-hover-color: #c6c6c6;
   /* tab */
   --tab-item-active-color: rgb(79, 167, 255);
   --tab-item-background-color-hover: #35353598;
@@ -336,7 +364,43 @@ code {
     color: var(--color);
     background-color: var(--background-color);
   }
+  --mask-background-color: rgba(56, 56, 56, 0.5);
+  /* ant-modal */
+  .ant-modal-root .ant-modal-mask {
+    background-color: var(--mask-background-color);
+  }
+  .ant-modal .ant-modal-title {
+    color: var(--chat-page-main-title-color);
+  }
+  .ant-modal .ant-modal-close {
+    color: var(--color);
+  }
 
+  .ant-modal .ant-modal-content,
+  .ant-modal .ant-modal-header {
+    color: var(--color);
+    background-color: var(--background-color);
+  }
+  /* ant-drawer */
+  .ant-drawer.ant-drawer-open .ant-drawer-mask {
+    background-color: var(--mask-background-color);
+  }
+  .ant-drawer .ant-drawer-header {
+    background: var(--background-color);
+
+    border-bottom: 1px solid var(--divider-color);
+  }
+  .ant-drawer .ant-drawer-title {
+    color: var(--color);
+  }
+  .ant-drawer .ant-drawer-close {
+    color: rgba(255, 255, 255, 0.5);
+  }
+  .ant-drawer .ant-drawer-content {
+    color: var(--color);
+    background-color: var(--background-color);
+  }
+  /* ant-radio */
   .ant-radio-button-wrapper-checked:not(.ant-radio-button-wrapper-disabled) {
     background-color: #656565;
     border: 1px solid #195ef2;
@@ -441,5 +505,10 @@ code {
   .ant-checkbox.ant-checkbox-disabled .ant-checkbox-inner {
     background-color: black;
     border-color: var(--background-color);
+  }
+
+
+  .ps .ps__rail-x:hover, .ps .ps__rail-y:hover, .ps .ps__rail-x:focus, .ps .ps__rail-y:focus, .ps .ps__rail-x.ps--clicking, .ps .ps__rail-y.ps--clicking{
+    background-color: #4242423f;
   }
 }
