@@ -87,7 +87,7 @@ const { appId, appName, author, websize, version, copyright } = useAppInfo();
               :rules="[{ message: 'Please input your username!' }]"
             >
               <a-input v-model:value="formState.username">
-                <template #prefix><UserOutlined style="color: rgba(0, 0, 0, 0.25)" /></template>
+                <template #prefix><UserOutlined class="prefix" /></template>
               </a-input>
             </a-form-item>
 
@@ -97,7 +97,7 @@ const { appId, appName, author, websize, version, copyright } = useAppInfo();
               :rules="[{ message: 'Please input your password!' }]"
             >
               <a-input-password v-model:value="formState.password">
-                <template #prefix><LockOutlined style="color: rgba(0, 0, 0, 0.25)" /></template>
+                <template #prefix><LockOutlined class="prefix" /></template>
               </a-input-password>
             </a-form-item>
 
@@ -112,7 +112,9 @@ const { appId, appName, author, websize, version, copyright } = useAppInfo();
         </div>
       </div>
     </page-content>
-    <page-footer class="footer"><video src=""></video>{{ version }}</page-footer>
+    <page-footer class="footer">
+      <div class="version">v{{ version }}</div>
+    </page-footer>
   </page>
 </template>
 
@@ -124,15 +126,20 @@ const { appId, appName, author, websize, version, copyright } = useAppInfo();
 .footer {
   background-color: unset;
   border: none;
-  color: #ccc;
   font-size: 12px;
   align-items: center;
   justify-content: center;
 }
+
 .page {
   width: 100%;
   height: 100%;
 }
+.prefix {
+  /* color: var(--color); */
+  font-weight: normal;
+}
+
 .login-page {
   padding: 20px;
   /* position: fixed;

@@ -10,7 +10,7 @@ const content = computed(() => props.item.content as TextContentDto);
 </script>
 
 <template>
-  <Bubble :r="item.isSelf" class="msg-text">
+  <Bubble :r="item.isSelf" class="msg-text" :class="{ self: item.isSelf }">
     <!-- {{ item.id }} -->
     <!-- {{ content?.text }}
     <br />
@@ -27,5 +27,23 @@ const content = computed(() => props.item.content as TextContentDto);
   min-width: 24px;
   line-height: 24px;
   max-width: var(--message-max-width);
+  background-color: var(--msg-text-background-color);
+  color: var(--msg-text-color);
+  background: var(--msg-text-background);
+}
+.msg-text:hover {
+  color: var(--msg-text-hover-color);
+  background-color: var(--msg-text-hover-background-color);
+  background: var(--msg-text-hover-background);
+}
+.msg-text.self {
+  color: var(--msg-text-self-color);
+  background-color: var(--msg-self-text-background-color);
+  background: var(--msg-text-self-background);
+}
+.msg-text.self:hover {
+  color: var(--msg-text-self-hover-color);
+  background-color: var(--msg-self-text-hover-background-color);
+  background: var(--msg-text-self-hover-background);
 }
 </style>

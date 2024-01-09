@@ -58,7 +58,16 @@ a {
 a:hover {
   color: #535bf2;
 }
-
+.version {
+  display: flex;
+  justify-content: center;
+  position: absolute;
+  bottom: 0;
+  color: rgba(135, 135, 135, 0.5);
+  font-size: 12px;
+  width: 100%;
+  height: 24px;
+}
 body {
   margin: 0;
   /* display: flex; */
@@ -230,7 +239,7 @@ code {
   /* avatar */
   --avatar-color: rgba(191, 191, 191, 0.877);
   --avatar-background-color: rgba(230, 230, 230, 0.554);
-/* chat-empty */
+  /* chat-empty */
   --chat-empty-background-color: rgb(249, 251, 255);
   --chat-empty-color: rgb(240, 244, 249);
   /* 边栏线条颜色 */
@@ -244,8 +253,8 @@ code {
   --session-item-hover-sendtime-color: #a6a6a6;
   --session-item-active-background: linear-gradient(135deg, #ddefff, #e9ffeb) border-box;
   --session-item-background-color-hover: rgba(203, 203, 203, 0.651);
-  --session-item-sender-color:#999;
-  --session-item-sender-after-color:#333;
+  --session-item-sender-color: #999;
+  --session-item-sender-after-color: #333;
 
   /* preview-message */
   --preview-message-type-color: #717171;
@@ -275,6 +284,44 @@ code {
   --msg-cmd-hover-border-color: #ccccccbf;
   --msg-cmd-object-color: #7f7f7f;
   --msg-cmd-object-hover-color: #333;
+  --msg-rollback-color: #ccc;
+  --msg-rollback-background-color: transparent;
+  /* msg-text */
+  --msg-text-color: #1b1b1b;
+  --msg-text-background-color: none;
+  --msg-text-background: linear-gradient(135deg, rgba(14, 55, 205, 0.3), rgba(1, 156, 148, 0.3))
+    border-box;
+
+  --msg-text-hover-color: #1b1b1b;
+  --msg-text-hover-background-color: none;
+  --msg-text-hover-background: linear-gradient(
+      135deg,
+      rgba(1, 156, 148, 0.3),
+      rgba(14, 55, 205, 0.3)
+    )
+    border-box;
+
+  --msg-text-self-color: #fcfcfc;
+  --msg-text-self-background-color: none;
+  --msg-text-self-background: linear-gradient(
+      135deg,
+      rgba(12, 193, 84, 0.689),
+      rgba(11, 167, 42, 0.807)
+    )
+    border-box;
+
+  --msg-text-self-hover-color: #fcfcfc;
+  --msg-text-self-hover-background-color: none;
+  --msg-text-self-hover-background: linear-gradient(
+      135deg,
+      rgba(11, 167, 42, 0.807),
+      rgba(12, 193, 84, 0.689)
+    )
+    border-box;
+
+  /* msg-rollback */
+  --msg-rollback-color: #ccc;
+  --msg-rollback-background-color: transparent;
   /* tab */
   --tab-item-active-color: rgb(10, 118, 226);
   --tab-item-background-color-hover: #d2d2d298;
@@ -290,6 +337,7 @@ code {
   --background-color-normal: rgba(41, 41, 41, 0.5);
   --background-color-hover: rgba(57, 57, 57, 0.5);
   --color: rgba(200, 200, 200, 0.904);
+  --title-color: rgb(222, 222, 222);
   --border-color: rgba(55, 55, 55, 0.904);
 
   --checked-background: linear-gradient(135deg, #0b0e12, #04172d) border-box;
@@ -297,7 +345,7 @@ code {
   --page-footer-border-top-color: rgb(55, 55, 55);
 
   --mute-color: #494949;
-  
+
   /* file-icon */
   --file-name-color: rgb(184, 184, 184);
   --file-icon-color: rgb(14, 105, 162);
@@ -321,8 +369,8 @@ code {
   --session-item-sendtime-color: #333333;
   --session-item-active-sendtime-color: #626262;
   --session-item-hover-sendtime-color: #626262;
-  --session-item-sender-color:#3c3c3c;
-  --session-item-sender-after-color:#6b6b6b;
+  --session-item-sender-color: #3c3c3c;
+  --session-item-sender-after-color: #6b6b6b;
 
   /* preview-message */
   --preview-message-type-color: #717171;
@@ -351,6 +399,37 @@ code {
   --msg-cmd-hover-border-color: #2f2f2fbf;
   --msg-cmd-object-color: #6c6c6c;
   --msg-cmd-object-hover-color: #c6c6c6;
+  /* msg-text */
+  --msg-text-color: #a1b3a5;
+  --msg-text-background-color: none;
+  --msg-text-background: linear-gradient(135deg, rgba(47, 47, 47, 0.938), rgb(35, 35, 35))
+    border-box;
+
+  --msg-text-hover-color: #a1b3a5;
+  --msg-text-hover-background-color: none;
+  --msg-text-hover-background: linear-gradient(135deg, rgb(68, 68, 68), rgba(35, 35, 35, 0.881))
+    border-box;
+
+  --msg-text-self-color: #cecece;
+  --msg-text-self-background-color: none;
+  --msg-text-self-background: linear-gradient(
+      135deg,
+      rgba(12, 193, 84, 0.114),
+      rgba(11, 167, 42, 0.225)
+    )
+    border-box;
+
+  --msg-text-self-hover-color: #cecece;
+  --msg-text-self-hover-background-color: none;
+  --msg-text-self-hover-background: linear-gradient(
+      135deg,
+      rgba(11, 167, 42, 0.2),
+      rgba(12, 193, 84, 0.2)
+    )
+    border-box;
+  /* msg-rollback */
+  --msg-rollback-color: #454545;
+  --msg-rollback-background-color: transparent;
   /* tab */
   --tab-item-active-color: rgb(79, 167, 255);
   --tab-item-background-color-hover: #35353598;
@@ -380,6 +459,12 @@ code {
   .ant-modal .ant-modal-header {
     color: var(--color);
     background-color: var(--background-color);
+  }
+  .ant-modal-confirm .ant-modal-confirm-body .ant-modal-confirm-title {
+    color: var(--color);
+  }
+  .ant-modal-confirm .ant-modal-confirm-body .ant-modal-confirm-content {
+    color: var(--color);
   }
   /* ant-drawer */
   .ant-drawer.ant-drawer-open .ant-drawer-mask {
@@ -432,6 +517,19 @@ code {
   .ant-switch.ant-switch-checked .ant-switch-handle::before {
     background: rgb(2, 79, 245);
   }
+
+  .ant-checkbox-wrapper {
+    color: var(--color);
+  }
+  .ant-input-affix-wrapper .ant-input-prefix,
+  .ant-input-affix-wrapper .ant-input-suffix {
+    color: var(--color);
+  }
+
+  .ant-input-affix-wrapper .anticon.ant-input-password-icon {
+    color: var(--color);
+  }
+
   .ant-input-affix-wrapper {
     color: var(--border-color);
     background-color: rgba(38, 38, 38, 0.361);
@@ -507,8 +605,12 @@ code {
     border-color: var(--background-color);
   }
 
-
-  .ps .ps__rail-x:hover, .ps .ps__rail-y:hover, .ps .ps__rail-x:focus, .ps .ps__rail-y:focus, .ps .ps__rail-x.ps--clicking, .ps .ps__rail-y.ps--clicking{
+  .ps .ps__rail-x:hover,
+  .ps .ps__rail-y:hover,
+  .ps .ps__rail-x:focus,
+  .ps .ps__rail-y:focus,
+  .ps .ps__rail-x.ps--clicking,
+  .ps .ps__rail-y.ps--clicking {
     background-color: #4242423f;
   }
 }

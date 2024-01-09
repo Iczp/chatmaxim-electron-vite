@@ -1,17 +1,13 @@
 <script setup lang="ts">
 import { ref } from 'vue';
-import { TabsProps } from 'ant-design-vue/es/tabs';
-const tabPosition = ref<TabsProps['tabPosition']>('left');
-const activeKey = ref('1');
 import { useAppInfo } from '../../../commons/useAppInfo';
-// defineProps<{ msg: string }>();
-
 import { reactive, toRaw } from 'vue';
 import type { UnwrapRef } from 'vue';
-import { setWindow } from '../../../commons/setWindow';
 import { setColorScheme } from '../../../commons/setColorScheme';
-import { useWindowFocus } from '@vueuse/core';
 import { useWindowStore } from '../../../stores/window';
+import { useColorMode } from '@vueuse/core';
+
+const { system, store } = useColorMode();
 
 interface FormState {
   colorScheme: string;
@@ -39,8 +35,8 @@ const title = ref('');
 const onColorSchemeChange = (e: any) => {
   console.log('onColorSchemeChange', e);
   const colorScheme = e.target.value;
-  const windowStore = useWindowStore()
-  windowStore.setColorScheme(colorScheme)
+  const windowStore = useWindowStore();
+  windowStore.setColorScheme(colorScheme);
   setColorScheme({ colorScheme });
 };
 </script>
@@ -54,10 +50,11 @@ const onColorSchemeChange = (e: any) => {
           <a-divider class="divider" orientation="left">主题</a-divider>
           <a-form-item label="颜色">
             <a-radio-group v-model:value="formState.colorScheme" @change="onColorSchemeChange">
-              <a-radio-button value="light">明亮</a-radio-button>
-              <a-radio-button value="dark">暗黑</a-radio-button>
-              <a-radio-button value="green">green</a-radio-button>
-              <a-radio-button value="blue">blue</a-radio-button>
+              <a-radio-button value="light">明亮(light)</a-radio-button>
+              <a-radio-button value="dark">暗黑(dark)</a-radio-button>
+              <a-radio-button value="auto">跟随系统({{ system }})</a-radio-button>
+              <!-- <a-radio-button value="green">green</a-radio-button>
+              <a-radio-button value="blue">blue</a-radio-button> -->
             </a-radio-group>
           </a-form-item>
           <a-divider class="divider" orientation="left">系统</a-divider>

@@ -142,14 +142,5 @@ const onTabClick = (item: any, index: number) => {
   background-color: var(--tab-item-background-color-hover);
 }
 
-.version {
-  display: flex;
-  justify-content: center;
-  position: absolute;
-  bottom: 0;
-  color: #8787878c;
-  font-size: 12px;
-  width: 100%;
-  height: 24px;
-}
+
 </style>

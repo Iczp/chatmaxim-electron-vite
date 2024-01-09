@@ -20,7 +20,7 @@ import {
   VideoPlay,
   FileDownload,
 } from '../../icons';
-import { MessageContextMenuInput, iconClass } from '.';
+import { MessageContextMenuInput, getTheme, iconClass } from '.';
 import { useClipboard } from '@vueuse/core';
 import { formatMessageContent } from '../utils';
 
@@ -45,6 +45,7 @@ export const showContextMenuForMessageContent = ({
 
   //show your menu
   ContextMenu.showContextMenu({
+    theme: getTheme(),
     x: event.x,
     y: event.y,
     minWidth: 80,

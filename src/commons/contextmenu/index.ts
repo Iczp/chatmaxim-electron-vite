@@ -4,6 +4,7 @@ import { showContextMenuForMessageAvatar } from './showContextMenuForMessageAvat
 import { showContextMenuForMessageContent } from './showContextMenuForMessageContent';
 import { showContextMenuForMessageSelect } from './showContextMenuForMessageSelect';
 import { setProfile } from '../setProfile';
+import { useWindowStore } from '../../stores/window';
 export { showContextMenuForSession } from './showContextMenuForSession';
 export { showContextMenuForMessageContent } from './showContextMenuForMessageContent';
 export { showContextMenuForMessageAvatar } from './showContextMenuForMessageAvatar';
@@ -44,6 +45,11 @@ export type MessageContextMenuInput = ContextmenuParams & {
 export type ContextmenuInput = ContextmenuParams & ContextmenuLabel;
 
 export const iconClass: HtmlHTMLAttributes = { class: 'svg-icon s16' };
+
+export const getTheme = () => {
+  const windowStore = useWindowStore();
+  return windowStore.colorScheme == 'dark' ? 'dark' : 'default';
+};
 
 export const showContextMenuForMessage = (args: MessageContextMenuInput & ContextmenuInput) => {
   const { event, entity, selectable, mouseButton, labelType, chatObjectId } = args;

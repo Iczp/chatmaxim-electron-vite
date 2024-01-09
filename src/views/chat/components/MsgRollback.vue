@@ -13,9 +13,11 @@ defineProps<{
 
 <style scoped>
 .rollback {
+
   display: flex;
   justify-content: center;
-  color: #ccc;
+  color: var(--msg-rollback-color);
+  background-color: var(--msg-rollback-background-color);
   font-size: 12px;
   align-items: center;
   padding: 8px;

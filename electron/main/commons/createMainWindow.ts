@@ -6,14 +6,14 @@ import { windowManager } from './windowManager';
 import { WindowParams } from '../ipc-types';
 
 export const createMainWindow = (window: WindowParams, _?: Electron.IpcMainInvokeEvent) => {
-
   let win = windowManager.getMain();
   if (win) {
     console.log('createMainWindow setWindow', window);
     setWindow(win, window, _);
     return win;
   }
-   win = new BrowserWindow({
+  win = new BrowserWindow({
+    backgroundColor: '#1b1b1b',
     title: 'Main window',
     // minWidth: 1560,
     // minHeight: 800,

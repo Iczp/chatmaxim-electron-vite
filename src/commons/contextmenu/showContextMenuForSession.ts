@@ -3,6 +3,7 @@ import { HtmlHTMLAttributes, h } from 'vue';
 import { SessionUnitOwnerDto } from '../../apis';
 import { AlignBottom, AlignTop, NotificationsActive, NotificationsOff } from '../../icons';
 import { setImmersed, setTopping } from '../setting';
+import { getTheme } from '.';
 
 export const showContextMenuForSession = ({
   event,
@@ -24,6 +25,7 @@ export const showContextMenuForSession = ({
   const isImmersed = entity.setting?.isImmersed;
   //show your menu
   ContextMenu.showContextMenu({
+    theme: getTheme(),
     x: event.x,
     y: event.y,
     minWidth: 80,

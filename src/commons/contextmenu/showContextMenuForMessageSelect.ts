@@ -20,7 +20,7 @@ import {
   VideoPlay,
   FileDownload,
 } from '../../icons';
-import { ContextmenuParams, MessageContextMenuInput, iconClass } from '.';
+import { ContextmenuParams, MessageContextMenuInput, getTheme, iconClass } from '.';
 
 export const showContextMenuForMessageSelect = ({
   event,
@@ -35,6 +35,7 @@ export const showContextMenuForMessageSelect = ({
   event.preventDefault();
 
   ContextMenu.showContextMenu({
+    theme: getTheme(),
     x: event.x,
     y: event.y,
     minWidth: 80,

@@ -4,7 +4,7 @@ import { ChatObjectTypeEnums } from '../../apis/enums';
 import ContextMenu from '@imengyu/vue3-context-menu';
 import { Remind, GroupRemove, PersonAdd, WavingHand, ChatOff, ChatOn } from '../../icons';
 import { sessionRequest } from '../sessionRequest';
-import { MessageContextMenuInput, iconClass } from '.';
+import { MessageContextMenuInput, getTheme, iconClass } from '.';
 import { getSenderNameForMessage, navToChat } from '../utils';
 import { FollowService } from '../../apis';
 import { message } from 'ant-design-vue';
@@ -43,6 +43,7 @@ export const showContextMenuForMessageAvatar = ({
 
   //show your menu
   ContextMenu.showContextMenu({
+    theme: getTheme(),
     x: event.x,
     y: event.y,
     minWidth: 80,
