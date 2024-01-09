@@ -222,7 +222,7 @@ code {
   /* body */
   --background-color: #f0f2f5;
   --background-color-normal: rgba(248, 248, 248, 0.5);
-  --background-color-hover: rgba(248, 248, 248, 0.5);
+  --background-color-hover: rgba(180, 180, 180, 0.5);
   --color: #383838;
   --checked-background: linear-gradient(135deg, #ddefff, #e9ffeb) border-box;
 

@@ -84,7 +84,10 @@ defineExpose({
   >
     <page class="drop-viewer">
       <page-content>
-        <chat-object :entity="destination" class="chat-object" :size="32"></chat-object>
+        <div class="chat-object-container">
+          <chat-object :entity="destination" class="chat-object" :size="32"></chat-object>
+        </div>
+
         <a-divider class="divider" />
         <scroll-view class="scroll-view">
           <div v-if="text" class="text-viewer">
@@ -117,8 +120,10 @@ defineExpose({
 :deep(.file-name) {
   max-width: 180px;
 }
+
 .drop-viewer {
   user-select: none;
+  background-color: unset;
 }
 .drop-viewer {
   user-select: none;
@@ -143,15 +148,15 @@ defineExpose({
   flex-direction: column;
   /* padding: 12px; */
   user-select: text;
-  background-color: var(--background-color);
+  /* background-color: var(--background-color); */
 }
 .file-info {
   color: rgba(128, 128, 128, 0.511);
 }
 .hover {
   position: relative;
-  /* background-color: #272727; */
   background-color: var(--background-color-normal);
+  /* background-color: #b8b8b8; */
 }
 .hover:last-child::after {
   content: unset;
