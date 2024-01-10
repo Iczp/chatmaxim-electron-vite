@@ -6,6 +6,7 @@ import type { UnwrapRef } from 'vue';
 import { setColorScheme } from '../../../commons/setColorScheme';
 import { useWindowStore } from '../../../stores/window';
 import { useColorMode } from '@vueuse/core';
+import { getLoginItemSettings, setLoginItemSettings } from '../../../commons/setLoginItemSettings';
 
 const { system, store } = useColorMode();
 const windowStore = useWindowStore();
@@ -35,9 +36,25 @@ const title = ref('');
 const onColorSchemeChange = (e: any) => {
   console.log('onColorSchemeChange', e);
   const colorScheme = e.target.value;
-
   windowStore.setColorScheme(colorScheme);
   setColorScheme({ colorScheme });
+};
+
+getLoginItemSettings().then(settings => {
+  console.log('getLoginItemSettings', settings);
+
+  formState.isOpenAtLogin = settings.openAtLogin;
+});
+const onIsOpenAtLoginChange = (e: any) => {
+  console.log('onIsOpenAtLoginChange', e);
+  setLoginItemSettings({
+    openAtLogin: !formState.isOpenAtLogin,
+  })
+    .then(settings => {
+      console.log('setLoginItemSettings', settings);
+      formState.isOpenAtLogin = settings.openAtLogin;
+    })
+    .finally(() => {});
 };
 </script>
 
@@ -50,16 +67,18 @@ const onColorSchemeChange = (e: any) => {
           <a-divider class="divider" orientation="left">主题</a-divider>
           <a-form-item label="颜色">
             <a-radio-group v-model:value="formState.colorScheme" @change="onColorSchemeChange">
-              <a-radio-button value="light">明亮(light)</a-radio-button>
-              <a-radio-button value="dark">暗黑(dark)</a-radio-button>
-              <a-radio-button value="auto">跟随系统({{ system }})</a-radio-button>
+              <a-radio-button value="light" title="light">明亮</a-radio-button>
+              <a-radio-button value="dark" title="dark">暗黑</a-radio-button>
+              <a-radio-button value="auto" title="System preference">
+                跟随系统({{ system }})
+              </a-radio-button>
               <!-- <a-radio-button value="green">green</a-radio-button>
               <a-radio-button value="blue">blue</a-radio-button> -->
             </a-radio-group>
           </a-form-item>
           <a-divider class="divider" orientation="left">系统</a-divider>
           <a-form-item label="开机启动">
-            <a-switch v-model:checked="formState.isOpenAtLogin" />
+            <a-switch :checked="formState.isOpenAtLogin" @click="onIsOpenAtLoginChange" />
           </a-form-item>
           <!-- <a-form-item label="Activity type">
             <a-checkbox-group v-model:value="formState.type">

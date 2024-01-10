@@ -35,6 +35,7 @@ import { createLoginWindow } from './commons/createLoginWindow';
 import { openAppSettingsWindowHandle } from './commons/openAppSettingsWindowHandle';
 import { env } from './env';
 import { setColorSchemeHandle } from './commons/setColorSchemeHandle';
+import { loginItemSettingsHandle } from './commons/loginItemSettingsHandle';
 
 setAppProtocol();
 
@@ -71,7 +72,7 @@ console.log('app.getPath', app.getAppPath(), app.getPath('userData'));
 //应用是否打包
 if (app.isPackaged) {
   //设置开机启动
-  app.setLoginItemSettings({
+  app.setLoginItemSettings(<Electron.Settings>{
     openAtLogin: true,
   });
   //获取是否开机启动
@@ -126,6 +127,7 @@ ipcMain.handle('websocket', websocketHandle);
 ipcMain.handle('set-tray', setTrayHandle);
 ipcMain.handle('authorize', setAuthorizehandle);
 ipcMain.handle('color-scheme', setColorSchemeHandle);
+ipcMain.handle('login-item-settings', loginItemSettingsHandle);
 
 //
 // macOS
