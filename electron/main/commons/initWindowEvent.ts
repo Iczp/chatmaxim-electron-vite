@@ -97,6 +97,7 @@ export const sendWindowInfo = (win: BrowserWindow) => {
       // isSkipTaskbar: undefined,
       isPackaged: app.isPackaged,
       colorScheme: globalState.colorScheme,
+      language: globalState.language,
     },
   ]);
 };

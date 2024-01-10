@@ -13,6 +13,8 @@ export const icon = join(process.env.VITE_PUBLIC, 'favicon.ico');
 export const store = new Store();
 
 export interface GlobalState {
+  colorScheme: string;
+  language: string;
   isAppQuitting?: boolean;
   trayPayload: TrayPayload;
   // displays: Electron.Display[];
@@ -27,12 +29,12 @@ export interface GlobalState {
   isAuthorized: boolean;
   token: any;
   tokenKey: string;
-  colorScheme: string;
 }
 
 export const globalState: GlobalState = {
+  colorScheme: 'auto',
+  language: 'zh-CN',
   isAppQuitting: false,
-
   trayPayload: {
     windowWidth: 240,
     itemHeight: 48,
@@ -60,7 +62,6 @@ export const globalState: GlobalState = {
   isAuthorized: false,
   token: store.get(TOKEN_KEY),
   tokenKey: TOKEN_KEY,
-  colorScheme: 'auto',
 };
 
 // app.whenReady().then(() => {

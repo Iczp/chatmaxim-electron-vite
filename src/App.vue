@@ -3,7 +3,9 @@ import { BasicColorMode, UseColorModeOptions, useCssVar, useDark } from '@vueuse
 import { useColorMode } from '@vueuse/core';
 import { ref, watch } from 'vue';
 import { useWindowStore } from './stores/window';
+import { useI18n } from 'vue-i18n';
 
+const { locale } = useI18n();
 const mode = useColorMode({
   attribute: 'color-scheme',
   modes: {
@@ -19,6 +21,16 @@ watch(
   colorScheme => {
     console.log('windowStore.colorScheme', colorScheme);
     mode.value = colorScheme!;
+  },
+  {
+    // immediate: true,
+  },
+);
+watch(
+  () => windowStore.language,
+  language => {
+    console.log('windowStore.language', language);
+    locale.value = language!;
   },
   {
     // immediate: true,

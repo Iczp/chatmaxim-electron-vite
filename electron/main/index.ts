@@ -36,6 +36,7 @@ import { openAppSettingsWindowHandle } from './commons/openAppSettingsWindowHand
 import { env } from './env';
 import { setColorSchemeHandle } from './commons/setColorSchemeHandle';
 import { loginItemSettingsHandle } from './commons/loginItemSettingsHandle';
+import { setLanguageHandle } from './commons/setLanguageHandle';
 
 setAppProtocol();
 
@@ -128,7 +129,7 @@ ipcMain.handle('set-tray', setTrayHandle);
 ipcMain.handle('authorize', setAuthorizehandle);
 ipcMain.handle('color-scheme', setColorSchemeHandle);
 ipcMain.handle('login-item-settings', loginItemSettingsHandle);
-
+ipcMain.handle('language', setLanguageHandle);
 //
 // macOS
 app.on('open-url', (event, url) => {

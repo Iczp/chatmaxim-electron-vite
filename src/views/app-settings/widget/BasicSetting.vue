@@ -7,7 +7,10 @@ import { setColorScheme } from '../../../commons/setColorScheme';
 import { useWindowStore } from '../../../stores/window';
 import { useColorMode } from '@vueuse/core';
 import { getLoginItemSettings, setLoginItemSettings } from '../../../commons/setLoginItemSettings';
+import { setLanguage } from '../../../commons/setLanguage';
 import { useI18n } from 'vue-i18n';
+import { l } from '../../../i18n';
+
 const { t, d, n, locale, availableLocales } = useI18n({
   useScope: 'global',
   inheritLocale: true,
@@ -32,7 +35,7 @@ const formState: UnwrapRef<FormState> = reactive({
 const onSubmit = () => {
   console.log('submit!', toRaw(formState));
 };
-const labelCol = { style: { width: '120px' } };
+const labelCol = { style: { width: '150px' } };
 const wrapperCol = { span: 14 };
 
 const { appId, appName, author, websize, version, copyright } = useAppInfo();
@@ -44,7 +47,12 @@ const onColorSchemeChange = (e: any) => {
   windowStore.setColorScheme(colorScheme);
   setColorScheme({ colorScheme });
 };
-
+const onLanguageChange = (language: string) => {
+  console.log('onLanguageChange', language);
+  setLanguage({
+    language,
+  });
+};
 getLoginItemSettings().then(settings => {
   console.log('getLoginItemSettings', settings);
 
@@ -75,7 +83,7 @@ const onIsOpenAtLoginChange = (e: any) => {
               <a-radio-button value="light" title="light">{{ t('Light') }}</a-radio-button>
               <a-radio-button value="dark" title="dark">{{ t('Dark') }}</a-radio-button>
               <a-radio-button value="auto" title="System preference">
-                {{ t('System preference') }}({{ t(system) }})
+                {{ t('System preference') }}({{ system }})
               </a-radio-button>
               <!-- <a-radio-button value="green">green</a-radio-button>
               <a-radio-button value="blue">blue</a-radio-button> -->
@@ -83,9 +91,9 @@ const onIsOpenAtLoginChange = (e: any) => {
           </a-form-item>
           <a-form-item :label="t('Language')">
             <!-- <a-input v-model:value="formState.sendMessage" /> -->
-            <a-select v-model:value="locale" style="width: 120px">
+            <a-select v-model:value="locale" style="width: 120px" @change="onLanguageChange">
               <a-select-option v-for="item in availableLocales" :value="item">
-                {{ item }}
+                {{ l(item) }}
               </a-select-option>
             </a-select>
           </a-form-item>
@@ -125,6 +133,6 @@ const onIsOpenAtLoginChange = (e: any) => {
 }
 .divider {
   font-size: 12px;
-  color: var(--divider-color);
+  color: var(--color);
 }
 </style>

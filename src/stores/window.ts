@@ -36,6 +36,7 @@ const defaultValue: WindowState = {
   path: undefined,
   isAlwaysOnTop: undefined,
   colorScheme: 'auto',
+  language: 'zh-CN',
 };
 
 export const useWindowStore = defineStore('window', {
@@ -80,6 +81,11 @@ export const useWindowStore = defineStore('window', {
           console.log('color-scheme', colorScheme, args);
           this.setColorScheme(colorScheme);
           break;
+        case 'language':
+          const { language } = args[0];
+          console.log('language', language, args);
+          this.setLanguage(language);
+          break;
         case 'focus':
           this.focus = true;
           break;
@@ -112,6 +118,9 @@ export const useWindowStore = defineStore('window', {
     },
     setColorScheme(colorScheme: 'auto' | 'light' | 'dark' | 'green' | 'blue') {
       this.colorScheme = colorScheme;
+    },
+    setLanguage(language: string) {
+      this.language = language;
     },
   },
 });
