@@ -3,6 +3,8 @@ import { ref } from 'vue';
 import { useAppInfo } from '../../commons/useAppInfo';
 import { appSettingsChildren } from '../../routes/appSettingsChildren';
 import { useRouter, useRoute } from 'vue-router';
+import { useI18n } from 'vue-i18n';
+const { t } = useI18n();
 const route = useRoute();
 const router = useRouter();
 const navItems = ref(Array.from(appSettingsChildren));
@@ -25,7 +27,7 @@ const onTabClick = (item: any, index: number) => {
             :class="{ active: route.name == item.name }"
             @click="onTabClick(item, index)"
           >
-            {{ item.title }}
+            {{ t(item.title) }}
           </div>
         </div>
       </scroll-view>
@@ -44,8 +46,7 @@ const onTabClick = (item: any, index: number) => {
 </template>
 
 <style scoped>
-:deep(.ant-form) 
-:deep(.ant-form-item) {
+:deep(.ant-form) :deep(.ant-form-item) {
   color: var(--color);
 }
 .fade-enter-active {
@@ -79,10 +80,13 @@ const onTabClick = (item: any, index: number) => {
 .nav-sider {
   position: relative;
   background-color: unset;
-  width: 120px;
-  min-width: 120px;
-  flex-basis: 120px;
-  flex: 0 0 120px;
+  /* width: 120px; */
+  /* min-width: 120px; */
+  /* flex-basis: 120px; */
+  /* flex: 0 0 120px; */
+}
+.nav-sider {
+  flex: 0 0 160px;
 }
 
 .page-content {
@@ -110,9 +114,9 @@ const onTabClick = (item: any, index: number) => {
 }
 .tab-item {
   display: flex;
-  padding: 0 20px;
+  padding: 12px 20px;
   align-items: center;
-  height: 44px;
+  /* height: 44px; */
   position: relative;
   transition: all 0.3s linear;
   -webkit-app-region: no-drag;
@@ -122,7 +126,7 @@ const onTabClick = (item: any, index: number) => {
   color: var(--tab-item-active-color);
   background-color: var(--tab-item-active-background-color);
   box-sizing: border-box;
-  font-weight: bold;
+  /* font-weight: bold; */
 }
 .tab-item::after {
   content: '';
@@ -141,6 +145,4 @@ const onTabClick = (item: any, index: number) => {
 .tab-item:hover {
   background-color: var(--tab-item-background-color-hover);
 }
-
-
 </style>

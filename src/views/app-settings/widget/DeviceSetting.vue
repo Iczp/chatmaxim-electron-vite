@@ -5,7 +5,9 @@ import { useClipboard } from '@vueuse/core';
 import { message } from 'ant-design-vue';
 import { useWindowStore } from '../../../stores/window';
 import { useAppInfo } from '../../../commons/useAppInfo';
-const labelCol = { style: { width: '100px' } };
+import { useI18n } from 'vue-i18n';
+const { t } = useI18n();
+const labelCol = { style: { width: '150px' } };
 const wrapperCol = { span: 14 };
 const windowStore = useWindowStore();
 
@@ -20,7 +22,7 @@ const copyContent = (contentText: string | undefined) => {
     return;
   }
   copy(contentText).then(v => {
-    message.success({ content: '复制成功!', duration: 2 });
+    message.success({ content: `${t('Copied')}!`, duration: 2 });
   });
 };
 const title = ref('');
@@ -33,15 +35,15 @@ const { appId, appName, author, websize, version, copyright } = useAppInfo();
     <page-content>
       <scroll-view>
         <a-form class="form" :label-col="labelCol" layout="horizontal" :wrapper-col="wrapperCol">
-          <a-divider class="divider" orientation="left">Device</a-divider>
-          <a-form-item label="AppId">
+          <a-divider class="divider" orientation="left">{{ t('Device') }}</a-divider>
+          <a-form-item :label="t('AppId')">
             <a-input v-model:value="appId" readonly>
               <template #addonAfter>
                 <div @click="copyContent(appId)"><ContentCopy class="svg-icon-14" /></div>
               </template>
             </a-input>
           </a-form-item>
-          <a-form-item label="MachineId">
+          <a-form-item :label="t('MachineId')">
             <a-input v-model:value="machineId" readonly>
               <template #addonAfter>
                 <div @click="copyContent(machineId)"><ContentCopy class="svg-icon-14" /></div>
@@ -49,9 +51,9 @@ const { appId, appName, author, websize, version, copyright } = useAppInfo();
             </a-input>
           </a-form-item>
 
-          <a-divider class="divider" orientation="left">Author</a-divider>
+          <a-divider class="divider" orientation="left">{{ t('Author') }}</a-divider>
 
-          <a-form-item label="Websize">
+          <a-form-item :label="t('Websize')">
             <a-input v-model:value="websize" readonly>
               <template #addonAfter>
                 <div @click="copyContent(websize)"><ContentCopy class="svg-icon-14" /></div>
@@ -59,13 +61,13 @@ const { appId, appName, author, websize, version, copyright } = useAppInfo();
             </a-input>
           </a-form-item>
 
-          <a-form-item label="Platform">
+          <a-form-item :label="t('Platform')">
             <div>{{ platform }}</div>
           </a-form-item>
-          <a-form-item label="Author">
+          <a-form-item :label="t('Author')">
             <div>{{ author }}</div>
           </a-form-item>
-          <a-form-item label="Copyright">
+          <a-form-item :label="t('Copyright')">
             <div>{{ copyright }}</div>
           </a-form-item>
         </a-form>

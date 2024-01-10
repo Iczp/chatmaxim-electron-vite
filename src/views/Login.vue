@@ -54,8 +54,8 @@ const onFinish = (values: any) => {
     password: formState.password,
   })
     .then(res => {
-      console.log(`${t('login succeeded')}!`, res);
-      message.success({ content: `${t('welcome back')}!`, key, duration: 2 });
+      console.log(`${t('Login succeeded')}!`, res);
+      message.success({ content: `${t('Welcome back')}!`, key, duration: 2 });
       // setWindow({ size: { width: 1080, height: 760 } });
       setAuthorize(res.detail as TokenDto);
       router.push('/');
@@ -74,7 +74,7 @@ const { appId, appName, author, websize, version, copyright } = useAppInfo();
 
 <template>
   <page>
-    <page-title class="header" :title="t('login')"></page-title>
+    <page-title class="header" :title="t('Login')"></page-title>
     <page-content>
       <div class="page drag">
         <div class="login-page no-drag">
@@ -91,7 +91,7 @@ const { appId, appName, author, websize, version, copyright } = useAppInfo();
             class="login-form"
           >
             <a-form-item
-              :label="t('account')"
+              :label="t('Account')"
               name="username"
               :rules="[{ message: 'Please input your username!' }]"
             >
@@ -101,7 +101,7 @@ const { appId, appName, author, websize, version, copyright } = useAppInfo();
             </a-form-item>
 
             <a-form-item
-              :label="t('password')"
+              :label="t('Password')"
               name="password"
               :rules="[{ message: 'Please input your password!' }]"
             >
@@ -112,14 +112,14 @@ const { appId, appName, author, websize, version, copyright } = useAppInfo();
 
             <a-form-item name="isAutoLogin" :wrapper-col="{ offset: 8, span: 16 }">
               <a-checkbox v-model:checked="formState.isAutoLogin">
-                {{ t('automatic logon') }}
+                {{ t('Automatic logon') }}
               </a-checkbox>
             </a-form-item>
 
             <a-form-item :wrapper-col="{ offset: 8, span: 16 }">
-              <a-button type="primary" html-type="submit">{{ t('login') }}</a-button>
+              <a-button type="primary" html-type="submit">{{ t('Login') }}</a-button>
             </a-form-item>
-            {{ locale }}
+            <!-- {{ locale }} -->
           </a-form>
         </div>
       </div>

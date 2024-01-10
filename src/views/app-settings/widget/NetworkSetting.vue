@@ -3,7 +3,8 @@ import { useAppInfo } from '../../../commons/useAppInfo';
 import { reactive, ref, toRaw } from 'vue';
 import type { UnwrapRef } from 'vue';
 import { env } from '../../../env';
-
+import { useI18n } from 'vue-i18n';
+const { t } = useI18n();
 interface FormState {
   server: string;
   authHost: string;
@@ -19,7 +20,7 @@ const formState: UnwrapRef<FormState> = reactive({
 const onSubmit = () => {
   console.log('submit!', toRaw(formState));
 };
-const labelCol = { style: { width: '100px' } };
+const labelCol = { style: { width: '150px' } };
 const wrapperCol = { span: 16 };
 
 const { appId, appName, author, websize, version, copyright } = useAppInfo();
@@ -38,16 +39,16 @@ const title = ref('');
           :label-col="labelCol"
           :wrapper-col="wrapperCol"
         >
-          <a-divider class="divider" orientation="left">Server</a-divider>
+          <a-divider class="divider" orientation="left">{{ t('Server') }}</a-divider>
           <!-- <a-divider dashed >aa</a-divider> -->
-          <a-form-item label="服务器地址">
+          <a-form-item :label="t('Server address')">
             <a-input v-model:value="formState.server" />
           </a-form-item>
 
-          <a-form-item label="授权地址">
+          <a-form-item :label="t('Authorized address')">
             <a-input v-model:value="formState.authHost" />
           </a-form-item>
-          <a-divider class="divider" orientation="left">Client</a-divider>
+          <a-divider class="divider" orientation="left">{{ t('Client') }}</a-divider>
           <a-form-item label="client_id">
             <a-input v-model:value="formState.clientId" />
           </a-form-item>

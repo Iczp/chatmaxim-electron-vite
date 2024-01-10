@@ -5,6 +5,8 @@ import type { UnwrapRef } from 'vue';
 import { ContentCopy } from '../../../icons';
 import { useClipboard } from '@vueuse/core';
 import { message } from 'ant-design-vue';
+import { useI18n } from 'vue-i18n';
+const { t } = useI18n();
 interface FormState {
   name: string;
   delivery: boolean;
@@ -22,7 +24,7 @@ const formState: UnwrapRef<FormState> = reactive({
 const onSubmit = () => {
   console.log('submit!', toRaw(formState));
 };
-const labelCol = { style: { width: '100px' } };
+const labelCol = { style: { width: '150px' } };
 const wrapperCol = { span: 14 };
 
 const versions = ref(process.versions);
@@ -37,7 +39,7 @@ const copyContent = () => {
     .join('\n');
 
   copy(contentText).then(v => {
-    message.success({ content: '复制成功!', duration: 2 });
+    message.success({ content: `${t('Copied')}!`, duration: 2 });
   });
 };
 const title = ref('');
@@ -49,7 +51,7 @@ const title = ref('');
     <page-content>
       <scroll-view class="scroll-view">
         <!-- {{ versions }} -->
-        <a-divider class="divider" orientation="left">App</a-divider>
+        <a-divider class="divider" orientation="left">{{ t('Application') }}</a-divider>
         <a-descriptions
           class="descriptions"
           :title="`${appName} v${version}`"
@@ -60,7 +62,7 @@ const title = ref('');
             <!-- <ContentCopy class="svg-icon-14" /> -->
             <a-button type="text" @click="copyContent">
               <ContentCopy class="svg-icon-14" />
-              复制
+              {{ t('Copy') }}
             </a-button>
           </template>
           <a-descriptions-item v-for="(value, key) in versions" :key="key" :label="key">

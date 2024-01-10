@@ -69,19 +69,19 @@ const onIsOpenAtLoginChange = (e: any) => {
     <page-content>
       <scroll-view>
         <a-form class="form" :model="formState" :label-col="labelCol" :wrapper-col="wrapperCol">
-          <a-divider class="divider" orientation="left">{{ t('theme') }}</a-divider>
-          <a-form-item :label="t('color scheme')">
+          <a-divider class="divider" orientation="left">{{ t('AppId') }}</a-divider>
+          <a-form-item :label="t('Color scheme')">
             <a-radio-group v-model:value="formState.colorScheme" @change="onColorSchemeChange">
-              <a-radio-button value="light" title="light">{{ t('light') }}</a-radio-button>
-              <a-radio-button value="dark" title="dark">{{ t('dark') }}</a-radio-button>
+              <a-radio-button value="light" title="light">{{ t('Light') }}</a-radio-button>
+              <a-radio-button value="dark" title="dark">{{ t('Dark') }}</a-radio-button>
               <a-radio-button value="auto" title="System preference">
-                {{ t('system preference') }}({{ t(system) }})
+                {{ t('System preference') }}({{ t(system) }})
               </a-radio-button>
               <!-- <a-radio-button value="green">green</a-radio-button>
               <a-radio-button value="blue">blue</a-radio-button> -->
             </a-radio-group>
           </a-form-item>
-          <a-form-item :label="t('language')">
+          <a-form-item :label="t('Language')">
             <!-- <a-input v-model:value="formState.sendMessage" /> -->
             <a-select v-model:value="locale" style="width: 120px">
               <a-select-option v-for="item in availableLocales" :value="item">
@@ -89,8 +89,8 @@ const onIsOpenAtLoginChange = (e: any) => {
               </a-select-option>
             </a-select>
           </a-form-item>
-          <a-divider class="divider" orientation="left">{{ t('system') }}</a-divider>
-          <a-form-item :label="t('open at login')">
+          <a-divider class="divider" orientation="left">{{ t('System') }}</a-divider>
+          <a-form-item :label="t('Open at login')">
             <a-switch :checked="formState.isOpenAtLogin" @click="onIsOpenAtLoginChange" />
           </a-form-item>
           <!-- <a-form-item label="Activity type">
@@ -125,6 +125,6 @@ const onIsOpenAtLoginChange = (e: any) => {
 }
 .divider {
   font-size: 12px;
-  color: #999;
+  color: var(--divider-color);
 }
 </style>

@@ -3,7 +3,8 @@ import { useAppInfo } from '../../../commons/useAppInfo';
 import { reactive, ref, toRaw } from 'vue';
 import type { UnwrapRef } from 'vue';
 import { SettingOutlined } from '@ant-design/icons-vue';
-
+import { useI18n } from 'vue-i18n';
+const { t } = useI18n();
 const value2 = ref<string>('+');
 const value3 = ref<string>('Ctrl');
 const value4 = ref<string>('N');
@@ -24,7 +25,7 @@ const formState: UnwrapRef<FormState> = reactive({
 const onSubmit = () => {
   console.log('submit!', toRaw(formState));
 };
-const labelCol = { style: { width: '100px' } };
+const labelCol = { style: { width: '150px' } };
 const wrapperCol = { span: 14 };
 
 const { appId, appName, author, websize, version, copyright } = useAppInfo();
@@ -44,11 +45,11 @@ const title = ref('');
           :wrapper-col="wrapperCol"
         >
           <a-divider class="divider" orientation="left">Global</a-divider>
-          <a-form-item label="提取消息">
+          <a-form-item :label="t('Extraction messages')">
             <a-input v-model:value="formState.fetchMessage" />
           </a-form-item>
 
-          <a-form-item label="发送消息">
+          <a-form-item :label="t('Send messages')">
             <!-- <a-input v-model:value="formState.sendMessage" /> -->
             <a-select v-model:value="formState.sendMessage">
               <a-select-option value="Ctrl + Enter">Ctrl + Enter</a-select-option>
@@ -56,7 +57,7 @@ const title = ref('');
             </a-select>
           </a-form-item>
 
-          <a-form-item label="创建群">
+          <a-form-item :label="t('Create group')">
             <a-input v-model:value="value2">
               <template #addonBefore>
                 <a-select v-model:value="value3" style="width: 80px">
