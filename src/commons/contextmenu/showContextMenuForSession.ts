@@ -6,9 +6,11 @@ import { setImmersed, setTopping } from '../setting';
 import { getTheme } from '.';
 
 export const showContextMenuForSession = ({
+  t,
   event,
   entity,
 }: {
+  t: any;
   event: MouseEvent | PointerEvent;
   entity?: SessionUnitOwnerDto;
 }) => {
@@ -32,7 +34,7 @@ export const showContextMenuForSession = ({
     customClass: 'session-context-menu',
     items: [
       {
-        label: isTopping ? '取消置顶' : '消息置顶',
+        label: isTopping ? t('Cancel Topping') : t('Topping'),
         icon: h(isTopping ? AlignBottom : AlignTop, iconClass),
         // divided: 'down',
         disabled: false,
@@ -42,7 +44,7 @@ export const showContextMenuForSession = ({
         },
       },
       {
-        label: isImmersed ? '开启通知' : '免打扰',
+        label: isImmersed ? t('Notifications') : t('Muted'),
         icon: h(isImmersed ? NotificationsActive : NotificationsOff, iconClass),
         divided: 'down',
         disabled: false,
@@ -51,13 +53,13 @@ export const showContextMenuForSession = ({
         },
       },
       {
-        label: '清空消息',
+        label:t('Clear messages'),
         // icon: h(isImmersed ? NotificationsActive : NotificationsOff, iconClass),
         disabled: false,
         onClick: () => {},
       },
       {
-        label: '删除会话',
+        label: t('Delete Session'),
         // icon: h(isImmersed ? NotificationsActive : NotificationsOff, iconClass),
         disabled: false,
         customClass: 'last-child',

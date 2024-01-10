@@ -1,16 +1,15 @@
 <script setup lang="ts">
-import { computed, ref } from 'vue';
+import { ref } from 'vue';
 import {
   UploadOutlined,
   MehOutlined,
   VideoCameraOutlined,
   FolderOpenOutlined,
   ScissorOutlined,
-  MoreOutlined,
-  EllipsisOutlined,
 } from '@ant-design/icons-vue';
-import { MessageDto } from '../../../apis/dtos';
-
+import { useFileDialog } from '@vueuse/core';
+import { useI18n } from 'vue-i18n';
+const { t } = useI18n();
 const props = withDefaults(
   defineProps<{
     disabled?: boolean;
@@ -61,7 +60,7 @@ const click = (e: any) => {
   // https://stackoverflow.com/questions/42289080/for-text-input-how-to-make-it-so-that-clicking-on-it-will-select-everything
 };
 
-import { useFileDialog } from '@vueuse/core';
+
 
 const { files, open, reset, onChange } = useFileDialog({
   // accept: 'image/*', // Set to accept only image files
@@ -105,7 +104,7 @@ defineExpose({
             class="textarea"
             v-model:value="inputValue"
             rows="5"
-            placeholder="说点什么..."
+            :placeholder="t('SendContentPlaceholder')"
             :focus="true"
             :options="mentions"
             :autofocus="false"
@@ -127,9 +126,9 @@ defineExpose({
             @click="send"
             :disabled="disabled"
             class="btn-send"
-            title="Alt+S 或 Ctrl+Enter 发送消息"
+            :title="t('SendShortcuts')"
           >
-            发送(
+            {{t('Send')}}(
             <u>S</u>
             )
           </a-button>
@@ -149,7 +148,6 @@ defineExpose({
   /* height: 200px; */
   /* border-top: 1px solid #ccc; */
   width: 100%;
-  
 }
 .input-body {
   /* background-color: rgba(255, 255, 255, 0.474); */

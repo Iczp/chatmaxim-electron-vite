@@ -10,7 +10,8 @@ import { useImStore } from '../stores/im';
 import { mapToSessionItemDto, navToChat as navToChatX } from '../commons/utils';
 import { showContextMenuForSession } from '../commons/contextmenu';
 import { openChildWindow } from '../ipc/openChildWindow';
-
+import { useI18n } from 'vue-i18n';
+const { t } = useI18n();
 const props = defineProps<{
   chatObjectId: number | undefined;
 }>();
@@ -71,6 +72,7 @@ const onItemDbClick = (item: SessionItemDto) => {
   item.isSeparated = true;
   router.push({ name: 'chat-empty' });
   openChildWindow({
+    t,
     window: {
       name: `chat-${item.id}`,
       path: `/separate-chat/${item.ownerId}/${item.id}`,
@@ -308,7 +310,7 @@ const footerObserver = ref<HTMLElement | null>();
             :bordered="true"
             :allowClear="true"
             v-model:value="keyword"
-            :placeholder="`搜索:${record.minMessageId}`"
+            :placeholder="`${t('Search')}:${record.minMessageId}`"
             style="width: 100%"
             @search="onSearch"
           />
@@ -384,7 +386,6 @@ const footerObserver = ref<HTMLElement | null>();
   left: 0;
   right: 0;
   z-index: 1;
- 
 }
 .nav-side {
   display: flex;

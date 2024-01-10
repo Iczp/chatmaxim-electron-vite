@@ -49,9 +49,5 @@ const onClick = () => {
 </template>
 
 <style scoped>
-.ps{
-  /* height: 100%; */
-  /* display: flex; */
-  /* flex: 1; */
-}
+
 </style>

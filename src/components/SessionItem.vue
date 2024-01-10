@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { computed, watch } from 'vue';
+import { watch } from 'vue';
 import { SessionUnitOwnerDto } from '../apis';
 
 import { HeartTwoTone, HeartFilled } from '@ant-design/icons-vue';
@@ -7,10 +7,11 @@ import { HeartTwoTone, HeartFilled } from '@ant-design/icons-vue';
 import { ChatObjectTypeEnums } from '../apis/enums';
 import ChatObject from '../components/ChatObject.vue';
 import MessageProview from '../components/MessageProview.vue';
-import { useSessionUnit, useSessionUnitId } from '../commons/useSessionUnit';
+import { useSessionUnitId } from '../commons/useSessionUnit';
 import { useImStore } from '../stores/im';
 import { env } from '../env';
-
+import { useI18n } from 'vue-i18n';
+const { t } = useI18n();
 const props = defineProps<{
   title?: string;
   active?: boolean;
@@ -21,6 +22,7 @@ const props = defineProps<{
 const emits = defineEmits<{
   contextmenu: [
     {
+      t: any;
       event: MouseEvent | PointerEvent;
       entity?: SessionUnitOwnerDto;
     },
@@ -74,7 +76,7 @@ const ondragstart = (event: DragEvent) => {
     :class="{ active, flash }"
     :object-type="objectType?.toString()"
     :size="44"
-    @click.right.native="emits('contextmenu', { entity, event: $event })"
+    @click.right.native="emits('contextmenu', { t, entity, event: $event })"
     sub
     sub-right
     title-right
@@ -98,7 +100,7 @@ const ondragstart = (event: DragEvent) => {
       <div class="text-ellipsis">
         <!-- @我 -->
         <span v-if="remindCount > 0" class="remind">
-          {{ Number(remindCount) > 99 ? '99+' : remindCount }}@我
+          {{ Number(remindCount) > 99 ? '99+' : remindCount }}@{{ t('Me') }}
         </span>
         <span v-if="followingCount > 0" class="following" :title="followingCount.toString()">
           <HeartFilled />

@@ -22,7 +22,8 @@ import { useChatObjectList } from '../commons/useChatObjectList';
 import { useWebsocket } from '../commons/useWebsocket';
 import { setWindow } from '../ipc/setWindow';
 import { openAppSettings } from '../ipc/openAppSettings';
-
+import { useI18n } from 'vue-i18n';
+const { t } = useI18n();
 const route = useRoute();
 const { connectionText, connectionState, retryCount } = useWebsocket();
 const { badge, badgeItems } = useChatObjectList();
@@ -114,7 +115,7 @@ const getKey = (route: RouteLocationNormalizedLoaded, component: any): string | 
         </div>
 
         <div class="side-bottom">
-          <div class="nav-item" title="用户" @click="goto('/user')">
+          <div class="nav-item" :title="t('User')" @click="goto('/user')">
             <a-badge :dot="true">
               <UserOutlined />
             </a-badge>
@@ -132,9 +133,9 @@ const getKey = (route: RouteLocationNormalizedLoaded, component: any): string | 
         <!-- <router-view ></router-view> -->
         <router-view v-slot="{ Component, route }">
           <!-- <transition> -->
-            <keep-alive>
-              <component :is="Component" :key="getKey(route, Component)" />
-            </keep-alive>
+          <keep-alive>
+            <component :is="Component" :key="getKey(route, Component)" />
+          </keep-alive>
           <!-- </transition> -->
         </router-view>
       </div>

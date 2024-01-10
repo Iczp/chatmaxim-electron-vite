@@ -1,7 +1,8 @@
 <script setup lang="ts">
+import { useI18n } from 'vue-i18n';
 import ChatObject from '../../components/ChatObject.vue';
 import { useTray } from './useTray';
-
+const { t } = useI18n();
 const { totalBadge, list, onItemClick, onHeaderClick, onIgnore, onMouseOver, onMouseLeave } =
   useTray();
 </script>
@@ -10,7 +11,7 @@ const { totalBadge, list, onItemClick, onHeaderClick, onIgnore, onMouseOver, onM
   <page class="page-tray" @mouseover="onMouseOver" @mouseleave="onMouseLeave">
     <!-- <page-title title="Tip" description="123" /> -->
     <page-header class="header">
-      <h3 class="total-badge" @click="onHeaderClick">新消息（{{ totalBadge }}）</h3>
+      <h3 class="total-badge" @click="onHeaderClick">{{ t('New messages') }} （{{ totalBadge }}）</h3>
     </page-header>
     <page-content>
       <!-- <header class="header" >
@@ -42,7 +43,7 @@ const { totalBadge, list, onItemClick, onHeaderClick, onIgnore, onMouseOver, onM
       </scroll-view>
     </page-content>
     <page-footer class="footer">
-      <div class="ignore" @click="onIgnore">忽略全部</div>
+      <div class="ignore" @click="onIgnore">{{ t('Ignore All') }}</div>
     </page-footer>
   </page>
 </template>

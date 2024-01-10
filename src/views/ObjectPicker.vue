@@ -11,10 +11,11 @@ import { useRemoteStore } from '../commons/useRemoteStore';
 import { useContacts } from '../commons/useContacts';
 import ChatObject from '../components/ChatObject.vue';
 import Loading from '../components/Loading.vue';
-
+import { useI18n } from 'vue-i18n';
+const { t } = useI18n();
 const route = useRoute();
 
-const title = useTitle((route.query.title as string) ?? '转发');
+const title = useTitle((route.query.title as string) ?? t('Forward'));
 
 const props = defineProps<{
   title?: string;
@@ -193,7 +194,7 @@ onMounted(() => {
       <div class="search-section">
         <a-input-search
           v-model:value="query.keyword"
-          placeholder="搜索"
+          :placeholder="t('Search')"
           enter-button
           @search="onSearch"
         />
@@ -241,7 +242,7 @@ onMounted(() => {
 
               <a-input-search
                 v-model:value="keyword"
-                placeholder="搜索：公众号"
+                :placeholder="`${t('Search')}:${t('Room')},${t('Official')}...`"
                 enter-button
                 @search="onSearch"
               />
@@ -252,14 +253,13 @@ onMounted(() => {
     </page-content>
     <page-footer class="footer">
       <div class="select-result">
-        已选择
+        {{ t('SelectedItems') }}:
         <b>{{ selectedList.length }}</b>
-        项
       </div>
       <a-space size="large">
-        <a-button type="default" @click="onCancle">取消</a-button>
+        <a-button type="default" @click="onCancle">{{ t('Cancel') }}</a-button>
         <a-button type="primary" @click="onConfirm" :disabled="selectedList.length == 0">
-          确定转发({{ selectedList.length }})
+          {{ t('Confirm Forward') }} ({{ selectedList.length }})
         </a-button>
       </a-space>
     </page-footer>

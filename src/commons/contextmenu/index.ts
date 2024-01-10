@@ -5,10 +5,10 @@ import { showContextMenuForMessageContent } from './showContextMenuForMessageCon
 import { showContextMenuForMessageSelect } from './showContextMenuForMessageSelect';
 import { setProfile } from '../../ipc/setProfile';
 import { useWindowStore } from '../../stores/window';
+import { ComposerTranslation, VueMessageType } from 'vue-i18n';
 export { showContextMenuForSession } from './showContextMenuForSession';
 export { showContextMenuForMessageContent } from './showContextMenuForMessageContent';
 export { showContextMenuForMessageAvatar } from './showContextMenuForMessageAvatar';
-
 export enum LabelType {
   'All' = 0,
   'Content' = 2,
@@ -40,6 +40,7 @@ export type MessageContextMenuInput = ContextmenuParams & {
   onRemind?: (entity: SessionUnitSenderDto) => void;
   onQuote?: (entity: MessageDto) => void;
   onFollowing?: (targetSessionUnitId: string, isFollowing: boolean) => void;
+  t: any;
 };
 
 export type ContextmenuInput = ContextmenuParams & ContextmenuLabel;

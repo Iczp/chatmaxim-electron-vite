@@ -52,10 +52,17 @@ export const setFavorite = async ({
  *
  */
 export const forwardMessage = ({
+  t,
   messageId,
   chatObjectId,
   sessionUnitId,
 }: {
+  /**
+   * i18n
+   *
+   * @type {*}
+   */
+  t: any;
   /**
    * 对象Id
    *
@@ -79,6 +86,7 @@ export const forwardMessage = ({
 }) => {
   const key = new Date().toString();
   objectPicker({
+    t,
     payload: {
       chatObjectId,
       selectedItems: [],
@@ -116,8 +124,10 @@ export const forwardMessage = ({
  *
  */
 export const rollbackMessage = ({
+  t,
   messageId,
 }: {
+  t: any;
   /**
    * 消息Id
    *
@@ -126,12 +136,12 @@ export const rollbackMessage = ({
   messageId: number;
 }): Promise<boolean> =>
   new Promise((resolve, reject) => {
-    const { t } = useI18n();
+    // const { t } = useI18n();
     Modal.confirm({
       title: t('Rollback message'),
       content: `${t('Roback confirm content')}`,
       icon: createVNode(ExclamationCircleOutlined),
-      cancelText: '取消',
+      cancelText: t('Cancel'),
       okText: t('Confirm rollback'),
       maskClosable: true,
       wrapClassName: 'chat-models',

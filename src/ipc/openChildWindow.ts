@@ -2,7 +2,6 @@ import { message } from 'ant-design-vue';
 import { ipcRenderer } from 'electron';
 import { WindowParams } from '../ipc-types';
 import { IdInput } from '../apis/dtos';
-import { useI18n } from 'vue-i18n';
 
 export type PickerResult = {
   success?: boolean;
@@ -16,13 +15,15 @@ export type PickerInput = {
 };
 
 export const openChildWindow = (args: {
+  t: any;
   // url: string;
   event?: string;
   // payload?: any;
   window?: WindowParams;
 }) =>
   new Promise((resolve: (value: PickerResult) => void, reject: (reason?: any) => void) => {
-    const { t } = useI18n();
+    // const { t } = useI18n();
+    const { t } = args;
     args.event = args.event || `e-${new Date().getTime()}`;
     // args.payload = args.payload || {};
     if (args.window?.payload) {

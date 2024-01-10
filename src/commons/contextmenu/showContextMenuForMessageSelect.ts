@@ -1,28 +1,12 @@
-import { HtmlHTMLAttributes, Ref, h } from 'vue';
-import { message } from 'ant-design-vue';
+import { h } from 'vue';
 import ContextMenu from '@imengyu/vue3-context-menu';
-import { MessageTypeEnums } from '../../apis/enums';
-import {
-  forwardMessage,
-  rollbackMessage,
-  setFavorite,
-} from '../../commons/messageContextMenuHandle';
 import {
   CheckList,
-  ContentCopy,
-  Forward,
-  Rollback,
-  Quote,
-  BookmarkAdd,
-  BookmarkRemove,
-  Alarm,
-  VideoStop,
-  VideoPlay,
-  FileDownload,
 } from '../../icons';
-import { ContextmenuParams, MessageContextMenuInput, getTheme, iconClass } from '.';
+import { MessageContextMenuInput, getTheme, iconClass } from '.';
 
 export const showContextMenuForMessageSelect = ({
+  t,
   event,
   entity,
   sessionUnitId,
@@ -42,7 +26,7 @@ export const showContextMenuForMessageSelect = ({
     customClass: 'message-context-menu',
     items: [
       {
-        label: selectable.value ? '取消多选' : '多选',
+        label: selectable.value ? t('Cancel Multiple Selection') : t('Multiple Selection'),
         icon: h(CheckList, iconClass),
         onClick: () => {
           selectable.value = !selectable.value;

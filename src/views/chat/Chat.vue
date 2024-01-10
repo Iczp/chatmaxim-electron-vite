@@ -37,7 +37,8 @@ import { useShortcutStore } from '../../stores/shortcut';
 import { FileContentDto } from '../../apis/dtos/message/FileContentDto';
 import { mapToFileContentDto, mapToImageContentDtoAsync } from '../../commons/utils';
 import { ChatObjectService } from '../../apis';
-
+import { useI18n } from 'vue-i18n';
+const { t } = useI18n();
 const store = useImStore();
 
 const props = defineProps<{
@@ -334,6 +335,7 @@ const onRemoveQuoteMessage = () => (quoteMessage.value = undefined);
 
 const showContextMenu = ({ labelType, mouseButton, event, entity }: ContextmenuInput) =>
   showContextMenuForMessage({
+    t,
     labelType,
     event,
     entity,

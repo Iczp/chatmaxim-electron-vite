@@ -12,13 +12,16 @@ import { PickerResult, openChildWindow, sendPickerResult } from './openChildWind
  * @return {*}  {Promise<PickerResult>}
  */
 export const sessionRequest = ({
+  t,
   payload,
   window,
 }: {
+  t: any;
   payload: { params: SessionRequestInput; destination?: SessionUnitDestinationDto };
   window?: WindowParams;
 }): Promise<PickerResult> =>
   openChildWindow({
+    t,
     // url: `/session-request/${payload.params.ownerId}`,
     // payload,
     window: {

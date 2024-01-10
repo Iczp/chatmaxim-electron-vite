@@ -8,15 +8,18 @@ export type ObjectPickerPayLoad = PickerInput & {
 };
 
 export const objectPicker = ({
+  t,
   payload,
   window,
 }: {
+  t:any,
   payload: ObjectPickerPayLoad;
   window?: WindowParams;
 }): Promise<ObjectPickerResult> => {
   const ticks = new Date().getTime();
   const event = `${payload.chatObjectId}-${ticks}`;
   return openChildWindow({
+    t,
     // url: `/object-picker/${payload.chatObjectId}`,
     event,
     // payload,
