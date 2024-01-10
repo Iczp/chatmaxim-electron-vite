@@ -84,5 +84,16 @@
   "SelectedItems": "Selected Items",
   "Confirm Forward": "Confirm Forward",
   "Ignore All": "Ignore All",
-  "New messages": "New Messages"
+  "New messages": "New Messages",
+  "Message is rollbacked": "Message is rollbacked",
+  "MessageType:Contacts": "Image",
+  "MessageType:Image": "Image",
+  "MessageType:Video": "Video",
+  "MessageType:File": "File",
+  "MessageType:Sound": "Sound",
+  "MessageType:Link": "Link",
+  "MessageType:History": "History",
+  "MessageType:Html": "Html",
+  "MessageType:Cmd": "Cmd",
+  "MessageType:Unsupported": "Unsupported message type"
 }

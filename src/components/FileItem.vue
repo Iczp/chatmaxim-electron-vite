@@ -1,9 +1,8 @@
 <script setup lang="ts">
 import { useSlots } from 'vue';
-import prettyBytes from 'pretty-bytes';
 import LayoutItem from './LayoutItem.vue';
 import FileIcon from './FileIcon.vue';
-import { FileFilled, CloseCircleOutlined } from '@ant-design/icons-vue';
+import { CloseCircleOutlined } from '@ant-design/icons-vue';
 defineProps<{
   name?: string | null;
   size?: number | null;
@@ -28,7 +27,7 @@ const emits = defineEmits<{
       <slot></slot>
     </template>
     <template v-if="del" #footer>
-      <div class="delete" title="删除" @click="emits('delete')">
+      <div class="delete" @click="emits('delete')">
         <CloseCircleOutlined />
       </div>
     </template>

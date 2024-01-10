@@ -2,11 +2,12 @@
 import { computed, watch } from 'vue';
 import { MessageSimpleDto } from '../apis/dtos';
 import { formatMessageContent } from '../commons/utils';
-
+import { useI18n } from 'vue-i18n';
+const { t } = useI18n();
 const props = defineProps<{
   entity?: MessageSimpleDto;
 }>();
-const content = computed(() => formatMessageContent(props.entity));
+const content = computed(() => formatMessageContent(props.entity, t));
 </script>
 
 <template>

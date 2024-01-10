@@ -84,5 +84,16 @@
   "SelectedItems": "已选择",
   "Confirm Forward": "确定转发",
   "Ignore All": "忽略全部",
-  "New messages": "新消息"
+  "New messages": "新消息",
+  "Message is rollbacked": "消息已经被撤回",
+  "MessageType:Contacts": "名片",
+  "MessageType:Image": "图片",
+  "MessageType:Video": "视频",
+  "MessageType:File": "文件",
+  "MessageType:Sound": "语音",
+  "MessageType:Link": "链接",
+  "MessageType:History": "聊天记录",
+  "MessageType:Html": "Html",
+  "MessageType:Cmd": "系统",
+  "MessageType:Unsupported": "不支持的类型"
 }

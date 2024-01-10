@@ -26,7 +26,7 @@ const style = reactive({
   align-items: center;
   /* height: 64px; */
   box-sizing: border-box;
-  color: rgba(128, 128, 128, 0.612);
+  color: var(--loading-color);
   padding: 20px;
 }
 .loading-text {

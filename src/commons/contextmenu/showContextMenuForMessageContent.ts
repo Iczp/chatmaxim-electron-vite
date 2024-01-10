@@ -60,7 +60,7 @@ export const showContextMenuForMessageContent = ({
         hidden: ![MessageTypeEnums.Text].some(x => x == entity.messageType),
         onClick: e => {
           console.log('contextmenu item click', entity);
-          const { contentText } = formatMessageContent(entity);
+          const { contentText } = formatMessageContent(entity, t);
           const { copy, isSupported } = useClipboard();
           copy(contentText).then(v => {
             message.success({ content: t('Copied'), duration: 2 });

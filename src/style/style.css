@@ -230,6 +230,8 @@ code {
 
   --mute-color: #ccc;
 
+  --loading-color:rgba(128, 128, 128, 0.5);
+
   /* file-icon */
   --file-name-color: rgb(44, 44, 44);
   --file-icon-color: rgb(14, 105, 162);
@@ -357,6 +359,8 @@ code {
   --page-footer-border-top-color: rgb(55, 55, 55);
 
   --mute-color: #494949;
+
+  --loading-color:rgba(128, 128, 128, 0.5);
 
   /* file-icon */
   --file-name-color: rgb(184, 184, 184);

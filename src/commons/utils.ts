@@ -152,10 +152,12 @@ export const getDestinationNameForSessionUnit = (
 
 export const formatMessageContent = (
   entity?: MessageSimpleDto,
+  t?: any,
 ): {
   contentType: string | undefined;
   contentText: string;
 } => {
+  t = t || ((k: string): string => k);
   let contentType: string | undefined;
   let contentText: string = '';
 
@@ -166,7 +168,7 @@ export const formatMessageContent = (
   }
 
   if (isRollbacked) {
-    contentText = '消息已经被撤回';
+    contentText = t('Message is rollbacked');
     return { contentType, contentText };
   }
 
@@ -174,44 +176,44 @@ export const formatMessageContent = (
 
   switch (entity.messageType) {
     case MessageTypeEnums.Contacts:
-      contentType = '[名片]';
+      contentType = `[${t('MessageType:Contacts')}]`;
       break;
     case MessageTypeEnums.Image:
-      contentType = '[图片]';
+      contentType = `[${t('MessageType:Image')}]`;
       break;
     case MessageTypeEnums.Video:
-      contentType = '[视频]';
+      contentType = `[${t('MessageType:Video')}]`;
       break;
     case MessageTypeEnums.File:
-      contentType = '[文件]';
+      contentType = `[${t('MessageType:File')}]`;
       contentText = formatText((content as FileContentDto).fileName!);
       break;
     case MessageTypeEnums.Sound:
-      contentType = '[语音]';
+      contentType = `[${t('MessageType:Sound')}语音]`;
       contentText = formatText((content as SoundContentDto).time!.toString());
       break;
     case MessageTypeEnums.Link:
-      contentType = '[链接]';
+      contentType = `[${t('MessageType:Link')}]`;
       contentText = formatText((content as LinkContentDto).url!);
       break;
     case MessageTypeEnums.History:
-      contentType = '[聊天记录]';
+      contentType = `[${t('MessageType:History')}]`;
       contentText = formatText((content as HistoryContentOutput).title!);
       break;
     case MessageTypeEnums.Html:
-      contentType = '[Html]';
+      contentType = `[${t('MessageType:Html')}]`;
       contentText = formatText((content as HistoryContentOutput).title!);
       break;
     case MessageTypeEnums.Cmd:
-      contentType = '[系统]';
+      contentType = `[${t('MessageType:Cmd')}]`;
       contentText = formatText((content as CmdContentDto).text!);
       break;
     case MessageTypeEnums.Text:
-      contentType = '';
+      contentType = ``;
       contentText = formatText((content as TextContentDto).text!);
       break;
     default:
-      contentText = '[不支持的类型]';
+      contentText = `[t('MessageType:Unsupported')}]`;
       break;
   }
   return { contentType, contentText };
