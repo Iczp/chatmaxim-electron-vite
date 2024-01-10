@@ -37,5 +37,12 @@
   "Server": "服务端",
   "Client": "客户端",
   "Global": "全局",
-  "Cancel": "取消"
+  "Cancel": "取消",
+  "Rollback": "撤回消息",
+  "Roback confirm content": "撤回消息有局限性，确定要撤回消息?",
+  "Rollback message": "撤回消息",
+  "Confirm rollback": "确定撤回",
+  "Rollback succeed": "撤回成功",
+  "Message forwarding": "消息转发中...",
+  "Message forwarding successful": "消息转发成功"
 }

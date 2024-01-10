@@ -5,6 +5,7 @@ import { objectPicker } from '../ipc/objectPicker';
 import { ExclamationCircleOutlined } from '@ant-design/icons-vue';
 import { createVNode } from 'vue';
 import { Modal } from 'ant-design-vue';
+import { useI18n } from 'vue-i18n';
 
 /**
  * 收藏与取消
@@ -87,7 +88,9 @@ export const forwardMessage = ({
     .then(v => {
       console.log('forward', v);
 
-      message.loading({ content: '转发中...', key });
+      const { t } = useI18n();
+
+      message.loading({ content: t('Message forwarding'), key });
 
       MessageSenderService.postApiChatMessageSenderForward({
         sessionUnitId,
@@ -95,7 +98,7 @@ export const forwardMessage = ({
         requestBody: v.selectedItems?.map(x => x.id!) || [],
       })
         .then(res => {
-          message.success({ content: '转发成功!', key });
+          message.success({ content: t('Message forwarding successful'), key });
         })
         .catch(err => {
           console.error('MessageSenderService.postApiChatMessageSenderForward', err);
@@ -123,12 +126,13 @@ export const rollbackMessage = ({
   messageId: number;
 }): Promise<boolean> =>
   new Promise((resolve, reject) => {
+    const { t } = useI18n();
     Modal.confirm({
-      title: '撤回',
-      content: '撤回有局限性，确定要撤回消息?',
+      title: t('Rollback message'),
+      content: `${t('Roback confirm content')}`,
       icon: createVNode(ExclamationCircleOutlined),
       cancelText: '取消',
-      okText: '确定撤回',
+      okText: t('Confirm rollback'),
       maskClosable: true,
       wrapClassName: 'chat-models',
       onOk() {
@@ -141,7 +145,7 @@ export const rollbackMessage = ({
           messageId,
         })
           .then(res => {
-            message.success({ content: '撤回成功!', key });
+            message.success({ content: t('Rollback succeed'), key });
             resolve(true);
           })
           .catch(err => {

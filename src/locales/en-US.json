@@ -37,5 +37,12 @@
   "Server": "Server",
   "Client": "Client",
   "Global": "Global",
-  "Cancel": "Cancel"
+  "Cancel": "Cancel",
+  "Rollback": "Rollback message",
+  "Roback confirm content": "Withdrawal has limitations, are you sure you want to withdraw the message?",
+  "Rollback message": "Withdraw message",
+  "Confirm rollback": "Confirm withdrawal",
+  "Rollback succeed": "Successfully withdrawal message",
+  "Message forwarding": "Message forwarding...",
+  "Message forwarding successful": "Message forwarding successful"
 }

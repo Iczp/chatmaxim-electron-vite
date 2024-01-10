@@ -3,7 +3,7 @@ import { ipcRenderer } from 'electron';
 import { WindowParams } from '../ipc-types';
 import { IdInput } from '../apis/dtos';
 import { useI18n } from 'vue-i18n';
-const { t } = useI18n();
+
 export type PickerResult = {
   success?: boolean;
   message?: string;
@@ -22,6 +22,7 @@ export const openChildWindow = (args: {
   window?: WindowParams;
 }) =>
   new Promise((resolve: (value: PickerResult) => void, reject: (reason?: any) => void) => {
+    const { t } = useI18n();
     args.event = args.event || `e-${new Date().getTime()}`;
     // args.payload = args.payload || {};
     if (args.window?.payload) {
