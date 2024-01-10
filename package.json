@@ -30,6 +30,7 @@
   },
   "devDependencies": {
     "@ant-design-vue/pro-layout": "^3.2.4",
+    "@intlify/unplugin-vue-i18n": "^2.0.0",
     "@types/websocket": "^1.0.8",
     "@vitejs/plugin-vue": "^4.3.3",
     "ant-design-vue": "^4.0.3",
@@ -65,6 +66,7 @@
     "node-machine-id": "^1.1.12",
     "pretty-bytes": "^6.1.1",
     "query-string": "^8.1.0",
+    "vue-i18n": "^9.9.0",
     "vue-virtual-scroller": "^2.0.0-beta.8"
   }
 }

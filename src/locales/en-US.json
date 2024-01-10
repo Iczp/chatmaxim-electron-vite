@@ -1,0 +1,19 @@
+{
+  "world": "The world!",
+  "login": "Login",
+  "automatic logon": "Automatic logon",
+  "account": "Account",
+  "password": "Password",
+  "user name": "User name",
+  "login succeeded": "Login succeeded",
+  "welcome back": "Welcome back",
+  "loginResult": "登录{msg}",
+  "language": "Language",
+  "color scheme": "Color scheme",
+  "theme": "Theme",
+  "light": "Light",
+  "dark": "Dark",
+  "system preference": "System preference",
+  "system": "System",
+  "open at login":"Open at login"
+}

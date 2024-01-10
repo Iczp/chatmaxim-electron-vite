@@ -8,8 +8,10 @@ import pkg from './package.json';
 import Components from 'unplugin-vue-components/vite';
 import { AntDesignVueResolver } from 'unplugin-vue-components/resolvers';
 import multiple from 'vite-plugin-multiple';
-import { resolve, join } from 'node:path';
+import { resolve, join,dirname  } from 'node:path';
 import svgLoader from 'vite-svg-loader';
+import VueI18nPlugin from '@intlify/unplugin-vue-i18n/vite'
+import { fileURLToPath } from 'url'
 
 // https://vitejs.dev/config/
 export default defineConfig(({ command }) => {
@@ -25,6 +27,11 @@ export default defineConfig(({ command }) => {
     },
     plugins: [
       vue(),
+      VueI18nPlugin({
+        /* options */
+        // locale messages resource pre-compile option
+        include: resolve(dirname(fileURLToPath(import.meta.url)), './src/locales/**'),
+      }),
       svgLoader({
         defaultImport: 'component',
       }),

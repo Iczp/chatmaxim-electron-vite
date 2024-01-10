@@ -16,5 +16,10 @@
   "debug.javascript.debugByLinkOptions": "on",
   "javascript.updateImportsOnFileMove.enabled": "always",
   "typescript.updateImportsOnFileMove.enabled": "always",
-  "vue.updateImportsOnFileMove.enabled": true
+  "vue.updateImportsOnFileMove.enabled": true,
+  "vue-i18n.i18nPaths": "src\\locales,release\\v2.0.3\\win-unpacked\\locales",
+  "i18n-ally.localesPaths": [
+    "src/locales",
+    "release/v2.0.3/win-unpacked/locales"
+  ]
 }

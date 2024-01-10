@@ -28,7 +28,7 @@ import { createPinia } from 'pinia';
 // import VueVirtualScroller from 'vue-virtual-scroller'
 import 'vue-virtual-scroller/dist/vue-virtual-scroller.css';
 
-// import './websocket'
+import { i18n } from './i18n';
 
 const pinia = createPinia();
 const app = createApp(App);
@@ -49,7 +49,7 @@ app
   .use(router)
   .use(pinia)
   .use(ContextMenu)
-
+  .use(i18n)
   .mount('#app')
   .$nextTick(() => {
     postMessage({ payload: 'removeLoading' }, '*');

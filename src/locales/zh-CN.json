@@ -1,0 +1,19 @@
+{
+  "world": "the world!",
+  "login": "登录",
+  "automatic logon": "自动登录",
+  "account": "账号",
+  "password": "密码",
+  "user name": "用户名",
+  "login succeeded": "登录成功",
+  "welcome back": "欢迎回来",
+  "loginResult": "登录{msg}",
+  "language": "语言",
+  "color scheme": "颜色",
+  "theme": "主题",
+  "light": "浅色",
+  "dark": "深色",
+  "system preference": "跟随系统",
+  "system": "系统",
+  "open at login": "开机启动"
+}

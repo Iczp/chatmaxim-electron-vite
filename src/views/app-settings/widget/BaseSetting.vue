@@ -7,27 +7,32 @@ import { setColorScheme } from '../../../commons/setColorScheme';
 import { useWindowStore } from '../../../stores/window';
 import { useColorMode } from '@vueuse/core';
 import { getLoginItemSettings, setLoginItemSettings } from '../../../commons/setLoginItemSettings';
+import { useI18n } from 'vue-i18n';
+const { t, d, n, locale, availableLocales } = useI18n({
+  useScope: 'global',
+  inheritLocale: true,
+});
 
 const { system, store } = useColorMode();
 const windowStore = useWindowStore();
 interface FormState {
   colorScheme: string;
   isOpenAtLogin: boolean;
-  type: string[];
+  language: string;
   resource: string;
   desc: string;
 }
 const formState: UnwrapRef<FormState> = reactive({
   colorScheme: windowStore.colorScheme as string,
   isOpenAtLogin: false,
-  type: [],
+  language: 'zh-CN',
   resource: '',
   desc: '',
 });
 const onSubmit = () => {
   console.log('submit!', toRaw(formState));
 };
-const labelCol = { style: { width: '100px' } };
+const labelCol = { style: { width: '120px' } };
 const wrapperCol = { span: 14 };
 
 const { appId, appName, author, websize, version, copyright } = useAppInfo();
@@ -64,20 +69,28 @@ const onIsOpenAtLoginChange = (e: any) => {
     <page-content>
       <scroll-view>
         <a-form class="form" :model="formState" :label-col="labelCol" :wrapper-col="wrapperCol">
-          <a-divider class="divider" orientation="left">主题</a-divider>
-          <a-form-item label="颜色">
+          <a-divider class="divider" orientation="left">{{ t('theme') }}</a-divider>
+          <a-form-item :label="t('color scheme')">
             <a-radio-group v-model:value="formState.colorScheme" @change="onColorSchemeChange">
-              <a-radio-button value="light" title="light">明亮</a-radio-button>
-              <a-radio-button value="dark" title="dark">暗黑</a-radio-button>
+              <a-radio-button value="light" title="light">{{ t('light') }}</a-radio-button>
+              <a-radio-button value="dark" title="dark">{{ t('dark') }}</a-radio-button>
               <a-radio-button value="auto" title="System preference">
-                跟随系统({{ system }})
+                {{ t('system preference') }}({{ t(system) }})
               </a-radio-button>
               <!-- <a-radio-button value="green">green</a-radio-button>
               <a-radio-button value="blue">blue</a-radio-button> -->
             </a-radio-group>
           </a-form-item>
-          <a-divider class="divider" orientation="left">系统</a-divider>
-          <a-form-item label="开机启动">
+          <a-form-item :label="t('language')">
+            <!-- <a-input v-model:value="formState.sendMessage" /> -->
+            <a-select v-model:value="locale" style="width: 120px">
+              <a-select-option v-for="item in availableLocales" :value="item">
+                {{ item }}
+              </a-select-option>
+            </a-select>
+          </a-form-item>
+          <a-divider class="divider" orientation="left">{{ t('system') }}</a-divider>
+          <a-form-item :label="t('open at login')">
             <a-switch :checked="formState.isOpenAtLogin" @click="onIsOpenAtLoginChange" />
           </a-form-item>
           <!-- <a-form-item label="Activity type">

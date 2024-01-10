@@ -24,6 +24,15 @@ import { UserOutlined, LockOutlined } from '@ant-design/icons-vue';
 import { TokenDto } from '../apis/auth/dto';
 import { setAuthorize } from '../commons/setAuthorize';
 import { useAppInfo } from '../commons/useAppInfo';
+import { useI18n } from 'vue-i18n';
+
+const { t, d, n, locale, availableLocales } = useI18n({
+  useScope: 'global',
+  inheritLocale: true,
+});
+availableLocales.forEach(locale => {
+  console.log(`${locale} locale messages`, locale);
+});
 const key = 'updatable';
 
 interface FormState {
@@ -45,8 +54,8 @@ const onFinish = (values: any) => {
     password: formState.password,
   })
     .then(res => {
-      console.log('登录成功！', res);
-      message.success({ content: '欢迎回来!', key, duration: 2 });
+      console.log(`${t('login succeeded')}!`, res);
+      message.success({ content: `${t('welcome back')}!`, key, duration: 2 });
       // setWindow({ size: { width: 1080, height: 760 } });
       setAuthorize(res.detail as TokenDto);
       router.push('/');
@@ -65,7 +74,7 @@ const { appId, appName, author, websize, version, copyright } = useAppInfo();
 
 <template>
   <page>
-    <page-title class="header" title="登录"></page-title>
+    <page-title class="header" :title="t('login')"></page-title>
     <page-content>
       <div class="page drag">
         <div class="login-page no-drag">
@@ -82,7 +91,7 @@ const { appId, appName, author, websize, version, copyright } = useAppInfo();
             class="login-form"
           >
             <a-form-item
-              label="用户名"
+              :label="t('account')"
               name="username"
               :rules="[{ message: 'Please input your username!' }]"
             >
@@ -92,7 +101,7 @@ const { appId, appName, author, websize, version, copyright } = useAppInfo();
             </a-form-item>
 
             <a-form-item
-              label="密码"
+              :label="t('password')"
               name="password"
               :rules="[{ message: 'Please input your password!' }]"
             >
@@ -102,12 +111,15 @@ const { appId, appName, author, websize, version, copyright } = useAppInfo();
             </a-form-item>
 
             <a-form-item name="isAutoLogin" :wrapper-col="{ offset: 8, span: 16 }">
-              <a-checkbox v-model:checked="formState.isAutoLogin">自动登录</a-checkbox>
+              <a-checkbox v-model:checked="formState.isAutoLogin">
+                {{ t('automatic logon') }}
+              </a-checkbox>
             </a-form-item>
 
             <a-form-item :wrapper-col="{ offset: 8, span: 16 }">
-              <a-button type="primary" html-type="submit">登录</a-button>
+              <a-button type="primary" html-type="submit">{{ t('login') }}</a-button>
             </a-form-item>
+            {{ locale }}
           </a-form>
         </div>
       </div>
