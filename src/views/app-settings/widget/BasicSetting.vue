@@ -69,7 +69,7 @@ const onIsOpenAtLoginChange = (e: any) => {
     <page-content>
       <scroll-view>
         <a-form class="form" :model="formState" :label-col="labelCol" :wrapper-col="wrapperCol">
-          <a-divider class="divider" orientation="left">{{ t('AppId') }}</a-divider>
+          <a-divider class="divider" orientation="left">{{ t('Application') }}</a-divider>
           <a-form-item :label="t('Color scheme')">
             <a-radio-group v-model:value="formState.colorScheme" @change="onColorSchemeChange">
               <a-radio-button value="light" title="light">{{ t('Light') }}</a-radio-button>

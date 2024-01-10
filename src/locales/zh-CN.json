@@ -35,5 +35,6 @@
   "Copyright": "版权所有",
   "Application": "App",
   "Server": "服务端",
-  "Client": "客户端"
+  "Client": "客户端",
+  "Global": "全局"
 }

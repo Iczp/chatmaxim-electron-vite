@@ -44,7 +44,7 @@ const title = ref('');
           :label-col="labelCol"
           :wrapper-col="wrapperCol"
         >
-          <a-divider class="divider" orientation="left">Global</a-divider>
+          <a-divider class="divider" orientation="left">{{ t('Global') }}</a-divider>
           <a-form-item :label="t('Extraction messages')">
             <a-input v-model:value="formState.fetchMessage" />
           </a-form-item>

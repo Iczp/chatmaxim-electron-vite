@@ -35,5 +35,6 @@
   "Copyright": "Copyright",
   "Application": "Application",
   "Server": "Server",
-  "Client": "Client"
+  "Client": "Client",
+  "Global": "Global"
 }
