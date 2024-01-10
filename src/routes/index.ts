@@ -1,7 +1,7 @@
 import { createRouter, createWebHashHistory } from 'vue-router';
 import { isLogined } from '../apis/auth/TokenController';
 import { useWindowStore } from '../stores/window';
-import { setWindow } from '../commons/setWindow';
+import { setWindow } from '../ipc/setWindow';
 import { routes } from './routes';
 
 // 3、创建一个路由的对象

@@ -1,4 +1,3 @@
-import { IdInput } from '../apis/dtos';
 import { WindowParams } from '../ipc-types';
 import { PickerInput, PickerResult, openChildWindow, sendPickerResult } from './openChildWindow';
 

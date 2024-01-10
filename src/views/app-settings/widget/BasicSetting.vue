@@ -3,11 +3,11 @@ import { ref } from 'vue';
 import { useAppInfo } from '../../../commons/useAppInfo';
 import { reactive, toRaw } from 'vue';
 import type { UnwrapRef } from 'vue';
-import { setColorScheme } from '../../../commons/setColorScheme';
+import { setColorScheme } from '../../../ipc/setColorScheme';
 import { useWindowStore } from '../../../stores/window';
 import { useColorMode } from '@vueuse/core';
-import { getLoginItemSettings, setLoginItemSettings } from '../../../commons/setLoginItemSettings';
-import { setLanguage } from '../../../commons/setLanguage';
+import { getLoginItemSettings, setLoginItemSettings } from '../../../ipc/setLoginItemSettings';
+import { setLanguage } from '../../../ipc/setLanguage';
 import { useI18n } from 'vue-i18n';
 import { l } from '../../../i18n';
 
@@ -136,3 +136,4 @@ const onIsOpenAtLoginChange = (e: any) => {
   color: var(--color);
 }
 </style>
+../../../ipc/setColorScheme../../../ipc/setLoginItemSettings

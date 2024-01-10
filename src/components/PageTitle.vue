@@ -11,7 +11,7 @@ import {
   VerifiedOutlined,
 } from '@ant-design/icons-vue';
 import ToolBar from './TooBar.vue';
-import { setWindow } from '../commons/setWindow';
+import { setWindow } from '../ipc/setWindow';
 import { useWindowStore } from '../stores/window';
 import { computed } from 'vue';
 
@@ -159,3 +159,4 @@ const toggleAlwayOnTop = () => {
   transform: rotate(-45deg);
 }
 </style>
+../ipc/setWindow

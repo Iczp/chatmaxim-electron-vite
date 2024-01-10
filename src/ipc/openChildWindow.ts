@@ -2,7 +2,8 @@ import { message } from 'ant-design-vue';
 import { ipcRenderer } from 'electron';
 import { WindowParams } from '../ipc-types';
 import { IdInput } from '../apis/dtos';
-
+import { useI18n } from 'vue-i18n';
+const { t } = useI18n();
 export type PickerResult = {
   success?: boolean;
   message?: string;
@@ -41,7 +42,7 @@ export const openChildWindow = (args: {
         console.error(err?.message, args, JSON.stringify(err));
         message.error({ content: err?.message || 'ERROR' });
         reject({
-          message: err?.message || '取消',
+          message: err?.message || t('Cancel'),
         });
       })
       .finally(() => args.window?.payload && localStorage.removeItem(args.event!));

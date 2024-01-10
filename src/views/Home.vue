@@ -20,8 +20,8 @@ import { message } from 'ant-design-vue';
 import { BadgeDto } from '../apis/dtos';
 import { useChatObjectList } from '../commons/useChatObjectList';
 import { useWebsocket } from '../commons/useWebsocket';
-import { setWindow } from '../commons/setWindow';
-import { openAppSettings } from '../commons/openAppSettings';
+import { setWindow } from '../ipc/setWindow';
+import { openAppSettings } from '../ipc/openAppSettings';
 
 const route = useRoute();
 const { connectionText, connectionState, retryCount } = useWebsocket();
@@ -242,3 +242,4 @@ const getKey = (route: RouteLocationNormalizedLoaded, component: any): string | 
   height: 100%;
 }
 </style>
+../ipc/setWindow../ipc/openAppSettings

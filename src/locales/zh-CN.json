@@ -36,5 +36,6 @@
   "Application": "App",
   "Server": "服务端",
   "Client": "客户端",
-  "Global": "全局"
+  "Global": "全局",
+  "Cancel": "取消"
 }

@@ -1,5 +1,4 @@
 <script setup lang="ts">
-import { ipcRenderer } from 'electron';
 // // const electron = require('electron');
 // const path = require('path');
 // const fs = require('fs');
@@ -22,14 +21,11 @@ import { router } from '../routes';
 import { message } from 'ant-design-vue';
 import { UserOutlined, LockOutlined } from '@ant-design/icons-vue';
 import { TokenDto } from '../apis/auth/dto';
-import { setAuthorize } from '../commons/setAuthorize';
+import { setAuthorize } from '../ipc/setAuthorize';
 import { useAppInfo } from '../commons/useAppInfo';
 import { useI18n } from 'vue-i18n';
 
-const { t, d, n, locale, availableLocales } = useI18n({
-  useScope: 'global',
-  inheritLocale: true,
-});
+const { t, d, n, locale, availableLocales } = useI18n();
 availableLocales.forEach(locale => {
   console.log(`${locale} locale messages`, locale);
 });
@@ -175,3 +171,4 @@ const { appId, appName, author, websize, version, copyright } = useAppInfo();
   max-width: 500px;
 }
 </style>
+../ipc/setAuthorize

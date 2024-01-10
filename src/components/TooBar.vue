@@ -10,7 +10,7 @@ import {
   SearchOutlined,
   VerifiedOutlined,
 } from '@ant-design/icons-vue';
-import { setWindow } from '../commons/setWindow';
+import { setWindow } from '../ipc/setWindow';
 import { useWindowStore } from '../stores/window';
 import { ref } from 'vue';
 const props = defineProps<{
@@ -79,3 +79,4 @@ const setClose = () => setWindow({ close: true });
   background-color: rgb(253, 61, 61);
 }
 </style>
+../ipc/setWindow

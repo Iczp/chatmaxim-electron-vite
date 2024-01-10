@@ -1,7 +1,7 @@
 import { createI18n } from 'vue-i18n';
 import zhCN from './locales/zh-CN.json';
 import enUS from './locales/en-US.json';
-
+import { useI18n } from 'vue-i18n';
 // Type-define 'en-US' as the master schema for the resource
 type MessageSchema = typeof enUS;
 
@@ -24,4 +24,6 @@ export const language: {
 
 export const l = (key: Lang | any) => language[key] || key;
 
+// export const i18nInstance = useI18n();
+// export const {t, d, n, locale, availableLocales} = i18nInstance;
 // export const langs = () => Object.entries(lang).map(([value,key])=>);

@@ -1,6 +1,6 @@
 import { message } from 'ant-design-vue';
 import { FavoriteService, MessageSenderService } from '../apis';
-import { objectPicker } from './objectPicker';
+import { objectPicker } from '../ipc/objectPicker';
 
 import { ExclamationCircleOutlined } from '@ant-design/icons-vue';
 import { createVNode } from 'vue';

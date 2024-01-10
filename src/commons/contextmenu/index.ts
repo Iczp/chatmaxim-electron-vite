@@ -3,7 +3,7 @@ import { MessageDto, SessionUnitOwnerDto, SessionUnitSenderDto } from '../../api
 import { showContextMenuForMessageAvatar } from './showContextMenuForMessageAvatar';
 import { showContextMenuForMessageContent } from './showContextMenuForMessageContent';
 import { showContextMenuForMessageSelect } from './showContextMenuForMessageSelect';
-import { setProfile } from '../setProfile';
+import { setProfile } from '../../ipc/setProfile';
 import { useWindowStore } from '../../stores/window';
 export { showContextMenuForSession } from './showContextMenuForSession';
 export { showContextMenuForMessageContent } from './showContextMenuForMessageContent';

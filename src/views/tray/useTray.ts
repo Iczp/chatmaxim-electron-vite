@@ -5,7 +5,7 @@ import { setTray } from '../../commons/setTray';
 import { useWindowStore } from '../../stores/window';
 import { TrayPayload } from '../../ipc-types';
 import { sendCententOver } from './sendCententOver';
-import { setWindow } from '../../commons/setWindow';
+import { setWindow } from '../../ipc/setWindow';
 
 export const useTray = () => {
   const windowStore = useWindowStore();

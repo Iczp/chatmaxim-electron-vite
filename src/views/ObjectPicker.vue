@@ -5,7 +5,7 @@ import { ChatObjectDto, IdInput, ResultValue } from '../apis/dtos';
 import { ChatObjectService, OfficialService, SessionRequestService } from '../apis';
 import { ChatObjectTypeEnumText, ChatObjectTypeEnums } from '../apis/enums';
 import { useTitle } from '@vueuse/core';
-import { ObjectPickerPayLoad, sendResult } from '../commons/objectPicker';
+import { ObjectPickerPayLoad, sendResult } from '../ipc/objectPicker';
 import { onBeforeRouteLeave, onBeforeRouteUpdate, useRoute } from 'vue-router';
 import { useRemoteStore } from '../commons/useRemoteStore';
 import { useContacts } from '../commons/useContacts';
@@ -306,3 +306,4 @@ onMounted(() => {
   font-size: 12px;
 }
 </style>
+../ipc/objectPicker

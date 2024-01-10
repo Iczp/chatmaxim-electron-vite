@@ -1,7 +1,7 @@
 import { WatchCallback, WatchOptions, onMounted, ref, watch } from 'vue';
 import { useRoute } from 'vue-router';
-import { getStoreValue } from './openChildWindow';
-import { setWindow } from './setWindow';
+import { getStoreValue } from '../ipc/openChildWindow';
+import { setWindow } from '../ipc/setWindow';
 import { WindowParams } from '../ipc-types';
 
 export const useRemoteStore = <T>(args?: WindowParams) => {

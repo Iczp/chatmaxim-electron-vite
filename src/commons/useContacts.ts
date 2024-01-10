@@ -2,7 +2,7 @@ import { ref, watch } from 'vue';
 import { ContactsService } from '../apis';
 import { ContactsDto, ContactsGetListInput, IdInput, SelectableDto } from '../apis/dtos';
 import { message } from 'ant-design-vue';
-import { PickerInput } from './openChildWindow';
+import { PickerInput } from '../ipc/openChildWindow';
 
 export const useContacts = ({
   input,

@@ -9,7 +9,7 @@ import { ResultValue, SessionUnitGetListInput, SessionItemDto } from '../apis/dt
 import { useImStore } from '../stores/im';
 import { mapToSessionItemDto, navToChat as navToChatX } from '../commons/utils';
 import { showContextMenuForSession } from '../commons/contextmenu';
-import { openChildWindow } from '../commons/openChildWindow';
+import { openChildWindow } from '../ipc/openChildWindow';
 
 const props = defineProps<{
   chatObjectId: number | undefined;
@@ -433,3 +433,4 @@ const footerObserver = ref<HTMLElement | null>();
   background-color:rgba(223, 223, 223, 0.41);
 } */
 </style>
+../ipc/openChildWindow

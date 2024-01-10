@@ -4,7 +4,7 @@ import { SessionRequestInput, SessionUnitDestinationDto } from '../apis/dtos';
 import { SessionRequestService } from '../apis';
 import { useTitle } from '@vueuse/core';
 import { onBeforeRouteLeave, onBeforeRouteUpdate, useRoute } from 'vue-router';
-import { sendPickerResult } from '../commons/openChildWindow';
+import { sendPickerResult } from '../ipc/openChildWindow';
 import { message } from 'ant-design-vue';
 import ChatObject from '../components/ChatObject.vue';
 import { useRemoteStore } from '../commons/useRemoteStore';
@@ -133,3 +133,4 @@ const wrapperCol = { span: 12 };
   overflow: hidden;
 }
 </style>
+../ipc/openChildWindow
