@@ -6,7 +6,7 @@ import { windowManager } from '../commons/windowManager';
 import { initWindowEvent } from '../commons/initWindowEvent';
 import { setWindow } from './windowSettingHandle';
 import { loadUrl } from '../commons/loadUrl';
-import { icon, preload } from '../global';
+import { getBackgroundColor, globalState, icon, preload } from '../global';
 import { IpcMainHandle } from '../IpcMainHandle';
 
 export const openChildWindowHandle: IpcMainHandle = {
@@ -27,7 +27,7 @@ export const openChildWindowHandle: IpcMainHandle = {
   ): any => {
     return new Promise((resolve, reject) => {
       console.log('open-child', { window });
-  
+
       const parent = windowManager.get(window.parent);
       // || BrowserWindow.fromWebContents(webContents.fromId(_.sender.id)) || windowManager.getMain();
       const path = addParamsToUrl(window.path, { event, callerId: _.sender.id });
@@ -48,7 +48,7 @@ export const openChildWindowHandle: IpcMainHandle = {
       // childWindow.webContents.send('navigate', { path, payload: window.payload });
       // args.callerId = _.sender.id;
       let isSuccess = false;
-  
+
       const resolveFunc = (_: Electron.IpcMainEvent, arg: any) => {
         console.log('ipc main once', arg);
         isSuccess = true;
@@ -69,7 +69,6 @@ export const openChildWindowHandle: IpcMainHandle = {
   },
 };
 
-
 export const createChildWindow = ({
   name,
   path,
@@ -84,6 +83,7 @@ export const createChildWindow = ({
   console.log('createChildWindow', path);
 
   const win = new BrowserWindow({
+    backgroundColor: getBackgroundColor(),
     parent,
     modal: isModel,
     maximizable: false,

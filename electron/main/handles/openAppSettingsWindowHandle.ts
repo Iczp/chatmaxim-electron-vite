@@ -1,7 +1,7 @@
 import { BrowserWindow } from 'electron';
 import { initWindowEvent } from '../commons/initWindowEvent';
 import { preventClose, setWindow } from './windowSettingHandle';
-import { icon, preload } from '../global';
+import { getBackgroundColor, globalState, icon, preload } from '../global';
 import { windowManager } from '../commons/windowManager';
 import { WindowParams } from '../ipc-types';
 import { IpcMainHandle } from '../IpcMainHandle';
@@ -10,16 +10,13 @@ export const appSettingWindowName = 'app-settings';
 
 export const openAppSettingsWindowHandle: IpcMainHandle = {
   channel: 'open-app-settings',
-  handle: (
-    _: Electron.IpcMainInvokeEvent,
-    window: WindowParams,
-  ): any => {
+  handle: (_: Electron.IpcMainInvokeEvent, window: WindowParams): any => {
     return new Promise((resolve, reject) => {
       console.log('openAppSettingsWindowHandle', { window });
       createAppSettingsWindow(window);
       resolve({});
     });
-  }
+  },
 };
 
 export const createAppSettingsWindow = (window: WindowParams, _?: Electron.IpcMainInvokeEvent) => {
@@ -30,6 +27,7 @@ export const createAppSettingsWindow = (window: WindowParams, _?: Electron.IpcMa
     return win;
   }
   win = new BrowserWindow({
+    backgroundColor: getBackgroundColor(),
     title: '设置',
     // minWidth: 1560,
     // minHeight: 800,

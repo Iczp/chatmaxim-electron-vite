@@ -1,7 +1,7 @@
 import { BrowserWindow } from 'electron';
 import { initWindowEvent } from './initWindowEvent';
 import { preventClose, setWindow } from '../handles/windowSettingHandle';
-import { icon, preload } from '../global';
+import { getBackgroundColor, icon, preload } from '../global';
 import { windowManager } from './windowManager';
 import { WindowParams } from '../ipc-types';
 
@@ -11,9 +11,10 @@ export const createLoginWindow = (window: WindowParams, _?: Electron.IpcMainInvo
     console.log('createLoginWindow setWindow', window);
     setWindow(win, window, _);
     return win;
-  } 
+  }
   win = new BrowserWindow({
     title: '登录',
+    backgroundColor: getBackgroundColor(),
     // minWidth: 1560,
     // minHeight: 800,
     width: 320,

@@ -140,7 +140,7 @@ export type WindowParams = {
    *
    * @type {'auto'}
    */
-  colorScheme?: 'auto' | 'light' | 'dark' | 'green' | 'blue';
+  colorScheme?: 'auto' | 'system' | 'light' | 'dark' | 'green' | 'blue';
 
   /**
    * 语言

@@ -6,7 +6,7 @@ import { initWindowEvent } from '../commons/initWindowEvent';
 import { setWindow } from './windowSettingHandle';
 import { preventClose } from './windowSettingHandle';
 
-import { icon, preload } from '../global';
+import { getBackgroundColor, globalState, icon, preload } from '../global';
 import { IpcMainHandle } from '../IpcMainHandle';
 
 export const openPopWindowHandle: IpcMainHandle = {
@@ -33,7 +33,7 @@ export const openPopWindowHandle: IpcMainHandle = {
       setWindow(popWindow, window, _);
       resolve({});
     });
-  }
+  },
 };
 
 export const createPopWindow = (window: WindowParams, _?: Electron.IpcMainInvokeEvent) => {
@@ -43,7 +43,8 @@ export const createPopWindow = (window: WindowParams, _?: Electron.IpcMainInvoke
     setWindow(win, window, _);
     return win;
   }
-   win = new BrowserWindow({
+  win = new BrowserWindow({
+    backgroundColor: getBackgroundColor(),
     title: 'Pop window',
     // minWidth: 240,
     // minHeight: 240,

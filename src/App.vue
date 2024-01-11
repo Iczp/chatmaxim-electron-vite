@@ -20,7 +20,7 @@ watch(
   () => windowStore.colorScheme,
   colorScheme => {
     console.log('windowStore.colorScheme', colorScheme);
-    mode.value = colorScheme!;
+    mode.value = colorScheme == 'system' ? 'auto' : colorScheme!;
   },
   {
     // immediate: true,

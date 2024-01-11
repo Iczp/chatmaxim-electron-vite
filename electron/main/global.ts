@@ -1,4 +1,4 @@
-import { app, screen } from 'electron';
+import { app, nativeTheme, screen } from 'electron';
 import { AppInfo, TrayPayload } from './ipc-types';
 import { join } from 'node:path';
 import { version } from '../../package.json';
@@ -13,6 +13,7 @@ export const icon = join(process.env.VITE_PUBLIC, 'favicon.ico');
 export const store = new Store();
 
 export interface GlobalState {
+  backgroundColor: string;
   colorScheme: string;
   language: string;
   isAppQuitting?: boolean;
@@ -49,7 +50,7 @@ export const getAppInfo = (): AppInfo => {
 };
 
 export const globalState: GlobalState = {
-  colorScheme: 'auto',
+  colorScheme: nativeTheme.shouldUseDarkColors ? 'dark' : 'auto',
   language: 'zh-CN',
   isAppQuitting: false,
   trayPayload: {
@@ -72,6 +73,7 @@ export const globalState: GlobalState = {
   isAuthorized: false,
   token: store.get(TOKEN_KEY),
   tokenKey: TOKEN_KEY,
+  backgroundColor: nativeTheme.shouldUseDarkColors ? '#1b1b1b' : '#f9fbff',
 };
 
 // app.whenReady().then(() => {
@@ -83,3 +85,12 @@ app.on('before-quit', e => {
 });
 
 export const isAuthorized = (): boolean => globalState.isAuthorized;
+
+export const setColorScheme = (colorScheme: string) => {
+  globalState.colorScheme = colorScheme;
+  globalState.backgroundColor = colorScheme == 'dark' ? '#1b1b1b' : '#f9fbff';
+};
+
+export const getBackgroundColor = (): string | undefined => {
+  return globalState.colorScheme == 'dark' ? '#1b1b1b' : '#f9fbff';
+};
