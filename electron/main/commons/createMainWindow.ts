@@ -1,6 +1,6 @@
 import { BrowserWindow } from 'electron';
 import { initWindowEvent } from './initWindowEvent';
-import { preventClose, setWindow } from './windowSettingHandle';
+import { preventClose, setWindow } from '../handles/windowSettingHandle';
 import { icon, preload } from '../global';
 import { windowManager } from './windowManager';
 import { WindowParams } from '../ipc-types';

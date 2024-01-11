@@ -1,34 +1,39 @@
 import { BrowserWindow } from 'electron';
 import { WindowParams } from '../ipc-types';
-import { addParamsToUrl } from './addParamsToUrl';
-import { windowManager } from './windowManager';
-import { initWindowEvent } from './initWindowEvent';
+import { addParamsToUrl } from '../commons/addParamsToUrl';
+import { windowManager } from '../commons/windowManager';
+import { initWindowEvent } from '../commons/initWindowEvent';
 import { setWindow } from './windowSettingHandle';
 import { preventClose } from './windowSettingHandle';
 
 import { icon, preload } from '../global';
-export const openPopWindowHandle = (
-  _: Electron.IpcMainInvokeEvent,
-  {
-    event,
-    window,
-  }: {
-    event: string;
-    window?: WindowParams;
-  },
-): any => {
-  return new Promise((resolve, reject) => {
-    console.log('openPopWindowHandle', { window });
-    const path = addParamsToUrl(window.path, { event, callerId: _.sender.id });
-    window.path = path;
-    console.warn('path', path);
-    let popWindow = windowManager.get(window.name);
-    if (!popWindow) {
-      popWindow = windowManager.set(window.name, createPopWindow({ path }));
-    }
-    setWindow(popWindow, window, _);
-    resolve({});
-  });
+import { IpcMainHandle } from '../IpcMainHandle';
+
+export const openPopWindowHandle: IpcMainHandle = {
+  channel: 'open-pop',
+  handle: (
+    _: Electron.IpcMainInvokeEvent,
+    {
+      event,
+      window,
+    }: {
+      event: string;
+      window?: WindowParams;
+    },
+  ): any => {
+    return new Promise((resolve, reject) => {
+      console.log('openPopWindowHandle', { window });
+      const path = addParamsToUrl(window.path, { event, callerId: _.sender.id });
+      window.path = path;
+      console.warn('path', path);
+      let popWindow = windowManager.get(window.name);
+      if (!popWindow) {
+        popWindow = windowManager.set(window.name, createPopWindow({ path }));
+      }
+      setWindow(popWindow, window, _);
+      resolve({});
+    });
+  }
 };
 
 export const createPopWindow = (window: WindowParams, _?: Electron.IpcMainInvokeEvent) => {

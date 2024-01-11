@@ -1,35 +1,30 @@
 import { BrowserWindow, webContents } from 'electron';
 import { WindowParams } from '../ipc-types';
-import { ifArrayNumber, ifBoolean, ifTrue } from './ifBoolean';
+import { ifArrayNumber, ifBoolean, ifTrue } from '../commons/ifBoolean';
 import { globalState } from '../global';
-import { windowManager } from './windowManager';
-import { addParamsToUrl } from './addParamsToUrl';
-import { sendEvent } from './initWindowEvent';
+import { windowManager } from '../commons/windowManager';
+import { addParamsToUrl } from '../commons/addParamsToUrl';
+import { IpcMainHandle } from '../IpcMainHandle';
 // import { preventClose } from './openChildWindowHandle';
 
-export const windowSettingHandle = (_: Electron.IpcMainInvokeEvent, params: WindowParams): any => {
-  return new Promise((resolve, reject) => {
-    console.log('win-setting', _.sender.id, params);
-    // if (params.name == '*' && params.colorScheme) {
-    //   windowManager.getAllWindows().map(([name, win]) => {
-    //     sendEvent(win, 'color-scheme', [params.colorScheme]);
-    //   });
-    //   resolve({ message: 'ok' });
-    //   return;
-    // }
-
-    let targetWindow: BrowserWindow | undefined;
-    if (params.name) {
-      targetWindow = windowManager.get(params.name);
-      if (!targetWindow) {
-        reject({ message: `No such window name:${params.name}` });
+export const windowSettingHandle: IpcMainHandle = {
+  channel: 'win-setting',
+  handle: (_: Electron.IpcMainInvokeEvent, params: WindowParams): any => {
+    return new Promise((resolve, reject) => {
+      console.log('win-setting', _.sender.id, params);
+      let targetWindow: BrowserWindow | undefined;
+      if (params.name) {
+        targetWindow = windowManager.get(params.name);
+        if (!targetWindow) {
+          reject({ message: `No such window name:${params.name}` });
+        }
+      } else {
+        targetWindow = BrowserWindow.fromWebContents(webContents.fromId(_.sender.id));
       }
-    } else {
-      targetWindow = BrowserWindow.fromWebContents(webContents.fromId(_.sender.id));
-    }
-    setWindow(targetWindow, params, _);
-    resolve({ message: 'ok' });
-  });
+      setWindow(targetWindow, params, _);
+      resolve({ message: 'ok' });
+    });
+  },
 };
 
 export const setWindow = (

@@ -1,21 +1,25 @@
 import { BrowserWindow } from 'electron';
-import { initWindowEvent } from './initWindowEvent';
+import { initWindowEvent } from '../commons/initWindowEvent';
 import { preventClose, setWindow } from './windowSettingHandle';
 import { icon, preload } from '../global';
-import { windowManager } from './windowManager';
+import { windowManager } from '../commons/windowManager';
 import { WindowParams } from '../ipc-types';
+import { IpcMainHandle } from '../IpcMainHandle';
 
 export const appSettingWindowName = 'app-settings';
 
-export const openAppSettingsWindowHandle = (
-  _: Electron.IpcMainInvokeEvent,
-  window: WindowParams,
-): any => {
-  return new Promise((resolve, reject) => {
-    console.log('openAppSettingsWindowHandle', { window });
-    createAppSettingsWindow(window);
-    resolve({});
-  });
+export const openAppSettingsWindowHandle: IpcMainHandle = {
+  channel: 'open-app-settings',
+  handle: (
+    _: Electron.IpcMainInvokeEvent,
+    window: WindowParams,
+  ): any => {
+    return new Promise((resolve, reject) => {
+      console.log('openAppSettingsWindowHandle', { window });
+      createAppSettingsWindow(window);
+      resolve({});
+    });
+  }
 };
 
 export const createAppSettingsWindow = (window: WindowParams, _?: Electron.IpcMainInvokeEvent) => {

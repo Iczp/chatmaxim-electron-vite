@@ -2,8 +2,8 @@ import { app, globalShortcut } from 'electron';
 import { windowManager } from './windowManager';
 import { globalState, isAuthorized } from '../global';
 import { WindowParams } from '../ipc-types';
-import { setWindow } from './windowSettingHandle';
-import { setTrayHandle } from './setTrayHandle';
+import { setWindow } from '../handles/windowSettingHandle';
+import { setTrayHandle } from '../handles/setTrayHandle';
 
 const accelerator = globalState.globalShortcut;
 
@@ -43,11 +43,11 @@ export const messageShortcutHandle = () => {
       // update tray
       items.splice(0, 1);
       trayPayload.totalBadge -= Number(publicBadge || 0);
-      setTrayHandle(null, trayPayload);
+      setTrayHandle.handle(null, trayPayload);
     } else if (totalBadge > 0) {
       setWindow(win, { name: 'main', visiblity: true, focus: true }, null);
       trayPayload.totalBadge = 0;
-      setTrayHandle(null, trayPayload);
+      setTrayHandle.handle(null, trayPayload);
     } else {
       if (win.isVisible() && win.isFocused()) {
         win.hide();

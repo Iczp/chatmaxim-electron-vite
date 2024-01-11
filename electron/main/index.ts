@@ -18,25 +18,25 @@ import { app, BrowserWindow, ipcMain, webContents, screen, dialog, protocol } fr
 import { release } from 'node:os';
 import { join } from 'node:path';
 import Store from 'electron-store';
-import { openChildWindowHandle } from './commons/openChildWindowHandle';
+import { openChildWindowHandle } from './handles/openChildWindowHandle';
 import { createMainWindow } from './commons/createMainWindow';
-import { windowSettingHandle } from './commons/windowSettingHandle';
+import { windowSettingHandle } from './handles/windowSettingHandle';
 import { initMachine } from './commons/machine';
 
-import { websocketHandle } from './commons/webscoketHandle';
+import { websocketHandle } from './handles/webscoketHandle';
 import './commons/logger';
 import './commons/tray';
 import './commons/keyboardShortcuts';
-import { openPopWindowHandle } from './commons/openPopWindowHandle';
-import { setTrayHandle } from './commons/setTrayHandle';
+import { openPopWindowHandle } from './handles/openPopWindowHandle';
+import { setTrayHandle } from './handles/setTrayHandle';
 import setAppProtocol from './commons/setAppProtocol';
-import { setAuthorizehandle } from './commons/setAuthorizehandle';
+import { setAuthorizehandle } from './handles/setAuthorizehandle';
 import { createLoginWindow } from './commons/createLoginWindow';
-import { openAppSettingsWindowHandle } from './commons/openAppSettingsWindowHandle';
+import { openAppSettingsWindowHandle } from './handles/openAppSettingsWindowHandle';
 import { env } from './env';
-import { setColorSchemeHandle } from './commons/setColorSchemeHandle';
-import { loginItemSettingsHandle } from './commons/loginItemSettingsHandle';
-import { setLanguageHandle } from './commons/setLanguageHandle';
+import { setColorSchemeHandle } from './handles/setColorSchemeHandle';
+import { loginItemSettingsHandle } from './handles/loginItemSettingsHandle';
+import { setLanguageHandle } from './handles/setLanguageHandle';
 
 setAppProtocol();
 
@@ -120,16 +120,17 @@ const handleUrl = (url: string) => {
   dialog.showErrorBox('handleUrl', url);
 };
 
-ipcMain.handle('open-child', openChildWindowHandle);
-ipcMain.handle('open-pop', openPopWindowHandle);
-ipcMain.handle('open-app-settings', openAppSettingsWindowHandle);
-ipcMain.handle('win-setting', windowSettingHandle);
-ipcMain.handle('websocket', websocketHandle);
-ipcMain.handle('set-tray', setTrayHandle);
-ipcMain.handle('authorize', setAuthorizehandle);
-ipcMain.handle('color-scheme', setColorSchemeHandle);
-ipcMain.handle('login-item-settings', loginItemSettingsHandle);
-ipcMain.handle('language', setLanguageHandle);
+ipcMain.handle(openChildWindowHandle.channel, openChildWindowHandle.handle);
+ipcMain.handle(openPopWindowHandle.channel, openPopWindowHandle.handle);
+ipcMain.handle(openAppSettingsWindowHandle.channel, openAppSettingsWindowHandle.handle);
+ipcMain.handle(windowSettingHandle.channel, windowSettingHandle.handle);
+ipcMain.handle(websocketHandle.channel, websocketHandle.handle);
+ipcMain.handle(setTrayHandle.channel, setTrayHandle.handle);
+ipcMain.handle(setAuthorizehandle.channel, setAuthorizehandle.handle);
+ipcMain.handle(setColorSchemeHandle.channel, setColorSchemeHandle.handle);
+ipcMain.handle(loginItemSettingsHandle.channel, loginItemSettingsHandle.handle);
+ipcMain.handle(setLanguageHandle.channel, setLanguageHandle.handle);
+
 //
 // macOS
 app.on('open-url', (event, url) => {

@@ -13,12 +13,12 @@ import { windowManager } from './windowManager';
 import { BrowserWindow } from 'electron';
 import { join } from 'node:path';
 import { initWindowEvent, sendWindowInfo } from './initWindowEvent';
-import { preventClose, setWindow } from './windowSettingHandle';
+import { preventClose, setWindow } from '../handles/windowSettingHandle';
 import { globalState, isAuthorized } from '../global';
 import { loadUrl } from './loadUrl';
 
 import { icon, preload } from '../global';
-import { appSettingWindowName, createAppSettingsWindow } from './openAppSettingsWindowHandle';
+import { appSettingWindowName, createAppSettingsWindow } from '../handles/openAppSettingsWindowHandle';
 import { WindowParams } from '../ipc-types';
 import { env } from '../env';
 
