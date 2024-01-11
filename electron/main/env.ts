@@ -95,5 +95,5 @@ export const env: {
 
   websize: import.meta.env.VITE_APP_WEBSIZE,
 
-  copyright: import.meta.env.copyright,
+  copyright: import.meta.env.VITE_APP_COPYRIGHT,
 };

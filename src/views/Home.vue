@@ -58,15 +58,6 @@ const isNavActive = (pattern: string | RegExp, flags?: string | undefined): bool
   return reg.test(router.currentRoute.value.path);
 };
 
-const gotoAppSettings = () => {
-  openAppSettings({
-    name: 'app-settings',
-    path: `/app-settings`,
-    visiblity: true,
-  });
-  // message.info({ content: '设置' });
-};
-
 const getKey = (route: RouteLocationNormalizedLoaded, component: any): string | string[] => {
   const m = route.path.match(/^\/(chat|object)\/\d+/gi);
   const key = m != null ? m[0] : route.path;
@@ -120,7 +111,7 @@ const getKey = (route: RouteLocationNormalizedLoaded, component: any): string | 
               <UserOutlined />
             </a-badge>
           </div>
-          <div class="nav-item" @click="gotoAppSettings()">
+          <div class="nav-item" @click="openAppSettings()">
             <a-badge color="red" count="0">
               <SettingOutlined />
             </a-badge>

@@ -37,9 +37,9 @@ const onTabClick = (item: any, index: number) => {
       <!-- <page-title /> -->
       <router-view v-slot="{ Component, route }">
         <!-- <transition name="fade"> -->
-          <keep-alive>
-            <component :is="Component" :key="route.path" />
-          </keep-alive>
+        <keep-alive>
+          <component :is="Component" :key="route.path" />
+        </keep-alive>
         <!-- </transition> -->
       </router-view>
     </page-content>
@@ -50,25 +50,9 @@ const onTabClick = (item: any, index: number) => {
 :deep(.ant-form) :deep(.ant-form-item) {
   color: var(--color);
 }
-.fade-enter-active {
-  transition: all 0.3s;
-}
-.fade-leave-active {
-  /* transition: opacity 0.1s; */
-  opacity: 0;
-}
-.fade-enter-from,
-.fade-leave-to {
-  opacity: 0;
-}
 
 :deep(.tool-bar) {
   position: fixed;
-}
-
-.divider {
-  font-size: 12px;
-  color: #999;
 }
 
 .app-setting-page {
@@ -93,19 +77,7 @@ const onTabClick = (item: any, index: number) => {
 .page-content {
   border-left: 1px solid var(--divider-color);
 }
-.header {
-  background-color: unset;
-  border: none;
-}
-.footer {
-  background-color: unset;
-  border: none;
-  color: #ccc;
-  font-size: 12px;
-  align-items: center;
-  justify-content: center;
-  height: 32px;
-}
+
 .tabs {
   width: 100%;
   /* height: 100%; */

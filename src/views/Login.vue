@@ -1,29 +1,15 @@
 <script setup lang="ts">
-// // const electron = require('electron');
-// const path = require('path');
-// const fs = require('fs');
-// const userDataPath = app.getPath('userData');
-
-// let win = app.remote.getCurrentWindow()
-// // win.setBounds({
-// //     width: 320,
-// //     height: 480,
-// // })
-// win.center()
-// win.setMaximizable(false)
-// win.setFullScreenable(false)
-// win.setResizable(false)
-
 import { reactive, ref } from 'vue';
 import { login, isLogined } from '../apis/auth/TokenController';
 import { router } from '../routes';
 
 import { message } from 'ant-design-vue';
-import { UserOutlined, LockOutlined } from '@ant-design/icons-vue';
+import { UserOutlined, LockOutlined, SettingOutlined } from '@ant-design/icons-vue';
 import { TokenDto } from '../apis/auth/dto';
 import { setAuthorize } from '../ipc/setAuthorize';
 import { useAppInfo } from '../commons/useAppInfo';
 import { useI18n } from 'vue-i18n';
+import { openAppSettings } from '../ipc/openAppSettings';
 
 const { t, d, n, locale, availableLocales } = useI18n();
 availableLocales.forEach(locale => {
@@ -44,7 +30,7 @@ const formState = reactive<FormState>({
 });
 const onFinish = (values: any) => {
   console.log('Success:', values, message);
-  message.loading({ content:t('Logging in'), key });
+  message.loading({ content: t('Logging in'), key });
   login({
     username: formState.username,
     password: formState.password,
@@ -122,6 +108,7 @@ const { appId, appName, author, websize, version, copyright } = useAppInfo();
     </page-content>
     <page-footer class="footer">
       <div class="version">v{{ version }}</div>
+      <a @click="openAppSettings({ path: '/app-settings/network' })"><SettingOutlined /></a>
     </page-footer>
   </page>
 </template>
