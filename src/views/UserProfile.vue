@@ -5,6 +5,8 @@ import { ChatObjectService, SessionUnitService } from '../apis';
 import { ChatObjectDto, PagedResultDto, ResultValue } from '../apis/dtos';
 import LayoutItem from '../components/LayoutItem.vue';
 import ChatObject from '../components/ChatObject.vue';
+import { useI18n } from 'vue-i18n';
+const { t } = useI18n();
 // defineProps<{ msg: string }>();
 
 const ret = reactive<ResultValue<ChatObjectDto>>({
@@ -24,7 +26,7 @@ onMounted(() => {
 
 <template>
   <page>
-    <page-title title="用户中心" />
+    <page-title :title="t('User')" />
     <page-content>
       <scroll-view>
         <chat-object class="atavar-layout" sub="555" icon="arrow">

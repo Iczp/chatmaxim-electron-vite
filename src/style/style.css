@@ -220,7 +220,7 @@ code {
 
 [color-scheme='light']:root {
   /* body */
-  --background-color: #f0f2f5;
+  --background-color: #f9fbff;
   --background-color-normal: rgba(248, 248, 248, 0.5);
   --background-color-hover: rgba(180, 180, 180, 0.5);
   --color: #383838;
@@ -242,8 +242,8 @@ code {
   --avatar-color: rgba(191, 191, 191, 0.877);
   --avatar-background-color: rgba(230, 230, 230, 0.554);
   /* chat-empty */
-  --chat-empty-background-color: rgb(249, 251, 255);
-  --chat-empty-color: rgb(240, 244, 249);
+  --chat-empty-background-color: #f0f2f5;
+  --chat-empty-color: #e7eaee;
   /* 边栏线条颜色 */
   --sider-border-color: #e0e0e0;
   --sider-background-color: #f1f3f6;
@@ -262,8 +262,8 @@ code {
   --preview-message-type-color: #717171;
   --preview-message-text-color: #aaaaaa;
   /* chat-page */
-  --chat-page-color: #e6e6e6;
-  --chat-page-background-color: f0f2f5;
+  --chat-page-color: #f0f2f5;
+  --chat-page-background-color: #f0f2f5;
   --chat-page-main-title-color: rgb(33, 33, 33);
   --chat-page-sub-title-color: rgba(126, 126, 126, 0.921);
   --message-divider-color: #999;

@@ -64,7 +64,7 @@ const gotoAppSettings = () => {
     path: `/app-settings`,
     visiblity: true,
   });
-  message.info({ content: '设置' });
+  // message.info({ content: '设置' });
 };
 
 const getKey = (route: RouteLocationNormalizedLoaded, component: any): string | string[] => {

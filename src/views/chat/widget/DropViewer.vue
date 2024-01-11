@@ -6,6 +6,8 @@ import FileItem from '../../../components/FileItem.vue';
 import { computed, ref } from 'vue';
 import { FileOutlined, CloseCircleOutlined } from '@ant-design/icons-vue';
 import prettyBytes from 'pretty-bytes';
+import { useI18n } from 'vue-i18n';
+const { t } = useI18n();
 defineProps<{
   destination?: ChatObjectDto;
   files?: Array<any>;
@@ -76,9 +78,9 @@ defineExpose({
     class="drop-viewer"
     v-model:open="isOpen"
     :width="360"
-    title="发送给"
+    :title="t('Send To')"
     :ok-text="okText"
-    cancel-text="取消"
+    :cancel-text="t('Cancel')"
     @ok="handleOk"
     @cancel="handleCancel"
   >
@@ -141,7 +143,8 @@ defineExpose({
 .text-viewer {
   user-select: text;
   padding: 12px;
-  background-color: #272727;
+  /* background-color: #272727; */
+  background-color: var(--background-color-normal);
 }
 .file-list {
   display: flex;
@@ -155,7 +158,7 @@ defineExpose({
 }
 .hover {
   position: relative;
-  background-color: var(--background-color-normal);
+  background-color: var(--background-color-hover);
   /* background-color: #b8b8b8; */
 }
 .hover:last-child::after {

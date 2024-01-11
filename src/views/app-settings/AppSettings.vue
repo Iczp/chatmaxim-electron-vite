@@ -34,12 +34,13 @@ const onTabClick = (item: any, index: number) => {
     </aside>
     <page-content class="page-content">
       <!-- <ToolBar /> -->
+      <!-- <page-title /> -->
       <router-view v-slot="{ Component, route }">
-        <transition name="fade">
+        <!-- <transition name="fade"> -->
           <keep-alive>
             <component :is="Component" :key="route.path" />
           </keep-alive>
-        </transition>
+        <!-- </transition> -->
       </router-view>
     </page-content>
   </page>

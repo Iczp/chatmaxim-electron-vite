@@ -105,5 +105,6 @@
   },
   "Devices": "设备",
   "Preferences": "设置",
-  "Logging in": "登录中..."
+  "Logging in": "登录中...",
+  "Send To": "发送给"
 }
