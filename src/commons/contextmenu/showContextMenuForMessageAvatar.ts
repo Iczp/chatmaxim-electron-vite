@@ -180,8 +180,8 @@ export const showContextMenuForMessageAvatar = ({
             title: t('Remove from group chat'),
             icon: h(ExclamationCircleOutlined),
             content: t(
-              'Do you want to remove {0} from the group chat',
-              entity.senderSessionUnit?.owner?.name,
+              'Ask remove group chat',
+              [entity.senderSessionUnit?.owner?.name],
             ),
             cancelText: t('Cancel'),
             okText: t('Confirm remove'),

@@ -176,36 +176,36 @@ export const formatMessageContent = (
 
   switch (entity.messageType) {
     case MessageTypeEnums.Contacts:
-      contentType = `[${t('MessageType:Contacts')}]`;
+      contentType = `[${t('MessageType.Contacts')}]`;
       break;
     case MessageTypeEnums.Image:
-      contentType = `[${t('MessageType:Image')}]`;
+      contentType = `[${t('MessageType.Image')}]`;
       break;
     case MessageTypeEnums.Video:
-      contentType = `[${t('MessageType:Video')}]`;
+      contentType = `[${t('MessageType.Video')}]`;
       break;
     case MessageTypeEnums.File:
-      contentType = `[${t('MessageType:File')}]`;
+      contentType = `[${t('MessageType.File')}]`;
       contentText = formatText((content as FileContentDto).fileName!);
       break;
     case MessageTypeEnums.Sound:
-      contentType = `[${t('MessageType:Sound')}语音]`;
+      contentType = `[${t('MessageType.Sound')}语音]`;
       contentText = formatText((content as SoundContentDto).time!.toString());
       break;
     case MessageTypeEnums.Link:
-      contentType = `[${t('MessageType:Link')}]`;
+      contentType = `[${t('MessageType.Link')}]`;
       contentText = formatText((content as LinkContentDto).url!);
       break;
     case MessageTypeEnums.History:
-      contentType = `[${t('MessageType:History')}]`;
+      contentType = `[${t('MessageType.History')}]`;
       contentText = formatText((content as HistoryContentOutput).title!);
       break;
     case MessageTypeEnums.Html:
-      contentType = `[${t('MessageType:Html')}]`;
+      contentType = `[${t('MessageType.Html')}]`;
       contentText = formatText((content as HistoryContentOutput).title!);
       break;
     case MessageTypeEnums.Cmd:
-      contentType = `[${t('MessageType:Cmd')}]`;
+      contentType = `[${t('MessageType.Cmd')}]`;
       contentText = formatText((content as CmdContentDto).text!);
       break;
     case MessageTypeEnums.Text:
@@ -213,7 +213,7 @@ export const formatMessageContent = (
       contentText = formatText((content as TextContentDto).text!);
       break;
     default:
-      contentText = `[t('MessageType:Unsupported')}]`;
+      contentText = `[t('MessageType.Unsupported')}]`;
       break;
   }
   return { contentType, contentText };

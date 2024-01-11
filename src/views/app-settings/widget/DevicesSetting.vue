@@ -35,7 +35,7 @@ const { appId, appName, author, websize, version, copyright } = useAppInfo();
     <page-content>
       <scroll-view>
         <a-form class="form" :label-col="labelCol" layout="horizontal" :wrapper-col="wrapperCol">
-          <a-divider class="divider" orientation="left">{{ t('Device') }}</a-divider>
+          <a-divider class="divider" orientation="left">{{ t('Devices') }}</a-divider>
           <a-form-item :label="t('AppId')">
             <a-input v-model:value="appId" readonly>
               <template #addonAfter>

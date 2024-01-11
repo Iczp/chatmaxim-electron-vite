@@ -1,15 +1,15 @@
 export const appSettingsChildren = [
   {
     path: '',
-    name: 'app-settings-base',
-    title: 'Basic',
-    component: () => import('../views/app-settings/widget/BasicSetting.vue'),
+    name: 'app-settings-preferences',
+    title: 'Preferences',
+    component: () => import('../views/app-settings/widget/PreferencesSetting.vue'),
   },
   {
-    path: 'shortcut',
-    name: 'app-settings-shortcut',
+    path: 'shortcuts',
+    name: 'app-settings-shortcuts',
     title: 'Shortcuts',
-    component: () => import('../views/app-settings/widget/ShortcutSetting.vue'),
+    component: () => import('../views/app-settings/widget/ShortcutsSetting.vue'),
   },
   {
     path: 'network',
@@ -19,10 +19,10 @@ export const appSettingsChildren = [
   },
 
   {
-    path: 'device',
-    name: 'app-settings-device',
-    title: 'Device',
-    component: () => import('../views/app-settings/widget/DeviceSetting.vue'),
+    path: 'devices',
+    name: 'app-settings-devices',
+    title: 'Devices',
+    component: () => import('../views/app-settings/widget/DevicesSetting.vue'),
   },
   {
     path: 'about',

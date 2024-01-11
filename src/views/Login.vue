@@ -44,7 +44,7 @@ const formState = reactive<FormState>({
 });
 const onFinish = (values: any) => {
   console.log('Success:', values, message);
-  message.loading({ content: 'Loading...', key });
+  message.loading({ content:t('Logging in'), key });
   login({
     username: formState.username,
     password: formState.password,

@@ -1,4 +1,7 @@
 <script setup lang="ts">
+import { useI18n } from 'vue-i18n';
+
+const { t } = useI18n();
 defineProps<{
   name?: string;
 }>();
@@ -7,13 +10,12 @@ defineProps<{
 <template>
   <div class="rollback">
     <text>{{ name }}</text>
-    <text>[撤回一条消息]</text>
+    <text>[{{ t('Rollback a message') }}]</text>
   </div>
 </template>
 
 <style scoped>
 .rollback {
-
   display: flex;
   justify-content: center;
   color: var(--msg-rollback-color);

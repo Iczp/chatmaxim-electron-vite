@@ -3,3 +3,5 @@
 reviews:
   Login:
     description: zh
+  message.dividerNewNews:
+    description: divider

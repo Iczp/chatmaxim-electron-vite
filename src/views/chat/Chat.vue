@@ -224,7 +224,7 @@ if (isSeparated) {
 
 const onSend = async ({ event, value }: any) => {
   if (!value) {
-    message.error({ content: '请输入', key: 'send-message' });
+    message.error({ content: t('Please Enter'), key: 'send-message' });
     return;
   }
   sendMessageContent({
@@ -527,7 +527,7 @@ const onRemove = (entity: MessageDto) => {
       >
         <Loading v-if="isPendingOfFetchHistorical" :height="loadingHeight" />
         <!-- <EmptyData v-if="isBof" text="没有了" :height="20" /> -->
-        <a-divider v-if="isBof" class="message-divider">美好的生活从这里开始</a-divider>
+        <a-divider v-if="isBof" class="message-divider">{{t('message.listStart')}}</a-divider>
         <MessageItem
           v-for="(item, index) in list"
           :key="item.id || item.autoId"
@@ -539,14 +539,14 @@ const onRemove = (entity: MessageDto) => {
           @contextmenu="showContextMenu"
         >
           <template v-if="index != list.length - 1 && localReadedMessageId == item.id" #footer>
-            <a-divider class="message-divider">以下是新消息</a-divider>
+            <a-divider class="message-divider">{{t('message.dividerNewNews')}}</a-divider>
           </template>
         </MessageItem>
 
         <Loading
           v-if="list.length == 0 && isPendingOfFetchLatest"
           :height="loadingHeight"
-          text="正在收取消息..."
+          :text="t('message.receiving')"
         />
       </scroll-view>
       <!-- <div class="latest-counter">有 {{ latestMessageCount }} 条最新消息</div> -->
