@@ -14,7 +14,7 @@ process.env.VITE_PUBLIC = process.env.VITE_DEV_SERVER_URL
   ? join(process.env.DIST_ELECTRON, '../public')
   : process.env.DIST;
 
-import { app, BrowserWindow, ipcMain, webContents, screen, dialog, protocol } from 'electron';
+import { app, BrowserWindow, ipcMain, webContents, screen, dialog, protocol, shell } from 'electron';
 import { release } from 'node:os';
 import { join } from 'node:path';
 import Store from 'electron-store';
@@ -37,6 +37,7 @@ import { env } from './env';
 import { setColorSchemeHandle } from './handles/setColorSchemeHandle';
 import { loginItemSettingsHandle } from './handles/loginItemSettingsHandle';
 import { setLanguageHandle } from './handles/setLanguageHandle';
+import { sheelHandle } from './handles/sheelHandle';
 
 setAppProtocol();
 
@@ -130,9 +131,18 @@ ipcMain.handle(setAuthorizehandle.channel, setAuthorizehandle.handle);
 ipcMain.handle(setColorSchemeHandle.channel, setColorSchemeHandle.handle);
 ipcMain.handle(loginItemSettingsHandle.channel, loginItemSettingsHandle.handle);
 ipcMain.handle(setLanguageHandle.channel, setLanguageHandle.handle);
-
+ipcMain.handle(sheelHandle.channel, sheelHandle.handle);
 //
 // macOS
 app.on('open-url', (event, url) => {
   dialog.showErrorBox('Welcome Back', `You arrived from: ${url}`);
 });
+
+
+
+// Handle window controls via IPC
+ipcMain.on('shell:open', () => {
+  const pageDirectory = __dirname.replace('app.asar', 'app.asar.unpacked')
+  const pagePath = join('file://', pageDirectory, 'index.html')
+  shell.openExternal(pagePath)
+})

@@ -98,6 +98,7 @@ export const sendWindowInfo = (win: BrowserWindow) => {
       isPackaged: app.isPackaged,
       colorScheme: globalState.colorScheme,
       language: globalState.language,
+      appInfo: globalState.appInfo,
     },
   ]);
 };

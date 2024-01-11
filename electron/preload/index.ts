@@ -1,3 +1,16 @@
+// // All of the Node.js APIs are available in the preload process.
+// // It has the same sandbox as a Chrome extension.
+// import { contextBridge, ipcRenderer } from 'electron'
+
+// // Set up context bridge between the renderer process and the main process
+// contextBridge.exposeInMainWorld(
+//   'shell',
+//   {
+//     open: () => ipcRenderer.send('shell:open'),
+//   }
+// )
+
+
 function domReady(condition: DocumentReadyState[] = ['complete', 'interactive']) {
   return new Promise((resolve) => {
     if (condition.includes(document.readyState)) {
@@ -90,3 +103,4 @@ window.onmessage = (ev) => {
 }
 
 setTimeout(removeLoading, 4999)
+

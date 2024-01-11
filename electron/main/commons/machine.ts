@@ -1,6 +1,8 @@
 import { machineId as MachineId, machineIdSync } from 'node-machine-id';
 import Store from 'electron-store';
 import { app } from 'electron';
+import { AppInfo } from '../ipc-types';
+import { env } from '../env';
 
 export const machineStoreKey = 'MachineId';
 
@@ -36,11 +38,4 @@ export const getMachineId = async (): Promise<string> => {
   return machine.id;
 };
 
-export const initAppInfo = (): void => {
-  machine.appPath = app.getAppPath();
-  machine.appDataPath = app.getPath('appData');
-  machine.userDataPath = app.getPath('userData');
-  machine.documentsPath = app.getPath('documents');
-  machine.downloadsPath = app.getPath('downloads');
-  machine.picturesPath = app.getPath('pictures');
-};
+

@@ -30,6 +30,23 @@ export interface GlobalState {
   token: any;
   tokenKey: string;
 }
+export const getAppInfo = (): AppInfo => {
+  const appInfo: AppInfo = {
+    appName: env.app_name,
+    appVersion: version,
+    copyright: env.copyright,
+    version: version,
+    website: env.websize,
+    author: env.author,
+    appPath: app.getAppPath(),
+    appDataPath: app.getPath('appData'),
+    userDataPath: app.getPath('userData'),
+    documentsPath: app.getPath('documents'),
+    downloadsPath: app.getPath('downloads'),
+    picturesPath: app.getPath('pictures'),
+  };
+  return appInfo;
+};
 
 export const globalState: GlobalState = {
   colorScheme: 'auto',
@@ -47,14 +64,7 @@ export const globalState: GlobalState = {
   trayWebContent: {
     isOver: undefined,
   },
-  appInfo: {
-    appName: env.app_name,
-    appVersion: version,
-    copyright: env.copyright,
-    version: version,
-    website: env.websize,
-    author: env.author,
-  },
+  appInfo: getAppInfo(),
   accelerator: {
     main: 'CommandOrControl+D',
   },

@@ -6,6 +6,8 @@ import { message } from 'ant-design-vue';
 import { useWindowStore } from '../../../stores/window';
 import { useAppInfo } from '../../../commons/useAppInfo';
 import { useI18n } from 'vue-i18n';
+import { setShell } from '../../../ipc/setShell';
+import { Link} from '../../../icons'
 const { t } = useI18n();
 const labelCol = { style: { width: '150px' } };
 const wrapperCol = { span: 14 };
@@ -27,6 +29,13 @@ const copyContent = (contentText: string | undefined) => {
 };
 const title = ref('');
 const { appId, appName, author, websize, version, copyright } = useAppInfo();
+
+const openUrl = (url: string) => {
+  setShell({
+    method: 'openExternal',
+    args: [url],
+  });
+};
 </script>
 
 <template>
@@ -56,7 +65,7 @@ const { appId, appName, author, websize, version, copyright } = useAppInfo();
           <a-form-item :label="t('Websize')">
             <a-input v-model:value="websize" readonly>
               <template #addonAfter>
-                <div @click="copyContent(websize)"><ContentCopy class="svg-icon-14" /></div>
+                <div @click="openUrl(websize)"><Link class="svg-icon-14" /></div>
               </template>
             </a-input>
           </a-form-item>

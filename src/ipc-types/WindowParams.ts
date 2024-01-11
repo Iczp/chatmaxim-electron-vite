@@ -1,3 +1,4 @@
+import { AppInfo } from './AppInfo';
 import { Size } from './Size';
 
 export type WindowParams = {
@@ -147,4 +148,11 @@ export type WindowParams = {
    * @type {string}
    */
   language?: string;
+
+    /**
+   *
+   *
+   * @type {AppInfo}
+   */
+    appInfo?: AppInfo;
 };
