@@ -1,5 +1,5 @@
 export type { SelectableDto } from './SelectableDto';
-export type { IdInput } from './IdInput';
+export type { IdDto } from './IdDto';
 export type { GetListInput } from './GetListInput';
 export type { PagedResultDto } from './PagedResultDto';
 export type { ResultValue } from './ResultValue';

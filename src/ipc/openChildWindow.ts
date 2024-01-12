@@ -1,7 +1,7 @@
 import { message } from 'ant-design-vue';
 import { ipcRenderer } from 'electron';
 import { WindowParams } from '../ipc-types';
-import { IdInput } from '../apis/dtos';
+import { IdDto } from '../apis/dtos';
 
 export type PickerResult = {
   success?: boolean;
@@ -11,8 +11,8 @@ export type PickerResult = {
 export type PickerInput = {
   isMultiple?: boolean;
   maxCount?: number;
-  selectedItems?: Array<IdInput>;
-  disabledItems?: Array<IdInput>;
+  selectedItems?: Array<IdDto>;
+  disabledItems?: Array<IdDto>;
 };
 
 export const openChildWindow = (args: {

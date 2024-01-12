@@ -1,10 +1,9 @@
 import { ref, toRaw, watch } from 'vue';
 import { ContactsService } from '../apis';
-import { ContactsDto, ContactsGetListInput, IdInput, SelectableDto } from '../apis/dtos';
+import { ContactsDto, ContactsGetListInput, IdDto } from '../apis/dtos';
 import { message } from 'ant-design-vue';
 import { PickerInput } from '../ipc/openChildWindow';
 import { useI18n } from 'vue-i18n';
-import { Item } from 'ant-design-vue/es/menu';
 
 export const useContacts = ({
   input,
@@ -21,8 +20,8 @@ export const useContacts = ({
   const service = ContactsService.getApiChatContacts;
   const query = ref<ContactsGetListInput>(input);
 
-  const selectedList = ref<IdInput[]>(picker?.selectedItems || []);
-  const disabledList = ref<IdInput[]>(picker?.disabledItems || []);
+  const selectedList = ref<IdDto[]>(picker?.selectedItems || []);
+  const disabledList = ref<IdDto[]>(picker?.disabledItems || []);
   const maxSelectCount = ref<number | undefined>(picker?.maxCount);
   const isMultiple = ref(false);
 
