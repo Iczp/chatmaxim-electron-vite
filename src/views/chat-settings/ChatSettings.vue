@@ -6,6 +6,7 @@ import { useI18n } from 'vue-i18n';
 import ChatObject from '../../components/ChatObject.vue';
 import { useDestination } from './commons/useDestination';
 import { computed } from 'vue';
+import { ChatObjectTypeEnums } from '../../apis/enums';
 const { t } = useI18n();
 const route = useRoute();
 const router = useRouter();
@@ -17,7 +18,15 @@ const onTabClick = (item: any, index: number) => {
   // console.log(item, index);
   router.push({ name: item.name });
 };
-const description = computed(() => t('Memebers Count', [`${memberCount.value || 50}`]));
+const description = computed(() => {
+  switch (sessionUnit.value?.destination?.objectType) {
+    case ChatObjectTypeEnums.Room:
+    case ChatObjectTypeEnums.Square:
+      return t('Memebers Count', [`${memberCount.value || 50}`]);
+    default:
+      return undefined;
+  }
+});
 </script>
 
 <template>
@@ -75,7 +84,7 @@ const description = computed(() => t('Memebers Count', [`${memberCount.value || 
 }
 .destination {
   padding: 20px;
-  --title-left-max-width: 120px;
+  --title-left-max-width: 160px;
 }
 .nav-sider {
   position: relative;
@@ -86,7 +95,7 @@ const description = computed(() => t('Memebers Count', [`${memberCount.value || 
   /* flex: 0 0 120px; */
 }
 .nav-sider {
-  flex: 0 0 200px;
+  flex: 0 0 240px;
 }
 
 .page-content {

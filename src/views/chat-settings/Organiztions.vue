@@ -11,7 +11,7 @@ const props = defineProps<{ sessionUnitId: string }>();
     <page-content>
       <a-page-header title="Title" sub-title="This is a subtitle" />
       <scroll-view>
-        <RouterLink to="/">返回主页</RouterLink>
+        <RouterLink to="/">{{ t('Home') }}</RouterLink>
       </scroll-view>
     </page-content>
   </page>

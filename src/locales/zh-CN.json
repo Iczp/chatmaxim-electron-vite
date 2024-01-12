@@ -116,5 +116,6 @@
   "Memebers Count": "{0} 成员",
   "MaxSelected": "最多只能选择｛0｝个项目",
   "NotFoundId": "未找到该项,Id:{0}",
-  "EmptyData": "没有了"
+  "EmptyData": "没有了",
+  "Home": "主页"
 }

@@ -116,5 +116,6 @@
   "Memebers Count": "{0} members",
   "MaxSelected": "Only up to {0} items can be selected",
   "NotFoundId": "Not Fount Id:{0}",
-  "EmptyData": "Empty Data"
+  "EmptyData": "Empty Data",
+  "Home": "Home"
 }

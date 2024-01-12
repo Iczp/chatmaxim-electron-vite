@@ -150,9 +150,9 @@ const openChatSettings = () => {
         sessionUnit: toRaw(sessionUnit.value),
         memberCount: detail.value?.sessionUnitCount,
       },
-      isModel: true,
+      // isModel: true,
       parent: windowStore.name,
-      // isPreventClose: true,
+      isPreventClose: true,
       visiblity: true,
     },
   });
