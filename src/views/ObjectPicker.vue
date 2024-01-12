@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { onMounted, reactive, ref, watch } from 'vue';
 import { generateTickect } from '../apis/websockets';
-import { ChatObjectDto, ResultValue } from '../apis/dtos';
+import { ChatObjectDto, ContactsDto, ResultValue } from '../apis/dtos';
 import { ChatObjectService, OfficialService, SessionRequestService } from '../apis';
 import { ChatObjectTypeEnumText, ChatObjectTypeEnums } from '../apis/enums';
 import { useTitle } from '@vueuse/core';
@@ -52,6 +52,8 @@ watch(
     fetchNext();
   },
 );
+
+const isItemDisabled = (item: ContactsDto) => !item.setting?.isInputEnabled || isDisabled(item);
 const remoteStore = useRemoteStore<ObjectPickerPayLoad>();
 watch(
   () => remoteStore.value,
@@ -208,12 +210,12 @@ onMounted(() => {
             v-for="(item, index) in list"
             :key="item.id"
             class="contacts-item"
-            :class="{ checked: isChecked(item), disabled: isDisabled(item) }"
+            :class="{ checked: isChecked(item), disabled: isItemDisabled(item) }"
             @click="toggleChecked(item)"
           >
             <a-checkbox
               :checked="isChecked(item)"
-              :disabled="isDisabled(item)"
+              :disabled="isItemDisabled(item)"
               class="check-box"
             ></a-checkbox>
             <chat-object :entity="item.destination" class="chat-object" :size="32">
