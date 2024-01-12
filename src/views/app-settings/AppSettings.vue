@@ -1,13 +1,13 @@
 <script setup lang="ts">
 import { ref } from 'vue';
 import { useAppInfo } from '../../commons/useAppInfo';
-import { appSettingsChildren } from '../../routes/appSettingsChildren';
+import { appSettings } from '../../routes/appSettings';
 import { useRouter, useRoute } from 'vue-router';
 import { useI18n } from 'vue-i18n';
 const { t } = useI18n();
 const route = useRoute();
 const router = useRouter();
-const navItems = ref(Array.from(appSettingsChildren));
+const navItems = ref(Array.from(appSettings));
 const { version } = useAppInfo();
 const onTabClick = (item: any, index: number) => {
   // console.log(item, index);
@@ -119,3 +119,4 @@ const onTabClick = (item: any, index: number) => {
   background-color: var(--tab-item-background-color-hover);
 }
 </style>
+../../routes/appSettingsRoutes

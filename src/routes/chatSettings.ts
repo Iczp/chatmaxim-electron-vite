@@ -1,6 +1,6 @@
 import { RouteRecordRaw } from 'vue-router';
 
-export const chatSettingsChildren: RouteRecordRaw[] = [
+export const chatSettings: RouteRecordRaw[] = [
   {
     path: 'members/:sessionUnitId',
     name: 'session-members',
