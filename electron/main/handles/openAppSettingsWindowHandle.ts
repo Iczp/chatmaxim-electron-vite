@@ -54,7 +54,7 @@ export const createAppSettingsWindow = (window: WindowParams, _?: Electron.IpcMa
   });
   win.on('close', () => win.setSkipTaskbar(true));
   win.on('show', () => win.setSkipTaskbar(false));
-  initWindowEvent(win, appSettingWindowName, window.path);
+  initWindowEvent(win, { name: appSettingWindowName, path: window.path });
   preventClose(win, true);
   return win;
 };

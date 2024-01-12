@@ -18,7 +18,10 @@ import { globalState, isAuthorized } from '../global';
 import { loadUrl } from './loadUrl';
 
 import { icon, preload } from '../global';
-import { appSettingWindowName, createAppSettingsWindow } from '../handles/openAppSettingsWindowHandle';
+import {
+  appSettingWindowName,
+  createAppSettingsWindow,
+} from '../handles/openAppSettingsWindowHandle';
 import { WindowParams } from '../ipc-types';
 import { env } from '../env';
 
@@ -218,7 +221,7 @@ export const createTrayWindow = (window: WindowParams, _?: Electron.IpcMainInvok
     // transparent: true,
   });
   trayWindow.on('blur', () => trayWindow.hide());
-  initWindowEvent(trayWindow, 'tray', window.path);
+  initWindowEvent(trayWindow, { name: 'tray', path: window.path });
   preventClose(trayWindow, true);
   return trayWindow;
 };

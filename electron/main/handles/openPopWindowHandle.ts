@@ -76,7 +76,7 @@ export const createPopWindow = (window: WindowParams, _?: Electron.IpcMainInvoke
       // win.hide();
     }
   });
-  initWindowEvent(win, 'pop', window.path);
+  initWindowEvent(win, { name: 'pop', path: window.path });
   preventClose(win, true);
   return win;
 };

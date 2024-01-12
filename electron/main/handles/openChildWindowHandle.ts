@@ -21,7 +21,7 @@ export const openChildWindowHandle: IpcMainHandle = {
     }: {
       event: string;
       // url: string;
-      payload: any;
+      // payload: any;
       window?: WindowParams;
     },
   ): any => {
@@ -42,6 +42,7 @@ export const openChildWindowHandle: IpcMainHandle = {
             parent,
             path,
             isModel: window.isModel || false,
+            payload: window.payload,
           }),
         );
       }
@@ -74,11 +75,13 @@ export const createChildWindow = ({
   path,
   isModel,
   parent,
+  payload,
 }: {
   name: string;
   path: string;
   isModel: boolean;
   parent?: BrowserWindow;
+  payload?: any;
 }): BrowserWindow => {
   console.log('createChildWindow', path);
 
@@ -99,7 +102,7 @@ export const createChildWindow = ({
     frame: false,
     hasShadow: false,
   });
-  initWindowEvent(win, name, path);
+  initWindowEvent(win, { name, path, payload });
   loadUrl(win, { path });
   // preventClose(win, isPreventClose);
   return win;

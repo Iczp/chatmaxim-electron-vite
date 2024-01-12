@@ -1,4 +1,4 @@
-export const env: {
+export type EnvType = {
   /**
    *
    *
@@ -74,7 +74,21 @@ export const env: {
    * @type {string}
    */
   copyright: string;
-} = {
+
+  /**
+   * default color-scheme
+   * @type {(string | 'auto' | 'system' | 'light' | 'dark' | 'green' | 'blue')}
+   */
+  defaultColorScheme: string | 'auto' | 'system' | 'light' | 'dark' | 'green' | 'blue';
+
+  /**
+   * default language
+   * @type {(string | 'zh-CN' | 'en-US')}
+   */
+  defaultLanguage: string | 'zh-CN' | 'en-US';
+};
+
+export const env: EnvType = {
   app_id: import.meta.env.VITE_APP_ID,
 
   app_name: import.meta.env.VITE_APP_NAME,
@@ -96,4 +110,8 @@ export const env: {
   websize: import.meta.env.VITE_APP_WEBSIZE,
 
   copyright: import.meta.env.VITE_APP_COPYRIGHT,
+
+  defaultColorScheme: import.meta.env.VITE_APP_DEFAULT_COLOR_SCHEME,
+  
+  defaultLanguage: import.meta.env.VITE_APP_DEFAULT_LANGUAGE,
 };

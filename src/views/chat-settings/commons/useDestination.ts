@@ -7,21 +7,25 @@ export const useDestination = () => {
   const windowStore = useWindowStore();
   const sessionUnit = ref<SessionUnitOwnerDto>();
 
-//   const remoteStore = useRemoteStore<ParamArgs>();
+  //   const remoteStore = useRemoteStore<ParamArgs>();
 
   const payload = computed(() => windowStore.payload as ParamArgs | undefined);
-  watch(payload, v => {
-    console.log('windowStore payload', v);
-    sessionUnit.value = v?.sessionUnit;
-  });
+  watch(
+    payload,
+    v => {
+      console.log('windowStore payload', v);
+      sessionUnit.value = v?.sessionUnit;
+    },
+    { immediate: true },
+  );
 
-//   watch(
-//     () => remoteStore.value,
-//     v => {
-//       console.log('remoteStore payload', v);
-//       sessionUnit.value = v?.sessionUnit;
-//     },
-//   );
+  //   watch(
+  //     () => remoteStore.value,
+  //     v => {
+  //       console.log('remoteStore payload', v);
+  //       sessionUnit.value = v?.sessionUnit;
+  //     },
+  //   );
 
   return {
     sessionUnit,

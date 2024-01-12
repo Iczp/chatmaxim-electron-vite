@@ -50,8 +50,8 @@ export const getAppInfo = (): AppInfo => {
 };
 
 export const globalState: GlobalState = {
-  colorScheme: nativeTheme.shouldUseDarkColors ? 'dark' : 'auto',
-  language: 'zh-CN',
+  colorScheme: env.defaultColorScheme,
+  language: env.defaultLanguage,
   isAppQuitting: false,
   trayPayload: {
     windowWidth: 240,

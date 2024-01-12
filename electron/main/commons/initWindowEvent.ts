@@ -7,7 +7,15 @@ import { loadUrl } from './loadUrl';
 import { globalState } from '../global';
 import electronLocalshortcut from 'electron-localshortcut';
 
-export const initWindowEvent = (win: BrowserWindow, name: string, path: string) => {
+type InitWindowEventArg = {
+  name: string;
+  path: string;
+  payload?: any;
+};
+export const initWindowEvent = (
+  win: BrowserWindow,
+  { name, path, payload }: InitWindowEventArg,
+) => {
   windowManager.set(name, win);
   loadUrl(win, { path });
   const send = (event: string, args: any[]) => sendEvent(win, event, args);
@@ -33,7 +41,7 @@ export const initWindowEvent = (win: BrowserWindow, name: string, path: string) 
 
   win.removeMenu();
   win.webContents.on('did-finish-load', () => {
-    sendWindowInfo(win);
+    sendWindowInfo(win, { payload });
   });
 
   win.webContents.on('did-navigate-in-page', (_, ...args) => {
@@ -64,7 +72,7 @@ export const sendEvent = (win: BrowserWindow, event: string, args: any[]) => {
   win.webContents.send('window-event', { event, args });
 };
 
-export const sendWindowInfo = (win: BrowserWindow) => {
+export const sendWindowInfo = (win: BrowserWindow, args?: WindowState) => {
   const [minWidth, minHeight] = win.getMinimumSize();
   const [maxWidth, maxHeight] = win.getMaximumSize();
   sendEvent(win, 'init', [
@@ -99,6 +107,7 @@ export const sendWindowInfo = (win: BrowserWindow) => {
       colorScheme: globalState.colorScheme,
       language: globalState.language,
       appInfo: globalState.appInfo,
+      ...args,
     },
   ]);
 };
