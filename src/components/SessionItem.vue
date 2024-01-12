@@ -141,6 +141,8 @@ const ondragstart = (event: DragEvent) => {
 }
 .session-item {
   --spacing-size: 12px;
+  --title-left-max-width: 112px;
+  --sub-left-max-width: 148px;
   height: var(--side-width);
   position: relative;
   padding: 0 var(--spacing-size);

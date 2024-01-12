@@ -56,6 +56,8 @@ const slots = useSlots();
 <style scoped>
 .layout-item {
   --spacing-size: 12px;
+  --title-left-max-width: 100%;
+  --sub-left-max-width: 100%;
   display: flex;
   position: relative;
   flex-direction: row;
@@ -101,7 +103,8 @@ const slots = useSlots();
   display: flex;
   flex: 1;
   /* max-width: calc(100% - 30px); */
-  max-width: 136px;
+  /* max-width: 136px; */
+  max-width: var(--sub-left-max-width);
 }
 .sub-right {
   display: flex;
@@ -121,6 +124,7 @@ const slots = useSlots();
   font-weight: 500;
   align-items: center;
   flex: 1;
+  max-width: var(--title-left-max-width);
 }
 
 .title-right {

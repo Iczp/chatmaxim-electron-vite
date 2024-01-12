@@ -43,7 +43,7 @@ const inheritanceKeys = Object.keys(slots).filter(x => !ignoreSlots.some(d => d 
   --spacing-size: 8px;
 } */
 :deep(.title-left.object-name) {
-  max-width: 240px;
+  /* max-width: 240px; */
 }
 .chat-object {
   padding: 6px 0px;

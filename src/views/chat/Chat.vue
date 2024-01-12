@@ -41,6 +41,7 @@ import { useI18n } from 'vue-i18n';
 import { setWindow } from '../../ipc/setWindow';
 import { useWindowStore } from '../../stores/window';
 import { openChildWindow } from '../../ipc/openChildWindow';
+import { toRaw } from 'vue';
 const { t } = useI18n();
 const store = useImStore();
 const windowStore = useWindowStore();
@@ -145,9 +146,10 @@ const openChatSettings = () => {
     window: {
       name: `${windowStore.name}:chat-settings`,
       path: `/chat-settings/members/${sessionUnitId}?chatObjectId=${chatObjectId}`,
+      payload: { sessionUnit: toRaw(sessionUnit.value) },
       isModel: true,
       parent: windowStore.name,
-      isPreventClose: true,
+      // isPreventClose: true,
       visiblity: true,
     },
   });

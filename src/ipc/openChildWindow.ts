@@ -22,16 +22,18 @@ export const openChildWindow = (args: {
   window?: WindowParams;
 }) =>
   new Promise((resolve: (value: PickerResult) => void, reject: (reason?: any) => void) => {
+    console.log('openChildWindow args', args);
     // const { t } = useI18n();
-    const { t } = args;
-    args.event = args.event || `e-${new Date().getTime()}`;
+    const { t, window } = args;
+
+    const event = args.event || `e-${new Date().getTime()}`;
     // args.payload = args.payload || {};
-    if (args.window?.payload) {
-      localStorage.setItem(args.event, JSON.stringify(args.window.payload));
+    if (window?.payload) {
+      localStorage.setItem(event, JSON.stringify(window.payload));
     }
-    args = JSON.parse(JSON.stringify(args));
+    const params = JSON.parse(JSON.stringify({ event, window }));
     ipcRenderer
-      .invoke('open-child', args)
+      .invoke('open-child', params)
       .then((res: PickerResult) => {
         console.warn(1, res);
         if (res.success) {

@@ -1,14 +1,17 @@
 <script setup lang="ts">
 import { ref } from 'vue';
-import { useAppInfo } from '../../commons/useAppInfo';
 import { chatSettings } from '../../routes/chatSettings';
 import { useRouter, useRoute } from 'vue-router';
 import { useI18n } from 'vue-i18n';
+import ChatObject from '../../components/ChatObject.vue';
+import { useDestination } from './commons/useDestination';
 const { t } = useI18n();
 const route = useRoute();
 const router = useRouter();
 const navItems = ref(Array.from(chatSettings));
-const { version } = useAppInfo();
+
+const { sessionUnit } = useDestination();
+
 const onTabClick = (item: any, index: number) => {
   // console.log(item, index);
   router.push({ name: item.name });
@@ -16,9 +19,15 @@ const onTabClick = (item: any, index: number) => {
 </script>
 
 <template>
-  <page class="app-setting-page">
+  <page class="chat-setting-page">
     <aside class="nav-sider">
-      <!-- <div class="version">v{{ version }}</div> -->
+      <header>
+        <chat-object
+          :entity="sessionUnit?.destination"
+          class="destination"
+          :sub="`24人`"
+        ></chat-object>
+      </header>
       <scroll-view>
         <div class="tabs">
           <div
@@ -55,12 +64,16 @@ const onTabClick = (item: any, index: number) => {
   position: fixed;
 }
 
-.app-setting-page {
+.chat-setting-page {
   user-select: none;
   display: flex;
   flex-direction: row;
-  color: var(--color);
-  background-color: var(--background-color);
+  /* color: var(--color);
+  background-color: var(--background-color); */
+}
+.destination {
+  padding: 20px;
+  --title-left-max-width: 120px;
 }
 .nav-sider {
   position: relative;
@@ -82,7 +95,7 @@ const onTabClick = (item: any, index: number) => {
   width: 100%;
   /* height: 100%; */
   box-sizing: border-box;
-  margin-top: 50px;
+  /* margin-top: 50px; */
   -webkit-app-region: drag;
 }
 .tab-item {
