@@ -9,6 +9,7 @@ export type PickerResult = {
 };
 
 export type PickerInput = {
+  isMultiple?: boolean;
   maxCount?: number;
   selectedItems?: Array<IdInput>;
   disabledItems?: Array<IdInput>;

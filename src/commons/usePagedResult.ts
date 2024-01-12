@@ -7,6 +7,9 @@ export const usePagedResult = <T>() => {
   /** 是否到底了 @type {*} */
   const isEof: Ref<boolean> = ref<boolean>(false);
 
+  /** 是否到顶了 @type {*} */
+  const isBof: Ref<boolean> = ref<boolean>(false);
+
   const isError: Ref<boolean> = ref<boolean>(false);
 
   /** 数据 @type {*} */

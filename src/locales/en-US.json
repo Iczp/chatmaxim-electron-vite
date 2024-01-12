@@ -113,5 +113,8 @@
   "Session Organiztions": "Session Organiztions",
   "Session Permissions": "Session Permissions",
   "Session Roles": "Session Roles",
-  "Memebers Count": "{0} members"
+  "Memebers Count": "{0} members",
+  "MaxSelected": "Only up to {0} items can be selected",
+  "NotFoundId": "Not Fount Id:{0}",
+  "EmptyData": "Empty Data"
 }

@@ -89,6 +89,7 @@ export const forwardMessage = ({
     t,
     payload: {
       chatObjectId,
+      isMultiple: true,
       selectedItems: [],
       disabledItems: [{ id: sessionUnitId }],
     },
@@ -96,7 +97,7 @@ export const forwardMessage = ({
     .then(v => {
       console.log('forward', v);
 
-      const { t } = useI18n();
+      // const { t } = useI18n();
 
       message.loading({ content: t('Message forwarding'), key });
 

@@ -1,13 +1,10 @@
-import { ref, watch } from 'vue';
+import { ref, toRaw, watch } from 'vue';
 import { ContactsService } from '../apis';
 import { ContactsDto, ContactsGetListInput, IdInput, SelectableDto } from '../apis/dtos';
 import { message } from 'ant-design-vue';
 import { PickerInput } from '../ipc/openChildWindow';
-
-
-
-
-
+import { useI18n } from 'vue-i18n';
+import { Item } from 'ant-design-vue/es/menu';
 
 export const useContacts = ({
   input,
@@ -27,13 +24,17 @@ export const useContacts = ({
   const selectedList = ref<IdInput[]>(picker?.selectedItems || []);
   const disabledList = ref<IdInput[]>(picker?.disabledItems || []);
   const maxSelectCount = ref<number | undefined>(picker?.maxCount);
+  const isMultiple = ref(false);
 
   const pickerRef = ref(picker);
+
+  const { t } = useI18n();
 
   watch(pickerRef, v => {
     maxSelectCount.value = v?.maxCount;
     selectedList.value = v?.selectedItems || [];
     disabledList.value = v?.disabledItems || [];
+    isMultiple.value = false; //v?.isMultiple || false;
   });
   watch(
     () => query.value.keyword,
@@ -44,7 +45,7 @@ export const useContacts = ({
 
   const fetchData = async (input?: ContactsGetListInput): Promise<ContactsDto[]> => {
     if (isEof.value) {
-      throw new Error('没有了');
+      throw new Error(t('EmptyData'));
     }
     const req = input || query.value;
     isPending.value = true;
@@ -69,27 +70,28 @@ export const useContacts = ({
   };
 
   const isChecked = (item: ContactsDto): boolean => selectedList.value.some(x => x.id == item.id);
+
   const isDisabled = (item: ContactsDto): boolean =>
     disabledList.value.some(x => x.id == item.id) || !item.setting?.isInputEnabled || false;
-  const toggleChecked = (item: ContactsDto): void => {
-    console.log('item', item);
-    if (isDisabled(item)) {
-      return;
-    }
 
+  const toggleSingleChecked = (item: ContactsDto): void => {
+    selectedList.value = isChecked(item) ? [] : [item];
+  };
+
+  const toggleMultipleChecked = (item: ContactsDto): void => {
     if (isChecked(item)) {
       const findIndex = selectedList.value.findIndex(x => x.id == item.id);
       if (findIndex != -1) {
         selectedList.value.splice(findIndex, 1);
       } else {
         console.log('Not such entity id:', item.id);
-        message.error({ content: `未找到该项,id:${item.id}` });
+        message.error({ content: t('NotFoundId', [item.id]) });
         return;
       }
     } else {
       if (maxSelectCount.value && selectedList.value.length >= Number(maxSelectCount.value)) {
         message.warn({
-          content: `最多只能选择 ${maxSelectCount.value} 项`,
+          content: t('MaxSelected', [maxSelectCount.value]),
           key: 'max-select-count',
         });
         return;
@@ -98,7 +100,23 @@ export const useContacts = ({
     }
   };
 
+  const toggleChecked = (item: ContactsDto): void => {
+    console.log('item', item);
+    if (isDisabled(item)) {
+      return;
+    }
+
+    if (isMultiple.value) {
+      toggleMultipleChecked(item);
+    } else {
+      toggleSingleChecked(item);
+    }
+  };
+
+  const getSelectItems = (): ContactsDto[] => selectedList.value.map(x => toRaw(x));
+
   return {
+    isMultiple,
     isChecked,
     totalCount,
     query,
@@ -115,5 +133,6 @@ export const useContacts = ({
     isDisabled,
     maxSelectCount,
     picker: pickerRef,
+    getSelectItems,
   };
 };

@@ -39,6 +39,7 @@ const {
   maxSelectCount,
   toggleChecked,
   picker,
+  getSelectItems,
 } = useContacts({
   input: { ownerId: Number(props.chatObjectId!) },
 });
@@ -152,11 +153,13 @@ const onCancle = (): void => {
 const onConfirm = (): void => {
   const { event } = route.query;
   console.log('router', route);
-  sendResult(event as string, {
+  const pickerResult = {
     success: true,
     message: 'ok',
-    selectedItems: toRaw(selectedList.value),
-  });
+    selectedItems: getSelectItems(),
+  };
+  console.log('pickerResult', pickerResult);
+  sendResult(event as string, pickerResult);
 };
 
 const onReachStart = (event: CustomEvent) => {

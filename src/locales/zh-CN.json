@@ -113,5 +113,8 @@
   "Session Organiztions": "群组件架构",
   "Session Permissions": "群权限",
   "Session Roles": "群角色",
-  "Memebers Count": "{0} 成员"
+  "Memebers Count": "{0} 成员",
+  "MaxSelected": "最多只能选择｛0｝个项目",
+  "NotFoundId": "未找到该项,Id:{0}",
+  "EmptyData": "没有了"
 }
