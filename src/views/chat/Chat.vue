@@ -138,7 +138,7 @@ const showDrawer = () => {
     sessionUnitId: sessionUnitId,
     entity: sessionUnit.value,
   });
-  openChatSettings();
+  // openChatSettings();
 };
 const openChatSettings = () => {
   openChildWindow({
@@ -146,7 +146,10 @@ const openChatSettings = () => {
     window: {
       name: `${windowStore.name}:chat-settings`,
       path: `/chat-settings/members/${sessionUnitId}?chatObjectId=${chatObjectId}`,
-      payload: { sessionUnit: toRaw(sessionUnit.value) },
+      payload: {
+        sessionUnit: toRaw(sessionUnit.value),
+        memberCount: detail.value?.sessionUnitCount,
+      },
       isModel: true,
       parent: windowStore.name,
       // isPreventClose: true,
@@ -518,7 +521,8 @@ const onRemove = (entity: MessageDto) => {
       :description="`code${destination?.code}:memberCount(${
         detail?.sessionUnitCount || ''
       }) readedMessageId:${readedMessageId}`"
-      @more="showDrawer"
+      @more="openChatSettings"
+      @titleClick="showDrawer"
       :search="true"
       :top="true"
       more

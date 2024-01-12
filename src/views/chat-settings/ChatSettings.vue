@@ -5,17 +5,19 @@ import { useRouter, useRoute } from 'vue-router';
 import { useI18n } from 'vue-i18n';
 import ChatObject from '../../components/ChatObject.vue';
 import { useDestination } from './commons/useDestination';
+import { computed } from 'vue';
 const { t } = useI18n();
 const route = useRoute();
 const router = useRouter();
 const navItems = ref(Array.from(chatSettings));
 
-const { sessionUnit } = useDestination();
+const { sessionUnit, memberCount } = useDestination();
 
 const onTabClick = (item: any, index: number) => {
   // console.log(item, index);
   router.push({ name: item.name });
 };
+const description = computed(() => t('Memebers Count', [`${memberCount.value || 50}`]));
 </script>
 
 <template>
@@ -25,7 +27,7 @@ const onTabClick = (item: any, index: number) => {
         <chat-object
           :entity="sessionUnit?.destination"
           class="destination"
-          :sub="`24人`"
+          :sub="description"
         ></chat-object>
       </header>
       <scroll-view>

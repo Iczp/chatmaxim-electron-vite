@@ -41,12 +41,12 @@ const toggleAlwayOnTop = () => {
 
 <template>
   <header class="page-title drag">
-    <div class="page-title-left" @click="onTitleClick">
-      <div class="main-title" :title="title">
+    <div class="page-title-left">
+      <div class="main-title" :title="title" @click="onTitleClick">
         <slot>
           <a-space>
             <div class="main-title-text">
-              <text class="text-ellipsis no-drag" @click="$emit('more', $event)">{{ title }}</text>
+              <text class="text-ellipsis no-drag" @click="$emit('titleClick', $event)">{{ title }}</text>
             </div>
 
             <VerifiedOutlined v-if="search" style="color: rgb(0, 207, 0); font-size: 16px" />
@@ -56,7 +56,7 @@ const toggleAlwayOnTop = () => {
       </div>
       <slot v-if="description" name="description">
         <div class="sub-title">
-          <text class="no-drag" @click="$emit('more', $event)">{{ description }}</text>
+          <text class="no-drag" @click="$emit('subClick', $event)">{{ description }}</text>
         </div>
       </slot>
     </div>
