@@ -72,7 +72,7 @@ export const routes = <RouteRecordRaw[]>[
   {
     path: '/management/members/:chatObjectId(\\d+)/:sessionUnitId',
     name: 'management-members',
-    component: () => import('../views/chat/settings/Members.vue'),
+    component: () => import('../views/chat-settings/Members.vue'),
     props: true,
   },
 
@@ -86,7 +86,7 @@ export const routes = <RouteRecordRaw[]>[
   {
     path: '/chat-settings',
     name: 'chat-settings',
-    component: () => import('../views/chat/settings/ChatSettings.vue'),
+    component: () => import('../views/chat-settings/ChatSettings.vue'),
     props: true,
     children: chatSettings,
   },

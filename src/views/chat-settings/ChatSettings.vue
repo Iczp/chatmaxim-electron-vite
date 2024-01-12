@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { ref } from 'vue';
-import { useAppInfo } from '../../../commons/useAppInfo';
-import { chatSettings } from '../../../routes/chatSettings';
+import { useAppInfo } from '../../commons/useAppInfo';
+import { chatSettings } from '../../routes/chatSettings';
 import { useRouter, useRoute } from 'vue-router';
 import { useI18n } from 'vue-i18n';
 const { t } = useI18n();

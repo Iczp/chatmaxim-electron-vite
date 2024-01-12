@@ -7,7 +7,7 @@ export const chatSettings: RouteRecordRaw[] = [
     meta: {
       title: 'Session Members',
     },
-    component: () => import('../views/chat/settings/Members.vue'),
+    component: () => import('../views/chat-settings/Members.vue'),
     props: true,
   },
   {
@@ -16,7 +16,7 @@ export const chatSettings: RouteRecordRaw[] = [
     meta: {
       title: 'Session Organiztions',
     },
-    component: () => import('../views/chat/settings/Organiztions.vue'),
+    component: () => import('../views/chat-settings/Organiztions.vue'),
     props: true,
   },
   {
@@ -25,7 +25,7 @@ export const chatSettings: RouteRecordRaw[] = [
     meta: {
       title: 'Session Roles',
     },
-    component: () => import('../views/chat/settings/Roles.vue'),
+    component: () => import('../views/chat-settings/Roles.vue'),
     props: true,
   },
   {
@@ -34,7 +34,7 @@ export const chatSettings: RouteRecordRaw[] = [
     meta: {
       title: 'Session Permissions',
     },
-    component: () => import('../views/chat/settings/Permissions.vue'),
+    component: () => import('../views/chat-settings/Permissions.vue'),
     props: true,
   },
 ];
