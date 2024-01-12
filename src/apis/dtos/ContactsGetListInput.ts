@@ -1,6 +1,6 @@
 import { GetListInput } from './GetListInput';
 
-export type ContactsGetListInput = GetListInput & {
+export interface ContactsGetListInput extends GetListInput {
   /**
    * 所属聊天对象Id
    */
@@ -13,4 +13,4 @@ export type ContactsGetListInput = GetListInput & {
    * 联系人标签
    */
   tagId?: string;
-};
+}

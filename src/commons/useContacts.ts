@@ -51,10 +51,10 @@ export const useContacts = ({
     const { items, totalCount: count } = await service(req);
     totalCount.value = count;
     isPending.value = false;
-    isEof.value = items.length < (req.maxResultCount || 10);
-    list.value = list.value.concat(items);
+    isEof.value = items!.length < (req.maxResultCount || 10);
+    list.value = list.value.concat(items!);
     console.log('fetchData', items);
-    return items;
+    return items!;
   };
 
   const fetchNext = async (input?: ContactsGetListInput): Promise<ContactsDto[]> => {

@@ -8,7 +8,7 @@ import type { Volo_Abp_Application_Dtos_PagedResultDto_1 } from '../models/Volo_
 import type { CancelablePromise } from '../core/CancelablePromise';
 import { OpenAPI } from '../core/OpenAPI';
 import { request as __request } from '../core/request';
-import { ContactsDto, ContactsGetListInput, ResultValue } from '../dtos';
+import { ContactsDto, ContactsGetListInput, PagedResultDto } from '../dtos';
 
 export class ContactsService {
 
@@ -25,7 +25,7 @@ keyword,
 maxResultCount,
 skipCount,
 sorting,
-}: ContactsGetListInput): CancelablePromise<ResultValue<ContactsDto>> {
+}: ContactsGetListInput): CancelablePromise<PagedResultDto<ContactsDto>> {
         return __request(OpenAPI, {
             method: 'GET',
             url: '/api/chat/contacts',
