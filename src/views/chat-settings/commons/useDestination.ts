@@ -1,15 +1,10 @@
-import { computed, ref, watch } from 'vue';
+import { ref, watch } from 'vue';
 import { SessionUnitOwnerDto } from '../../../apis';
-import { useWindowStore } from '../../../stores/window';
-import { useRemoteStore } from '../../../commons/useRemoteStore';
+import { usePayload } from '../../../commons/usePayload';
 type ParamArgs = { sessionUnit: SessionUnitOwnerDto };
 export const useDestination = () => {
-  const windowStore = useWindowStore();
   const sessionUnit = ref<SessionUnitOwnerDto>();
-
-  //   const remoteStore = useRemoteStore<ParamArgs>();
-
-  const payload = computed(() => windowStore.payload as ParamArgs | undefined);
+  const payload = usePayload<ParamArgs>();
   watch(
     payload,
     v => {
@@ -18,14 +13,6 @@ export const useDestination = () => {
     },
     { immediate: true },
   );
-
-  //   watch(
-  //     () => remoteStore.value,
-  //     v => {
-  //       console.log('remoteStore payload', v);
-  //       sessionUnit.value = v?.sessionUnit;
-  //     },
-  //   );
 
   return {
     sessionUnit,
