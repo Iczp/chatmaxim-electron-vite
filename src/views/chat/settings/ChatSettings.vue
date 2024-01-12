@@ -1,13 +1,13 @@
 <script setup lang="ts">
 import { ref } from 'vue';
-import { useAppInfo } from '../../commons/useAppInfo';
-import { appSettingsChildren } from '../../routes/appSettingsChildren';
+import { useAppInfo } from '../../../commons/useAppInfo';
+import { chatSettingsChildren } from '../../../routes/chatSettingsChildren';
 import { useRouter, useRoute } from 'vue-router';
 import { useI18n } from 'vue-i18n';
 const { t } = useI18n();
 const route = useRoute();
 const router = useRouter();
-const navItems = ref(Array.from(appSettingsChildren));
+const navItems = ref(Array.from(chatSettingsChildren));
 const { version } = useAppInfo();
 const onTabClick = (item: any, index: number) => {
   // console.log(item, index);
@@ -18,7 +18,7 @@ const onTabClick = (item: any, index: number) => {
 <template>
   <page class="app-setting-page">
     <aside class="nav-sider">
-      <div class="version">v{{ version }}</div>
+      <!-- <div class="version">v{{ version }}</div> -->
       <scroll-view>
         <div class="tabs">
           <div
@@ -27,7 +27,7 @@ const onTabClick = (item: any, index: number) => {
             :class="{ active: route.name == item.name }"
             @click="onTabClick(item, index)"
           >
-            {{ t(item.meta?.title as string) }}
+            {{ t(item.meta!.title as string) }}
           </div>
         </div>
       </scroll-view>
@@ -71,7 +71,7 @@ const onTabClick = (item: any, index: number) => {
   /* flex: 0 0 120px; */
 }
 .nav-sider {
-  flex: 0 0 160px;
+  flex: 0 0 200px;
 }
 
 .page-content {

@@ -106,5 +106,11 @@
   "Devices": "Devices",
   "Preferences": "Preferences",
   "Logging in": "Logging in...",
-  "Send To": "Send To"
+  "Send To": "Send To",
+  "Members": "Members",
+  "Chat Members": "Chat Members",
+  "Session Members": "Session Members",
+  "Session Organiztions": "Session Organiztions",
+  "Session Permissions": "Session Permissions",
+  "Session Roles": "Session Roles"
 }

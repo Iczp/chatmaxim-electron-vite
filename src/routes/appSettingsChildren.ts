@@ -1,33 +1,46 @@
-export const appSettingsChildren = [
+import { RouteRecordRaw } from 'vue-router';
+
+export const appSettingsChildren: RouteRecordRaw[] = [
   {
     path: '',
     name: 'app-settings-preferences',
-    title: 'Preferences',
+
+    meta: {
+      title: 'Preferences',
+    },
     component: () => import('../views/app-settings/widget/PreferencesSetting.vue'),
   },
   {
     path: 'shortcuts',
     name: 'app-settings-shortcuts',
-    title: 'Shortcuts',
+    meta: {
+      title: 'Shortcuts',
+    },
     component: () => import('../views/app-settings/widget/ShortcutsSetting.vue'),
   },
   {
     path: 'network',
     name: 'app-settings-network',
-    title: 'Network',
+    meta: {
+      title: 'Network',
+    },
     component: () => import('../views/app-settings/widget/NetworkSetting.vue'),
   },
 
   {
     path: 'devices',
     name: 'app-settings-devices',
-    title: 'Devices',
+    meta: {
+      title: 'Devices',
+    },
     component: () => import('../views/app-settings/widget/DevicesSetting.vue'),
   },
   {
     path: 'about',
     name: 'app-settings-about',
-    title: 'About',
+    meta: {
+      title: 'About',
+    },
     component: () => import('../views/app-settings/widget/About.vue'),
   },
 ];

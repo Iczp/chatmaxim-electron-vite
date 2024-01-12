@@ -106,5 +106,11 @@
   "Devices": "设备",
   "Preferences": "设置",
   "Logging in": "登录中...",
-  "Send To": "发送给"
+  "Send To": "发送给",
+  "Members": "成员",
+  "Chat Members": "成员",
+  "Session Members": "会话成员",
+  "Session Organiztions": "群组件架构",
+  "Session Permissions": "群权限",
+  "Session Roles": "群角色"
 }

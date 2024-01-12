@@ -1,6 +1,7 @@
 import { RouteRecordRaw } from 'vue-router';
 import { WindowParams } from '../ipc-types';
 import { appSettingsChildren } from './appSettingsChildren';
+import { chatSettingsChildren } from './chatSettingsChildren';
 
 export const routes = <RouteRecordRaw[]>[
   {
@@ -71,7 +72,7 @@ export const routes = <RouteRecordRaw[]>[
   {
     path: '/management/members/:chatObjectId(\\d+)/:sessionUnitId',
     name: 'management-members',
-    component: () => import('../views/management/MemberList.vue'),
+    component: () => import('../views/chat/settings/Members.vue'),
     props: true,
   },
 
@@ -81,6 +82,13 @@ export const routes = <RouteRecordRaw[]>[
     component: () => import('../views/app-settings/AppSettings.vue'),
     props: true,
     children: appSettingsChildren,
+  },
+  {
+    path: '/chat-settings',
+    name: 'chat-settings',
+    component: () => import('../views/chat/settings/ChatSettings.vue'),
+    props: true,
+    children: chatSettingsChildren,
   },
   {
     path: '/object-picker/:chatObjectId(\\d+)',

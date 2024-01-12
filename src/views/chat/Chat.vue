@@ -38,9 +38,12 @@ import { FileContentDto } from '../../apis/dtos/message/FileContentDto';
 import { mapToFileContentDto, mapToImageContentDtoAsync } from '../../commons/utils';
 import { ChatObjectService } from '../../apis';
 import { useI18n } from 'vue-i18n';
+import { setWindow } from '../../ipc/setWindow';
+import { useWindowStore } from '../../stores/window';
+import { openChildWindow } from '../../ipc/openChildWindow';
 const { t } = useI18n();
 const store = useImStore();
-
+const windowStore = useWindowStore();
 const props = defineProps<{
   sessionUnitId: string;
   title?: string;
@@ -133,6 +136,20 @@ const showDrawer = () => {
     chatObjectId: chatObjectId,
     sessionUnitId: sessionUnitId,
     entity: sessionUnit.value,
+  });
+  openChatSettings();
+};
+const openChatSettings = () => {
+  openChildWindow({
+    t,
+    window: {
+      name: `${windowStore.name}:chat-settings`,
+      path: `/chat-settings/members/${sessionUnitId}?chatObjectId=${chatObjectId}`,
+      isModel: true,
+      parent: windowStore.name,
+      isPreventClose: true,
+      visiblity: true,
+    },
   });
 };
 const scrollTo = (duration: number = 1500) => {
@@ -527,7 +544,7 @@ const onRemove = (entity: MessageDto) => {
       >
         <Loading v-if="isPendingOfFetchHistorical" :height="loadingHeight" />
         <!-- <EmptyData v-if="isBof" text="没有了" :height="20" /> -->
-        <a-divider v-if="isBof" class="message-divider">{{t('message.listStart')}}</a-divider>
+        <a-divider v-if="isBof" class="message-divider">{{ t('message.listStart') }}</a-divider>
         <MessageItem
           v-for="(item, index) in list"
           :key="item.id || item.autoId"
@@ -539,7 +556,7 @@ const onRemove = (entity: MessageDto) => {
           @contextmenu="showContextMenu"
         >
           <template v-if="index != list.length - 1 && localReadedMessageId == item.id" #footer>
-            <a-divider class="message-divider">{{t('message.dividerNewNews')}}</a-divider>
+            <a-divider class="message-divider">{{ t('message.dividerNewNews') }}</a-divider>
           </template>
         </MessageItem>
 
