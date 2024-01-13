@@ -49,8 +49,12 @@ const onReachEnd = (event: CustomEvent) => {
     );
     return;
   }
+  if (isPending.value) {
+    console.info('isPending', isPending);
+    return;
+  }
 
-  // fetchNext();
+  fetchNext();
 };
 
 onMounted(() => {
@@ -74,6 +78,7 @@ const onSearch = () => {
           @search="onSearch"
         />
       </div>
+      <div>总数:{{ list.length }}/{{ totalCount }}</div>
       <scroll-view @ps-y-reach-end="onReachEnd" @ps-y-reach-start="onReachStart">
         <div class="data-list">
           <div

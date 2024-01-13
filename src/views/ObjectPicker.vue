@@ -48,7 +48,7 @@ watch(
   () => props.chatObjectId,
   v => {
     query.value.ownerId = Number(v);
-    list.value = [];
+    // list.value = [];
     fetchNext();
   },
 );

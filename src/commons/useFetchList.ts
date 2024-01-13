@@ -37,13 +37,14 @@ export const useFetchList = <TInput extends GetListInput, TDto extends IdDto>({
   picker?: PickerInput;
   selectable?: boolean;
 }) => {
-  const caches = ref(new Map<string | undefined, UnwrapNestedRefs<ResultDto>>());
+  const caches = ref(new Map<string | undefined, ResultDto>());
 
   const currentCache = computed(() => caches.value.get(query.value.keyword || ''));
   const totalCount = computed(() => currentCache.value?.totalCount);
   const isPending = computed(() => currentCache.value?.isPending);
   const isBof = computed(() => currentCache.value?.isBof);
   const isEof = computed(() => currentCache.value?.isEof);
+  //   const list = computed(() => currentCache.value?.items || []);
   const list = ref<TDto[]>([]);
 
   const query = ref<TInput>(input);
@@ -84,6 +85,9 @@ export const useFetchList = <TInput extends GetListInput, TDto extends IdDto>({
     if (ret.isEof) {
       throw new Error(t('EmptyData'));
     }
+    if (ret.isPending) {
+      throw new Error(t('Error:IsPending'));
+    }
     ret.query = input;
     ret.isPending = true;
     const { items, totalCount } = await service(req);
@@ -91,9 +95,8 @@ export const useFetchList = <TInput extends GetListInput, TDto extends IdDto>({
     ret.totalCount = totalCount;
     ret.isPending = false;
     ret.isEof = items!.length < (req.maxResultCount || 10);
-    const arrs = items! as any[];
-    list.value = query.value.skipCount == 0 ? arrs : list.value.concat(arrs);
-    ret.items = list.value as TDto[];
+    ret.items = query.value.skipCount == 0 ? items! : ret.items.concat(items);
+    list.value = ret.items;
     caches.value.set(query.value.keyword || '', ret);
     return items!;
   };
@@ -105,7 +108,7 @@ export const useFetchList = <TInput extends GetListInput, TDto extends IdDto>({
 
   const refresh = async (): Promise<TDto[]> => {
     query.value = <any>{ ...input };
-    list.value = [];
+    // list.value = [];
     return fetchData(query.value as TInput);
   };
 
