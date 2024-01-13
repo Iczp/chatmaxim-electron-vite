@@ -205,11 +205,11 @@ onMounted(() => {
         />
       </div>
       <scroll-view @ps-y-reach-end="onReachEnd" @ps-y-reach-start="onReachStart">
-        <div class="contacts-list">
+        <div class="data-list">
           <div
             v-for="(item, index) in list"
             :key="item.id"
-            class="contacts-item"
+            class="data-item"
             :class="{ checked: isChecked(item), disabled: isItemDisabled(item) }"
             @click="toggleChecked(item)"
           >
@@ -277,18 +277,18 @@ onMounted(() => {
   padding: 12px;
   border-bottom: 1px solid var(--divider-color);
 }
-.contacts-list {
+.data-list {
   display: flex;
   flex-direction: column;
   --split-size: 12px;
 }
-.contacts-item {
+.data-item {
   display: flex;
   flex-direction: row-reverse;
   justify-content: space-between;
   padding: 4px 12px;
 }
-.contacts-item:hover {
+.data-item:hover {
   background-color: var(--background-color-hover);
 }
 .checked,

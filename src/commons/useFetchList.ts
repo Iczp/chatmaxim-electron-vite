@@ -1,25 +1,51 @@
-import { ref, toRaw, watch } from 'vue';
+import { UnwrapNestedRefs, computed, reactive, ref, toRaw, watch } from 'vue';
 import { CancelablePromise } from '../apis';
 import { GetListInput, IdDto, PagedResultDto } from '../apis/dtos';
 import { message } from 'ant-design-vue';
 import { PickerInput } from '../ipc/openChildWindow';
 import { useI18n } from 'vue-i18n';
 
+type ResultDto = {
+  query?: GetListInput;
+  items: any[];
+  totalCount?: number;
+  isPending: boolean;
+  isEof: boolean;
+  isBof: boolean;
+  creationTime: Date;
+};
+const defaultResultValue = (): ResultDto => {
+  const value: ResultDto = {
+    query: undefined,
+    items: [],
+    totalCount: 0,
+    isPending: false,
+    isEof: false,
+    isBof: false,
+    creationTime: new Date(),
+  };
+  return value;
+};
 export const useFetchList = <TInput extends GetListInput, TDto extends IdDto>({
   input,
   picker,
   service,
+  selectable,
 }: {
   input: TInput;
   service: (input: TInput) => CancelablePromise<PagedResultDto<TDto>>;
   picker?: PickerInput;
+  selectable?: boolean;
 }) => {
-  const isPending = ref(false);
-  const isBof = ref(false);
-  const isEof = ref(false);
+  const caches = ref(new Map<string | undefined, UnwrapNestedRefs<ResultDto>>());
+
+  const currentCache = computed(() => caches.value.get(query.value.keyword || ''));
+  const totalCount = computed(() => currentCache.value?.totalCount);
+  const isPending = computed(() => currentCache.value?.isPending);
+  const isBof = computed(() => currentCache.value?.isBof);
+  const isEof = computed(() => currentCache.value?.isEof);
   const list = ref<TDto[]>([]);
-  const totalCount = ref<number>();
-  // const service = ContactsService.getApiChatContacts;
+
   const query = ref<TInput>(input);
 
   const selectedList = ref<IdDto[]>(picker?.selectedItems || []);
@@ -37,25 +63,38 @@ export const useFetchList = <TInput extends GetListInput, TDto extends IdDto>({
     disabledList.value = v?.disabledItems || [];
     isMultiple.value = v?.isMultiple || false;
   });
-  //   watch(
-  //     () => query.value.keyword,
-  //     v => {
-  //       console.log('keyword', v);
-  //     },
-  //   );
+
+  watch(
+    () => query.value.keyword,
+    v => {
+      console.log('keyword', v);
+      if (caches.value.has(v || '')) {
+        const cache = caches.value.get(v);
+        list.value = cache?.items || [];
+        console.log('caches.value', v, cache);
+      } else {
+        fetchData({ ...input, skipCount: 0, keyword: v });
+      }
+    },
+  );
 
   const fetchData = async (input: TInput): Promise<TDto[]> => {
-    if (isEof.value) {
+    const req = input;
+    const ret = currentCache.value || defaultResultValue();
+    if (ret.isEof) {
       throw new Error(t('EmptyData'));
     }
-    const req = input;
-    isPending.value = true;
-    const { items, totalCount: count } = await service(req);
-    totalCount.value = count;
-    isPending.value = false;
-    isEof.value = items!.length < (req.maxResultCount || 10);
-    list.value = list.value.concat(items! as any[]);
+    ret.query = input;
+    ret.isPending = true;
+    const { items, totalCount } = await service(req);
     console.log('fetchData', items);
+    ret.totalCount = totalCount;
+    ret.isPending = false;
+    ret.isEof = items!.length < (req.maxResultCount || 10);
+    const arrs = items! as any[];
+    list.value = query.value.skipCount == 0 ? arrs : list.value.concat(arrs);
+    ret.items = list.value as TDto[];
+    caches.value.set(query.value.keyword || '', ret);
     return items!;
   };
 
@@ -64,7 +103,7 @@ export const useFetchList = <TInput extends GetListInput, TDto extends IdDto>({
     return fetchData(query.value as TInput);
   };
 
-  const refresh = async (input: TInput): Promise<TDto[]> => {
+  const refresh = async (): Promise<TDto[]> => {
     query.value = <any>{ ...input };
     list.value = [];
     return fetchData(query.value as TInput);
@@ -117,8 +156,7 @@ export const useFetchList = <TInput extends GetListInput, TDto extends IdDto>({
   const getSelectItems = (): TDto[] => selectedList.value.map(x => toRaw(x) as TDto);
 
   return {
-    isMultiple,
-    isChecked,
+    // list
     totalCount,
     query,
     isPending,
@@ -128,6 +166,9 @@ export const useFetchList = <TInput extends GetListInput, TDto extends IdDto>({
     fetchData,
     fetchNext,
     refresh,
+    //picker
+    isMultiple,
+    isChecked,
     toggleChecked,
     selectedList,
     disabledList,
