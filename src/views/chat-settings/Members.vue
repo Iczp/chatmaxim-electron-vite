@@ -128,12 +128,7 @@ const onSearch = () => {
 </template>
 
 <style scoped>
-.scroller {
-  height: 100%;
-  margin-right: 5px;
-  margin-bottom: 5px;
-  box-sizing: border-box;
-}
+
 
 .search-section {
   display: flex;
@@ -168,30 +163,4 @@ const onSearch = () => {
   flex: 1;
 }
 
-/* 滚动槽 */
-::-webkit-scrollbar {
-  width: 10px;
-  height: 10px;
-  /* padding: 10px; */
-  transition: all 0.3s linear;
-  /* background: transparent; */
-}
-.scroller-container {
-}
-::-webkit-scrollbar-track {
-  border-radius: 5px;
-  background: rgba(124, 124, 124, 0.221);
-  -webkit-box-shadow: inset 0 0 5px rgba(0, 0, 0, 0.08);
-}
-/* 滚动条滑块 */
-::-webkit-scrollbar-thumb {
-  border-radius: 5px;
-  background: rgba(223, 213, 213, 0.546);
-  -webkit-box-shadow: inset 0 0 10px rgba(0, 0, 0, 0.2);
-  transition: all 0.3s linear;
-}
-
-:hover::-webkit-scrollbar-thumb {
-  background: rgba(163, 163, 163, 0.546);
-}
 </style>
