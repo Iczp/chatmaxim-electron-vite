@@ -117,5 +117,7 @@
   "MaxSelected": "Only up to {0} items can be selected",
   "NotFoundId": "Not Fount Id:{0}",
   "EmptyData": "Empty Data",
-  "Home": "Home"
+  "Home": "Home",
+  "DividerEnd": "Divider End",
+  "JoinTime": "Join Time"
 }

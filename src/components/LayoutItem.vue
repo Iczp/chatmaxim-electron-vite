@@ -83,6 +83,7 @@ const slots = useSlots();
 .main-content {
   display: flex;
   flex: 1;
+  color: var(--main-title-color);
 }
 
 .main-content {
@@ -97,6 +98,7 @@ const slots = useSlots();
   box-sizing: border-box;
   align-items: center;
   font-size: 12px;
+  color: var(--sub-title-color);
 }
 
 .sub-left {

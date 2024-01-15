@@ -117,5 +117,7 @@
   "MaxSelected": "最多只能选择｛0｝个项目",
   "NotFoundId": "未找到该项,Id:{0}",
   "EmptyData": "没有了",
-  "Home": "主页"
+  "Home": "主页",
+  "DividerEnd": "我是有底线的",
+  "JoinTime": "加入时间"
 }

@@ -238,6 +238,8 @@ code {
   --background-color-normal: rgba(248, 248, 248, 0.5);
   --background-color-hover: rgba(180, 180, 180, 0.5);
   --color: #383838;
+  --main-title-color: #383838;
+  --sub-title-color: #ccc;
   --checked-background: linear-gradient(135deg, #ddefff, #e9ffeb) border-box;
 
   --page-footer-border-top-color: rgba(179, 179, 179, 0.5);
@@ -364,7 +366,9 @@ code {
   --background-color: #1b1b1b;
   --background-color-normal: rgba(41, 41, 41, 0.5);
   --background-color-hover: rgba(57, 57, 57, 0.5);
-  --color: rgba(200, 200, 200, 0.904);
+  --color: #c8c8c8e7;
+  --main-title-color: #c8c8c8e7;
+  --sub-title-color: #454545ee;
   --title-color: rgb(222, 222, 222);
   --border-color: rgba(55, 55, 55, 0.904);
 
@@ -479,7 +483,6 @@ code {
   --tab-item-active-background-color: rgba(57, 57, 57, 0.93);
   --tab-item-active-bar-background-color: rgba(6, 182, 226, 0.93);
 
-  
   --mask-background-color: rgba(56, 56, 56, 0.5);
 
   /* ant */
@@ -488,7 +491,7 @@ code {
     color: var(--color);
     background-color: var(--background-color);
   }
-  
+
   /* ant-modal */
   .ant-modal-root .ant-modal-mask {
     background-color: var(--mask-background-color);

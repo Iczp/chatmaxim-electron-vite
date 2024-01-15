@@ -83,6 +83,7 @@ export const useFetchList = <TInput extends GetListInput, TDto extends IdDto>({
     const req = input;
     const ret = currentCache.value || defaultResultValue();
     if (ret.isEof) {
+      console.error('ret.isEof', ret.isEof, ret);
       throw new Error(t('EmptyData'));
     }
     if (ret.isPending) {

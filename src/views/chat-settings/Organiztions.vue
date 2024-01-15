@@ -33,25 +33,30 @@ const {
 });
 
 const onReachStart = (event: CustomEvent) => {
-  console.info('onReachStart');
+  console.info('onReachStart', event);
 };
 const onReachEnd = (event: CustomEvent) => {
-  const el = event.target as HTMLElement;
-  console.info('onReachEnd');
-  const isReachEnd = el.scrollTop != 0; //&& el.scrollTop > el.offsetHeight;
-  if (!isReachEnd) {
-    console.error(
-      'onReachEnd',
-      isReachEnd,
-      el.clientHeight,
-      el.offsetHeight,
-      el.scrollHeight,
-      el.scrollTop,
-    );
-    return;
-  }
+  console.info('onReachEnd', event);
+  // const el = event.target as HTMLElement;
+
+  // const isReachEnd = el.scrollTop != 0; //&& el.scrollTop > el.offsetHeight;
+  // if (!isReachEnd) {
+  //   console.error(
+  //     'onReachEnd',
+  //     isReachEnd,
+  //     el.clientHeight,
+  //     el.offsetHeight,
+  //     el.scrollHeight,
+  //     el.scrollTop,
+  //   );
+  //   return;
+  // }
   if (isPending.value) {
     console.info('isPending', isPending);
+    return;
+  }
+  if (isEof.value) {
+    console.info('isEof', isEof);
     return;
   }
 
@@ -79,7 +84,7 @@ const onSearch = () => {
           @search="onSearch"
         />
       </div>
-      <div>总数:{{ list.length }}/{{ totalCount }}</div>
+
       <!-- <scroll-view @ps-y-reach-end="onReachEnd" @ps-y-reach-start="onReachStart"> -->
       <RecycleScroller
         class="scroller"
@@ -89,8 +94,11 @@ const onSearch = () => {
         @scroll-start="onReachStart"
         @scroll-end="onReachEnd"
       >
-        <template #before>before</template>
-        <template #after>after</template>
+        <template #before>
+          <div>总数:{{ list.length }}/{{ totalCount }}</div>
+        </template>
+        <template v-if="isPending" #after><Loading /></template>
+        <template v-else-if="isEof" #after>{{ t('DividerEnd') }}</template>
         <template v-slot="{ item }">
           <div
             :key="item.id"
@@ -98,7 +106,7 @@ const onSearch = () => {
             :class="{ checked: isChecked(item), disabled: isDisabled(item) }"
             @click="toggleChecked(item)"
           >
-            <chat-object :entity="item.owner" class="chat-object" :size="32">
+            <chat-object :entity="item.owner" :size="44">
               <!-- <template #title>title-left</template> -->
               <!-- <template #title-right>title-right555</template> -->
               <!-- <template #sub>sub-left555</template> -->
@@ -143,7 +151,7 @@ const onSearch = () => {
   flex-direction: row;
   justify-content: space-between;
   /* height: 32%; */
-  padding: 4px 12px;
+  padding: 0 12px;
   /* height: 100px; */
 }
 .data-item:hover {

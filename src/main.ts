@@ -29,6 +29,8 @@ import { createPinia } from 'pinia';
 import VueVirtualScroller from 'vue-virtual-scroller';
 // const VueVirtualScroller = require('vue-virtual-scroller').default;
 import 'vue-virtual-scroller/dist/vue-virtual-scroller.css';
+import 'overlayscrollbars/overlayscrollbars.css';
+
 
 import { i18n } from './i18n';
 
