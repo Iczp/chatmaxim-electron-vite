@@ -26,9 +26,14 @@ import { router } from './routes';
 import { createPinia } from 'pinia';
 
 // import VueVirtualScroller from 'vue-virtual-scroller'
+import VueVirtualScroller from 'vue-virtual-scroller';
+// const VueVirtualScroller = require('vue-virtual-scroller').default;
 import 'vue-virtual-scroller/dist/vue-virtual-scroller.css';
 
 import { i18n } from './i18n';
+
+console.log('VueVirtualScroller', VueVirtualScroller);
+console.log('i18n', i18n);
 
 const pinia = createPinia();
 const app = createApp(App);
@@ -40,6 +45,7 @@ app.component('PageContent', PageContent);
 app.component('LayoutItem', LayoutItem);
 app.component('Icon', Icon);
 app
+  .use(VueVirtualScroller)
   .use(PerfectScrollbar, <PerfectScrollbarOptions>{
     // tag: 'scroll-view',
     name: 'scroll-view',

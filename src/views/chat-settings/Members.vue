@@ -80,6 +80,38 @@ const onSearch = () => {
       </div>
       <div>总数:{{ list.length }}/{{ totalCount }}</div>
       <scroll-view @ps-y-reach-end="onReachEnd" @ps-y-reach-start="onReachStart">
+        <RecycleScroller
+          class="scroller"
+          :items="list"
+          :item-size="56"
+          key-field="id"
+          v-slot="{ item }"
+        >
+        <!-- v-for="(item, index) in list" -->
+        <div
+           
+            :key="item.id"
+            class="data-item"
+            :class="{ checked: isChecked(item), disabled: isDisabled(item) }"
+            @click="toggleChecked(item)"
+          >
+            <chat-object :entity="item.owner" class="chat-object" :size="32">
+              <!-- <template #title>title-left</template> -->
+              <!-- <template #title-right>title-right555</template> -->
+              <!-- <template #sub>sub-left555</template> -->
+              <!-- <template #footer>
+                <a-button @click="addFriend(item)">添加/关注</a-button>
+              </template> -->
+            </chat-object>
+            <a-checkbox
+              v-if="selectable"
+              :checked="isChecked(item)"
+              :disabled="isDisabled(item)"
+              class="check-box"
+            ></a-checkbox>
+          </div>
+        </RecycleScroller>
+
         <div class="data-list">
           <div
             v-for="(item, index) in list"
@@ -112,6 +144,11 @@ const onSearch = () => {
 </template>
 
 <style scoped>
+
+.scroller {
+  height: 100%;
+}
+
 .search-section {
   display: flex;
   padding: 12px;
