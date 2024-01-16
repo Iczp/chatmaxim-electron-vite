@@ -82,6 +82,10 @@ export function formatMessageTime(datetime: Date | string): any {
   return moment(datetime).format(fmt);
 }
 
+export const formatDatetime = (datetime: Date | string, fmt = 'YYYY-MM-DD HH:mm:ss') => {
+  return moment(datetime).format(fmt);
+};
+
 export const formatHourStr = (date: Date) => {
   const hours = date.getHours();
   let ret = '';
@@ -375,5 +379,3 @@ export const mapToImageContentDtoAsync = (file: File): Promise<ImageContentDto> 
     };
   });
 };
-
-

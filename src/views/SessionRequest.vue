@@ -131,6 +131,7 @@ const wrapperCol = { span: 12 };
   resize: unset;
   height: 120px;
   overflow: hidden;
+  resize: none;
 }
 </style>
 ../ipc/openChildWindow

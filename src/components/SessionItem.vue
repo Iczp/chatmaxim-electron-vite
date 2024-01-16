@@ -143,6 +143,7 @@ const ondragstart = (event: DragEvent) => {
   --spacing-size: 12px;
   --title-left-max-width: 112px;
   --sub-left-max-width: 148px;
+  --border-left: 68px;
   height: var(--side-width);
   position: relative;
   padding: 0 var(--spacing-size);
@@ -156,14 +157,14 @@ const ondragstart = (event: DragEvent) => {
 
 .session-item::after {
   content: '';
-  height: 1px;
+  /* height: 1px;
   left: 68px;
   right: 0px;
   bottom: 0;
   position: absolute;
   transform: scaleY(0.5);
   overflow: hidden;
-  background-color: var(--divider-color);
+  background-color: var(--divider-color); */
 }
 .session-item:last-child::after {
   background-color: rgba(242, 20, 20, 0.41);

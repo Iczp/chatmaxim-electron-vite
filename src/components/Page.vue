@@ -14,10 +14,10 @@ const props = defineProps<{
   </a-layout>
 </template>
 <style scoped>
-
-:deep(.ant-layout){
+:deep(.ant-layout) {
   color: var(--color);
   background-color: var(--background-color);
+  background-color: unset;
 }
 .page-loading {
   position: fixed;

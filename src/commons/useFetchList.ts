@@ -49,6 +49,7 @@ export const useFetchList = <TInput extends GetListInput, TDto extends IdDto>({
 
   const query = ref<TInput>(input);
 
+  const selectableRef = ref(selectable);
   const selectedList = ref<IdDto[]>(picker?.selectedItems || []);
   const disabledList = ref<IdDto[]>(picker?.disabledItems || []);
   const maxSelectCount = ref<number | undefined>(picker?.maxCount);
@@ -113,6 +114,22 @@ export const useFetchList = <TInput extends GetListInput, TDto extends IdDto>({
     return fetchData(query.value as TInput);
   };
 
+  const onReachStart = (event: CustomEvent) => {
+    console.info('onReachStart', event);
+  };
+  const onReachEnd = (event: CustomEvent) => {
+    console.info('onReachEnd', event);
+    if (isPending.value) {
+      console.info('isPending', isPending.value);
+      return;
+    }
+    if (isEof.value) {
+      console.info('isEof', isEof.value);
+      return;
+    }
+    fetchNext();
+  };
+
   const isChecked = (item: TDto): boolean => selectedList.value.some(x => x.id == item.id);
 
   const isDisabled = (item: TDto, andPredicate?: boolean): boolean =>
@@ -170,7 +187,10 @@ export const useFetchList = <TInput extends GetListInput, TDto extends IdDto>({
     fetchData,
     fetchNext,
     refresh,
+    onReachStart,
+    onReachEnd,
     //picker
+    selectable: selectableRef,
     isMultiple,
     isChecked,
     toggleChecked,

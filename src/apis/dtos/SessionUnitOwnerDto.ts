@@ -5,7 +5,7 @@ import { SessionUnitSettingDto } from './SessionUnitSettingDto';
 
 export type SessionUnitOwnerDto = SessionItemDto & {
   // id?: string;
-  // ownerId?: number;
+  ownerId?: number;
   // lastMessageId?: number | null;
   // sorting?: number;
   sessionId?: string;

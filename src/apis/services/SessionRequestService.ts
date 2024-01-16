@@ -2,14 +2,15 @@
 /* istanbul ignore file */
 /* tslint:disable */
 /* eslint-disable */
-import type { IczpNet_Chat_SessionSections_SessionRequests_Dtos_SessionRequestDetailDto } from '../models/IczpNet_Chat_SessionSections_SessionRequests_Dtos_SessionRequestDetailDto';
+import type { SessionRequestDetailDto } from '../dtos/SessionRequestDetailDto';
 // import type { IczpNet_Chat_SessionSections_SessionRequests_Dtos_SessionRequestDto_IczpNet_Chat_Application_Contracts_Version_0_1_1_0_Culture_neutral_PublicKeyToken_null_ } from '../models/IczpNet_Chat_SessionSections_SessionRequests_Dtos_SessionRequestDto_IczpNet_Chat_Application_Contracts_Version_0_1_1_0_Culture_neutral_PublicKeyToken_null_';
 import type { Volo_Abp_Application_Dtos_PagedResultDto_1 } from '../models/Volo_Abp_Application_Dtos_PagedResultDto_1';
 
 import type { CancelablePromise } from '../core/CancelablePromise';
 import { OpenAPI } from '../core/OpenAPI';
 import { request as __request } from '../core/request';
-import { SessionRequestInput } from '../dtos';
+import { PagedResultDto, SessionRequestInput } from '../dtos';
+import { SessionRequestGetListInput } from '../dtos/SessionRequestGetListInput';
 
 export class SessionRequestService {
 
@@ -22,7 +23,7 @@ export class SessionRequestService {
 ownerId,
 destinationId,
 requestMessage,
-}: SessionRequestInput): CancelablePromise<IczpNet_Chat_SessionSections_SessionRequests_Dtos_SessionRequestDetailDto> {
+}: SessionRequestInput): CancelablePromise<SessionRequestDetailDto> {
         return __request(OpenAPI, {
             method: 'POST',
             url: '/api/chat/session-request',
@@ -40,7 +41,7 @@ requestMessage,
      * @returns Volo_Abp_Application_Dtos_PagedResultDto_1<IczpNet_Chat_SessionSections_SessionRequests_Dtos_SessionRequestDto_IczpNet_Chat_Application_Contracts_Version_0_1_1_0_Culture_neutral_PublicKeyToken_null_> Success
      * @throws ApiError
      */
-    public static getApiChatSessionRequest({
+    public static getApiChatSessionRequestList({
 ownerId,
 destinationId,
 isEnabled,
@@ -55,64 +56,7 @@ keyword,
 maxResultCount,
 skipCount,
 sorting,
-}: {
-/**
- * 所属聊天对象Id
- */
-ownerId?: number,
-/**
- * 目标聊天对象Id
- */
-destinationId?: number,
-/**
- * 是否可用
- */
-isEnabled?: boolean,
-/**
- * 是否过期
- */
-isExpired?: boolean,
-/**
- * 是否处理过
- */
-isHandled?: boolean,
-/**
- * 是否同意请求
- */
-isAgreed?: boolean,
-/**
- * 处理起始时间
- */
-startHandleTime?: string,
-/**
- * 处理结束时间
- */
-endHandleTime?: string,
-/**
- * 创建请求的起始时间
- */
-startCreationTime?: string,
-/**
- * 创建请求的结束时间
- */
-endCreationTime?: string,
-/**
- * 关键字(支持拼音)
- */
-keyword?: string,
-/**
- * 显示数量
- */
-maxResultCount?: number,
-/**
- * 跳过数量
- */
-skipCount?: number,
-/**
- * 排序
- */
-sorting?: string,
-}): CancelablePromise<Volo_Abp_Application_Dtos_PagedResultDto_1> {
+}: SessionRequestGetListInput ): CancelablePromise<PagedResultDto<SessionRequestDetailDto>> {
         return __request(OpenAPI, {
             method: 'GET',
             url: '/api/chat/session-request',
@@ -148,7 +92,7 @@ id,
  * 主键Id
  */
 id: string,
-}): CancelablePromise<IczpNet_Chat_SessionSections_SessionRequests_Dtos_SessionRequestDetailDto> {
+}): CancelablePromise<SessionRequestDetailDto> {
         return __request(OpenAPI, {
             method: 'GET',
             url: '/api/chat/session-request/{id}',
@@ -171,7 +115,7 @@ idList,
  * 主键Id[多个]
  */
 idList?: Array<string>,
-}): CancelablePromise<Array<IczpNet_Chat_SessionSections_SessionRequests_Dtos_SessionRequestDetailDto>> {
+}): CancelablePromise<Array<SessionRequestDetailDto>> {
         return __request(OpenAPI, {
             method: 'GET',
             url: '/api/chat/session-request/many',
@@ -204,7 +148,7 @@ isAgreed: boolean,
  * 处理消息
  */
 handleMessage?: string,
-}): CancelablePromise<IczpNet_Chat_SessionSections_SessionRequests_Dtos_SessionRequestDetailDto> {
+}): CancelablePromise<SessionRequestDetailDto> {
         return __request(OpenAPI, {
             method: 'POST',
             url: '/api/chat/session-request/handle-request',

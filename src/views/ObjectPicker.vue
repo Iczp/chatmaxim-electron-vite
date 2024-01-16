@@ -168,18 +168,12 @@ const onReachStart = (event: CustomEvent) => {
   console.info('onReachStart');
 };
 const onReachEnd = (event: CustomEvent) => {
-  const el = event.target as HTMLElement;
-  console.info('onReachEnd');
-  const isReachEnd = el.scrollTop != 0; //&& el.scrollTop > el.offsetHeight;
-  if (!isReachEnd) {
-    console.error(
-      'onReachEnd',
-      isReachEnd,
-      el.clientHeight,
-      el.offsetHeight,
-      el.scrollHeight,
-      el.scrollTop,
-    );
+  if (isPending.value) {
+    console.info('isPending', isPending);
+    return;
+  }
+  if (isEof.value) {
+    console.info('isEof', isEof);
     return;
   }
 
@@ -204,57 +198,44 @@ onMounted(() => {
           @search="onSearch"
         />
       </div>
-      <scroll-view @ps-y-reach-end="onReachEnd" @ps-y-reach-start="onReachStart">
-        <div class="data-list">
+      <RecycleScroller
+        class="scroller"
+        :items="list"
+        :item-size="56"
+        key-field="id"
+        @scroll-start="onReachStart"
+        @scroll-end="onReachEnd"
+      >
+        <template #before>
+          <div>总数:{{ list.length }}/{{ totalCount }}</div>
+        </template>
+        <template v-if="isPending" #after><Loading /></template>
+        <template v-else-if="isEof" #after>{{ t('DividerEnd') }}</template>
+        <template v-slot="{ item }">
           <div
-            v-for="(item, index) in list"
             :key="item.id"
             class="data-item"
-            :class="{ checked: isChecked(item), disabled: isItemDisabled(item) }"
+            :class="{ checked: isChecked(item), disabled: isDisabled(item) }"
             @click="toggleChecked(item)"
           >
-            <a-checkbox
-              :checked="isChecked(item)"
-              :disabled="isItemDisabled(item)"
-              class="check-box"
-            ></a-checkbox>
-            <chat-object :entity="item.destination" class="chat-object" :size="32">
+          <a-checkbox
+    
+    :checked="isChecked(item)"
+    :disabled="isDisabled(item)"
+    class="check-box"
+  ></a-checkbox>
+            <chat-object :entity="item.destination" :size="44">
               <!-- <template #title>title-left</template> -->
               <!-- <template #title-right>title-right555</template> -->
-              <!-- <template #sub>sub-left555</template> -->
+              <!-- <template #sub>{{ t('JoinTime') }}:{{ item.creationTime }}</template> -->
               <!-- <template #footer>
                 <a-button @click="addFriend(item)">添加/关注</a-button>
               </template> -->
             </chat-object>
+           
           </div>
-          <Loading v-if="isPending" :height="48" />
-          <div>总数:{{ list.length }}/{{ totalCount }}</div>
-        </div>
-
-        <div>
-          {{ ChatObjectTypeEnumText }}
-          <a-space direction="vertical">
-            <a-input-group compact>
-              <a-select v-model:value="objectType" style="width: 160px">
-                <a-select-option
-                  v-for="(item, index) in objectTypes"
-                  :value="item.value"
-                  :key="index"
-                >
-                  {{ item.text }} ({{ item.key }} )
-                </a-select-option>
-              </a-select>
-
-              <a-input-search
-                v-model:value="keyword"
-                :placeholder="`${t('Search')}:${t('Room')},${t('Official')}...`"
-                enter-button
-                @search="onSearch"
-              />
-            </a-input-group>
-          </a-space>
-        </div>
-      </scroll-view>
+        </template>
+      </RecycleScroller>
     </page-content>
     <page-footer class="footer">
       <div class="select-result">
@@ -286,7 +267,7 @@ onMounted(() => {
   display: flex;
   flex-direction: row-reverse;
   justify-content: space-between;
-  padding: 4px 12px;
+  padding: 0px 12px;
 }
 .data-item:hover {
   background-color: var(--background-color-hover);

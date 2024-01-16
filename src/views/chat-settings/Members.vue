@@ -4,9 +4,10 @@ import { useMembersList } from './commons/useMembersList';
 import { useI18n } from 'vue-i18n';
 import ChatObject from '../../components/ChatObject.vue';
 import Loading from '../../components/Loading.vue';
+// import {RecycleScroller} from 'vue-virtual-scroller/RecycleScroller'
 const { t } = useI18n();
 const props = defineProps<{ sessionUnitId: string }>();
-const selectable = ref(false);
+
 const {
   totalCount,
   query,
@@ -17,6 +18,7 @@ const {
   fetchData,
   fetchNext,
   refresh,
+  selectable,
   isChecked,
   toggleChecked,
   selectedList,
@@ -129,29 +131,15 @@ const onSearch = () => {
 
 <style scoped>
 
-
+.data-item {
+  padding: 0 20px;
+}
 .search-section {
   display: flex;
   padding: 12px;
   border-bottom: 1px solid var(--divider-color);
 }
-.data-list {
-  display: flex;
-  flex-direction: column;
-  --split-size: 12px;
-  padding: 12px;
-}
-.data-item {
-  display: flex;
-  flex-direction: row;
-  justify-content: space-between;
-  /* height: 32%; */
-  padding: 0 12px;
-  /* height: 100px; */
-}
-.data-item:hover {
-  background-color: var(--background-color-hover);
-}
+
 .checked,
 .checked:hover {
   background: var(--checked-background);

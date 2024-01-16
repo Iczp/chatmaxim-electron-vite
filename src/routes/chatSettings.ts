@@ -37,4 +37,13 @@ export const chatSettings: RouteRecordRaw[] = [
     component: () => import('../views/chat-settings/Permissions.vue'),
     props: true,
   },
+  {
+    path: 'request/:sessionUnitId',
+    name: 'session-request-list',
+    meta: {
+      title: 'Session Request',
+    },
+    component: () => import('../views/chat-settings/Request.vue'),
+    props: true,
+  },
 ];

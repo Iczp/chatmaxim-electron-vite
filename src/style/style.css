@@ -68,6 +68,23 @@ a:hover {
   width: 100%;
   height: 24px;
 }
+.data-list {
+  display: flex;
+  flex-direction: column;
+  --split-size: 12px;
+  padding: 12px;
+}
+.data-item {
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  /* height: 32%; */
+  /* padding: 0 12px; */
+  /* height: 100px; */
+}
+.data-item:hover {
+  background-color: var(--background-color-hover);
+}
 body {
   margin: 0;
   /* display: flex; */
@@ -77,6 +94,10 @@ body {
   color: var(--color) !important;
   background-color: var(--background-color) !important;
   overflow: hidden;
+}
+.no-resize,
+.no-resize textarea {
+  resize: none;
 }
 .ps {
   width: 100%;
@@ -207,8 +228,8 @@ code {
 /* scroller */
 .scroller {
   height: 100%;
-  margin-right: 5px;
-  margin-bottom: 5px;
+  margin-right: 2px;
+  margin-bottom: 2px;
   box-sizing: border-box;
 }
 /* 滚动槽 */
@@ -217,13 +238,17 @@ code {
   height: 10px;
   /* padding: 10px; */
   transition: all 0.3s linear;
-  /* background: transparent; */
+  background: transparent;
+  /* display: none; */
+  /* position: absolute; */
 }
 
 ::-webkit-scrollbar-track {
   border-radius: 5px;
   background: rgba(124, 124, 124, 0.221);
   -webkit-box-shadow: inset 0 0 5px rgba(0, 0, 0, 0.08);
+  /* display: none; */
+  position: absolute;
 }
 /* 滚动条滑块 */
 ::-webkit-scrollbar-thumb {
@@ -231,8 +256,14 @@ code {
   background: rgba(223, 213, 213, 0.546);
   -webkit-box-shadow: inset 0 0 10px rgba(0, 0, 0, 0.2);
   transition: all 0.3s linear;
+  /* display: none; */
 }
-
+:hover::-webkit-scrollbar {
+  display: unset;
+}
+:hover::-webkit-scrollbar-track {
+  display: unset;
+}
 :hover::-webkit-scrollbar-thumb {
   background: rgba(163, 163, 163, 0.546);
 }
@@ -268,7 +299,7 @@ code {
   /* body */
   --background-color: #f9fbff;
   --background-color-normal: rgba(248, 248, 248, 0.5);
-  --background-color-hover: rgba(180, 180, 180, 0.5);
+  --background-color-hover: rgba(220, 220, 220, 0.5);
   --color: #383838;
   --main-title-color: #383838;
   --sub-title-color: #ccc;
@@ -520,8 +551,9 @@ code {
   /* ant */
   .ant-layout,
   .ant-layout .ant-layout-footer {
-    color: var(--color);
-    background-color: var(--background-color);
+    /* color: var(--color);
+    background-color: var(--background-color); */
+    background-color: unset;
   }
 
   /* ant-modal */
@@ -566,6 +598,16 @@ code {
     background-color: var(--background-color);
   }
   /* ant-radio */
+
+  .ant-radio-wrapper {
+    color: var(--color);
+  }
+  .ant-radio-wrapper .ant-radio-inner {
+    background-color: var(--background-color);
+  }
+  .ant-radio-wrapper .ant-radio-inner::after {
+    background-color: #195ef2;
+  }
   .ant-radio-button-wrapper-checked:not(.ant-radio-button-wrapper-disabled) {
     background-color: #656565;
     border: 1px solid #195ef2;
@@ -638,6 +680,7 @@ code {
     /* background-color: var(--background-color); */
     background-color: transparent;
     border-color: var(--border-color);
+    resize: unset;
   }
   .ant-input::placeholder {
     color: rgba(100, 100, 100, 0.619);
@@ -645,6 +688,7 @@ code {
   .ant-mentions > textarea {
     color: var(--color);
     background-color: transparent;
+    resize: none;
   }
   .ant-mentions > textarea::placeholder,
   textarea::placeholder {

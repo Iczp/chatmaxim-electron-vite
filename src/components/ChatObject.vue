@@ -5,7 +5,7 @@ import Avatar from '../components/Avatar.vue';
 import { ChatObjectDto } from '../apis/dtos';
 const slots = useSlots();
 const attrs = useAttrs();
-// console.log('slots', slots);
+console.log('slots', slots);
 // console.log('attrs', attrs);
 // const icon = ref(attrs['icon'] || false);
 const props = defineProps<{
@@ -48,5 +48,19 @@ const inheritanceKeys = Object.keys(slots).filter(x => !ignoreSlots.some(d => d 
 .chat-object {
   padding: 6px 0px;
   --spacing-size: 8px;
+  --border-left: 0;
+  --border-right: 0;
+}
+
+.chat-object::after {
+  /* content: ''; */
+  height: 1px;
+  left: var(--border-left);
+  right: var(--border-right);
+  bottom: 0;
+  position: absolute;
+  transform: scaleY(0.5);
+  overflow: hidden;
+  background-color: var(--divider-color);
 }
 </style>

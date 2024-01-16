@@ -219,14 +219,14 @@ const fetchData = (query: SessionUnitGetListInput) => {
       if (!ret.isEof) {
         store.setMany(res.items!);
         setMinMessageId(res.items![res.items!.length - 1].lastMessageId!);
-        const _items = res.items!.map(x => mapToSessionItemDto(x));
+        const _items = res.items!; //.map(x => mapToSessionItemDto(x));
         if (Number(query.maxMessageId) > 0) {
           ret.items = ret.items!.concat(_items);
         } else {
           ret.items = _items;
         }
       }
-      store.setSessionItems(props.chatObjectId!, ret.items, query.keyword);
+      store.setSessionItems(props.chatObjectId!, ret.items as SessionUnitOwnerDto[], query.keyword);
 
       // console.log('res SessionUnitService.getApiChatSessionUnit1', res, res.totalCount);
     })
@@ -434,4 +434,3 @@ const footerObserver = ref<HTMLElement | null>();
   background-color:rgba(223, 223, 223, 0.41);
 } */
 </style>
-../ipc/openChildWindow

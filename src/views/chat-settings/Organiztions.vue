@@ -17,6 +17,8 @@ const {
   fetchData,
   fetchNext,
   refresh,
+  onReachStart,
+  onReachEnd,
   isChecked,
   toggleChecked,
   selectedList,
@@ -31,37 +33,6 @@ const {
     maxResultCount: 40,
   },
 });
-
-const onReachStart = (event: CustomEvent) => {
-  console.info('onReachStart', event);
-};
-const onReachEnd = (event: CustomEvent) => {
-  console.info('onReachEnd', event);
-  // const el = event.target as HTMLElement;
-
-  // const isReachEnd = el.scrollTop != 0; //&& el.scrollTop > el.offsetHeight;
-  // if (!isReachEnd) {
-  //   console.error(
-  //     'onReachEnd',
-  //     isReachEnd,
-  //     el.clientHeight,
-  //     el.offsetHeight,
-  //     el.scrollHeight,
-  //     el.scrollTop,
-  //   );
-  //   return;
-  // }
-  if (isPending.value) {
-    console.info('isPending', isPending);
-    return;
-  }
-  if (isEof.value) {
-    console.info('isEof', isEof);
-    return;
-  }
-
-  fetchNext();
-};
 
 onMounted(() => {
   fetchNext();
@@ -128,34 +99,14 @@ const onSearch = () => {
 </template>
 
 <style scoped>
-.scroller {
-  height: 100%;
-  margin-right: 5px;
-  margin-bottom: 5px;
-  box-sizing: border-box;
+.data-item {
+  padding: 0 20px;
 }
 
 .search-section {
   display: flex;
   padding: 12px;
   border-bottom: 1px solid var(--divider-color);
-}
-.data-list {
-  display: flex;
-  flex-direction: column;
-  --split-size: 12px;
-  padding: 12px;
-}
-.data-item {
-  display: flex;
-  flex-direction: row;
-  justify-content: space-between;
-  /* height: 32%; */
-  padding: 0 12px;
-  /* height: 100px; */
-}
-.data-item:hover {
-  background-color: var(--background-color-hover);
 }
 .checked,
 .checked:hover {

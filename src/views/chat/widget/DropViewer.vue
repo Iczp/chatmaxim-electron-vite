@@ -25,7 +25,7 @@ const files = ref<Array<any>>([]);
 const text = ref<string>();
 const isOpen = ref(false);
 const okText = computed(
-  () => `发送` + (files.value.length == 0 ? '' : `( ${files.value.length} )`),
+  () => t('Send') + (files.value.length == 0 ? '' : `( ${files.value.length} )`),
 );
 
 const confirm = ref<(files?: Array<any>, text?: string) => void>();

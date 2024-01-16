@@ -23,9 +23,9 @@ export interface GlobalState {
     isOver?: boolean;
   };
   appInfo: AppInfo;
-  accelerator: {
-    main: string;
-  };
+  // accelerator: {
+  //   main: string;
+  // };
   globalShortcut: string;
   isAuthorized: boolean;
   token: any;
@@ -66,10 +66,10 @@ export const globalState: GlobalState = {
     isOver: undefined,
   },
   appInfo: getAppInfo(),
-  accelerator: {
-    main: 'CommandOrControl+D',
-  },
-  globalShortcut: 'CommandOrControl+D',
+  // accelerator: {
+  //   main: 'CommandOrControl+D',
+  // },
+  globalShortcut: env.defaultfetchMessageShortcuts,
   isAuthorized: false,
   token: store.get(TOKEN_KEY),
   tokenKey: TOKEN_KEY,

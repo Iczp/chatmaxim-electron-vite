@@ -86,6 +86,12 @@ export type EnvType = {
    * @type {(string | 'zh-CN' | 'en-US')}
    */
   defaultLanguage: string | 'zh-CN' | 'en-US';
+
+  /**
+   * default fetch message shortcuts: 
+   * @type {(string | 'zh-CN' | 'en-US')}
+   */
+  defaultfetchMessageShortcuts: string | 'CommandOrControl+D' | 'Alt+D';
 };
 
 export const env: EnvType = {
@@ -112,6 +118,8 @@ export const env: EnvType = {
   copyright: import.meta.env.VITE_APP_COPYRIGHT,
 
   defaultColorScheme: import.meta.env.VITE_APP_DEFAULT_COLOR_SCHEME,
-  
+
   defaultLanguage: import.meta.env.VITE_APP_DEFAULT_LANGUAGE,
+
+  defaultfetchMessageShortcuts: import.meta.env.VITE_APP_DEFAULT_FETCH_MESSAGE_SHORTCUTS,
 };

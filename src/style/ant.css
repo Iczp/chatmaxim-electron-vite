@@ -24,3 +24,9 @@
   user-select: none;
   -webkit-app-region: no-drag;
 }
+
+
+.ant-layout,
+.ant-layout .ant-layout-footer {
+  background-color: unset;
+}

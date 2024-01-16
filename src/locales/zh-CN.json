@@ -119,5 +119,13 @@
   "EmptyData": "没有了",
   "Home": "主页",
   "DividerEnd": "我是有底线的",
-  "JoinTime": "加入时间"
+  "JoinTime": "加入时间",
+  "Session Request": "好友请求",
+  "Agree": "同意",
+  "Disagree": "拒绝",
+  "HandleMessage": "意见",
+  "RequestMessage": "请求消息",
+  "HandleResult": "处理",
+  "Agreed": "已同意",
+  "Disagreed": "已拒绝"
 }

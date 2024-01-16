@@ -1,11 +1,7 @@
-/* generated using openapi-typescript-codegen -- do no edit */
-/* istanbul ignore file */
-/* tslint:disable */
-/* eslint-disable */
 
-import type { IczpNet_Chat_ChatObjects_Dtos_ChatObjectSimpleDto } from './IczpNet_Chat_ChatObjects_Dtos_ChatObjectSimpleDto';
+import { ChatObjectDto } from '.';
 
-export type IczpNet_Chat_SessionSections_SessionRequests_Dtos_SessionRequestDetailDto = {
+export type SessionRequestDetailDto = {
     id?: string;
     creationTime?: string;
     /**
@@ -16,7 +12,7 @@ export type IczpNet_Chat_SessionSections_SessionRequests_Dtos_SessionRequestDeta
      * 被请求者Id
      */
     destinationId?: number | null;
-    destination?: IczpNet_Chat_ChatObjects_Dtos_ChatObjectSimpleDto;
+    destination?: ChatObjectDto;
     /**
      * 是否处理过
      */
@@ -37,11 +33,11 @@ export type IczpNet_Chat_SessionSections_SessionRequests_Dtos_SessionRequestDeta
      * 过期时间
      */
     expirationTime?: string | null;
-    owner?: IczpNet_Chat_ChatObjects_Dtos_ChatObjectSimpleDto;
+    owner?: ChatObjectDto;
     /**
      * 处理消息
      */
-    handleMessage?: string | null;
+    handleMessage?: string ;
     /**
      * 处理时间
      */

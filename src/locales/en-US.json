@@ -119,5 +119,13 @@
   "EmptyData": "Empty Data",
   "Home": "Home",
   "DividerEnd": "Divider End",
-  "JoinTime": "Join Time"
+  "JoinTime": "Join Time",
+  "Session Request": "Session Request",
+  "Agree": "Agree",
+  "Disagree": "Disagree",
+  "HandleMessage": "Handle Message",
+  "RequestMessage": "Request Message",
+  "HandleResult": "HandleResult",
+  "Agreed": "Agreed",
+  "Disagreed": "Disagreed"
 }

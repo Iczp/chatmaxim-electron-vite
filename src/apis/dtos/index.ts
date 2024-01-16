@@ -45,3 +45,8 @@ export type { HtmlContentDto } from './message/HtmlContentDto';
 
 export type { BadgeDto } from './BadgeDto';
 export type { BadgeDetialDto } from './BadgeDetialDto';
+
+
+
+export type { SessionRequestGetListInput } from './SessionRequestGetListInput';
+export type { SessionRequestDetailDto } from './SessionRequestDetailDto';
