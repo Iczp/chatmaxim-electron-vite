@@ -4,6 +4,77 @@ import { useMembersList } from './commons/useMembersList';
 import { useI18n } from 'vue-i18n';
 import ChatObject from '../../components/ChatObject.vue';
 import Loading from '../../components/Loading.vue';
+
+import { OverlayScrollbarsComponent, useOverlayScrollbars } from 'overlayscrollbars-vue';
+import type { OverlayScrollbarsComponentRef } from 'overlayscrollbars-vue';
+
+import { useEventObserver } from './commons/useEventObserver';
+
+const contentHidden = ref(false);
+const elementHidden = ref(false);
+const overlayScrollbarsApplied = ref(true);
+const bodyOverlayScrollbarsApplied = ref<boolean | null>(null);
+const osRef = ref<OverlayScrollbarsComponentRef | null>(null);
+const [activeEvents, activateEvent] = useEventObserver();
+const [initBodyOverlayScrollbars, getBodyOverlayScrollbarsInstance] = useOverlayScrollbars({
+  defer: true,
+  events: {
+    initialized: () => {
+      bodyOverlayScrollbarsApplied.value = true;
+    },
+    destroyed: () => {
+      bodyOverlayScrollbarsApplied.value = false;
+    },
+  },
+  options: {
+    scrollbars: {
+      theme: 'os-theme-light',
+    },
+  },
+});
+
+const scrollContent = () => {
+  const osInstance = osRef?.value?.osInstance();
+
+  if (!osInstance) {
+    return;
+  }
+
+  const { overflowAmount } = osInstance.state();
+  const { scrollOffsetElement } = osInstance.elements();
+  const { scrollLeft, scrollTop } = scrollOffsetElement;
+
+  scrollOffsetElement.scrollTo({
+    behavior: 'smooth',
+    left: Math.round((overflowAmount.x - scrollLeft) / overflowAmount.x) * overflowAmount.x,
+    top: Math.round((overflowAmount.y - scrollTop) / overflowAmount.y) * overflowAmount.y,
+  });
+};
+const toggleContent = () => (contentHidden.value = !contentHidden.value);
+const toggleElement = () => (elementHidden.value = !elementHidden.value);
+
+const scroller = ref(null);
+const toggleBodyOverlayScrollbars = () => {
+  const bodyOsInstance = getBodyOverlayScrollbarsInstance();
+
+  if (bodyOsInstance && !bodyOsInstance.state().destroyed) {
+    bodyOsInstance.destroy();
+  } else {
+    initBodyOverlayScrollbars({
+      target: document.body,
+      cancel: {
+        body: false,
+      },
+    });
+  }
+};
+
+onMounted(() => {
+  console.log('scroller', scroller);
+
+  // initBodyOverlayScrollbars(document.body)
+});
+
 const { t } = useI18n();
 const props = defineProps<{ sessionUnitId: string }>();
 const selectable = ref(false);
@@ -56,44 +127,69 @@ const onSearch = () => {
         />
       </div>
 
-      <!-- <scroll-view @ps-y-reach-end="onReachEnd" @ps-y-reach-start="onReachStart"> -->
       <RecycleScroller
-        class="scroller"
-        :items="list"
-        :item-size="56"
-        key-field="id"
-        @scroll-start="onReachStart"
-        @scroll-end="onReachEnd"
-      >
-        <template #before>
-          <div>总数:{{ list.length }}/{{ totalCount }}</div>
-        </template>
-        <template v-if="isPending" #after><Loading /></template>
-        <template v-else-if="isEof" #after>{{ t('DividerEnd') }}</template>
-        <template v-slot="{ item }">
-          <div
-            :key="item.id"
-            class="data-item"
-            :class="{ checked: isChecked(item), disabled: isDisabled(item) }"
-            @click="toggleChecked(item)"
-          >
-            <chat-object :entity="item.owner" :size="44">
-              <!-- <template #title>title-left</template> -->
-              <!-- <template #title-right>title-right555</template> -->
-              <!-- <template #sub>sub-left555</template> -->
-              <!-- <template #footer>
+          ref="scroller"
+          class="scroller"
+          :items="list"
+          :item-size="56"
+          key-field="id"
+          @scroll-start="onReachStart"
+          @scroll-end="onReachEnd"
+        >
+          <template #before>
+            <div>总数:{{ list.length }}/{{ totalCount }}</div>
+          </template>
+          <template v-if="isPending" #after><Loading /></template>
+          <template v-else-if="isEof" #after>{{ t('DividerEnd') }}</template>
+          <template v-slot="{ item }">
+            <div
+              :key="item.id"
+              class="data-item"
+              :class="{ checked: isChecked(item), disabled: isDisabled(item) }"
+              @click="toggleChecked(item)"
+            >
+              <chat-object :entity="item.owner" :size="44">
+                <!-- <template #title>title-left</template> -->
+                <!-- <template #title-right>title-right555</template> -->
+                <!-- <template #sub>sub-left555</template> -->
+                <!-- <template #footer>
                 <a-button @click="addFriend(item)">添加/关注</a-button>
               </template> -->
-            </chat-object>
-            <a-checkbox
-              v-if="selectable"
-              :checked="isChecked(item)"
-              :disabled="isDisabled(item)"
-              class="check-box"
-            ></a-checkbox>
-          </div>
-        </template>
-      </RecycleScroller>
+              </chat-object>
+              <a-checkbox
+                v-if="selectable"
+                :checked="isChecked(item)"
+                :disabled="isDisabled(item)"
+                class="check-box"
+              ></a-checkbox>
+            </div>
+          </template>
+        </RecycleScroller>
+
+      <!-- <OverlayScrollbarsComponent
+        class="overlayscrollbars-vue"
+        ref="osRef"
+        :style="{ display: elementHidden ? 'none' : undefined }"
+        :options="{
+          scrollbars: {
+            theme: 'os-theme-light',
+          },
+        }"
+        :events="{
+          initialized: () => activateEvent('initialized'),
+          destroyed: () => activateEvent('destroyed'),
+          updated: () => activateEvent('updated'),
+          scroll: () => activateEvent('scroll'),
+        }"
+        defer
+      >
+        <div v-if="!contentHidden" class="logo">
+          <img alt="Vue logo" src="logo.svg" />
+        </div>
+        
+      </OverlayScrollbarsComponent> -->
+
+      <!-- <scroll-view @ps-y-reach-end="onReachEnd" @ps-y-reach-start="onReachStart"> -->
     </page-content>
   </page>
 </template>
@@ -119,30 +215,4 @@ const onSearch = () => {
   flex: 1;
 }
 
-/* 滚动槽 */
-::-webkit-scrollbar {
-  width: 10px;
-  height: 10px;
-  /* padding: 10px; */
-  transition: all 0.3s linear;
-  /* background: transparent; */
-}
-.scroller-container {
-}
-::-webkit-scrollbar-track {
-  border-radius: 5px;
-  background: rgba(238, 5, 5, 0.221);
-  -webkit-box-shadow: inset 0 0 5px rgba(0, 0, 0, 0.08);
-}
-/* 滚动条滑块 */
-::-webkit-scrollbar-thumb {
-  border-radius: 5px;
-  background: rgba(223, 213, 213, 0.546);
-  -webkit-box-shadow: inset 0 0 10px rgba(0, 0, 0, 0.2);
-  transition: all 0.3s linear;
-}
-
-:hover::-webkit-scrollbar-thumb {
-  background: rgba(255, 0, 0, 0.546);
-}
 </style>

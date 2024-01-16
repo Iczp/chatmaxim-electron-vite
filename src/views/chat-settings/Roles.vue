@@ -1,20 +1,105 @@
 <script setup lang="ts">
+import { ref } from 'vue';
 import { useI18n } from 'vue-i18n';
+import { useRoleList } from './commons/useRoleList';
+import RoleFromModal from './widget/RoleFormModal.vue';
 const { t } = useI18n();
 const props = defineProps<{ sessionUnitId: string }>();
+const formModal = ref<InstanceType<typeof RoleFromModal> | null>();
+const {
+  totalCount,
+  query,
+  isPending,
+  list,
+  isBof,
+  isEof,
+  fetchData,
+  fetchNext,
+  refresh,
+  onReachStart,
+  onReachEnd,
+  isChecked,
+  toggleChecked,
+  selectedList,
+  disabledList,
+  isDisabled,
+  maxSelectCount,
+  picker: pickerRef,
+  getSelectItems,
+} = useRoleList({
+  input: {
+    // id: props.sessionUnitId,
+    maxResultCount: 999,
+  },
+});
+
+const panes = ref<{ title: string; content: string; key: string; closable?: boolean }[]>([
+  { title: 'Tab 1', content: 'Content of Tab 1', key: '1' },
+  { title: 'Tab 2', content: 'Content of Tab 2', key: '2' },
+  { title: 'Tab 3', content: 'Content of Tab 3', key: '3', closable: false },
+]);
+
+const activeKey = ref(panes.value[0].key);
+
+const newTabIndex = ref(0);
+
+const add = () => {
+  activeKey.value = `newTab${++newTabIndex.value}`;
+  panes.value.push({ title: 'New Tab', content: 'Content of new Tab', key: activeKey.value });
+
+  formModal.value?.open({
+    entity: undefined,
+  });
+};
+
+const remove = (targetKey: string) => {
+  let lastIndex = 0;
+  panes.value.forEach((pane, i) => {
+    if (pane.key === targetKey) {
+      lastIndex = i - 1;
+    }
+  });
+  panes.value = panes.value.filter(pane => pane.key !== targetKey);
+  if (panes.value.length && activeKey.value === targetKey) {
+    if (lastIndex >= 0) {
+      activeKey.value = panes.value[lastIndex].key;
+    } else {
+      activeKey.value = panes.value[0].key;
+    }
+  }
+};
+
+const onEdit = (targetKey: string | MouseEvent, action: string) => {
+  if (action === 'add') {
+    add();
+  } else {
+    remove(targetKey as string);
+  }
+};
 </script>
 
 <template>
   <page>
     <page-title :title="t('Session Roles')" description="managermemt" />
-
+    <RoleFromModal ref="formModal" />
     <page-content>
-      <a-page-header title="Title" sub-title="This is a subtitle" />
-      <scroll-view>
-        <RouterLink to="/">{{ t('Home') }}</RouterLink>
-      </scroll-view>
+      <div>
+        <a-button type="text" @click="add">add</a-button>
+      </div>
+      <a-tabs v-model:activeKey="activeKey" size="small" @edit="onEdit">
+        <template #rightExtra>
+          <a-button type="text">Add</a-button>
+        </template>
+        <a-tab-pane v-for="item in list" :key="item.id" :tab="item.name" :closable="true">
+          <scroll-view>5555</scroll-view>
+        </a-tab-pane>
+      </a-tabs>
     </page-content>
   </page>
 </template>
 
-<style scoped></style>
+<style scoped>
+:deep(.page-content) {
+  margin-left: 20px;
+}
+</style>

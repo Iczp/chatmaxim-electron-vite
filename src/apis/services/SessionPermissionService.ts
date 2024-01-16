@@ -5,7 +5,7 @@
 import type { IczpNet_Chat_SessionSections_SessionPermissions_Dtos_SessionPermissionGrantDto } from '../models/IczpNet_Chat_SessionSections_SessionPermissions_Dtos_SessionPermissionGrantDto';
 import type { IczpNet_Chat_SessionSections_SessionPermissions_Dtos_SessionPermissionRoleGrantDto } from '../models/IczpNet_Chat_SessionSections_SessionPermissions_Dtos_SessionPermissionRoleGrantDto';
 import type { IczpNet_Chat_SessionSections_SessionPermissions_Dtos_SessionPermissionUnitGrantDto } from '../models/IczpNet_Chat_SessionSections_SessionPermissions_Dtos_SessionPermissionUnitGrantDto';
-import type { IczpNet_Chat_SessionSections_SessionPermissions_PermissionGrantValue } from '../models/IczpNet_Chat_SessionSections_SessionPermissions_PermissionGrantValue';
+import type { PermissionGrantValue } from '../models/PermissionGrantValue';
 
 import type { CancelablePromise } from '../core/CancelablePromise';
 import { OpenAPI } from '../core/OpenAPI';
@@ -28,7 +28,7 @@ export class SessionPermissionService {
      */
     sessionRoleId: string;
   }): CancelablePromise<
-    Record<string, IczpNet_Chat_SessionSections_SessionPermissions_PermissionGrantValue>
+    Record<string, PermissionGrantValue>
   > {
     return __request(OpenAPI, {
       method: 'GET',
@@ -88,7 +88,7 @@ export class SessionPermissionService {
     /**
      * 授予值
      */
-    requestBody?: IczpNet_Chat_SessionSections_SessionPermissions_PermissionGrantValue;
+    requestBody?: PermissionGrantValue;
   }): CancelablePromise<IczpNet_Chat_SessionSections_SessionPermissions_Dtos_SessionPermissionRoleGrantDto> {
     return __request(OpenAPI, {
       method: 'POST',
@@ -123,7 +123,7 @@ export class SessionPermissionService {
     /**
      * 授予值
      */
-    requestBody?: IczpNet_Chat_SessionSections_SessionPermissions_PermissionGrantValue;
+    requestBody?: PermissionGrantValue;
   }): CancelablePromise<IczpNet_Chat_SessionSections_SessionPermissions_Dtos_SessionPermissionUnitGrantDto> {
     return __request(OpenAPI, {
       method: 'POST',

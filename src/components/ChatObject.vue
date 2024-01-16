@@ -5,7 +5,7 @@ import Avatar from '../components/Avatar.vue';
 import { ChatObjectDto } from '../apis/dtos';
 const slots = useSlots();
 const attrs = useAttrs();
-console.log('slots', slots);
+// console.log('slots', slots);
 // console.log('attrs', attrs);
 // const icon = ref(attrs['icon'] || false);
 const props = defineProps<{

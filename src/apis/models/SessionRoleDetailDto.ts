@@ -5,7 +5,7 @@
 
 import type { PermissionGrantValue } from './PermissionGrantValue';
 
-export type IczpNet_Chat_SessionSections_SessionRoles_Dtos_SessionRolePermissionDto = {
+export type SessionRoleDetailDto = {
     id?: string;
     sessionId?: string | null;
     name?: string | null;

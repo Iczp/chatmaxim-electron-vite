@@ -127,5 +127,8 @@
   "RequestMessage": "Request Message",
   "HandleResult": "HandleResult",
   "Agreed": "Agreed",
-  "Disagreed": "Disagreed"
+  "Disagreed": "Disagreed",
+  "RoleName": "Role Name",
+  "RoleDescription": "Role Description",
+  "RoleAdd": "Add Role"
 }

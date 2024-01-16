@@ -3,11 +3,11 @@
 /* tslint:disable */
 /* eslint-disable */
 
-import type { IczpNet_Chat_SessionSections_SessionPermissions_PermissionGrantValue } from './IczpNet_Chat_SessionSections_SessionPermissions_PermissionGrantValue';
+import type { PermissionGrantValue } from './PermissionGrantValue';
 
 export type IczpNet_Chat_SessionSections_SessionRoles_Dtos_SessionRoleCreateBySessionUnitInput = {
     name?: string | null;
     description?: string | null;
     isDefault?: boolean;
-    permissionGrant?: Record<string, IczpNet_Chat_SessionSections_SessionPermissions_PermissionGrantValue> | null;
+    permissionGrant?: Record<string, PermissionGrantValue> | null;
 };

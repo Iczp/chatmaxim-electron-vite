@@ -3,7 +3,7 @@
 /* tslint:disable */
 /* eslint-disable */
 import type { IczpNet_Chat_SessionSections_SessionRoles_Dtos_SessionRoleCreateBySessionUnitInput } from '../models/IczpNet_Chat_SessionSections_SessionRoles_Dtos_SessionRoleCreateBySessionUnitInput';
-import type { IczpNet_Chat_SessionSections_SessionRoles_Dtos_SessionRoleDetailDto } from '../models/IczpNet_Chat_SessionSections_SessionRoles_Dtos_SessionRoleDetailDto';
+import type { SessionRoleDetailDto } from '../models/SessionRoleDetailDto';
 // import type { IczpNet_Chat_SessionSections_SessionRoles_Dtos_SessionRoleDto_IczpNet_Chat_Application_Contracts_Version_0_1_1_0_Culture_neutral_PublicKeyToken_null_ } from '../models/IczpNet_Chat_SessionSections_SessionRoles_Dtos_SessionRoleDto_IczpNet_Chat_Application_Contracts_Version_0_1_1_0_Culture_neutral_PublicKeyToken_null_';
 import type { IczpNet_Chat_SessionSections_SessionRoles_Dtos_SessionRoleUpdateInput } from '../models/IczpNet_Chat_SessionSections_SessionRoles_Dtos_SessionRoleUpdateInput';
 import type { Volo_Abp_Application_Dtos_PagedResultDto_1 } from '../models/Volo_Abp_Application_Dtos_PagedResultDto_1';
@@ -24,7 +24,7 @@ requestBody,
 }: {
 sessionUnitId?: string,
 requestBody?: IczpNet_Chat_SessionSections_SessionRoles_Dtos_SessionRoleCreateBySessionUnitInput,
-}): CancelablePromise<IczpNet_Chat_SessionSections_SessionRoles_Dtos_SessionRoleDetailDto> {
+}): CancelablePromise<SessionRoleDetailDto> {
         return __request(OpenAPI, {
             method: 'POST',
             url: '/api/chat/session-role-by-session-unit',
@@ -135,7 +135,7 @@ sessionUnitId,
 }: {
 id: string,
 sessionUnitId?: string,
-}): CancelablePromise<IczpNet_Chat_SessionSections_SessionRoles_Dtos_SessionRoleDetailDto> {
+}): CancelablePromise<SessionRoleDetailDto> {
         return __request(OpenAPI, {
             method: 'GET',
             url: '/api/chat/session-role-by-session-unit/{id}',
@@ -161,7 +161,7 @@ idList,
  * 主键Id[多个]
  */
 idList?: Array<string>,
-}): CancelablePromise<Array<IczpNet_Chat_SessionSections_SessionRoles_Dtos_SessionRoleDetailDto>> {
+}): CancelablePromise<Array<SessionRoleDetailDto>> {
         return __request(OpenAPI, {
             method: 'GET',
             url: '/api/chat/session-role-by-session-unit/many',
@@ -184,7 +184,7 @@ requestBody,
 sessionUnitId: string,
 id: string,
 requestBody?: IczpNet_Chat_SessionSections_SessionRoles_Dtos_SessionRoleUpdateInput,
-}): CancelablePromise<IczpNet_Chat_SessionSections_SessionRoles_Dtos_SessionRoleDetailDto> {
+}): CancelablePromise<SessionRoleDetailDto> {
         return __request(OpenAPI, {
             method: 'POST',
             url: '/api/chat/session-role-by-session-unit/{id}/update/{sessionUnitId}',

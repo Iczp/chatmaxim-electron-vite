@@ -3,7 +3,7 @@
 /* tslint:disable */
 /* eslint-disable */
 
-export type IczpNet_Chat_SessionSections_SessionPermissions_PermissionGrantValue = {
+export type PermissionGrantValue = {
     /**
      * 是否启用
      */

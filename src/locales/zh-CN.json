@@ -127,5 +127,8 @@
   "RequestMessage": "请求消息",
   "HandleResult": "处理",
   "Agreed": "已同意",
-  "Disagreed": "已拒绝"
+  "Disagreed": "已拒绝",
+  "RoleName": "角色名称",
+  "RoleDescription": "说明",
+  "RoleAdd": "添加角色"
 }
