@@ -12,6 +12,10 @@ import { useContacts } from '../commons/useContacts';
 import ChatObject from '../components/ChatObject.vue';
 import Loading from '../components/Loading.vue';
 import { useI18n } from 'vue-i18n';
+import { usePayload } from '../commons/usePayload';
+import { env } from '../env';
+import { onActivated } from 'vue';
+
 const { t } = useI18n();
 const route = useRoute();
 
@@ -22,6 +26,16 @@ const props = defineProps<{
   chatObjectId: number | string;
   ticks?: number;
 }>();
+
+const payload = usePayload<any>();
+
+watch(
+  payload,
+  v => {
+    console.log('windowStore payload', v);
+  },
+  { immediate: true },
+);
 
 const {
   isChecked,
@@ -34,6 +48,8 @@ const {
   isEof,
   fetchData,
   fetchNext,
+  onReachStart,
+  onReachEnd,
   query,
   totalCount,
   maxSelectCount,
@@ -47,29 +63,20 @@ const {
 watch(
   () => props.chatObjectId,
   v => {
-    query.value.ownerId = Number(v);
-    // list.value = [];
+    console.warn('#watch props.chatObjectId', v);
+    query.value = {
+      ownerId: Number(v),
+    };
     fetchNext();
+    // if (list.value.length < Number(query.value.maxResultCount || 10)) {
+    //   fetchNext(query.value);
+    // }
   },
 );
 
 const isItemDisabled = (item: ContactsDto) => !item.setting?.isInputEnabled || isDisabled(item);
-const remoteStore = useRemoteStore<ObjectPickerPayLoad>();
-watch(
-  () => remoteStore.value,
-  v => {
-    picker.value = v;
-  },
-);
 
 const isLoading = ref(false);
-
-const searchResult = reactive<ResultValue<ChatObjectDto>>({
-  isPosting: false,
-  isEof: false,
-  totalCount: 0,
-  items: [],
-});
 
 // .then(res => {
 //   console.log('useFetchValue', res);
@@ -97,36 +104,7 @@ const onClick = () => {
 
 const keyword = ref('');
 
-const onSearch = () => {
-  ChatObjectService.getApiChatChatObject({
-    objectType: objectType.value,
-    keyword: keyword.value,
-    maxResultCount: 20,
-  }).then(res => {
-    searchResult.totalCount = res.totalCount!;
-    searchResult.items = res.items!;
-  });
-};
-
-const addFriend = (item: ChatObjectDto) => {
-  if (item.objectType == ChatObjectTypeEnums.Official) {
-    OfficialService.postApiChatOfficialSubscribe({
-      ownerId: 13,
-      destinationId: item.id!,
-    }).then(res => {
-      console.log(res);
-    });
-    return;
-  }
-
-  SessionRequestService.postApiChatSessionRequest({
-    ownerId: 13,
-    destinationId: item.id!,
-    requestMessage: 'add from Election App.',
-  }).then(res => {
-    console.log(res);
-  });
-};
+const onSearch = () => {};
 
 const objectTypes = ref(
   Object.keys(ChatObjectTypeEnums)
@@ -141,8 +119,6 @@ const objectTypes = ref(
 );
 
 const objectType = ref<ChatObjectTypeEnums>();
-
-const activeKey = ref('all');
 
 const onCancle = (): void => {
   const { event } = route.query;
@@ -163,26 +139,6 @@ const onConfirm = (): void => {
   console.log('pickerResult', pickerResult);
   sendResult(event as string, pickerResult);
 };
-
-const onReachStart = (event: CustomEvent) => {
-  console.info('onReachStart');
-};
-const onReachEnd = (event: CustomEvent) => {
-  if (isPending.value) {
-    console.info('isPending', isPending);
-    return;
-  }
-  if (isEof.value) {
-    console.info('isEof', isEof);
-    return;
-  }
-
-  fetchNext();
-};
-
-onMounted(() => {
-  fetchNext();
-});
 </script>
 
 <template>
@@ -218,21 +174,18 @@ onMounted(() => {
             :class="{ checked: isChecked(item), disabled: isDisabled(item) }"
             @click="toggleChecked(item)"
           >
-          <a-checkbox
-    
-    :checked="isChecked(item)"
-    :disabled="isDisabled(item)"
-    class="check-box"
-  ></a-checkbox>
+            <a-checkbox
+              :checked="isChecked(item)"
+              :disabled="isDisabled(item)"
+              class="check-box"
+            ></a-checkbox>
             <chat-object :entity="item.destination" :size="44">
-              <!-- <template #title>title-left</template> -->
-              <!-- <template #title-right>title-right555</template> -->
-              <!-- <template #sub>{{ t('JoinTime') }}:{{ item.creationTime }}</template> -->
+              <!-- <template v-if="env.isDev" #title-right>{{ item?.destination?.id }}</template> -->
+              <template v-if="env.isDev" #sub>ownerId:{{ query.ownerId }}</template>
               <!-- <template #footer>
                 <a-button @click="addFriend(item)">添加/关注</a-button>
               </template> -->
             </chat-object>
-           
           </div>
         </template>
       </RecycleScroller>

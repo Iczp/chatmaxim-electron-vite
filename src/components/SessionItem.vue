@@ -83,7 +83,8 @@ const ondragstart = (event: DragEvent) => {
   >
     <template #title>
       <div class="object-name" :title="destinationName!">
-        <span class="text-ellipsis">{{ destinationName }} - {{ entity?.ownerId }}</span>
+        <span v-if="env.isDev">{{ entity?.ownerId }} -</span>
+        <span class="text-ellipsis">{{ destinationName }}</span>
         <a-tag v-if="objectType == ChatObjectTypeEnums.Robot" color="blue" class="object-type-tag">
           机器人
         </a-tag>

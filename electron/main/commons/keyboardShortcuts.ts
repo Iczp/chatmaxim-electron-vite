@@ -1,4 +1,4 @@
-import { app, globalShortcut } from 'electron';
+import { BrowserWindow, app, globalShortcut } from 'electron';
 import { windowManager } from './windowManager';
 import { globalState, isAuthorized } from '../global';
 import { WindowParams } from '../ipc-types';
@@ -50,8 +50,12 @@ export const messageShortcutHandle = () => {
       setTrayHandle.handle(null, trayPayload);
     } else {
       if (win.isVisible() && win.isFocused()) {
-        win.hide();
-        windowManager.getSeparatedChatWindows().map(([name, win]) => win.hide());
+        const hideWindows = (win: BrowserWindow) => {
+          win.hide();
+          win.getChildWindows().map(x => hideWindows(x));
+        };
+        hideWindows(win);
+        windowManager.getSeparatedChatWindows().map(([name, win]) => hideWindows(win));
       } else {
         windowManager.getSeparatedChatWindows().map(([name, win]) => win.show());
         win.show();

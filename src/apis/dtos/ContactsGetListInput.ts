@@ -1,3 +1,4 @@
+import { ChatObjectTypeEnums } from '../enums';
 import { GetListInput } from './GetListInput';
 
 export interface ContactsGetListInput extends GetListInput {
@@ -13,4 +14,11 @@ export interface ContactsGetListInput extends GetListInput {
    * 联系人标签
    */
   tagId?: string;
+
+  /**
+   * 聊天对象类型
+   * @type {Array<ChatObjectTypeEnums>}
+   * @memberof ContactsGetListInput
+   */
+  objectTypes?: Array<ChatObjectTypeEnums>;
 }

@@ -1,5 +1,11 @@
 export type EnvType = {
   /**
+   * 是否开发
+   *
+   * @type {boolean}
+   */
+  isDev: boolean;
+  /**
    *
    *
    * @type {string}
@@ -88,13 +94,15 @@ export type EnvType = {
   defaultLanguage: string | 'zh-CN' | 'en-US';
 
   /**
-   * default fetch message shortcuts: 
+   * default fetch message shortcuts:
    * @type {(string | 'zh-CN' | 'en-US')}
    */
   defaultfetchMessageShortcuts: string | 'CommandOrControl+D' | 'Alt+D';
 };
 
 export const env: EnvType = {
+  isDev: !import.meta.env.PROD,
+  
   app_id: import.meta.env.VITE_APP_ID,
 
   app_name: import.meta.env.VITE_APP_NAME,

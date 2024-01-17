@@ -1,3 +1,4 @@
+import { ChatObjectTypeEnums } from '../apis/enums';
 import { WindowParams } from '../ipc-types';
 import { PickerInput, PickerResult, openChildWindow, sendPickerResult } from './openChildWindow';
 
@@ -5,6 +6,7 @@ export type ObjectPickerResult = PickerResult & PickerInput;
 
 export type ObjectPickerPayLoad = PickerInput & {
   chatObjectId: number | string;
+  objectTypes?: Array<ChatObjectTypeEnums>;
 };
 
 export const objectPicker = ({
@@ -12,7 +14,7 @@ export const objectPicker = ({
   payload,
   window,
 }: {
-  t:any,
+  t: any;
   payload: ObjectPickerPayLoad;
   window?: WindowParams;
 }): Promise<ObjectPickerResult> => {

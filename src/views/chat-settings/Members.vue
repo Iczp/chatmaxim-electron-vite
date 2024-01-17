@@ -4,6 +4,15 @@ import { useMembersList } from './commons/useMembersList';
 import { useI18n } from 'vue-i18n';
 import ChatObject from '../../components/ChatObject.vue';
 import Loading from '../../components/Loading.vue';
+
+import {
+  PlusOutlined,
+  PlusCircleOutlined,
+  CloseCircleOutlined,
+  CloseOutlined,
+  EditOutlined,
+  MoreOutlined,
+} from '@ant-design/icons-vue';
 // import {RecycleScroller} from 'vue-virtual-scroller/RecycleScroller'
 const { t } = useI18n();
 const props = defineProps<{ sessionUnitId: string }>();
@@ -112,9 +121,14 @@ const onSearch = () => {
               <!-- <template #title>title-left</template> -->
               <!-- <template #title-right>title-right555</template> -->
               <template #sub>{{ t('JoinTime') }}:{{ item.creationTime }}</template>
-              <!-- <template #footer>
-                <a-button @click="addFriend(item)">添加/关注</a-button>
-              </template> -->
+              <template #footer>
+                <a-space>
+                  <!-- <a-button type="text"><PlusOutlined /></a-button>
+                  <a-button type="text"><EditOutlined /></a-button>
+                  <a-button type="text"><CloseOutlined /></a-button> -->
+                  <a-button class="btn-item" type="text"><MoreOutlined /></a-button>
+                </a-space>
+              </template>
             </chat-object>
             <a-checkbox
               v-if="selectable"
@@ -130,9 +144,19 @@ const onSearch = () => {
 </template>
 
 <style scoped>
-
+.btn-item {
+  --btn-size: 32px;
+  width: var(--btn-size);
+  height: var(--btn-size);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 12px;
+  border-radius: 0;
+  outline: none;
+}
 .data-item {
-  padding: 0 20px;
+  padding: 0 12px;
 }
 .search-section {
   display: flex;
@@ -150,5 +174,4 @@ const onSearch = () => {
 .chat-object {
   flex: 1;
 }
-
 </style>
