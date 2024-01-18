@@ -5,6 +5,7 @@ export { ReminderTypeEnums } from './ReminderTypeEnums';
 export { GenderEnums } from './GenderEnums';
 export { ServiceStatusEnums } from './ServiceStatusEnums';
 export { JoinWayEnums } from './JoinWayEnums';
+export { RoomTypeEnums } from './RoomTypeEnums';
 
 
 

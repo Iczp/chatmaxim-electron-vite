@@ -9,7 +9,7 @@ defineProps<{
 
 <template>
   <div class="rollback">
-    <text>{{ name }}</text>
+    <text>'{{ name }}' </text>
     <text>[{{ t('Rollback a message') }}]</text>
   </div>
 </template>

@@ -88,6 +88,8 @@ export const forwardMessage = ({
   objectPicker({
     t,
     payload: {
+      title: t('Forward'),
+      confirmText: t('Confirm Forward'),
       chatObjectId,
       isMultiple: true,
       selectedItems: [],

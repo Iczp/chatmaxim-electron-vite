@@ -101,7 +101,7 @@ export type { IczpNet_Chat_OpenedRecorders_Dtos_OpenedRecorderDto } from './mode
 export type { IczpNet_Chat_Robots_Dtos_RobotCreateInput } from './models/IczpNet_Chat_Robots_Dtos_RobotCreateInput';
 export { IczpNet_Chat_Robots_Dtos_RobotDto } from './models/IczpNet_Chat_Robots_Dtos_RobotDto';
 export type { IczpNet_Chat_Robots_Dtos_RobotUpdateInput } from './models/IczpNet_Chat_Robots_Dtos_RobotUpdateInput';
-export { IczpNet_Chat_RoomSections_Rooms_Dtos_RoomCreateInput } from './models/IczpNet_Chat_RoomSections_Rooms_Dtos_RoomCreateInput';
+export type { RoomCreateInput } from './models/RoomCreateInput';
 export type { IczpNet_Chat_RoomSections_Rooms_InviteInput } from './models/IczpNet_Chat_RoomSections_Rooms_InviteInput';
 export type { IczpNet_Chat_SessionSections_SessionOrganizations_SessionOrganizationInfo } from './models/IczpNet_Chat_SessionSections_SessionOrganizations_SessionOrganizationInfo';
 export type { IczpNet_Chat_SessionSections_SessionOrganiztions_Dtos_SessionOrganizationCreateBySessionUnitInput } from './models/IczpNet_Chat_SessionSections_SessionOrganiztions_Dtos_SessionOrganizationCreateBySessionUnitInput';
@@ -167,7 +167,6 @@ export type { IczpNet_Chat_Words_Dtos_WordDetailDto } from './models/IczpNet_Cha
 export type { IczpNet_Chat_Words_Dtos_WordDto } from './models/IczpNet_Chat_Words_Dtos_WordDto';
 export type { IczpNet_Chat_Words_Dtos_WordUpdateInput } from './models/IczpNet_Chat_Words_Dtos_WordUpdateInput';
 export type { Volo_Abp_Application_Dtos_ListResultDto_1 } from './models/Volo_Abp_Application_Dtos_ListResultDto_1';
-
 
 export type { Volo_Abp_AspNetCore_Mvc_ApplicationConfigurations_ApplicationAuthConfigurationDto } from './models/Volo_Abp_AspNetCore_Mvc_ApplicationConfigurations_ApplicationAuthConfigurationDto';
 export type { Volo_Abp_AspNetCore_Mvc_ApplicationConfigurations_ApplicationConfigurationDto } from './models/Volo_Abp_AspNetCore_Mvc_ApplicationConfigurations_ApplicationConfigurationDto';

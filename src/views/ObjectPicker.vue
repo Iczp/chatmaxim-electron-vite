@@ -12,17 +12,21 @@ import Loading from '../components/Loading.vue';
 import { useI18n } from 'vue-i18n';
 import { usePayload } from '../commons/usePayload';
 import { env } from '../env';
+import EmptyData from '../components/EmptyData.vue';
+import { message } from 'ant-design-vue';
 
 const { t } = useI18n();
 const route = useRoute();
-
-const title = useTitle((route.query.title as string) ?? t('Forward'));
 
 const props = defineProps<{
   title?: string;
   chatObjectId: number | string;
   ticks?: number;
 }>();
+
+const payload = usePayload<ObjectPickerPayLoad>();
+
+const title = useTitle((payload.value?.title as string) ?? t('PleasePick'));
 
 const {
   isChecked,
@@ -44,10 +48,13 @@ const {
   picker,
   getSelectItems,
 } = useContacts({
-  input: { ownerId: Number(props.chatObjectId!), maxResultCount: 40 },
+  input: {
+    ownerId: Number(props.chatObjectId!),
+    objectTypes: payload.value?.objectTypes,
+    maxResultCount: 40,
+  },
 });
 
-const payload = usePayload<ObjectPickerPayLoad>();
 watch(
   payload,
   v => {
@@ -57,8 +64,9 @@ watch(
       objectTypes: payload.value?.objectTypes,
     };
     picker.value = v;
+    title.value = v?.title;
   },
-  { immediate: false },
+  { immediate: true },
 );
 
 watch(
@@ -136,6 +144,12 @@ const onCancle = (): void => {
 const onConfirm = (): void => {
   const { event } = route.query;
   console.log('router', route);
+  const selectedItems = getSelectItems();
+  const minCount = picker.value?.minCount;
+  if (minCount && selectedItems.length < minCount) {
+    message.error({ content: t('SelectLeastItems', [minCount]) });
+    return;
+  }
   const pickerResult = {
     success: true,
     message: 'ok',
@@ -159,7 +173,10 @@ const onConfirm = (): void => {
           @search="onSearch"
         />
       </div>
+
+      <EmptyData v-if="isEof && !isPending && list.length == 0" />
       <RecycleScroller
+        v-else
         class="scroller"
         :items="list"
         :item-size="56"
@@ -203,7 +220,7 @@ const onConfirm = (): void => {
       <a-space size="large">
         <a-button type="default" @click="onCancle">{{ t('Cancel') }}</a-button>
         <a-button type="primary" @click="onConfirm" :disabled="selectedList.length == 0">
-          {{ t('Confirm Forward') }} ({{ selectedList.length }})
+          {{ payload?.confirmText }} ({{ selectedList.length }})
         </a-button>
       </a-space>
     </page-footer>

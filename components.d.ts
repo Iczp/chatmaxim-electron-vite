@@ -53,6 +53,7 @@ declare module 'vue' {
     FileItem: typeof import('./src/components/FileItem.vue')['default']
     Icon: typeof import('./src/components/Icon.vue')['default']
     Icons: typeof import('./src/components/Icons.vue')['default']
+    Icons1: typeof import('./src/components/Icons1.vue')['default']
     LabelBox: typeof import('./src/components/LabelBox.vue')['default']
     LabelGroup: typeof import('./src/components/LabelGroup.vue')['default']
     LayoutItem: typeof import('./src/components/LayoutItem.vue')['default']

@@ -130,5 +130,10 @@
   "Disagreed": "已拒绝",
   "RoleName": "角色名称",
   "RoleDescription": "说明",
-  "RoleAdd": "添加角色"
+  "RoleAdd": "添加角色",
+  "CreateRoom": "创建群聊",
+  "PleasePick": "请选择",
+  "SelectLeastItems": "至少选择 {0} 项",
+  "RoomCreating": "创建群聊\"{0}\"...",
+  "CreateSuccessful": "创建成功"
 }

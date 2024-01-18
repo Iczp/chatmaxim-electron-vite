@@ -130,5 +130,11 @@
   "Disagreed": "Disagreed",
   "RoleName": "Role Name",
   "RoleDescription": "Role Description",
-  "RoleAdd": "Add Role"
+  "RoleAdd": "Add Role",
+  "CreateRoom": "Create Room",
+  "PleasePick": "Please Pick",
+  "SelectLeastItems": "Select at least {0} items",
+  "RoomCreating": "Room \"{0}\" Creating...",
+  "RoomCreateSuccessful": "",
+  "CreateSuccessful": "Create Successful"
 }

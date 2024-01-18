@@ -83,6 +83,9 @@ import SmartToy from '../svgs/smart_toy_black_24dp.svg';
 import Services from '../svgs/medical_services_black_24dp.svg';
 import ShoppingBag from '../svgs/shopping_bag_black_24dp.svg';
 
+import Plus from '../svgs/add_black_24dp.svg';
+import Remove from '../svgs/remove_black_24dp.svg';
+
 export {
   Alarm,
   AlarmOff,
@@ -157,4 +160,6 @@ export {
   SmartToy,
   Services,
   ShoppingBag,
+  Plus,
+  Remove,
 };

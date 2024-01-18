@@ -11,6 +11,8 @@ import { mapToSessionItemDto, navToChat as navToChatX } from '../commons/utils';
 import { showContextMenuForSession } from '../commons/contextmenu';
 import { openChildWindow } from '../ipc/openChildWindow';
 import { useI18n } from 'vue-i18n';
+import { Plus } from '../icons';
+import { createRoom } from '../commons/createRoom';
 const { t } = useI18n();
 const props = defineProps<{
   chatObjectId: number | undefined;
@@ -299,6 +301,15 @@ const footerObserver = ref<HTMLElement | null>();
 // onUnmounted(() => {
 //   intersectionObserver.unobserve(footerObserver.value!);
 // });
+
+const onPlus = () => {
+  createRoom({
+    t,
+    title: t('CreateRoom'),
+    chatObjectId: props.chatObjectId!,
+  });
+  console.log('onPlus');
+};
 </script>
 
 <template>
@@ -306,14 +317,26 @@ const footerObserver = ref<HTMLElement | null>();
     <aside class="nav-side">
       <div class="search-bar">
         <a-space direction="vertical">
-          <a-input-search
+          <a-input
+            v-model:value="keyword"
+            :bordered="true"
+            :allowClear="true"
+            :placeholder="`${t('Search')}:${record.minMessageId}`"
+            style="width: 100%"
+          >
+            <template #addonAfter>
+              <div class="plus-label"><Plus @click="onPlus" class="svg-icon cursor-pointer" /></div>
+            </template>
+          </a-input>
+
+          <!-- <a-input-search
             :bordered="true"
             :allowClear="true"
             v-model:value="keyword"
             :placeholder="`${t('Search')}:${record.minMessageId}`"
             style="width: 100%"
             @search="onSearch"
-          />
+          /> -->
         </a-space>
       </div>
       <!-- <scroll-view v-if="keyword.length != 0">
@@ -403,9 +426,18 @@ const footerObserver = ref<HTMLElement | null>();
   flex-shrink: 0;
   justify-content: center;
   align-items: center;
+
   /* width: 100%; */
 }
-。session-scroll-view {
+.search-bar:deep(.ant-input-group-addon){
+  /* width: 32px; */
+  padding: 0;
+}
+.plus-label {
+  /* color: var(--color); */
+  width: 32px;
+}
+.session-scroll-view {
   display: flex;
   flex: 1;
 }

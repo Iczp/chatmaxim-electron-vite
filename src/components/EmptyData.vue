@@ -1,6 +1,8 @@
 <script setup lang="ts">
 import { SyncOutlined, LoadingOutlined } from '@ant-design/icons-vue';
 import { reactive } from 'vue';
+import { useI18n } from 'vue-i18n';
+const { t } = useI18n();
 const props = defineProps<{
   height?: number;
   text?: string;
@@ -13,7 +15,7 @@ const style = reactive({
 <template>
   <div class="empty-data" :style="style">
     <slot>
-      <span v-if="text" class="empty-text">{{ text }}</span>
+      <span class="empty-text">{{ text || t('EmptyData') }}</span>
     </slot>
   </div>
 </template>

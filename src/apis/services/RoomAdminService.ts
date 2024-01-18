@@ -3,7 +3,7 @@
 /* tslint:disable */
 /* eslint-disable */
 import type { IczpNet_Chat_ChatObjects_Dtos_ChatObjectDto } from '../models/IczpNet_Chat_ChatObjects_Dtos_ChatObjectDto';
-import type { IczpNet_Chat_RoomSections_Rooms_Dtos_RoomCreateInput } from '../models/IczpNet_Chat_RoomSections_Rooms_Dtos_RoomCreateInput';
+import type { RoomCreateInput } from '../models/RoomCreateInput';
 import type { IczpNet_Chat_RoomSections_Rooms_InviteInput } from '../models/IczpNet_Chat_RoomSections_Rooms_InviteInput';
 import type { IczpNet_Chat_SessionSections_SessionUnits_SessionUnitSenderInfo } from '../models/IczpNet_Chat_SessionSections_SessionUnits_SessionUnitSenderInfo';
 // import type { IczpNet_Chat_SessionUnits_Dtos_SessionUnitDto_IczpNet_Chat_Application_Contracts_Version_0_1_1_0_Culture_neutral_PublicKeyToken_null_ } from '../models/IczpNet_Chat_SessionUnits_Dtos_SessionUnitDto_IczpNet_Chat_Application_Contracts_Version_0_1_1_0_Culture_neutral_PublicKeyToken_null_';
@@ -22,7 +22,7 @@ export class RoomAdminService {
     public static postApiChatRoomAdmin({
 requestBody,
 }: {
-requestBody?: IczpNet_Chat_RoomSections_Rooms_Dtos_RoomCreateInput,
+requestBody?: RoomCreateInput,
 }): CancelablePromise<IczpNet_Chat_ChatObjects_Dtos_ChatObjectDto> {
         return __request(OpenAPI, {
             method: 'POST',
