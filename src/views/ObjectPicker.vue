@@ -1,20 +1,17 @@
 <script setup lang="ts">
-import { onMounted, reactive, ref, watch } from 'vue';
+import { ref, watch } from 'vue';
 import { generateTickect } from '../apis/websockets';
-import { ChatObjectDto, ContactsDto, ResultValue } from '../apis/dtos';
-import { ChatObjectService, OfficialService, SessionRequestService } from '../apis';
+import { ContactsDto } from '../apis/dtos';
 import { ChatObjectTypeEnumText, ChatObjectTypeEnums } from '../apis/enums';
 import { useTitle } from '@vueuse/core';
 import { ObjectPickerPayLoad, sendResult } from '../ipc/objectPicker';
 import { onBeforeRouteLeave, onBeforeRouteUpdate, useRoute } from 'vue-router';
-import { useRemoteStore } from '../commons/useRemoteStore';
 import { useContacts } from '../commons/useContacts';
 import ChatObject from '../components/ChatObject.vue';
 import Loading from '../components/Loading.vue';
 import { useI18n } from 'vue-i18n';
 import { usePayload } from '../commons/usePayload';
 import { env } from '../env';
-import { onActivated } from 'vue';
 
 const { t } = useI18n();
 const route = useRoute();
@@ -26,16 +23,6 @@ const props = defineProps<{
   chatObjectId: number | string;
   ticks?: number;
 }>();
-
-const payload = usePayload<any>();
-
-watch(
-  payload,
-  v => {
-    console.log('windowStore payload', v);
-  },
-  { immediate: true },
-);
 
 const {
   isChecked,
@@ -60,18 +47,34 @@ const {
   input: { ownerId: Number(props.chatObjectId!) },
 });
 
+const payload = usePayload<ObjectPickerPayLoad>();
+watch(
+  payload,
+  v => {
+    console.log('windowStore payload', v);
+    query.value = {
+      ownerId: Number(props.chatObjectId),
+      objectTypes: payload.value?.objectTypes,
+    };
+    picker.value = v;
+  },
+  { immediate: false },
+);
+
 watch(
   () => props.chatObjectId,
   v => {
     console.warn('#watch props.chatObjectId', v);
     query.value = {
-      ownerId: Number(v),
+      skipCount: 0,
+      ownerId: Number(props.chatObjectId),
+      objectTypes: payload.value?.objectTypes,
     };
-    fetchNext();
-    // if (list.value.length < Number(query.value.maxResultCount || 10)) {
-    //   fetchNext(query.value);
-    // }
+    if (list.value.length < Number(query.value.maxResultCount || 10)) {
+      // fetchNext(query.value);
+    }
   },
+  { immediate: true },
 );
 
 const isItemDisabled = (item: ContactsDto) => !item.setting?.isInputEnabled || isDisabled(item);

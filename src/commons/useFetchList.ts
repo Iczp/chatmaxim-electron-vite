@@ -46,8 +46,8 @@ export const useFetchList = <TInput extends GetListInput, TDto extends IdDto>({
   const isPending = computed(() => currentCache.value?.isPending);
   const isBof = computed(() => currentCache.value?.isBof);
   const isEof = computed(() => currentCache.value?.isEof);
-  //   const list = computed(() => currentCache.value?.items || []);
-  const list = ref<TDto[]>([]);
+  const list = computed(() => currentCache.value?.items || []);
+  // const list = ref<TDto[]>([]);
 
   const query = ref<TInput>(input);
 
@@ -71,22 +71,26 @@ export const useFetchList = <TInput extends GetListInput, TDto extends IdDto>({
   });
 
   watch(
-    () => query.value.keyword,
+    () => query.value,
     v => {
-      console.log('keyword', v);
-      const k = key(query.value as TInput);
+      console.warn('query', toRaw(v));
+      const k = key(v as TInput);
       if (caches.value.has(k)) {
         const cache = caches.value.get(k);
-        list.value = cache?.items || [];
+        // list.value = cache?.items || [];
         console.log('caches.value', k, cache);
       } else {
-        fetchData({ ...input, skipCount: 0, keyword: v });
+        fetchData({ ...v, skipCount: 0, keyword: v?.keyword });
       }
+    },
+    {
+      // deep: true,
     },
   );
 
   const fetchData = async (input: TInput): Promise<TDto[]> => {
     const req = input;
+    console.log('fetchData input', req);
     const ret = currentCache.value || defaultResultValue();
     if (ret.isEof) {
       console.error('ret.isEof', ret.isEof, ret);
@@ -97,24 +101,25 @@ export const useFetchList = <TInput extends GetListInput, TDto extends IdDto>({
     }
     ret.query = input;
     ret.isPending = true;
-    console.log('fetchData input', req);
+    
     const { items, totalCount } = await service(req);
     console.log('fetchData', items);
     ret.totalCount = totalCount;
     ret.isPending = false;
     ret.isEof = items!.length < (req.maxResultCount || 10);
-    ret.items = query.value.skipCount == 0 ? items! : ret.items.concat(items);
-    list.value = ret.items;
+    ret.items = ret.query.value?.skipCount == 0 ? items! : ret.items.concat(items);
+    // list.value = ret.items;
     caches.value.set(key(query.value as TInput), ret);
     return items!;
   };
 
   const fetchNext = async (input?: TInput): Promise<TDto[]> => {
-    query.value = <any>{
-      ...query.value,
-      ...input,
-      skipCount: currentCache.value?.items.length,
-    };
+    // query.value = <any>{
+    //   ...query.value,
+    //   ...input,
+    //   skipCount: currentCache.value?.items.length,
+    // };
+    query.value.skipCount = currentCache.value?.items.length;
     return fetchData(query.value as TInput);
   };
 
@@ -137,7 +142,7 @@ export const useFetchList = <TInput extends GetListInput, TDto extends IdDto>({
       console.info('isEof', isEof.value);
       return;
     }
-    fetchNext();
+    // fetchNext();
   };
 
   const isChecked = (item: TDto): boolean => selectedList.value.some(x => x.id == item.id);

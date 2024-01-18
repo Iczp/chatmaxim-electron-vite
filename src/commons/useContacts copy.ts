@@ -33,7 +33,7 @@ export const useContacts = ({
     maxSelectCount.value = v?.maxCount;
     selectedList.value = v?.selectedItems || [];
     disabledList.value = v?.disabledItems || [];
-    isMultiple.value = v?.isMultiple || false;
+    isMultiple.value = v?.isMultiple || true;
   });
   watch(
     () => query.value.keyword,
