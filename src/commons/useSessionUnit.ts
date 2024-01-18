@@ -17,7 +17,7 @@ export const useSessionUnitId = (sessionUnitId: string) => {
   const isMainWindow = windowStore.name == 'main';
   const store = useImStore();
   if (!isMainWindow) {
-    const remoteStore = useRemoteStore<{ sessionUnit: SessionItemDto }>();
+    const remoteStore = useRemoteStore<{ sessionUnit: SessionUnitOwnerDto }>();
     console.log('remoteStore', remoteStore.value?.sessionUnit);
     watch(
       () => remoteStore.value,
