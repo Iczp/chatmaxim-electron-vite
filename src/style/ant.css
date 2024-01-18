@@ -27,6 +27,8 @@
 
 
 .ant-layout,
-.ant-layout .ant-layout-footer {
+.ant-layout .ant-layout-footer,
+.ant-layout-footer {
   background-color: unset;
+  color: unset;
 }

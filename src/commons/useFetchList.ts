@@ -80,11 +80,11 @@ export const useFetchList = <TInput extends GetListInput, TDto extends IdDto>({
         // list.value = cache?.items || [];
         console.log('caches.value', k, cache);
       } else {
-        fetchData({ ...v, skipCount: 0, keyword: v?.keyword });
+        fetchData({ ...v as TInput, skipCount: 0, keyword: v?.keyword });
       }
     },
     {
-      // deep: true,
+      deep: true,
     },
   );
 
@@ -101,13 +101,13 @@ export const useFetchList = <TInput extends GetListInput, TDto extends IdDto>({
     }
     ret.query = input;
     ret.isPending = true;
-    
+
     const { items, totalCount } = await service(req);
     console.log('fetchData', items);
     ret.totalCount = totalCount;
     ret.isPending = false;
     ret.isEof = items!.length < (req.maxResultCount || 10);
-    ret.items = ret.query.value?.skipCount == 0 ? items! : ret.items.concat(items);
+    ret.items = ret.query?.skipCount == 0 ? items! : ret.items.concat(items);
     // list.value = ret.items;
     caches.value.set(key(query.value as TInput), ret);
     return items!;
@@ -142,13 +142,15 @@ export const useFetchList = <TInput extends GetListInput, TDto extends IdDto>({
       console.info('isEof', isEof.value);
       return;
     }
-    // fetchNext();
+    fetchNext();
   };
 
   const isChecked = (item: TDto): boolean => selectedList.value.some(x => x.id == item.id);
-
-  const isDisabled = (item: TDto, andPredicate?: boolean): boolean =>
-    disabledList.value.some(x => x.id == item.id); //|| !item.setting?.isInputEnabled || false;
+  const isDisabled = ref((item: TDto, andPredicate?: boolean): boolean =>
+    disabledList.value.some(x => x.id == item.id),
+  );
+  // const isDisabled = (item: TDto, andPredicate?: boolean): boolean =>
+  //   disabledList.value.some(x => x.id == item.id); //|| !item.setting?.isInputEnabled || false;
 
   const toggleSingleChecked = (item: TDto): void => {
     selectedList.value = isChecked(item) ? [] : [item];
@@ -178,7 +180,7 @@ export const useFetchList = <TInput extends GetListInput, TDto extends IdDto>({
 
   const toggleChecked = (item: TDto): void => {
     console.log('item', item);
-    if (isDisabled(item)) {
+    if (isDisabled.value(item)) {
       return;
     }
 

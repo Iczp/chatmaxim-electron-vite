@@ -44,7 +44,7 @@ const {
   picker,
   getSelectItems,
 } = useContacts({
-  input: { ownerId: Number(props.chatObjectId!) },
+  input: { ownerId: Number(props.chatObjectId!), maxResultCount: 40 },
 });
 
 const payload = usePayload<ObjectPickerPayLoad>();
@@ -69,15 +69,17 @@ watch(
       skipCount: 0,
       ownerId: Number(props.chatObjectId),
       objectTypes: payload.value?.objectTypes,
+      maxResultCount: 20,
     };
-    if (list.value.length < Number(query.value.maxResultCount || 10)) {
-      // fetchNext(query.value);
-    }
   },
   { immediate: true },
 );
 
-const isItemDisabled = (item: ContactsDto) => !item.setting?.isInputEnabled || isDisabled(item);
+isDisabled.value = (item: ContactsDto) =>
+  !item.setting?.isInputEnabled ||
+  !item.setting?.isEnabled ||
+  !item.destination?.isEnabled ||
+  disabledList.value.some(x => x.id == item.id);
 
 const isLoading = ref(false);
 
