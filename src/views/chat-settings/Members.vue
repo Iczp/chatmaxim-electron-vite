@@ -39,6 +39,7 @@ const {
 } = useMembersList({
   input: {
     id: props.sessionUnitId,
+    // isPublic: true,
     maxResultCount: 40,
   },
 });
@@ -95,7 +96,7 @@ const onSearch = () => {
           @search="onSearch"
         />
       </div>
-
+      <!-- <Loading /> -->
       <!-- <scroll-view @ps-y-reach-end="onReachEnd" @ps-y-reach-start="onReachStart"> -->
       <RecycleScroller
         class="scroller"

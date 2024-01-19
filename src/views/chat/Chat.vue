@@ -71,6 +71,10 @@ const loadingHeight = ref(40);
 const { isInputEnabled, destination, destinationName, isImmersed, lastMessageId, readedMessageId } =
   useSessionUnitId(sessionUnitId);
 
+const chatTitle = computed(
+  () => destinationName.value || props.title || (route.query.title as string),
+);
+
 const activeLastMessageId = ref<number | null | undefined>();
 
 const localReadedMessageId = ref<number | null | undefined>();
@@ -517,7 +521,7 @@ const onRemove = (entity: MessageDto) => {
 <template>
   <page class="chat-page" v-drop="dropHandle">
     <PageTitle
-      :title="destinationName"
+      :title="chatTitle"
       :description="`code${destination?.code}:memberCount(${
         detail?.sessionUnitCount || ''
       }) readedMessageId:${readedMessageId}`"

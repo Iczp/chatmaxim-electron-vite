@@ -10,13 +10,14 @@ const content = computed(() => props.item.content as CmdContentDto);
 
 <template>
   <!-- <Bubble :r="item.isSelf"> -->
-  <TextViewer :value="content.text!" class="msg-cmd" />
+  <div class="msg-cmd">
+    <TextViewer :value="content.text!" />
+  </div>
   <!-- </Bubble> -->
 </template>
 
 <style scoped>
 .msg-cmd {
-
   display: flex;
   justify-content: center;
   align-items: center;
@@ -33,15 +34,11 @@ const content = computed(() => props.item.content as CmdContentDto);
   margin: 4px auto;
   box-sizing: border-box;
   /* user-select: none; */
-
-
 }
 .msg-cmd:hover {
   color: var(--msg-cmd-hover-color);
   background-color: var(--msg-cmd-hover-background-color);
   border: 1px solid var(--msg-cmd-hover-border-color);
-
-
 }
 :deep(.uid),
 :deep(.oid) {

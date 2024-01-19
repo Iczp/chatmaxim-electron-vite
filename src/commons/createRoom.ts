@@ -1,19 +1,17 @@
 import { message } from 'ant-design-vue';
 import { objectPicker } from '../ipc/objectPicker';
 import { ChatObjectTypeEnums } from '../apis/enums';
-import { RoomService } from '../apis';
+import { RoomService, SessionUnitService } from '../apis';
 import { ContactsDto } from '../apis/dtos';
 import { navToChat } from './utils';
 
 export const createRoom = ({
   t,
   chatObjectId,
-  sessionUnitId,
   title,
 }: {
   t: any;
   chatObjectId: number;
-  sessionUnitId?: string;
   title?: string;
 }) => {
   const key = new Date().toString();
@@ -52,8 +50,21 @@ export const createRoom = ({
         ownerId: chatObjectId,
         chatObjectIdList,
       })
-        .then(res => {
+        .then(chatObject => {
           message.success({ content: t('CreateSuccessful'), key });
+
+          SessionUnitService.getApiChatSessionUnitFindId({
+            ownerId: chatObjectId,
+            destinactionId: chatObject.id!,
+          })
+            .then(sessionUnitId => {
+              navToChat({ chatObjectId, sessionUnitId, title: chatObject.name });
+            })
+            .catch(err => {
+              console.error('MessageSenderService.postApiChatMessageSenderForward', err);
+              message.warn({ content: t('NavigateToChatFail', [name]), key, duration: 3 });
+            });
+
           // navToChat({chatObjectId})
         })
         .catch(err => {
