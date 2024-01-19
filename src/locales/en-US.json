@@ -138,5 +138,7 @@
   "RoomCreateSuccessful": "",
   "CreateSuccessful": "Create Successful",
   "NavigateToChatFail": "Navigate to chat '{0}' fail",
-  "AppTitle": "App Store"
+  "AppTitle": "App Store",
+  "Name": "Name",
+  "Description": "Description"
 }
