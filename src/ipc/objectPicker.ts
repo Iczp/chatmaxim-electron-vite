@@ -8,6 +8,7 @@ export type ObjectPickerPayLoad = PickerInput & {
   chatObjectId: number | string;
   objectTypes?: Array<ChatObjectTypeEnums>;
   confirmText?: string;
+  isInputEnabled?: boolean;
 };
 
 export const objectPicker = ({

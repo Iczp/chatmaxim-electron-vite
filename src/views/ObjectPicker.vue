@@ -84,7 +84,7 @@ watch(
 );
 
 isDisabled.value = (item: ContactsDto) =>
-  !item.setting?.isInputEnabled ||
+  (payload.value?.isInputEnabled === true && !item.setting?.isInputEnabled) ||
   !item.setting?.isEnabled ||
   !item.destination?.isEnabled ||
   disabledList.value.some(x => x.id == item.id);

@@ -39,7 +39,7 @@ const {
 } = useMembersList({
   input: {
     id: props.sessionUnitId,
-    // isPublic: true,
+    isPublic: true,
     maxResultCount: 40,
   },
 });
@@ -91,6 +91,7 @@ const onSearch = () => {
       <div class="search-section">
         <a-input-search
           v-model:value="query.keyword"
+          :allowClear="true"
           :placeholder="t('Search')"
           enter-button
           @search="onSearch"

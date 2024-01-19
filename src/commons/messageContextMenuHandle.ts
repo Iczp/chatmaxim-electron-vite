@@ -92,6 +92,7 @@ export const forwardMessage = ({
       confirmText: t('Confirm Forward'),
       chatObjectId,
       isMultiple: true,
+      isInputEnabled: true,
       selectedItems: [],
       disabledItems: [{ id: sessionUnitId }],
     },
