@@ -165,7 +165,7 @@ const onConfirm = (): void => {
     <page-title :title="title || chatObjectId" />
 
     <page-content>
-      <div class="search-section">
+      <div class="section-search">
         <a-input-search
           v-model:value="query.keyword"
           :placeholder="t('Search')"
@@ -228,9 +228,9 @@ const onConfirm = (): void => {
 </template>
 
 <style scoped>
-.search-section {
+.section-search {
   display: flex;
-  padding: 12px;
+  padding: 20px;
   border-bottom: 1px solid var(--divider-color);
 }
 .data-list {
@@ -242,7 +242,7 @@ const onConfirm = (): void => {
   display: flex;
   flex-direction: row-reverse;
   justify-content: space-between;
-  padding: 0px 12px;
+  padding: 0px 20px;
 }
 .data-item:hover {
   background-color: var(--background-color-hover);

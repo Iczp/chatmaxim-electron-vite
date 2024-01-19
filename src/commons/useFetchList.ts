@@ -46,7 +46,7 @@ export const useFetchList = <TInput extends GetListInput, TDto extends IdDto>({
   const isPending = computed(() => currentCache.value?.isPending);
   const isBof = computed(() => currentCache.value?.isBof);
   const isEof = computed(() => currentCache.value?.isEof);
-  const list = computed(() => currentCache.value?.items || []);
+  const list = computed<TDto[]>(() => currentCache.value?.items || []);
   // const list = ref<TDto[]>([]);
 
   const query = ref<TInput>(input);

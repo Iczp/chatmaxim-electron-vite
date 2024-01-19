@@ -5,7 +5,20 @@ import { chatSettings } from './chatSettings';
 
 export const routes = <RouteRecordRaw[]>[
   {
+    path: '/login',
+    meta: {
+      windows: ['login'],
+      // size: [320, 560],
+      options: <WindowParams>{
+        maximizable: true,
+        size: { width: 320, height: 560 },
+      },
+    },
+    component: () => import('../views/Login.vue'),
+  },
+  {
     path: '/',
+    name: 'root',
     component: () => import('../views/Home.vue'),
     props: true,
     meta: {
@@ -48,11 +61,11 @@ export const routes = <RouteRecordRaw[]>[
         component: () => import('../views/UserProfile.vue'),
         props: true,
       },
-
       {
-        path: '/about',
-        component: () => import('../views/app-settings/widget/About.vue'),
-        props: true,
+        path: '/apps',
+        name: 'apps',
+        meta: {},
+        component: () => import('../views/apps/Apps.vue'),
       },
     ],
   },
@@ -123,17 +136,5 @@ export const routes = <RouteRecordRaw[]>[
       windows: ['tray'],
     },
     component: () => import('../views/tray/Tray.vue'),
-  },
-  {
-    path: '/login',
-    meta: {
-      windows: ['login'],
-      // size: [320, 560],
-      options: <WindowParams>{
-        maximizable: true,
-        size: { width: 320, height: 560 },
-      },
-    },
-    component: () => import('../views/Login.vue'),
   },
 ];

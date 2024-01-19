@@ -13,6 +13,8 @@ import {
   EditOutlined,
   MoreOutlined,
 } from '@ant-design/icons-vue';
+import { SessionUnitOwnerDto } from '../../apis';
+import { SessionUnitDestinationDto } from '../../apis/dtos';
 // import {RecycleScroller} from 'vue-virtual-scroller/RecycleScroller'
 const { t } = useI18n();
 const props = defineProps<{ sessionUnitId: string }>();
@@ -88,7 +90,7 @@ const onSearch = () => {
     <page-title :title="t('Session Members')" :description="sessionUnitId" />
     <!-- <a-page-header :title="t('Session Members')" :sub-title="sessionUnitId" /> -->
     <page-content>
-      <div class="search-section">
+      <div class="section section-search">
         <a-input-search
           v-model:value="query.keyword"
           :allowClear="true"
@@ -108,11 +110,11 @@ const onSearch = () => {
         @scroll-end="onReachEnd"
       >
         <template #before>
-          <div>总数:{{ list.length }}/{{ totalCount }}</div>
+          <div class="section">总数:{{ list.length }}/{{ totalCount }}</div>
         </template>
         <template v-if="isPending" #after><Loading /></template>
         <template v-else-if="isEof" #after>{{ t('DividerEnd') }}</template>
-        <template v-slot="{ item }">
+        <template v-slot="{ item }: { item: SessionUnitDestinationDto }">
           <div
             :key="item.id"
             class="data-item"
@@ -120,7 +122,18 @@ const onSearch = () => {
             @click="toggleChecked(item)"
           >
             <chat-object :entity="item.owner" :size="44">
-              <!-- <template #title>title-left</template> -->
+              <template #title>
+                <a-space>
+                  <div>{{ item.owner?.name }}</div>
+                  <a-tag
+                    v-if="item.setting?.isCreator"
+                    class="tag-creator"
+                    color="pink"
+                  >
+                    群主
+                  </a-tag>
+                </a-space>
+              </template>
               <!-- <template #title-right>title-right555</template> -->
               <template #sub>{{ t('JoinTime') }}:{{ item.creationTime }}</template>
               <template #footer>
@@ -146,6 +159,15 @@ const onSearch = () => {
 </template>
 
 <style scoped>
+.section {
+  display: flex;
+  flex-direction: column;
+  padding: 20px;
+}
+.tag-creator{
+  
+  font-size: 11px;
+}
 .btn-item {
   --btn-size: 32px;
   width: var(--btn-size);
@@ -158,11 +180,9 @@ const onSearch = () => {
   outline: none;
 }
 .data-item {
-  padding: 0 12px;
+  padding: 0 20px;
 }
-.search-section {
-  display: flex;
-  padding: 12px;
+.section-search {
   border-bottom: 1px solid var(--divider-color);
 }
 

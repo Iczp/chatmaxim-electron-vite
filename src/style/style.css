@@ -740,7 +740,10 @@ code {
   .ant-descriptions .ant-descriptions-item-content {
     color: var(--chat-page-main-title-color);
   }
-
+  .ant-divider-horizontal.ant-divider-with-text,
+  .ant-divider {
+    color: var(--color);
+  }
   .divider.ant-divider-horizontal.ant-divider-with-text-left::before,
   .divider.ant-divider-horizontal.ant-divider-with-text-left::after {
     background-color: var(--border-color);

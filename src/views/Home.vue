@@ -71,7 +71,7 @@ const getKey = (route: RouteLocationNormalizedLoaded, component: any): string | 
     <div id="chatMaxim">
       <div class="side">
         <div class="side-top">
-          <div class="nav-item" @click="goto('/')">
+          <div class="nav-item" @click="goto('/')" :class="{ active: route.name == 'root' }">
             <a-badge :count="badge" :dot="true" :title="badge.toString()">
               <HomeOutlined />
             </a-badge>
@@ -103,7 +103,9 @@ const getKey = (route: RouteLocationNormalizedLoaded, component: any): string | 
             <SketchOutlined />
           </div> -->
 
-          <div class="nav-item"><AppstoreOutlined /></div>
+          <div class="nav-item" @click="goto('/apps')" :class="{ active: route.name == 'apps' }">
+            <AppstoreOutlined />
+          </div>
           <div class="nav-item"><ClockCircleOutlined /></div>
           <div class="nav-item"><MoreOutlined /></div>
         </div>

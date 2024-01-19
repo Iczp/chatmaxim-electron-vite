@@ -136,5 +136,6 @@
   "SelectLeastItems": "至少选择 {0} 项",
   "RoomCreating": "创建群聊\"{0}\"...",
   "CreateSuccessful": "创建成功",
-  "NavigateToChatFail": "导航到 '{0}' 失败"
+  "NavigateToChatFail": "导航到 '{0}' 失败",
+  "AppTitle": "应用市场"
 }

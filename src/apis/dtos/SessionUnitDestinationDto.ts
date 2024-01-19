@@ -1,5 +1,6 @@
 import { ChatObjectTypeEnums } from '../enums';
 import { ChatObjectDto } from './ChatObjectDto';
+import { SessionUnitSettingDto } from './SessionUnitSettingDto';
 
 export type SessionUnitDestinationDto = {
   /**
@@ -57,4 +58,18 @@ export type SessionUnitDestinationDto = {
    * @type {boolean}
    */
   isCreator?: boolean;
+
+  /**
+   * 设置
+   *
+   * @type {SessionUnitSettingDto}
+   */
+  setting?: SessionUnitSettingDto;
+
+  /**
+   * Join time 入群时间
+   *
+   * @type {string}
+   */
+  creationTime?:string
 };

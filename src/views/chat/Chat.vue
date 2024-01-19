@@ -603,7 +603,7 @@ const onRemove = (entity: MessageDto) => {
   color: var(--chat-page-main-title-color);
 }
 :deep(.page-title-left) {
-  padding: 0 20px;
+  /* padding: 0 20px; */
 }
 :deep(.main-title-text) {
   font-size: 16px;

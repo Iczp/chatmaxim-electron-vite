@@ -128,43 +128,43 @@ const onSearch = () => {
       </div>
 
       <RecycleScroller
-          ref="scroller"
-          class="scroller"
-          :items="list"
-          :item-size="56"
-          key-field="id"
-          @scroll-start="onReachStart"
-          @scroll-end="onReachEnd"
-        >
-          <template #before>
-            <div>总数:{{ list.length }}/{{ totalCount }}</div>
-          </template>
-          <template v-if="isPending" #after><Loading /></template>
-          <template v-else-if="isEof" #after>{{ t('DividerEnd') }}</template>
-          <template v-slot="{ item }">
-            <div
-              :key="item.id"
-              class="data-item"
-              :class="{ checked: isChecked(item), disabled: isDisabled(item) }"
-              @click="toggleChecked(item)"
-            >
-              <chat-object :entity="item.owner" :size="44">
-                <!-- <template #title>title-left</template> -->
-                <!-- <template #title-right>title-right555</template> -->
-                <!-- <template #sub>sub-left555</template> -->
-                <!-- <template #footer>
+        ref="scroller"
+        class="scroller"
+        :items="list"
+        :item-size="56"
+        key-field="id"
+        @scroll-start="onReachStart"
+        @scroll-end="onReachEnd"
+      >
+        <template #before>
+          <div class="section">总数:{{ list.length }}/{{ totalCount }}</div>
+        </template>
+        <template v-if="isPending" #after><Loading /></template>
+        <template v-else-if="isEof" #after>{{ t('DividerEnd') }}</template>
+        <template v-slot="{ item }">
+          <div
+            :key="item.id"
+            class="data-item"
+            :class="{ checked: isChecked(item), disabled: isDisabled(item) }"
+            @click="toggleChecked(item)"
+          >
+            <chat-object :entity="item.owner" :size="44">
+              <!-- <template #title>title-left</template> -->
+              <!-- <template #title-right>title-right555</template> -->
+              <!-- <template #sub>sub-left555</template> -->
+              <!-- <template #footer>
                 <a-button @click="addFriend(item)">添加/关注</a-button>
               </template> -->
-              </chat-object>
-              <a-checkbox
-                v-if="selectable"
-                :checked="isChecked(item)"
-                :disabled="isDisabled(item)"
-                class="check-box"
-              ></a-checkbox>
-            </div>
-          </template>
-        </RecycleScroller>
+            </chat-object>
+            <a-checkbox
+              v-if="selectable"
+              :checked="isChecked(item)"
+              :disabled="isDisabled(item)"
+              class="check-box"
+            ></a-checkbox>
+          </div>
+        </template>
+      </RecycleScroller>
 
       <!-- <OverlayScrollbarsComponent
         class="overlayscrollbars-vue"
@@ -195,13 +195,16 @@ const onSearch = () => {
 </template>
 
 <style scoped>
+.section {
+  padding: 0 20px;
+}
 .data-item {
   padding: 0 20px;
 }
 
 .search-section {
   display: flex;
-  padding: 12px;
+  padding: 20px;
   border-bottom: 1px solid var(--divider-color);
 }
 .checked,
@@ -214,5 +217,4 @@ const onSearch = () => {
 .chat-object {
   flex: 1;
 }
-
 </style>

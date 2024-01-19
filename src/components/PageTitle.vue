@@ -46,7 +46,9 @@ const toggleAlwayOnTop = () => {
         <slot>
           <a-space>
             <div class="main-title-text">
-              <text class="text-ellipsis no-drag" @click="$emit('titleClick', $event)">{{ title }}</text>
+              <text class="text-ellipsis no-drag" @click="$emit('titleClick', $event)">
+                {{ title }}
+              </text>
             </div>
 
             <VerifiedOutlined v-if="search" style="color: rgb(0, 207, 0); font-size: 16px" />
@@ -87,6 +89,7 @@ const toggleAlwayOnTop = () => {
 
 <style scoped>
 .page-title {
+  --padding-left: 20px;
   display: flex;
   flex-direction: row;
   justify-content: space-between;
@@ -118,13 +121,15 @@ const toggleAlwayOnTop = () => {
   /* align-items: center; */
   justify-content: center;
   flex-direction: column;
-  padding: 0 8px;
+  /* padding: 0 8px; */
+  padding-left: var(--padding-left);
 }
 .page-title-right {
   display: flex;
   flex-direction: column;
-  align-items: flex-end;
-  padding-top: 32px;
+  justify-content: flex-end;
+  /* align-items: flex-end; */
+  /* padding-top: 32px; */
 }
 .main-title {
   display: flex;
@@ -159,4 +164,4 @@ const toggleAlwayOnTop = () => {
   transform: rotate(-45deg);
 }
 </style>
-../ipc/setWindow
+
