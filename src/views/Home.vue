@@ -88,18 +88,21 @@ const getKey = (route: RouteLocationNormalizedLoaded, component: any): string | 
               <MessageOutlined />
             </a-badge>
           </div>
-          <div class="nav-item" @click="goto('/about')">
+          <!-- <div class="nav-item" @click="goto('/about')">
             <CodepenCircleOutlined two-tone-color="#ff0000" />
-          </div>
-          <div class="nav-item" @click="goto('/contacts/13')">
+          </div> -->
+
+          <!-- <div class="nav-item" @click="goto('/contacts/13')">
             <AndroidOutlined />
-          </div>
-          <div
+          </div> -->
+
+          <!-- <div
             class="nav-item"
             @click="goto('/management/members/13/e52bacf4-c231-061a-6628-3a0b0cf571fb')"
           >
             <SketchOutlined />
-          </div>
+          </div> -->
+
           <div class="nav-item"><AppstoreOutlined /></div>
           <div class="nav-item"><ClockCircleOutlined /></div>
           <div class="nav-item"><MoreOutlined /></div>
