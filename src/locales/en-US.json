@@ -140,5 +140,6 @@
   "NavigateToChatFail": "Navigate to chat '{0}' fail",
   "AppTitle": "App Store",
   "Name": "Name",
-  "Description": "Description"
+  "Description": "Description",
+  "Session Avatar": "Avatar"
 }

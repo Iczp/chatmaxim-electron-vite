@@ -46,4 +46,13 @@ export const chatSettings: RouteRecordRaw[] = [
     component: () => import('../views/chat-settings/Request.vue'),
     props: true,
   },
+  {
+    path: 'avatar/:sessionUnitId',
+    name: 'session-avatar',
+    meta: {
+      title: 'Session Avatar',
+    },
+    component: () => import('../views/chat-settings/Avatar.vue'),
+    props: true,
+  },
 ];

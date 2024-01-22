@@ -139,5 +139,6 @@
   "NavigateToChatFail": "导航到 '{0}' 失败",
   "AppTitle": "应用市场",
   "Name": "名称",
-  "Description": "说明"
+  "Description": "说明",
+  "Session Avatar": "头像"
 }
