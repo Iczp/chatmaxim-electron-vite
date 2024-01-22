@@ -147,3 +147,38 @@ dist-electron/preload/index.js  1.57 kB │ gzip: 0.76 kB
   • building block map  blockMapFile=release\2.0.0\YourAppName-Windows-2.0.0-Setup.exe.blockmap
 ```
 
+# [npm 源地址设置及恢复](https://www.cnblogs.com/uzi666/p/15350757.html)
+
+### 设置国内淘宝镜像
+
+1. 通过cnpm使用淘宝镜像：
+
+```javascript
+npm install -g cnpm --registry=https://registry.npm.taobao.org
+```
+
+1. 将npm设置为淘宝镜像：
+
+```javascript
+npm config set registry https://registry.npm.taobao.org
+```
+
+1. 查看当前npm源
+
+```javascript
+npm config get registry 
+```
+
+1. 查看当前cnpm源
+
+```javascript
+cnpm config get registry  
+```
+
+1. 如果设置了npm为淘宝镜像，需要恢复为默认源时：
+
+```javascript
+npm config set registry=https://registry.npmjs.org 
+```
+
+设置之后，记得通过**npm config get registry** 查看源是否设置成功

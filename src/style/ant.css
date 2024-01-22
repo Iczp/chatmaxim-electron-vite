@@ -25,10 +25,13 @@
   -webkit-app-region: no-drag;
 }
 
-
 .ant-layout,
 .ant-layout .ant-layout-footer,
 .ant-layout-footer {
   background-color: unset;
   color: unset;
+}
+
+.ant-popover .ant-popover-inner {
+  padding: 0;
 }

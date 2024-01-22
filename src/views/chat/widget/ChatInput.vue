@@ -9,6 +9,9 @@ import {
 } from '@ant-design/icons-vue';
 import { useFileDialog } from '@vueuse/core';
 import { useI18n } from 'vue-i18n';
+
+import EmojiPicker from 'vue3-emoji-picker';
+import 'vue3-emoji-picker/css';
 const { t } = useI18n();
 const props = withDefaults(
   defineProps<{
@@ -60,8 +63,6 @@ const click = (e: any) => {
   // https://stackoverflow.com/questions/42289080/for-text-input-how-to-make-it-so-that-clicking-on-it-will-select-everything
 };
 
-
-
 const { files, open, reset, onChange } = useFileDialog({
   // accept: 'image/*', // Set to accept only image files
   directory: false, // Select directories instead of files if set true
@@ -72,6 +73,33 @@ onChange((files: any) => {
   console.warn('files', files);
 });
 
+// event callback
+function onSelectEmoji(emoji: any) {
+  console.log(emoji);
+  inputValue.value += emoji.i;
+
+  /*
+    // result
+    { 
+        i: "😚", 
+        n: ["kissing face"], 
+        r: "1f61a", // with skin tone
+        t: "neutral", // skin tone
+        u: "1f61a" // without tone
+    }
+    */
+}
+
+const groupNames = {
+  smileys_people: '微笑与人',
+  animals_nature: 'Animals & Nature',
+  food_drink: 'Food & Drink',
+  activities: 'Activities',
+  travel_places: 'Travel places',
+  objects: 'Objects',
+  symbols: 'Symbols',
+  flags: 'Flags',
+};
 defineExpose({
   clear,
   send,
@@ -83,7 +111,22 @@ defineExpose({
   <section class="chat-input" disabled="disabled">
     <div class="tool-bar">
       <a-space>
-        <a-button type="text"><MehOutlined /></a-button>
+        <a-popover trigger="click">
+          <template #content>
+            <EmojiPicker
+              class="emoji-picker"
+              :group-names="groupNames"
+              :native="true"
+              @select="onSelectEmoji"
+              :hide-search="true"
+              :hide-group-names="false"
+              :disable-sticky-group-names="true"
+              :disable-skin-tones="true"
+            />
+          </template>
+          <a-button type="text"><MehOutlined /></a-button>
+        </a-popover>
+
         <a-button type="text" @click="open"><FolderOpenOutlined /></a-button>
         <a-button type="text"><VideoCameraOutlined /></a-button>
         <a-button type="text"><ScissorOutlined /></a-button>
@@ -128,7 +171,7 @@ defineExpose({
             class="btn-send"
             :title="t('SendShortcuts')"
           >
-            {{t('Send')}}(
+            {{ t('Send') }}(
             <u>S</u>
             )
           </a-button>
@@ -141,6 +184,19 @@ defineExpose({
 <style scoped>
 :deep(.ant-mentions) {
   background-color: transparent;
+}
+.emoji-picker.v3-emoji-picker .v3-body {
+  color: red;
+  padding-bottom: 0;
+}
+
+.ant-popover .ant-popover-inner,
+:deep(.ant-popover .ant-popover-inner) {
+  padding: 0 !important;
+}
+:deep(.emoji-picker.v3-emoji-picker .v3-body) {
+  padding: 0;
+  padding-bottom: 0;
 }
 .chat-input {
   display: flex;
