@@ -73,7 +73,7 @@ const { totalBadge, list, onItemClick, onHeaderClick, onIgnore, onMouseOver, onM
   align-items: center;
   font-size: 12px;
   font-weight: bold;
-  color: var(--color);
+  color: var(--title-color);
 }
 .list {
   padding: 0;

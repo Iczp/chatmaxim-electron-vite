@@ -190,7 +190,7 @@ export class RoomService {
      * 群名字
      */
     name?: string;
-  }): CancelablePromise<IczpNet_Chat_ChatObjects_Dtos_ChatObjectDto> {
+  }): CancelablePromise<ChatObjectDto> {
     return __request(OpenAPI, {
       method: 'POST',
       url: '/api/chat/room/update-name/{sessionUnitId}',
@@ -220,7 +220,7 @@ export class RoomService {
      * 头像,全地址或相对地址:"http://www.icpz.net/logo.png","/logo.png"
      */
     portrait?: string;
-  }): CancelablePromise<IczpNet_Chat_ChatObjects_Dtos_ChatObjectDto> {
+  }): CancelablePromise<ChatObjectDto> {
     return __request(OpenAPI, {
       method: 'POST',
       url: '/api/chat/room/update-portrait/{sessionUnitId}',

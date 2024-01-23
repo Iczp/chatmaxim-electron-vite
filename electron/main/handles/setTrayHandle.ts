@@ -22,6 +22,9 @@ export const setTrayHandle: IpcMainHandle = {
 
       const isFlash = Number(payload.totalBadge) > 0 || payload.items.length > 0;
       isFlash ? startFlash() : stopFlash();
+      if (!isFlash) {
+        windowParam.visiblity = false;
+      }
       const win = windowManager.get(windowParam.name);
       setWindow(win, windowParam, _);
       resolve({});

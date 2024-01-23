@@ -7,11 +7,18 @@ import {
   FolderOpenOutlined,
   ScissorOutlined,
 } from '@ant-design/icons-vue';
-import { useFileDialog } from '@vueuse/core';
+import { useColorMode, useFileDialog } from '@vueuse/core';
 import { useI18n } from 'vue-i18n';
 
 import EmojiPicker from 'vue3-emoji-picker';
+import ColorTheme from 'vue3-emoji-picker';
 import 'vue3-emoji-picker/css';
+import { useWindowStore } from '../../../stores/window';
+import { computed } from 'vue';
+
+const windowStore = useWindowStore();
+const colorScheme = computed(() => windowStore.colorScheme as 'dark' | 'light' | 'auto');
+
 const { t } = useI18n();
 const props = withDefaults(
   defineProps<{
@@ -73,11 +80,17 @@ onChange((files: any) => {
   console.warn('files', files);
 });
 
+const visible = ref<boolean>(false);
+
+const hide = () => {
+  visible.value = false;
+};
+
 // event callback
 function onSelectEmoji(emoji: any) {
   console.log(emoji);
   inputValue.value += emoji.i;
-
+  hide();
   /*
     // result
     { 
@@ -100,6 +113,7 @@ const groupNames = {
   symbols: 'Symbols',
   flags: 'Flags',
 };
+
 defineExpose({
   clear,
   send,
@@ -111,10 +125,11 @@ defineExpose({
   <section class="chat-input" disabled="disabled">
     <div class="tool-bar">
       <a-space>
-        <a-popover trigger="click">
+        <a-popover trigger="click" v-model:open="visible" overlayClassName="emoji-popover">
           <template #content>
             <EmojiPicker
               class="emoji-picker"
+              :theme="colorScheme"
               :group-names="groupNames"
               :native="true"
               @select="onSelectEmoji"
@@ -128,16 +143,15 @@ defineExpose({
         </a-popover>
 
         <a-button type="text" @click="open"><FolderOpenOutlined /></a-button>
-        <a-button type="text"><VideoCameraOutlined /></a-button>
+        <a-popconfirm title="Are you sure delete this task?" ok-text="Yes" cancel-text="No">
+          <a-button type="text"><VideoCameraOutlined /></a-button>
+        </a-popconfirm>
+
         <a-button type="text"><ScissorOutlined /></a-button>
 
         <a-button type="text">
           <UploadOutlined />
         </a-button>
-
-        <a-popconfirm title="Are you sure delete this task?" ok-text="Yes" cancel-text="No">
-          <a-button type="text">Confirm</a-button>
-        </a-popconfirm>
       </a-space>
     </div>
     <div class="input-body">
@@ -180,17 +194,35 @@ defineExpose({
     </div>
   </section>
 </template>
-
+<style>
+.emoji-picker.v3-emoji-picker .v3-body {
+  padding-bottom: 0;
+}
+.v3-group h5 {
+  color: var(--v3picker-fg);
+}
+.emoji-popover.ant-popover .ant-popover-inner{
+  padding: 0;
+}
+</style>
 <style scoped>
+:root {
+  --antd-arrow-background-color: red;
+}
 :deep(.ant-mentions) {
   background-color: transparent;
 }
-.emoji-picker.v3-emoji-picker .v3-body {
-  color: red;
-  padding-bottom: 0;
+.emoji-picker {
+  padding: 0;
 }
 
-.ant-popover .ant-popover-inner,
+.emoji-popover.ant-popover .ant-popover-inner
+:deep(.emoji-popover.ant-popover .ant-popover-inner) {
+  background-color: unset;
+  padding: 0;
+  --antd-arrow-background-color: red;
+}
+.emoji-popover.ant-popover .ant-popover-inner
 :deep(.ant-popover .ant-popover-inner) {
   padding: 0 !important;
 }
