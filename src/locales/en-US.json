@@ -140,5 +140,21 @@
   "AppTitle": "App Store",
   "Name": "Name",
   "Description": "Description",
-  "Session Avatar": "Avatar"
+  "Session Avatar": "Avatar",
+  "Gender": "Gender",
+  "Verification Method": "Verification Method",
+  "Session Name": "Session Name",
+  "Gender:Girl": "Girl",
+  "Gender:Unset": "Unset",
+  "Gender:Boy": "Boy",
+  "VerificationMethod:None": "None",
+  "VerificationMethod:Required": "Required",
+  "VerificationMethod:Rejected": "Rejected",
+  "Verification Method Help": "Verification method for friend requests",
+  "Code": "Code",
+  "Code Help": "Not modifiable",
+  "Profile": "Profile",
+  "Session Portrait": "Session Portrait",
+  "RoomNameChangeHelp": "Change the name and notify all members in the group",
+  "ObjectNameHelp": "Display Name"
 }

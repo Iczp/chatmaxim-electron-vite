@@ -1,6 +1,6 @@
 import { RouteRecordRaw } from 'vue-router';
 
-export const chatSettings: RouteRecordRaw[] = [
+export const chatSettingsRoutes: RouteRecordRaw[] = [
   {
     path: 'profile/:sessionUnitId',
     name: 'session-profile',
@@ -16,7 +16,7 @@ export const chatSettings: RouteRecordRaw[] = [
     meta: {
       title: 'Session name',
     },
-    component: () => import('../views/chat-settings/ChangeName.vue'),
+    component: () => import('../views/chat-settings/RoomName.vue'),
     props: true,
   },
   {
@@ -65,12 +65,12 @@ export const chatSettings: RouteRecordRaw[] = [
     props: true,
   },
   {
-    path: 'avatar/:sessionUnitId',
-    name: 'session-avatar',
+    path: 'portrait/:sessionUnitId',
+    name: 'session-portrait',
     meta: {
-      title: 'Session Avatar',
+      title: 'Session Portrait',
     },
-    component: () => import('../views/chat-settings/Avatar.vue'),
+    component: () => import('../views/chat-settings/Portrait.vue'),
     props: true,
   },
 ];

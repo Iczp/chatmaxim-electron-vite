@@ -780,6 +780,33 @@ code {
   .ant-popover .ant-popover-inner {
     background-color: #000;
   }
+  .ant-card {
+    color: var(--color);
+    border-color: var(--border-color);
+    background: var(--background-color);
+  }
+  .ant-card .ant-card-bordered {
+    border: 1px solid var(--border-color);
+  }
+  .ant-card .ant-card-actions {
+    color: var(--color);
+    border-top: 1px solid var(--border-color);
+    border-color: var(--border-color);
+    background: var(--background-color);
+  }
+  .ant-card .ant-card-actions > li:not(:last-child) {
+    border-inline-end: 1px solid var(--border-color);
+  }
+  .ant-card .ant-card-actions > li > span > .anticon,
+  .ant-card .ant-card-actions > li {
+    color: var(--color);
+  }
+  .ant-card .ant-card-meta-title {
+    color: var(--main-title-color);
+  }
+  .ant-card .ant-card-meta-description {
+    color: var(--sub-title-color);
+  }
 
   .ps .ps__rail-x:hover,
   .ps .ps__rail-y:hover,

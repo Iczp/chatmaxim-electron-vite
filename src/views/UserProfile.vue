@@ -1,12 +1,15 @@
 <script setup lang="ts">
-import { Ref, onMounted, reactive, ref } from 'vue';
+import { Ref, onMounted, reactive, ref, toRaw } from 'vue';
 import { SettingOutlined, EditOutlined, EllipsisOutlined } from '@ant-design/icons-vue';
 import { ChatObjectService, SessionUnitService } from '../apis';
 import { ChatObjectDto, PagedResultDto, ResultValue } from '../apis/dtos';
 import LayoutItem from '../components/LayoutItem.vue';
 import ChatObject from '../components/ChatObject.vue';
 import { useI18n } from 'vue-i18n';
+import { openChildWindow } from '../ipc/openChildWindow';
+import { useWindowStore } from '../stores/window';
 const { t } = useI18n();
+const windowStore = useWindowStore();
 // defineProps<{ msg: string }>();
 
 const ret = reactive<ResultValue<ChatObjectDto>>({
@@ -22,6 +25,23 @@ onMounted(() => {
     ret.items = res.items!;
   });
 });
+
+const openObjectProfile = (item: ChatObjectDto) => {
+  openChildWindow({
+    t,
+    window: {
+      name: `${windowStore.name}:object-settings`,
+      path: `/object-settings/profile/${item.id}`,
+      payload: {
+        chatObjectId: item.id,
+      },
+      // isModel: true,
+      parent: windowStore.name,
+      isPreventClose: true,
+      visiblity: true,
+    },
+  });
+};
 </script>
 
 <template>
@@ -49,9 +69,9 @@ onMounted(() => {
               </a-card-meta>
 
               <template #actions>
-                <setting-outlined key="setting" />
-                <edit-outlined key="edit" />
-                <ellipsis-outlined key="ellipsis" />
+                <setting-outlined key="setting" @click="openObjectProfile(item)" />
+                <edit-outlined key="edit" @click="openObjectProfile(item)" />
+                <ellipsis-outlined key="ellipsis" @click="openObjectProfile(item)" />
               </template>
             </a-card>
           </div>
@@ -76,7 +96,7 @@ onMounted(() => {
 
 .div-image {
   height: 240px;
-  background-image: url('https://m.rctea.com/mobile/images/precomposed.png');
+  /* background-image: url('https://m.rctea.com/mobile/images/precomposed.png'); */
   background-size: inherit;
   background-position: center center;
   background-repeat: no-repeat;

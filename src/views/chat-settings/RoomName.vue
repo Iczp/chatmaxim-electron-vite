@@ -48,7 +48,7 @@ const wrapperCol = { span: 14 };
 
 <template>
   <page>
-    <page-title :title="t('Session Profile')" description="Session Name" />
+    <page-title :title="t('Session Name')" description="Session Name" />
 
     <page-content>
       <scroll-view>
@@ -57,7 +57,7 @@ const wrapperCol = { span: 14 };
         <a-form :model="formState" :label-col="labelCol" :wrapper-col="wrapperCol">
           <a-form-item
             :label="t('Session Name')"
-            help="Modifying the name and notify the session members"
+            :help="t('RoomNameChangeHelp')"
           >
             <a-input v-model:value="formState.name" :bordered="true">
               <!-- <template #prefix>
@@ -75,12 +75,12 @@ const wrapperCol = { span: 14 };
         </a-form>
       </scroll-view>
     </page-content>
-    <page-footer class="flex-end">
+    <!-- <page-footer class="flex-end">
       <a-space>
         <a-button type="primary" @click="onSubmit">Change</a-button>
         <a-button style="margin-left: 10px">Cancel</a-button>
       </a-space>
-    </page-footer>
+    </page-footer> -->
   </page>
 </template>
 

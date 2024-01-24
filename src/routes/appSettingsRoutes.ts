@@ -1,6 +1,6 @@
 import { RouteRecordRaw } from 'vue-router';
 
-export const appSettings: RouteRecordRaw[] = [
+export const appSettingsRoutes: RouteRecordRaw[] = [
   {
     path: '',
     name: 'app-settings-preferences',

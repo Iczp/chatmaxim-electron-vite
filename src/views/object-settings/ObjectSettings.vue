@@ -1,25 +1,25 @@
 <script setup lang="ts">
 import { ref } from 'vue';
-import { chatSettingsRoutes } from '../../routes/chatSettingsRoutes';
+import { objectSettingsRoutes } from '../../routes/objectSettingsRoutes';
 import { useRouter, useRoute } from 'vue-router';
 import { useI18n } from 'vue-i18n';
 import ChatObject from '../../components/ChatObject.vue';
-import { useDestination } from './commons/useDestination';
+import { useOwner } from './commons/useOwner';
 import { computed } from 'vue';
 import { ChatObjectTypeEnums } from '../../apis/enums';
 const { t } = useI18n();
 const route = useRoute();
 const router = useRouter();
-const navItems = ref(Array.from(chatSettingsRoutes));
+const navItems = ref(Array.from(objectSettingsRoutes));
 
-const { sessionUnit, memberCount } = useDestination();
+const { owner, memberCount } = useOwner();
 
 const onTabClick = (item: any, index: number) => {
   // console.log(item, index);
   router.push({ name: item.name });
 };
 const description = computed(() => {
-  switch (sessionUnit.value?.destination?.objectType) {
+  switch (owner.value?.objectType) {
     case ChatObjectTypeEnums.Room:
     case ChatObjectTypeEnums.Square:
       return t('Memebers Count', [`${memberCount.value || 50}`]);
@@ -34,7 +34,7 @@ const description = computed(() => {
     <aside class="nav-sider">
       <header>
         <chat-object
-          :entity="sessionUnit?.destination"
+          :entity="owner"
           class="destination"
           :sub="description"
         ></chat-object>
@@ -143,4 +143,5 @@ const description = computed(() => {
   background-color: var(--tab-item-background-color-hover);
 }
 </style>
-../../../routes/chatSettingsRoutes ../../routes/chatSettingsRoutes
+../../../routes/chatSettingsRoutes
+../../routes/objectSettingsRoutes

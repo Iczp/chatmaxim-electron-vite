@@ -140,5 +140,21 @@
   "AppTitle": "应用市场",
   "Name": "名称",
   "Description": "说明",
-  "Session Avatar": "头像"
+  "Session Avatar": "头像",
+  "Gender": "性别",
+  "Verification Method": "验证方式",
+  "Session Name": "会话名称",
+  "Gender:Girl": "女",
+  "Gender:Unset": "未设置",
+  "Gender:Boy": "男",
+  "VerificationMethod:None": "不需要验证",
+  "VerificationMethod:Required": "需要验证",
+  "VerificationMethod:Rejected": "拒绝验证",
+  "Verification Method Help": "好友请求的验证方式",
+  "Code": "编码",
+  "Code Help": "不可修改",
+  "Profile": "概述",
+  "Session Portrait": "头像",
+  "RoomNameChangeHelp": "修改名称并通知群内所有成员",
+  "ObjectNameHelp": "显示名称"
 }

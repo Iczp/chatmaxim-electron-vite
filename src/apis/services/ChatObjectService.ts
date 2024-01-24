@@ -8,7 +8,7 @@ import type { IczpNet_Chat_ChatObjects_Dtos_ChatObjectCreateInput } from '../mod
 import type { IczpNet_Chat_ChatObjects_Dtos_ChatObjectDetailDto } from '../models/IczpNet_Chat_ChatObjects_Dtos_ChatObjectDetailDto';
 import type { IczpNet_Chat_ChatObjects_Dtos_ChatObjectDto } from '../models/IczpNet_Chat_ChatObjects_Dtos_ChatObjectDto';
 // import type { IczpNet_Chat_ChatObjects_Dtos_ChatObjectDto_IczpNet_Chat_Application_Contracts_Version_0_1_1_0_Culture_neutral_PublicKeyToken_null_ } from '../models/IczpNet_Chat_ChatObjects_Dtos_ChatObjectDto_IczpNet_Chat_Application_Contracts_Version_0_1_1_0_Culture_neutral_PublicKeyToken_null_';
-import type { IczpNet_Chat_ChatObjects_Dtos_ChatObjectUpdateInput } from '../models/IczpNet_Chat_ChatObjects_Dtos_ChatObjectUpdateInput';
+import type { ChatObjectUpdateInput } from '../models/ChatObjectUpdateInput';
 import type { Volo_Abp_Application_Dtos_PagedResultDto_1 } from '../models/Volo_Abp_Application_Dtos_PagedResultDto_1';
 
 import type { CancelablePromise } from '../core/CancelablePromise';
@@ -16,7 +16,7 @@ import { OpenAPI } from '../core/OpenAPI';
 import { request as __request } from '../core/request';
 import { PagedResultDto } from '../dtos/PagedResultDto';
 import { ChatObjectTypeEnums } from '../enums';
-import { ChatObjectDto } from '../dtos';
+import { ChatObjectDetailDto, ChatObjectDto, GetListInput } from '../dtos';
 import { AxiosProgressEvent } from 'axios';
 
 export class ChatObjectService {
@@ -333,7 +333,7 @@ export class ChatObjectService {
      * 主建Id
      */
     id: number;
-  }): CancelablePromise<IczpNet_Chat_ChatObjects_Dtos_ChatObjectDetailDto> {
+  }): CancelablePromise<ChatObjectDetailDto> {
     return __request(OpenAPI, {
       method: 'GET',
       url: '/api/chat/chat-object/{id}/detail',
@@ -421,23 +421,7 @@ export class ChatObjectService {
      * 用户Id
      */
     userId: string;
-    /**
-     * 关键字(支持拼音)
-     */
-    keyword?: string;
-    /**
-     * 显示数量
-     */
-    maxResultCount?: number;
-    /**
-     * 跳过数量
-     */
-    skipCount?: number;
-    /**
-     * 排序
-     */
-    sorting?: string;
-  }): CancelablePromise<Volo_Abp_Application_Dtos_PagedResultDto_1> {
+  } & GetListInput): CancelablePromise<PagedResultDto<ChatObjectDto>> {
     return __request(OpenAPI, {
       method: 'GET',
       url: '/api/chat/chat-object/by-user-id/{userId}',
@@ -465,7 +449,7 @@ export class ChatObjectService {
      * 主键Id[多个]
      */
     idList?: Array<number>;
-  }): CancelablePromise<Array<IczpNet_Chat_ChatObjects_ChatObjectInfo>> {
+  }): CancelablePromise<Array<ChatObjectDto>> {
     return __request(OpenAPI, {
       method: 'GET',
       url: '/api/chat/chat-object/manay-by-cache',
@@ -487,7 +471,7 @@ export class ChatObjectService {
      * 主键Id[多个]
      */
     idList?: Array<number>;
-  }): CancelablePromise<Array<IczpNet_Chat_ChatObjects_Dtos_ChatObjectDto>> {
+  }): CancelablePromise<Array<ChatObjectDto>> {
     return __request(OpenAPI, {
       method: 'GET',
       url: '/api/chat/chat-object/many',
@@ -568,8 +552,8 @@ export class ChatObjectService {
      * 主键Id
      */
     id: number;
-    requestBody?: IczpNet_Chat_ChatObjects_Dtos_ChatObjectUpdateInput;
-  }): CancelablePromise<IczpNet_Chat_ChatObjects_Dtos_ChatObjectDto> {
+    requestBody?: ChatObjectUpdateInput;
+  }): CancelablePromise<ChatObjectDto> {
     return __request(OpenAPI, {
       method: 'POST',
       url: '/api/chat/chat-object/{id}/update',
@@ -595,7 +579,7 @@ export class ChatObjectService {
      */
     id: number;
     name?: string;
-  }): CancelablePromise<IczpNet_Chat_ChatObjects_Dtos_ChatObjectDto> {
+  }): CancelablePromise<ChatObjectDto> {
     return __request(OpenAPI, {
       method: 'POST',
       url: '/api/chat/chat-object/{id}/update-name',
@@ -616,7 +600,7 @@ export class ChatObjectService {
   public static postApiChatChatObjectUpdatePortrait({
     id,
     formData,
-    onUploadProgress
+    onUploadProgress,
   }: {
     /**
      * 主建Id

@@ -77,7 +77,7 @@ const cropLayout = reactive({
 
 <template>
   <page>
-    <page-title :title="t('Session Avatar')" description="managermemt" />
+    <page-title :title="t('Session Portrait')" description="managermemt" />
     <!-- <RoleFromModal ref="formModal" /> -->
     <page-content>
       <div>

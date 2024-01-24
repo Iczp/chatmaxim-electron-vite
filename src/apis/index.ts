@@ -24,7 +24,7 @@ export { IczpNet_Chat_ChatObjects_Dtos_ChatObjectCreateInput } from './models/Ic
 export { IczpNet_Chat_ChatObjects_Dtos_ChatObjectDetailDto } from './models/IczpNet_Chat_ChatObjects_Dtos_ChatObjectDetailDto';
 export { IczpNet_Chat_ChatObjects_Dtos_ChatObjectDto } from './models/IczpNet_Chat_ChatObjects_Dtos_ChatObjectDto';
 export { IczpNet_Chat_ChatObjects_Dtos_ChatObjectSimpleDto } from './models/IczpNet_Chat_ChatObjects_Dtos_ChatObjectSimpleDto';
-export { IczpNet_Chat_ChatObjects_Dtos_ChatObjectUpdateInput } from './models/IczpNet_Chat_ChatObjects_Dtos_ChatObjectUpdateInput';
+export type { ChatObjectUpdateInput } from './models/ChatObjectUpdateInput';
 export type { IczpNet_Chat_ChatObjectTypes_Dtos_ChatObjectTypeCreateInput } from './models/IczpNet_Chat_ChatObjectTypes_Dtos_ChatObjectTypeCreateInput';
 export type { IczpNet_Chat_ChatObjectTypes_Dtos_ChatObjectTypeDetailDto } from './models/IczpNet_Chat_ChatObjectTypes_Dtos_ChatObjectTypeDetailDto';
 export type { IczpNet_Chat_ChatObjectTypes_Dtos_ChatObjectTypeDto } from './models/IczpNet_Chat_ChatObjectTypes_Dtos_ChatObjectTypeDto';

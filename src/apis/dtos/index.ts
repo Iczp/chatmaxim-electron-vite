@@ -22,6 +22,7 @@ export type { SessionUnitSettingDto } from './SessionUnitSettingDto';
 export type { SessionUnitSettingSimpleDto } from './SessionUnitSettingSimpleDto';
 
 export type { ChatObjectDto } from './ChatObjectDto';
+export type { ChatObjectDetailDto } from './ChatObjectDetailDto';
 export type { MessageDto } from './MessageDto';
 export type { MessageOwnerDto } from './MessageOwnerDto';
 export type { MessageSimpleDto } from './MessageSimpleDto';
