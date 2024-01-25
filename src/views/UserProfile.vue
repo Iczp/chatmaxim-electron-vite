@@ -8,6 +8,7 @@ import ChatObject from '../components/ChatObject.vue';
 import { useI18n } from 'vue-i18n';
 import { openChildWindow } from '../ipc/openChildWindow';
 import { useWindowStore } from '../stores/window';
+import { env } from '../env';
 const { t } = useI18n();
 const windowStore = useWindowStore();
 // defineProps<{ msg: string }>();
@@ -39,7 +40,7 @@ const openObjectProfile = (item: ChatObjectDto) => {
         chatObjectId: item.id,
         owner: item,
       },
-      // isModel: true,
+      isModel: !env.isDev,
       parent: windowStore.name,
       isPreventClose: true,
       visiblity: true,

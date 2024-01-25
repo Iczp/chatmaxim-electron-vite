@@ -166,11 +166,14 @@ const wrapperCol = { span: 14 };
     <page-content>
       <scroll-view>
         <a-form :model="formState" :label-col="labelCol" :wrapper-col="wrapperCol">
-          <!-- <a-divider class="divider" orientation="left">{{ t('Application') }}</a-divider> -->
+          <!-- <a-form-item :label="t('Avatar')">
+            <avatar :entity="owner" :size="56" />
+          </a-form-item> -->
+
           <a-form-item :label="t('Name')" :help="t('ObjectNameHelp')">
             <a-input v-model:value="formState.name" :bordered="true">
               <!-- <template #prefix>
-                <avatar :entity="sessionUnit?.destination" :size="28" />
+                <avatar :entity="owner" :size="24" />
               </template> -->
             </a-input>
           </a-form-item>
@@ -180,11 +183,7 @@ const wrapperCol = { span: 14 };
           </a-form-item>
 
           <a-form-item :label="t('Gender')" name="gender">
-            <a-radio-group v-model:value="formState.gender" :options="genderOptions">
-              <!-- <a-radio v-for="item in verificationMethodOptions" :value="item.value">
-                {{ t(`VerificationMethod:${item.label}`) }}
-              </a-radio> -->
-            </a-radio-group>
+            <a-radio-group v-model:value="formState.gender" :options="genderOptions" />
           </a-form-item>
 
           <a-form-item :label="t('ObjectType')" :help="t('Code Help')">
@@ -192,10 +191,6 @@ const wrapperCol = { span: 14 };
               <!-- <template #suffixIcon><smile-outlined class="ant-select-suffix" /></template> -->
             </a-select>
           </a-form-item>
-
-          <!-- <span v-for="item in objectTypeOptions">{{ `t('${item.label}')` }}</span> -->
-
-          <!-- <a-divider class="divider" orientation="left">{{ t('Verification Method') }}</a-divider> -->
 
           <a-form-item
             :label="t('Verification Method')"
@@ -205,11 +200,7 @@ const wrapperCol = { span: 14 };
             <a-radio-group
               v-model:value="formState.verificationMethod"
               :options="verificationMethodOptions"
-            >
-              <!-- <a-radio v-for="item in verificationMethodOptions" :value="item.value">
-                {{ t(`VerificationMethod:${item.label}`) }}
-              </a-radio> -->
-            </a-radio-group>
+            />
           </a-form-item>
 
           <a-form-item :label="t('Description')" name="desc">

@@ -23,12 +23,13 @@ const onTabClick = (item: any, index: number) => {
   router.push({ name: item.name });
 };
 const description = computed(() => {
-  switch (owner.value?.objectType) {
+  const objectType = payload.value?.owner.objectType;
+  switch (objectType) {
     case ChatObjectTypeEnums.Room:
     case ChatObjectTypeEnums.Square:
       return t('Memebers Count', [`${memberCount.value || 50}`]);
     default:
-      return undefined;
+      return t(`ObjectType:${ChatObjectTypeEnums[owner.value?.objectType || 0]}`);
   }
 });
 </script>
