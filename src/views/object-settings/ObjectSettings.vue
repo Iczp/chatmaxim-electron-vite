@@ -7,10 +7,14 @@ import ChatObject from '../../components/ChatObject.vue';
 import { useOwner } from './commons/useOwner';
 import { computed } from 'vue';
 import { ChatObjectTypeEnums } from '../../apis/enums';
+import { usePayload } from '../../commons/usePayload';
+import { ChatObjectDto } from '../../apis/dtos';
 const { t } = useI18n();
 const route = useRoute();
 const router = useRouter();
 const navItems = ref(Array.from(objectSettingsRoutes));
+
+const payload = usePayload<{ owner: ChatObjectDto }>();
 
 const { owner, memberCount } = useOwner();
 
@@ -33,11 +37,7 @@ const description = computed(() => {
   <page class="chat-setting-page">
     <aside class="nav-sider">
       <header>
-        <chat-object
-          :entity="owner"
-          class="destination"
-          :sub="description"
-        ></chat-object>
+        <chat-object :entity="payload?.owner" class="destination" :sub="description"></chat-object>
       </header>
       <scroll-view>
         <div class="tabs">
@@ -143,5 +143,4 @@ const description = computed(() => {
   background-color: var(--tab-item-background-color-hover);
 }
 </style>
-../../../routes/chatSettingsRoutes
-../../routes/objectSettingsRoutes
+../../../routes/chatSettingsRoutes ../../routes/objectSettingsRoutes

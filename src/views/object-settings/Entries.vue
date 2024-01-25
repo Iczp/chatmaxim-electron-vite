@@ -1,21 +1,19 @@
 <script setup lang="ts">
 import { UnwrapRef, computed, reactive, ref, toRaw, onActivated } from 'vue';
 import { useI18n } from 'vue-i18n';
+import { useDestination } from '../chat-settings/commons/useDestination';
 import ChatObject from '../../components/ChatObject.vue';
+import Avatar from '../../components/Avatar.vue';
 import { ChatObjectTypeEnums, GenderEnums, VerificationMethodEnums } from '../../apis/enums';
 import { ChatObjectService, EntryNameService, EntryService } from '../../apis';
 import { message } from 'ant-design-vue';
 import { useOwner } from './commons/useOwner';
+import { useEntries } from './commons/useEntries';
 import { EntryNameDto } from '../../apis/dtos/EntryNameDto';
 import { setWindow } from '../../ipc/setWindow';
-import { ChatObjectDto } from '../../apis/dtos/ChatObjectDto';
-import { usePayload } from '../../commons/usePayload';
-import { sendPickerResult } from '../../ipc/openChildWindow';
-import { useRoute } from 'vue-router';
-const route = useRoute();
 const { t } = useI18n();
 const props = defineProps<{ chatObjectId: string }>();
-const payload = usePayload<{ owner: ChatObjectDto }>();
+
 const { owner, memberCount } = useOwner();
 
 const description = computed(() => {
@@ -121,14 +119,12 @@ const onSubmit = () => {
   // return;
   const key = 'session-change-name';
   isPending.value = true;
-  ChatObjectService.postApiChatChatObjectUpdate({
-    id: Number(props.chatObjectId),
-    // name: formState.name,
-    requestBody: toRaw(formState),
+  EntryService.postApiChatEntrySetForChatObject({
+    ownerId: Number(props.chatObjectId),
+    requestBody: getEntryValue(),
   })
     .then(res => {
       message.success({ content: `ok`, key });
-      payload.value!.owner = res;
     })
     .catch(err => {
       message.error({ content: err?.body?.error?.message, key });
@@ -138,17 +134,9 @@ const onSubmit = () => {
     });
 };
 const onCancel = () => {
-  const event = route.query.event as string;
-  console.log('event', event);
-  sendPickerResult({
-    event,
-    success: false,
-    message: 'User canceled!',
+  setWindow({
+    visiblity: false,
   });
-
-  // setWindow({
-  //   visiblity: false,
-  // });
 };
 const labelCol = { style: { width: '150px' } };
 const wrapperCol = { span: 14 };
@@ -156,64 +144,25 @@ const wrapperCol = { span: 14 };
 
 <template>
   <page>
-    <page-title :title="t('Profile')" />
+    <page-title :title="t('Entries')" />
 
     <page-content>
       <scroll-view>
         <a-form :model="formState" :label-col="labelCol" :wrapper-col="wrapperCol">
           <!-- <a-divider class="divider" orientation="left">{{ t('Application') }}</a-divider> -->
-          <a-form-item :label="t('Name')" :help="t('ObjectNameHelp')">
-            <a-input v-model:value="formState.name" :bordered="true">
-              <!-- <template #prefix>
-                <avatar :entity="sessionUnit?.destination" :size="28" />
-              </template> -->
-            </a-input>
-          </a-form-item>
 
-          <a-form-item :label="t('Code')" :help="t('Code Help')">
-            <a-input v-model:value="formState.code" :readOnly="true"></a-input>
-          </a-form-item>
-
-          <a-form-item :label="t('Gender')" name="gender">
-            <a-radio-group v-model:value="formState.gender" :options="genderOptions">
-              <!-- <a-radio v-for="item in genderOptions" :value="item.value">
-                {{ t(`Gender:${item.label}`) }}
-              </a-radio> -->
-            </a-radio-group>
-          </a-form-item>
-          <!-- <a-divider class="divider" orientation="left">{{ t('Verification Method') }}</a-divider> -->
-
+          <!-- entryName -->
           <a-form-item
-            :label="t('Verification Method')"
-            name="verificationMethod"
-            :help="t('Verification Method Help')"
+            v-for="entry in entryNameList"
+            :key="entry.id"
+            :name="entry.code"
+            :label="entry.code"
+            :help="entry.help"
           >
-            <a-radio-group
-              v-model:value="formState.verificationMethod"
-              :options="verificationMethodOptions"
-            >
-              <!-- <a-radio v-for="item in verificationMethodOptions" :value="item.value">
-                {{ t(`VerificationMethod:${item.label}`) }}
-              </a-radio> -->
-            </a-radio-group>
+            <template v-for="(entryValue,index) in entryState[entry.id!].values" :key="index">
+              <a-input v-model:value="entryValue.value"></a-input>
+            </template>
           </a-form-item>
-
-          <a-form-item :label="t('Description')" name="desc">
-            <a-textarea v-model:value="formState.description" />
-          </a-form-item>
-          <!-- <a-form-item :wrapper-col="{ span: 16, offset: 8 }">
-            <a-space>
-              <a-button>{{ t('Cancel') }}</a-button>
-              <a-button
-                type="primary"
-                :loading="isPending"
-                style="margin-left: 10px"
-                @click="onSubmit"
-              >
-                {{ t('Confirm') }}
-              </a-button>
-            </a-space>
-          </a-form-item> -->
         </a-form>
       </scroll-view>
     </page-content>

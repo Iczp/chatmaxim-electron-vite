@@ -19,11 +19,14 @@ const ret = reactive<ResultValue<ChatObjectDto>>({
   items: [],
 });
 
-onMounted(() => {
+const fetchEntity = () => {
   ChatObjectService.getApiChatChatObjectByCurrentUser({}).then(res => {
     console.log('getApiChatChatObjectByCurrentUser', res);
     ret.items = res.items!;
   });
+};
+onMounted(() => {
+  fetchEntity();
 });
 
 const openObjectProfile = (item: ChatObjectDto) => {
@@ -34,12 +37,15 @@ const openObjectProfile = (item: ChatObjectDto) => {
       path: `/object-settings/profile/${item.id}`,
       payload: {
         chatObjectId: item.id,
+        owner: item,
       },
       // isModel: true,
       parent: windowStore.name,
       isPreventClose: true,
       visiblity: true,
     },
+  }).finally(() => {
+    fetchEntity();
   });
 };
 </script>

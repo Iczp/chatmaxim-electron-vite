@@ -156,5 +156,6 @@
   "Profile": "Profile",
   "Session Portrait": "Session Portrait",
   "RoomNameChangeHelp": "Change the name and notify all members in the group",
-  "ObjectNameHelp": "Display Name"
+  "ObjectNameHelp": "Display Name",
+  "Entries": "Entries"
 }
