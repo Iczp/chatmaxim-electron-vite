@@ -157,5 +157,16 @@
   "Session Portrait": "头像",
   "RoomNameChangeHelp": "修改名称并通知群内所有成员",
   "ObjectNameHelp": "显示名称",
-  "Entries": "Entries"
+  "Entries": "Entries",
+  "ObjectType": "类型",
+  "ObjectType:Anonymous": "匿名",
+  "ObjectType:Personal": "个人",
+  "ObjectType:Official": "官方号",
+  "ObjectType:Subscription": "订阅号",
+  "ObjectType:Square": "聊天广场",
+  "ObjectType:Robot": "机器人",
+  "ObjectType:ShopKeeper": "掌柜",
+  "ObjectType:ShopWaiter": "店小二",
+  "ObjectType:Customer": "顾客",
+  "ObjectType:Room": "群"
 }

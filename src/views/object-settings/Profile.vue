@@ -69,11 +69,16 @@ const toKeyValues = (enums: object, prefix?: string): Array<{ label: string; val
     .map(([key, value]) => ({ label: t(prefix + key), value }));
 };
 
-const genderOptions = toKeyValues(GenderEnums, 'Gender:');
+const genderOptions = computed(() => toKeyValues(GenderEnums, 'Gender:'));
 
-const verificationMethodOptions = toKeyValues(VerificationMethodEnums, 'VerificationMethod:');
+const verificationMethodOptions = computed(() =>
+  toKeyValues(VerificationMethodEnums, 'VerificationMethod:'),
+);
+const objectTypeOptions = computed(() => toKeyValues(ChatObjectTypeEnums, 'ObjectType:'));
 
-console.log('---genderOptions----', genderOptions);
+// objectTypeOptions.map(x => `t('${x.label}')`);
+
+// console.log('---objectTypeOptions----', objectTypeOptions.map(x => `t('${x.label}')`).join('\n'));
 
 // const objectTypes = ref(
 //   Object.keys(ChatObjectTypeEnums)
@@ -176,11 +181,20 @@ const wrapperCol = { span: 14 };
 
           <a-form-item :label="t('Gender')" name="gender">
             <a-radio-group v-model:value="formState.gender" :options="genderOptions">
-              <!-- <a-radio v-for="item in genderOptions" :value="item.value">
-                {{ t(`Gender:${item.label}`) }}
+              <!-- <a-radio v-for="item in verificationMethodOptions" :value="item.value">
+                {{ t(`VerificationMethod:${item.label}`) }}
               </a-radio> -->
             </a-radio-group>
           </a-form-item>
+
+          <a-form-item :label="t('ObjectType')" :help="t('Code Help')">
+            <a-select :value="owner?.objectType" style="width: 240px" :options="objectTypeOptions">
+              <!-- <template #suffixIcon><smile-outlined class="ant-select-suffix" /></template> -->
+            </a-select>
+          </a-form-item>
+
+          <!-- <span v-for="item in objectTypeOptions">{{ `t('${item.label}')` }}</span> -->
+
           <!-- <a-divider class="divider" orientation="left">{{ t('Verification Method') }}</a-divider> -->
 
           <a-form-item

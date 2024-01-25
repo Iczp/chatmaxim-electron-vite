@@ -157,5 +157,16 @@
   "Session Portrait": "Session Portrait",
   "RoomNameChangeHelp": "Change the name and notify all members in the group",
   "ObjectNameHelp": "Display Name",
-  "Entries": "Entries"
+  "Entries": "Entries",
+  "ObjectType": "Type",
+  "ObjectType:Anonymous": "Anonymous",
+  "ObjectType:Personal": "Personal",
+  "ObjectType:Official": "Official",
+  "ObjectType:Subscription": "Subscription",
+  "ObjectType:Square": "Square",
+  "ObjectType:Robot": "Robot",
+  "ObjectType:ShopKeeper": "ShopKeeper",
+  "ObjectType:ShopWaiter": "ShopWaiter",
+  "ObjectType:Customer": "Customer",
+  "ObjectType:Room": "Room"
 }

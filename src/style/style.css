@@ -808,6 +808,21 @@ code {
     color: var(--sub-title-color);
   }
 
+  .ant-select-dropdown {
+    background-color: rgb(36, 36, 36);
+  }
+  .ant-select-dropdown .ant-select-item {
+    color: var(--color);
+  }
+  .ant-select-dropdown .ant-select-item-option-active:not(.ant-select-item-option-disabled) {
+    background-color: rgba(79, 79, 79, 0.529);
+  }
+  .ant-select-dropdown .ant-select-item-option-selected:not(.ant-select-item-option-disabled) {
+    color: #1677ff;
+    font-weight: 600;
+    background-color: rgba(51, 52, 70, 0.358);
+  }
+
   .ps .ps__rail-x:hover,
   .ps .ps__rail-y:hover,
   .ps .ps__rail-x:focus,
