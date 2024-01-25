@@ -1,16 +1,17 @@
 <script setup lang="ts">
-import { UnwrapRef, computed, reactive, ref, toRaw } from 'vue';
+import { UnwrapRef, computed, reactive, ref, toRaw, onActivated } from 'vue';
 import { useI18n } from 'vue-i18n';
 import { useDestination } from '../chat-settings/commons/useDestination';
 import ChatObject from '../../components/ChatObject.vue';
 import Avatar from '../../components/Avatar.vue';
 import { ChatObjectTypeEnums, GenderEnums, VerificationMethodEnums } from '../../apis/enums';
-import { ChatObjectService, RoomService } from '../../apis';
+import { ChatObjectService, EntryNameService, EntryService } from '../../apis';
 import { message } from 'ant-design-vue';
 import { useOwner } from './commons/useOwner';
-import { onActivated } from 'vue';
+import { useEntries } from './commons/useEntries';
+import { EntryNameDto } from '../../apis/dtos/EntryNameDto';
 const { t } = useI18n();
-const props = defineProps<{ chatObjectId: number }>();
+const props = defineProps<{ chatObjectId: string }>();
 
 const { owner, memberCount } = useOwner();
 
@@ -24,30 +25,52 @@ const description = computed(() => {
   }
 });
 
-const toKeyValues = (enums: object) => {
-  return Object.entries(enums)
-    .filter(([a, b]) => Number(b) >= 0)
-    .map(([key, value]) => ({
-      key,
-      value,
-    }));
-};
-
-onActivated(() => {
-  ChatObjectService.getApiChatChatObjectDetail({ id: props.chatObjectId }).then(entity => {
+// const { list: entryNameList } = useEntries({
+//   input: {},
+// });
+const entryNameList = ref<EntryNameDto[]>([]);
+const fetchEntity = () => {
+  ChatObjectService.getApiChatChatObjectDetail({ id: Number(props.chatObjectId) }).then(entity => {
     owner.value = entity;
     formState.name = entity.name;
     formState.code = entity.code;
     formState.gender = entity.gender;
-    formState.verificationMethod = entity.verificationMethods;
+    formState.verificationMethod = entity.verificationMethod;
     formState.description = entity.description;
+    entity.entries?.forEach(x => {
+      entryState[x.entryName?.id!] = {
+        values: [{ value: x.entryValue?.value || '' }],
+      };
+    });
   });
+};
+const fetchEntries = () => {
+  EntryNameService.getApiChatEntryNameList({ maxResultCount: 999 }).then(res => {
+    console.log('ntryNameService.getApiChatEntryNameList', res);
+    entryNameList.value = res.items!;
+    res.items?.forEach(x => {
+      entryState[x.id!] = entryState[x.id!] || {
+        values: [{ value: '' }],
+      };
+    });
+  });
+};
+onActivated(() => {
+  fetchEntity();
+  fetchEntries();
 });
-const genderOptions = toKeyValues(GenderEnums);
 
-const verificationMethodOptions = toKeyValues(VerificationMethodEnums);
+const toKeyValues = (enums: object, prefix?: string): Array<{ label: string; value: any }> => {
+  return Object.entries(enums)
+    .filter(([a, b]) => Number(b) >= 0)
+    .map(([key, value]) => ({ label: t(prefix + key), value }));
+};
 
-console.log('-------', toKeyValues(GenderEnums));
+const genderOptions = toKeyValues(GenderEnums, 'Gender:');
+
+const verificationMethodOptions = toKeyValues(VerificationMethodEnums, 'VerificationMethod:');
+
+console.log('---genderOptions----', genderOptions);
 
 // const objectTypes = ref(
 //   Object.keys(ChatObjectTypeEnums)
@@ -67,20 +90,51 @@ interface FormState {
   gender?: GenderEnums;
   verificationMethod?: VerificationMethodEnums;
   description?: string;
+  entries: { [key: string]: string };
 }
-const formState: UnwrapRef<FormState> = reactive({});
+interface EntryState {
+  [key: string]: {
+    values: Array<{ value: string }>;
+  };
+}
+interface EntryItemState {
+  entity: string;
+  values: Array<{ value: string }>;
+}
+
+const formState: UnwrapRef<FormState> = reactive({ entries: {} });
+const entryState: UnwrapRef<EntryState> = reactive({});
+const isPending = ref(false);
+const getEntryValue = (): Record<string, string[]> => {
+  const v: Record<string, string[]> = {};
+  Object.keys(entryState).forEach(key => {
+    v[key] = entryState[key].values.map(d => d.value);
+  });
+  return v;
+};
 const onSubmit = () => {
-  console.log('submit!', toRaw(formState));
+  console.log('formState!', toRaw(formState));
+  console.log('entryState!', toRaw(entryState));
+  // return;
   const key = 'session-change-name';
+  isPending.value = true;
+  EntryService.postApiChatEntrySetForChatObject({
+    ownerId: Number(props.chatObjectId),
+    requestBody: getEntryValue(),
+  });
   ChatObjectService.postApiChatChatObjectUpdate({
-    id: props.chatObjectId,
+    id: Number(props.chatObjectId),
     // name: formState.name,
+    requestBody: toRaw(formState),
   })
     .then(res => {
       message.success({ content: `ok`, key });
     })
     .catch(err => {
       message.error({ content: err?.body?.error?.message, key });
+    })
+    .finally(() => {
+      isPending.value = false;
     });
 };
 const labelCol = { style: { width: '150px' } };
@@ -89,12 +143,10 @@ const wrapperCol = { span: 14 };
 
 <template>
   <page>
-    <page-title :title="t('Profile')" description="Session Name" />
+    <page-title :title="t('Profile')" />
 
     <page-content>
       <scroll-view>
-        <chat-object :entity="owner" class="destination"></chat-object>
-
         <a-form :model="formState" :label-col="labelCol" :wrapper-col="wrapperCol">
           <!-- <a-divider class="divider" orientation="left">{{ t('Application') }}</a-divider> -->
           <a-form-item :label="t('Name')" :help="t('ObjectNameHelp')">
@@ -107,14 +159,12 @@ const wrapperCol = { span: 14 };
               </template> -->
             </a-input>
           </a-form-item>
-          <a-form-item :label="t('Code')" :help="t('Code Help')">
-            <a-input v-model:value="formState.code" :readOnly="true"></a-input>
-          </a-form-item>
+
           <a-form-item :label="t('Gender')" name="gender">
-            <a-radio-group v-model:value="formState.gender">
-              <a-radio v-for="item in genderOptions" :value="item.value">
-                {{ t(`Gender:${item.key}`) }}
-              </a-radio>
+            <a-radio-group v-model:value="formState.gender" :options="genderOptions">
+              <!-- <a-radio v-for="item in genderOptions" :value="item.value">
+                {{ t(`Gender:${item.label}`) }}
+              </a-radio> -->
             </a-radio-group>
           </a-form-item>
           <!-- <a-divider class="divider" orientation="left">{{ t('Verification Method') }}</a-divider> -->
@@ -124,31 +174,56 @@ const wrapperCol = { span: 14 };
             name="verificationMethod"
             :help="t('Verification Method Help')"
           >
-            <a-radio-group v-model:value="formState.verificationMethod">
-              <a-radio v-for="item in verificationMethodOptions" :value="item.value">
-                {{ t(`VerificationMethod:${item.key}`) }}
-              </a-radio>
+            <a-radio-group
+              v-model:value="formState.verificationMethod"
+              :options="verificationMethodOptions"
+            >
+              <!-- <a-radio v-for="item in verificationMethodOptions" :value="item.value">
+                {{ t(`VerificationMethod:${item.label}`) }}
+              </a-radio> -->
             </a-radio-group>
+          </a-form-item>
+
+          <!-- entryName -->
+          <a-form-item
+            v-for="entry in entryNameList"
+            :key="entry.id"
+            :name="entry.code"
+            :label="entry.code"
+            :help="entry.help"
+          >
+            <template v-for="(entryValue,index) in entryState[entry.id!].values" :key="index">
+              <a-input v-model:value="entryValue.value"></a-input>
+            </template>
           </a-form-item>
 
           <a-form-item :label="t('Description')" name="desc">
             <a-textarea v-model:value="formState.description" />
           </a-form-item>
-          <a-form-item :wrapper-col="{ span: 16, offset: 8 }">
-            <a-button>{{ t('Cancel') }}</a-button>
-            <a-button type="primary" style="margin-left: 10px" @click="onSubmit">
-              {{ t('Confirm') }}
-            </a-button>
-          </a-form-item>
+          <!-- <a-form-item :wrapper-col="{ span: 16, offset: 8 }">
+            <a-space>
+              <a-button>{{ t('Cancel') }}</a-button>
+              <a-button
+                type="primary"
+                :loading="isPending"
+                style="margin-left: 10px"
+                @click="onSubmit"
+              >
+                {{ t('Confirm') }}
+              </a-button>
+            </a-space>
+          </a-form-item> -->
         </a-form>
       </scroll-view>
     </page-content>
-    <!-- <page-footer class="flex-end">
+    <page-footer class="flex-end">
       <a-space>
-        <a-button type="primary" @click="onSubmit">Change</a-button>
-        <a-button style="margin-left: 10px">Cancel</a-button>
+        <a-button>{{ t('Cancel') }}</a-button>
+        <a-button type="primary" :loading="isPending" style="margin-left: 10px" @click="onSubmit">
+          {{ t('Confirm') }}
+        </a-button>
       </a-space>
-    </page-footer> -->
+    </page-footer>
   </page>
 </template>
 
@@ -163,5 +238,8 @@ const wrapperCol = { span: 14 };
   border-radius: 0;
   padding: 6px 6px;
   border-bottom: 1px solid #41414132;
+}
+.flex-end {
+  justify-content: flex-end;
 }
 </style>

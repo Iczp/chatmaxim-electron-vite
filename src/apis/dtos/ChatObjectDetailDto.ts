@@ -8,7 +8,7 @@ export type ChatObjectDetailDto = ChatObjectDto & {
    *
    * @type {VerificationMethodEnums}
    */
-  verificationMethods?: VerificationMethodEnums;
+  verificationMethod?: VerificationMethodEnums;
   /**
    * 说明
    *
