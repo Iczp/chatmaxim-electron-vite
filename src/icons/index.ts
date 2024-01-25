@@ -86,6 +86,8 @@ import ShoppingBag from '../svgs/shopping_bag_black_24dp.svg';
 import Plus from '../svgs/add_black_24dp.svg';
 import Remove from '../svgs/remove_black_24dp.svg';
 
+import Diversity2 from '../svgs/diversity_2_black_24dp.svg';
+
 export {
   Alarm,
   AlarmOff,
@@ -162,4 +164,5 @@ export {
   ShoppingBag,
   Plus,
   Remove,
+  Diversity2,
 };

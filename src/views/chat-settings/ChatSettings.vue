@@ -10,7 +10,14 @@ import { ChatObjectTypeEnums } from '../../apis/enums';
 const { t } = useI18n();
 const route = useRoute();
 const router = useRouter();
-const navItems = ref(Array.from(chatSettingsRoutes));
+const objectType = computed(() => sessionUnit.value?.destination?.objectType);
+const navItems = computed(() =>
+  chatSettingsRoutes.filter(
+    x =>
+      !x.meta?.objectTypes ||
+      (x.meta?.objectTypes as Array<ChatObjectTypeEnums>).some(d => d == objectType.value),
+  ),
+);
 
 const { sessionUnit, memberCount } = useDestination();
 
@@ -18,8 +25,9 @@ const onTabClick = (item: any, index: number) => {
   // console.log(item, index);
   router.push({ name: item.name });
 };
+
 const description = computed(() => {
-  switch (sessionUnit.value?.destination?.objectType) {
+  switch (objectType.value) {
     case ChatObjectTypeEnums.Room:
     case ChatObjectTypeEnums.Square:
       return t('Memebers Count', [`${memberCount.value || 50}`]);

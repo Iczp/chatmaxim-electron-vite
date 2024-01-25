@@ -14,7 +14,7 @@
 .page-footer {
   display: flex;
   flex-direction: row;
-  justify-content: space-between;
+  /* justify-content: space-between; */
   padding: 0 12px;
   border-top: 1px solid var(--page-footer-border-top-color);
 }

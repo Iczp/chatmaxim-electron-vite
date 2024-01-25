@@ -1,4 +1,5 @@
 import { RouteRecordRaw } from 'vue-router';
+import { ChatObjectTypeEnums } from '../apis/enums';
 
 export const chatSettingsRoutes: RouteRecordRaw[] = [
   {
@@ -15,6 +16,7 @@ export const chatSettingsRoutes: RouteRecordRaw[] = [
     name: 'session-name',
     meta: {
       title: 'Session Name',
+      objectTypes: [ChatObjectTypeEnums.Room, ChatObjectTypeEnums.Square],
     },
     component: () => import('../views/chat-settings/RoomName.vue'),
     props: true,
@@ -24,6 +26,7 @@ export const chatSettingsRoutes: RouteRecordRaw[] = [
     name: 'session-members',
     meta: {
       title: 'Session Members',
+      objectTypes: [ChatObjectTypeEnums.Room, ChatObjectTypeEnums.Square],
     },
     component: () => import('../views/chat-settings/Members.vue'),
     props: true,
@@ -33,6 +36,7 @@ export const chatSettingsRoutes: RouteRecordRaw[] = [
     name: 'session-organiztions',
     meta: {
       title: 'Session Organiztions',
+      objectTypes: [ChatObjectTypeEnums.Room, ChatObjectTypeEnums.Square],
     },
     component: () => import('../views/chat-settings/Organiztions.vue'),
     props: true,
@@ -42,6 +46,7 @@ export const chatSettingsRoutes: RouteRecordRaw[] = [
     name: 'session-roles',
     meta: {
       title: 'Session Roles',
+      objectTypes: [ChatObjectTypeEnums.Room, ChatObjectTypeEnums.Square],
     },
     component: () => import('../views/chat-settings/Roles.vue'),
     props: true,
@@ -51,6 +56,7 @@ export const chatSettingsRoutes: RouteRecordRaw[] = [
     name: 'session-permissions',
     meta: {
       title: 'Session Permissions',
+      objectTypes: [ChatObjectTypeEnums.Room, ChatObjectTypeEnums.Square],
     },
     component: () => import('../views/chat-settings/Permissions.vue'),
     props: true,
@@ -60,6 +66,7 @@ export const chatSettingsRoutes: RouteRecordRaw[] = [
     name: 'session-request-list',
     meta: {
       title: 'Session Request',
+      objectTypes: [ChatObjectTypeEnums.Room, ChatObjectTypeEnums.Square],
     },
     component: () => import('../views/chat-settings/Request.vue'),
     props: true,
@@ -69,6 +76,7 @@ export const chatSettingsRoutes: RouteRecordRaw[] = [
     name: 'session-portrait',
     meta: {
       title: 'Session Portrait',
+      objectTypes: [ChatObjectTypeEnums.Room, ChatObjectTypeEnums.Square],
     },
     component: () => import('../views/chat-settings/Portrait.vue'),
     props: true,

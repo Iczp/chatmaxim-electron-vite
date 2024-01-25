@@ -6,18 +6,31 @@ const { sessionUnit, memberCount } = useDestination();
 
 const { t } = useI18n();
 const props = defineProps<{ sessionUnitId: string }>();
+
+
+// const isTopping = ref(Number(props.entity?.sorting) > 0);
+// const isImmersed = ref(setting?.isImmersed);
+// const isContacts = ref(setting?.isContacts);
+// const isShowMemberName = ref(setting?.isShowMemberName);
+// const memberName = ref(setting?.memberName || '');
+// const rename = ref(setting?.rename || '');
+
 interface FormState {
-  name: string;
-  rename: string;
-  delivery: boolean;
-  type: string[];
-  resource: string;
-  desc: string;
+  name?: string;
+  rename?: string;
+  isMuted?: boolean;
+  isTopping?: boolean;
+  isImmersed?: boolean;
+  isShowMemberName?: boolean;
+  isContacts?: boolean;
+  type?: string[];
+  resource?: string;
+  desc?: string;
 }
 const formState: UnwrapRef<FormState> = reactive({
   name: sessionUnit?.value?.destination?.name || '',
   rename: '',
-  delivery: false,
+  isMuted: false,
   type: [],
   resource: '',
   desc: '',
@@ -42,31 +55,33 @@ const wrapperCol = { span: 14 };
           style="margin-top: 50px"
         >
           <a-form-item :label="t('Name')">
-            {{ formState.name }}
+            {{ sessionUnit?.destination?.name }}
             <!-- <a-input v-model:value="formState.name" :readOnly="true"/> -->
           </a-form-item>
           <a-form-item :label="t('Rename')" :help="t('RenameHelp')">
             <a-input v-model:value="formState.rename" :placeholder="formState.name" />
           </a-form-item>
           <a-form-item :label="t('Mute')" :help="t('MuteHelp')">
-            <a-switch v-model:checked="formState.delivery" />
+            <a-switch v-model:checked="formState.isMuted" />
           </a-form-item>
 
-          <a-form-item :wrapper-col="{ span: 16, offset: 8 }">
+          <!-- <a-form-item :wrapper-col="{ span: 16, offset: 8 }">
             <a-button>{{ t('Cancel') }}</a-button>
             <a-button type="primary" style="margin-left: 10px" @click="onSubmit">
               {{ t('Confirm') }}
             </a-button>
-          </a-form-item>
+          </a-form-item> -->
         </a-form>
       </scroll-view>
     </page-content>
-    <!-- <page-footer class="flex-end">
+    <page-footer class="flex-end">
       <a-space>
-        <a-button type="primary" @click="onSubmit">Create</a-button>
-        <a-button style="margin-left: 10px">Cancel</a-button>
+        <a-button>{{ t('Cancel') }}</a-button>
+            <a-button type="primary" style="margin-left: 10px" @click="onSubmit">
+              {{ t('Confirm') }}
+            </a-button>
       </a-space>
-    </page-footer> -->
+    </page-footer>
   </page>
 </template>
 
