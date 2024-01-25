@@ -21,6 +21,9 @@ const description = computed(() => {
       return undefined;
   }
 });
+const confirmDisabled = computed(
+  () => formState.name == (sessionUnit?.value?.destination?.name || ''),
+);
 
 interface FormState {
   name: string;
@@ -28,18 +31,26 @@ interface FormState {
 const formState: UnwrapRef<FormState> = reactive({
   name: sessionUnit?.value?.destination?.name || '',
 });
+const isPending = ref(false);
 const onSubmit = () => {
   console.log('submit!', toRaw(formState));
   const key = 'session-change-name';
+  isPending.value = true;
   RoomService.postApiChatRoomUpdateName({
     sessionUnitId: props.sessionUnitId,
     name: formState.name,
   })
     .then(res => {
+      if (sessionUnit?.value?.destination?.name) {
+        sessionUnit.value.destination.name = formState.name;
+      }
       message.success({ content: `ok`, key });
     })
     .catch(err => {
       message.error({ content: err?.body?.error?.message, key });
+    })
+    .finally(() => {
+      isPending.value = false;
     });
 };
 const labelCol = { style: { width: '150px' } };
@@ -52,13 +63,15 @@ const wrapperCol = { span: 14 };
 
     <page-content>
       <scroll-view>
-        <chat-object :entity="sessionUnit?.destination" class="destination"></chat-object>
+        <!-- <chat-object :entity="sessionUnit?.destination" class="destination"></chat-object> -->
 
-        <a-form :model="formState" :label-col="labelCol" :wrapper-col="wrapperCol">
-          <a-form-item
-            :label="t('Session Name')"
-            :help="t('RoomNameChangeHelp')"
-          >
+        <a-form
+          :model="formState"
+          :label-col="labelCol"
+          :wrapper-col="wrapperCol"
+          style="margin-top: 50px"
+        >
+          <a-form-item :label="t('Session Name')" :help="t('RoomNameChangeHelp')">
             <a-input v-model:value="formState.name" :bordered="true">
               <!-- <template #prefix>
                 <avatar :entity="sessionUnit?.destination" :size="28" />
@@ -66,9 +79,15 @@ const wrapperCol = { span: 14 };
             </a-input>
           </a-form-item>
 
-          <a-form-item :wrapper-col="{ span: 16, offset: 8 }">
-            <a-button>{{ t('Cancel') }}</a-button>
-            <a-button type="primary" style="margin-left: 10px" @click="onSubmit">
+          <a-form-item :wrapper-col="{ span: 14, offset: 6 }">
+            <!-- <a-button>{{ t('Cancel') }}</a-button> -->
+            <a-button
+              type="primary"
+              style="margin-left: 10px"
+              :disabled="confirmDisabled"
+              @click="onSubmit"
+              :loading="isPending"
+            >
               {{ t('Confirm') }}
             </a-button>
           </a-form-item>

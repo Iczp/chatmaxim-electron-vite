@@ -29,7 +29,7 @@ const description = computed(() => {
     case ChatObjectTypeEnums.Square:
       return t('Memebers Count', [`${memberCount.value || 50}`]);
     default:
-      return t(`ObjectType:${ChatObjectTypeEnums[owner.value?.objectType || 0]}`);
+      return t(`ObjectType:${ChatObjectTypeEnums[objectType!]}`);
   }
 });
 </script>
@@ -38,7 +38,7 @@ const description = computed(() => {
   <page class="chat-setting-page">
     <aside class="nav-sider">
       <header>
-        <chat-object :entity="payload?.owner" class="destination" :sub="description"></chat-object>
+        <chat-object :entity="payload?.owner" class="destination" :sub="`T:${description}`"></chat-object>
       </header>
       <scroll-view>
         <div class="tabs">

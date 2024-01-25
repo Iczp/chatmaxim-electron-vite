@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { UnwrapRef, computed, reactive, ref, toRaw, onActivated } from 'vue';
 import { useI18n } from 'vue-i18n';
-import ChatObject from '../../components/ChatObject.vue';
+import { ContentCopy } from '../../icons';
 import { ChatObjectTypeEnums, GenderEnums, VerificationMethodEnums } from '../../apis/enums';
 import { ChatObjectService, EntryNameService, EntryService } from '../../apis';
 import { message } from 'ant-design-vue';
@@ -12,6 +12,7 @@ import { ChatObjectDto } from '../../apis/dtos/ChatObjectDto';
 import { usePayload } from '../../commons/usePayload';
 import { sendPickerResult } from '../../ipc/openChildWindow';
 import { useRoute } from 'vue-router';
+import { useClipboard } from '@vueuse/core';
 const route = useRoute();
 const { t } = useI18n();
 const props = defineProps<{ chatObjectId: string }>();
@@ -112,7 +113,7 @@ interface EntryItemState {
 
 const formState: UnwrapRef<FormState> = reactive({ entries: {} });
 const entryState: UnwrapRef<EntryState> = reactive({});
-const isPending = ref(false);
+
 const getEntryValue = (): Record<string, string[]> => {
   const v: Record<string, string[]> = {};
   Object.keys(entryState).forEach(key => {
@@ -120,6 +121,7 @@ const getEntryValue = (): Record<string, string[]> => {
   });
   return v;
 };
+const isPending = ref(false);
 const onSubmit = () => {
   console.log('formState!', toRaw(formState));
   console.log('entryState!', toRaw(entryState));
@@ -155,6 +157,17 @@ const onCancel = () => {
   //   visiblity: false,
   // });
 };
+const { copy, isSupported } = useClipboard();
+const copyContent = (contentText: string | undefined) => {
+  // let contentText = machineId.value || '';
+  if (!contentText) {
+    return;
+  }
+  copy(contentText).then(v => {
+    message.success({ content: `${t('Copied')}!`, duration: 2 });
+  });
+};
+
 const labelCol = { style: { width: '150px' } };
 const wrapperCol = { span: 14 };
 </script>
@@ -179,7 +192,13 @@ const wrapperCol = { span: 14 };
           </a-form-item>
 
           <a-form-item :label="t('Code')" :help="t('Code Help')">
-            <a-input v-model:value="formState.code" :readOnly="true"></a-input>
+            <!-- <a-input v-model:value="formState.code" :readOnly="true"></a-input> -->
+            <a-input v-model:value="formState.code" readonly>
+              <template #addonAfter>
+                <div @click="copyContent(formState.code)"><ContentCopy class="svg-icon-14" /></div>
+              </template>
+            </a-input>
+            <!-- {{ formState.code }} -->
           </a-form-item>
 
           <a-form-item :label="t('Gender')" name="gender">

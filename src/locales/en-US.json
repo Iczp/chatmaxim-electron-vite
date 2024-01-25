@@ -168,5 +168,10 @@
   "ObjectType:ShopKeeper": "ShopKeeper",
   "ObjectType:ShopWaiter": "ShopWaiter",
   "ObjectType:Customer": "Customer",
-  "ObjectType:Room": "Room"
+  "ObjectType:Room": "Room",
+  "RenameHelp": "Only visible to oneself",
+  "Rename": "\nRename",
+  "Mute": "Mute",
+  "MuteHelp": "Turn off notifications",
+  "Session Profile": "Profile"
 }

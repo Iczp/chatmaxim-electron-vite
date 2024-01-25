@@ -14,7 +14,7 @@ export const chatSettingsRoutes: RouteRecordRaw[] = [
     path: 'name/:sessionUnitId',
     name: 'session-name',
     meta: {
-      title: 'Session name',
+      title: 'Session Name',
     },
     component: () => import('../views/chat-settings/RoomName.vue'),
     props: true,

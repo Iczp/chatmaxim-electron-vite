@@ -73,6 +73,40 @@ const cropLayout = reactive({
   width: 300,
   height: 300,
 });
+
+const isPending = ref(false);
+const onSubmit = () => {
+  // console.log('formState!', toRaw(formState));
+  // console.log('entryState!', toRaw(entryState));
+  // // return;
+  // const key = 'session-change-name';
+  // isPending.value = true;
+  // ChatObjectService.postApiChatChatObjectUpdate({
+  //   id: Number(props.chatObjectId),
+  //   // name: formState.name,
+  //   requestBody: toRaw(formState),
+  // })
+  //   .then(res => {
+  //     message.success({ content: `ok`, key });
+  //     payload.value!.owner = res;
+  //   })
+  //   .catch(err => {
+  //     message.error({ content: err?.body?.error?.message, key });
+  //   })
+  //   .finally(() => {
+  //     isPending.value = false;
+  //   });
+};
+const onCancel = () => {
+  // const event = route.query.event as string;
+  // console.log('event', event);
+  // sendPickerResult({
+  //   event,
+  //   success: false,
+  //   message: 'User canceled!',
+  // });
+
+};
 </script>
 
 <template>
@@ -100,11 +134,22 @@ const cropLayout = reactive({
         center-wrapper
       ></vue-cropper>
     </page-content>
+    <page-footer class="flex-end">
+      <a-space>
+        <a-button @click="onCancel">{{ t('Cancel') }}</a-button>
+        <a-button type="primary" :loading="isPending" style="margin-left: 10px" @click="onSubmit">
+          {{ t('Confirm') }}
+        </a-button>
+      </a-space>
+    </page-footer>
   </page>
 </template>
 
 <style scoped>
 :deep(.page-content) {
   margin-left: 20px;
+}
+.flex-end {
+  justify-content: flex-end;
 }
 </style>

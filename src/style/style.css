@@ -149,6 +149,10 @@ code {
   padding: 2em;
 }
 
+.flex-end {
+  justify-content: flex-end;
+}
+
 #app {
   /* max-width: 1280px; */
   width: 100%;
@@ -696,6 +700,17 @@ code {
   .ant-btn-text:hover {
     color: var(--color);
     background-color: rgba(68, 68, 68, 0.581);
+  }
+
+  .ant-btn-primary[disabled],
+  .ant-btn-primary[disabled]:hover,
+  .ant-btn-primary[disabled]:focus,
+  .ant-btn-primary[disabled]:active {
+    color: #64646440;
+    border-color: #373737;
+    background: #1f1f1f;
+    text-shadow: none;
+    box-shadow: none;
   }
 
   .ant-input {

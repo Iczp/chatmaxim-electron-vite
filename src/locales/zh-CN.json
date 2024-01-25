@@ -168,5 +168,10 @@
   "ObjectType:ShopKeeper": "掌柜",
   "ObjectType:ShopWaiter": "店小二",
   "ObjectType:Customer": "顾客",
-  "ObjectType:Room": "群"
+  "ObjectType:Room": "群",
+  "RenameHelp": "只对自己可见",
+  "Rename": "备注",
+  "Mute": "免打扰",
+  "MuteHelp": "消息将不提醒",
+  "Session Profile": "概况"
 }
