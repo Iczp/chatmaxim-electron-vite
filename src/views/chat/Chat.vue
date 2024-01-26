@@ -127,13 +127,13 @@ watch(
   { immediate: true },
 );
 
-watch(
-  () => route.fullPath,
-  (val, old) => {
-    console.warn('watch route.fullPath', val, old);
-  },
-  { immediate: true },
-);
+// watch(
+//   () => route.fullPath,
+//   (val, old) => {
+//     console.warn('watch route.fullPath', val, old);
+//   },
+//   { immediate: true },
+// );
 const textValue = ref('669+++');
 
 const showDrawer = () => {

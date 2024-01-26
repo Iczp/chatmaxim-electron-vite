@@ -14,6 +14,7 @@ const objectType = computed(() => sessionUnit.value?.destination?.objectType);
 const navItems = computed(() =>
   chatSettingsRoutes.filter(
     x =>
+      // true ||
       !x.meta?.objectTypes ||
       (x.meta?.objectTypes as Array<ChatObjectTypeEnums>).some(d => d == objectType.value),
   ),

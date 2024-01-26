@@ -80,7 +80,7 @@ const getKey = (route: RouteLocationNormalizedLoaded, component: any): string | 
             class="nav-item"
             v-for="(item, index) in badgeItems"
             :key="index"
-            :title="item.owner?.name"
+            :title="item.owner?.fullPathName?.replace('/', ':')"
             :class="{active: isChatActive(item.chatObjectId!)}"
             @click="navToChatHitory(item)"
           >

@@ -3,6 +3,7 @@ import { useAttrs, useSlots } from 'vue';
 import LayoutItem from '../components/LayoutItem.vue';
 import Avatar from '../components/Avatar.vue';
 import { ChatObjectDto } from '../apis/dtos';
+import { computed } from 'vue';
 const slots = useSlots();
 const attrs = useAttrs();
 // console.log('slots', slots);
@@ -18,6 +19,10 @@ const props = defineProps<{
 // custom slot
 const ignoreSlots = ['header', 'title'];
 const inheritanceKeys = Object.keys(slots).filter(x => !ignoreSlots.some(d => d == x));
+
+const displayName = computed(
+  () => props.entity?.fullPathName?.replace('/', ':') || props.entity?.name,
+);
 </script>
 
 <template>
@@ -29,7 +34,7 @@ const inheritanceKeys = Object.keys(slots).filter(x => !ignoreSlots.some(d => d 
     </template>
     <template #title>
       <slot name="title">
-        <span class="text-ellipsis">{{ entity?.name }}</span>
+        <span class="text-ellipsis">{{ displayName }}</span>
       </slot>
     </template>
     <template v-for="(slot, index) of inheritanceKeys" :key="index" v-slot:[slot]>

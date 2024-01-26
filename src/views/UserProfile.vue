@@ -9,6 +9,8 @@ import { useI18n } from 'vue-i18n';
 import { openChildWindow } from '../ipc/openChildWindow';
 import { useWindowStore } from '../stores/window';
 import { env } from '../env';
+import { ChatObjectTypeEnums } from '../apis/enums';
+import { computed } from 'vue';
 const { t } = useI18n();
 const windowStore = useWindowStore();
 // defineProps<{ msg: string }>();
@@ -49,6 +51,9 @@ const openObjectProfile = (item: ChatObjectDto) => {
     fetchEntity();
   });
 };
+
+const getDescription = (item: ChatObjectDto): string =>
+  t(`ObjectType:${ChatObjectTypeEnums[item.objectType!]}`);
 </script>
 
 <template>
@@ -65,11 +70,11 @@ const openObjectProfile = (item: ChatObjectDto) => {
         <div class="object-list">
           <div v-for="(item, index) in ret.items" :key="item.appUserId!" class="object-item">
             <a-card hoverable style="width: 240px">
-              <template #cover>
+              <!-- <template #cover>
                 <div class="div-image"></div>
-              </template>
+              </template> -->
 
-              <a-card-meta :title="item.name" :description="item.code">
+              <a-card-meta :title="item.name" :description="getDescription(item)">
                 <template #avatar>
                   <a-avatar src="https://m.rctea.com/mobile/images/precomposed.png" />
                 </template>
@@ -95,10 +100,12 @@ const openObjectProfile = (item: ChatObjectDto) => {
   /* width: 100%; */
   align-items: center;
   justify-content: center;
+  flex-wrap: wrap;
 }
 .object-item {
   display: flex;
-  margin: 0 20px;
+  margin: 20px;
+  width: 25%;
 }
 
 .div-image {

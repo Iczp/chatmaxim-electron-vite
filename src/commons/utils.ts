@@ -145,7 +145,19 @@ export const getSenderNameForMessage = (entity?: MessageDto): string | undefined
   if (!entity) {
     return undefined;
   }
-  return entity.senderName || entity.senderDisplayName || entity.senderSessionUnit?.displayName;
+
+  const senderSessionUnit = entity.senderSessionUnit;
+
+  // const displayName = computed(
+  //   () => props.entity?.fullPathName?.replace('/', ':') || props.entity?.name,
+  // );
+
+  return (
+    senderSessionUnit?.owner?.fullPathName?.replace('/', ':') ||
+    entity.senderName ||
+    entity.senderDisplayName ||
+    entity.senderSessionUnit?.displayName
+  );
 };
 
 export const getDestinationNameForSessionUnit = (

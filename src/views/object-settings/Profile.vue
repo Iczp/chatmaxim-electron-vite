@@ -112,6 +112,11 @@ interface EntryItemState {
 }
 
 const formState: UnwrapRef<FormState> = reactive({ entries: {} });
+
+const parentName = computed(() => {
+  const names = owner.value?.fullPathName?.split('/') || [];
+  return names.length == 2 ? names[0] : undefined;
+});
 const entryState: UnwrapRef<EntryState> = reactive({});
 
 const getEntryValue = (): Record<string, string[]> => {
@@ -185,15 +190,15 @@ const wrapperCol = { span: 14 };
 
           <a-form-item :label="t('Name')" :help="t('ObjectNameHelp')">
             <a-input v-model:value="formState.name" :bordered="true">
-              <!-- <template #prefix>
-                <avatar :entity="owner" :size="24" />
-              </template> -->
+              <template v-if="parentName" #prefix>
+                <div class="parent-name">{{ parentName }}</div>
+              </template>
             </a-input>
           </a-form-item>
 
           <a-form-item :label="t('Code')" :help="t('Code Help')">
             <!-- <a-input v-model:value="formState.code" :readOnly="true"></a-input> -->
-            <a-input v-model:value="formState.code" readonly>
+            <a-input v-model:value="formState.code" readonly disabled>
               <template #addonAfter>
                 <div @click="copyContent(formState.code)"><ContentCopy class="svg-icon-14" /></div>
               </template>
@@ -256,13 +261,13 @@ const wrapperCol = { span: 14 };
 :deep(.page-content) {
   margin-left: 20px;
 }
-.name-input-wrapper {
-  background-color: #9090901e;
+.parent-name {
+  color: var(--sub-title-color);
 }
-.name-input {
-  border-radius: 0;
-  padding: 6px 6px;
-  border-bottom: 1px solid #41414132;
+.parent-name::after {
+  padding: 0 4px;
+  content: ':';
+  color: var(--main-title-color);
 }
 .flex-end {
   justify-content: flex-end;

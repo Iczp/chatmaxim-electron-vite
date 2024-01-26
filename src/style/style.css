@@ -463,6 +463,10 @@ code {
 
   --loading-color: rgba(128, 128, 128, 0.5);
 
+  --disabled-color: rgba(70, 70, 70, 0.675);
+  
+  --disabled-background-color: rgba(48, 48, 48, 0.147);
+
   /* file-icon */
   --file-name-color: rgb(184, 184, 184);
   --file-icon-color: rgb(14, 105, 162);
@@ -722,6 +726,13 @@ code {
   }
   .ant-input::placeholder {
     color: rgba(100, 100, 100, 0.619);
+  }
+
+  .ant-input-disabled,
+  .ant-input[disabled] {
+
+    color: var(--disabled-color);
+    background-color: var(--disabled-background-color);
   }
   .ant-mentions > textarea {
     color: var(--color);
