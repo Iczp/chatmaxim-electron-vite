@@ -6,25 +6,27 @@ import { useI18n } from 'vue-i18n';
 import { reactive } from 'vue';
 import type { UnwrapRef } from 'vue';
 import { message } from 'ant-design-vue';
-import { SessionRoleService } from '../../../apis';
-import { SessionRoleDetailDto } from '../../../apis/models/SessionRoleDetailDto';
+import { SessionRoleService, ShopWaiterService } from '../../../apis';
+import { getParentName } from '../../../commons/utils';
+import { UserOutlined, LockOutlined } from '@ant-design/icons-vue';
 const { t } = useI18n();
 defineProps<{
   destination?: ChatObjectDto;
   open?: boolean;
 }>();
 interface FormState {
-  isAgreed?: boolean | null;
+  account?: string;
+  password?: string;
+  isEnabled?: boolean;
   name?: string;
   description?: string;
 }
-const formTitle = ref(t('RoleAdd'));
-const formState: UnwrapRef<FormState> = reactive({
-  isAgreed: undefined,
-  handleMessage: '',
-  name: '',
-  description: '',
-});
+const isAdd = ref(true);
+const formTitle = computed(() => (isAdd.value ? t('WaiterAdd') : t('Edit')));
+
+const formState: UnwrapRef<FormState> = reactive({});
+
+const parentName = computed(() => shopKeeper.value?.name);
 
 const labelCol = { style: { width: '150px' } };
 const wrapperCol = { span: 14 };
@@ -34,7 +36,8 @@ const emits = defineEmits<{
   cancel: [];
 }>();
 
-const entity = ref<SessionRoleDetailDto>();
+const entity = ref<ChatObjectDto>();
+const shopKeeper = ref<ChatObjectDto>();
 
 const isOpen = ref(false);
 const okText = computed(() => t('Confirm'));
@@ -43,12 +46,18 @@ const okBtnDisabled = ref(false);
 const formDisabled = ref(false);
 
 const cancel = ref<() => void>();
-const open = (args: { entity: SessionRoleDetailDto | undefined; isAgreed?: boolean }) => {
+const open = (args: { shopKeeper?: ChatObjectDto; entity?: ChatObjectDto; isAdd?: boolean }) => {
+  shopKeeper.value = args.shopKeeper;
   entity.value = args.entity;
+  isAdd.value = args.isAdd || false;
   isOpen.value = true;
-  // formState.isAgreed = entity.value.isAgreed;
-  // formState.handleMessage = entity.value.handleMessage;
-  // okBtnDisabled.value = entity.value.isHandled || false;
+  if (isAdd) {
+    formState.password = '';
+    formState.account = '';
+  }
+  formState.name = args.entity?.name;
+  formState.isEnabled = args.entity?.isEnabled;
+  formState.description = args.entity?.description;
 };
 const close = () => {
   isOpen.value = false;
@@ -63,11 +72,12 @@ const handleOk = (e: MouseEvent) => {
   console.log(e);
   confirmLoading.value = true;
   const key = 'session-request-handle';
-  SessionRoleService.postApiChatSessionRole({
-
-    requestBody:{
-      sessionId:''
-    }
+  ShopWaiterService.postApiChatShopWaiterUpdate({
+    id: Number(entity.value?.id),
+    requestBody: {
+      name: formState.name,
+      description: formState.description,
+    },
   })
     .then(res => {
       isOpen.value = false;
@@ -103,19 +113,52 @@ defineExpose({
     <page class="drop-viewer">
       <page-content>
         <a-form
-          
           :model="formState"
           :label-col="labelCol"
           :wrapper-col="wrapperCol"
           :disabled="formDisabled"
         >
-          <a-form-item :label="t('RoleName')">
-            <a-input v-model:value="formState.name" class="no-resize" />
+          <template v-if="isAdd">
+            <a-form-item
+              :label="t('Account')"
+              name="username"
+              :rules="[{ message: 'Please input your username!' }]"
+              :help="t('AccountHelp')"
+              required
+            >
+              <a-input v-model:value="formState.account">
+                <template #prefix><UserOutlined class="prefix" /></template>
+              </a-input>
+            </a-form-item>
+
+            <a-form-item
+              :label="t('Password')"
+              name="password"
+              :rules="[{ message: 'Please input your password!' }]"
+              :help="t('PasswordHelp')"
+              required
+            >
+              <a-input-password v-model:value="formState.password">
+                <template #prefix><LockOutlined class="prefix" /></template>
+              </a-input-password>
+            </a-form-item>
+          </template>
+
+          <a-form-item :label="t('Name')" :help="t('ObjectNameHelp')" required>
+            <a-input v-model:value="formState.name" :bordered="true">
+              <template v-if="parentName" #prefix>
+                <div class="parent-name">{{ parentName }}</div>
+              </template>
+            </a-input>
           </a-form-item>
 
-          <a-form-item :label="t('RoleDescription')">
-            <a-textarea v-model:value="formState.description" class="no-resize" />
+          <a-form-item :label="t('EnabledState')">
+            <a-checkbox v-model:checked="formState.isEnabled">{{ t('Enabled') }}</a-checkbox>
           </a-form-item>
+
+          <!-- <a-form-item :label="t('Description')">
+            <a-textarea v-model:value="formState.description" class="no-resize" />
+          </a-form-item> -->
         </a-form>
         <!-- </scroll-view> -->
       </page-content>
@@ -130,6 +173,14 @@ defineExpose({
 }
 :deep(.file-name) {
   max-width: 180px;
+}
+.parent-name {
+  color: var(--sub-title-color);
+}
+.parent-name::after {
+  padding: 0 4px;
+  content: ':';
+  color: var(--main-title-color);
 }
 
 .drop-viewer {

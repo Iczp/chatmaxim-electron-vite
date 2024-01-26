@@ -1,6 +1,7 @@
 import { ChatObjectTypeEnums, GenderEnums, ServiceStatusEnums } from '../enums';
+import { IdDto } from './IdDto';
 
-export type ChatObjectDto = {
+export type ChatObjectDto = IdDto & {
   /**
    *
    *
@@ -19,6 +20,12 @@ export type ChatObjectDto = {
    * @type {string}
    */
   name?: string;
+  /**
+   *
+   *
+   * @type {string}
+   */
+  description?: string;
   /**
    *
    *

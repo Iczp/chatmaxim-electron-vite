@@ -152,7 +152,7 @@ export type { IczpNet_Chat_ShopKeepers_Dtos_ShopKeeperCreateInput } from './mode
 export { IczpNet_Chat_ShopKeepers_Dtos_ShopKeeperDto } from './models/IczpNet_Chat_ShopKeepers_Dtos_ShopKeeperDto';
 export type { IczpNet_Chat_ShopWaiters_Dtos_ShopWaiterCreateInput } from './models/IczpNet_Chat_ShopWaiters_Dtos_ShopWaiterCreateInput';
 export { IczpNet_Chat_ShopWaiters_Dtos_ShopWaiterDto } from './models/IczpNet_Chat_ShopWaiters_Dtos_ShopWaiterDto';
-export type { IczpNet_Chat_ShopWaiters_Dtos_ShopWaiterUpdateInput } from './models/IczpNet_Chat_ShopWaiters_Dtos_ShopWaiterUpdateInput';
+export type { IczpNet_Chat_ShopWaiters_Dtos_ShopWaiterUpdateInput } from './models/ShopWaiterUpdateInput';
 export { IczpNet_Chat_Squares_Dtos_SquareDto } from './models/IczpNet_Chat_Squares_Dtos_SquareDto';
 export type { IczpNet_Chat_WalletOrders_Dtos_WalletOrderCreateInput } from './models/IczpNet_Chat_WalletOrders_Dtos_WalletOrderCreateInput';
 export { IczpNet_Chat_WalletOrders_Dtos_WalletOrderDetailDto } from './models/IczpNet_Chat_WalletOrders_Dtos_WalletOrderDetailDto';

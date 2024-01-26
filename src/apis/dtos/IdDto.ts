@@ -1,1 +1,1 @@
-export type IdDto = { id?: string };
+export type IdDto = { id?: string | number };

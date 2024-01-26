@@ -12,7 +12,15 @@ import { ChatObjectDto } from '../../apis/dtos';
 const { t } = useI18n();
 const route = useRoute();
 const router = useRouter();
-const navItems = ref(Array.from(objectSettingsRoutes));
+const objectType = computed(() => payload.value?.owner?.objectType);
+const navItems = computed(() =>
+  objectSettingsRoutes.filter(
+    x =>
+      // true ||
+      !x.meta?.objectTypes ||
+      (x.meta?.objectTypes as Array<ChatObjectTypeEnums>).some(d => d == objectType.value),
+  ),
+);
 
 const payload = usePayload<{ owner: ChatObjectDto }>();
 
@@ -38,7 +46,11 @@ const description = computed(() => {
   <page class="chat-setting-page">
     <aside class="nav-sider">
       <header>
-        <chat-object :entity="payload?.owner" class="destination" :sub="`T:${description}`"></chat-object>
+        <chat-object
+          :entity="payload?.owner"
+          class="destination"
+          :sub="`T:${description}`"
+        ></chat-object>
       </header>
       <scroll-view>
         <div class="tabs">

@@ -11,6 +11,7 @@ import { useWindowStore } from '../stores/window';
 import { env } from '../env';
 import { ChatObjectTypeEnums } from '../apis/enums';
 import { computed } from 'vue';
+import { getDisplayName } from '../commons/utils';
 const { t } = useI18n();
 const windowStore = useWindowStore();
 // defineProps<{ msg: string }>();
@@ -54,6 +55,8 @@ const openObjectProfile = (item: ChatObjectDto) => {
 
 const getDescription = (item: ChatObjectDto): string =>
   t(`ObjectType:${ChatObjectTypeEnums[item.objectType!]}`);
+
+
 </script>
 
 <template>
@@ -74,7 +77,7 @@ const getDescription = (item: ChatObjectDto): string =>
                 <div class="div-image"></div>
               </template> -->
 
-              <a-card-meta :title="item.name" :description="getDescription(item)">
+              <a-card-meta :title="getDisplayName(item)" :description="getDescription(item)">
                 <template #avatar>
                   <a-avatar src="https://m.rctea.com/mobile/images/precomposed.png" />
                 </template>

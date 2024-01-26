@@ -61,6 +61,10 @@ export const useFetchList = <TInput extends GetListInput, TDto extends IdDto>({
 
   // const getKey = (input: TInput) => input.keyword || '';
 
+  const clearCaches = () => {
+    caches.value.clear();
+  };
+
   const { t } = useI18n();
 
   watch(pickerRef, v => {
@@ -80,7 +84,7 @@ export const useFetchList = <TInput extends GetListInput, TDto extends IdDto>({
         // list.value = cache?.items || [];
         console.log('caches.value', k, cache);
       } else {
-        fetchData({ ...v as TInput, skipCount: 0, keyword: v?.keyword });
+        fetchData({ ...(v as TInput), skipCount: 0, keyword: v?.keyword });
       }
     },
     {
@@ -124,9 +128,12 @@ export const useFetchList = <TInput extends GetListInput, TDto extends IdDto>({
   };
 
   const refresh = async (): Promise<TDto[]> => {
-    query.value = <any>{ ...input };
+    console.log('refresh');
+    clearCaches();
+
+    // query.value = <any>{ ...input };
     // list.value = [];
-    return fetchData(query.value as TInput);
+    return fetchData({ ...input } as TInput);
   };
 
   const onReachStart = (event: CustomEvent) => {

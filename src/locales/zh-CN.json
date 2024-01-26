@@ -173,5 +173,12 @@
   "Rename": "备注",
   "Mute": "免打扰",
   "MuteHelp": "消息将不提醒",
-  "Session Profile": "概况"
+  "Session Profile": "概况",
+  "ShopWaiter": "客服(店小二)",
+  "WaiterAdd": "添加客服",
+  "Enabled": "启用",
+  "EnabledState": "状态",
+  "Edit": "编辑",
+  "AccountHelp": "a-z,0-9",
+  "PasswordHelp": "a-z,0-9"
 }

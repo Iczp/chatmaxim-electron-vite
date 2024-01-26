@@ -36,11 +36,13 @@ const entryNameList = ref<EntryNameDto[]>([]);
 const fetchEntity = () => {
   ChatObjectService.getApiChatChatObjectDetail({ id: Number(props.chatObjectId) }).then(entity => {
     owner.value = entity;
+    formState.parentId = entity.parentId;
     formState.name = entity.name;
     formState.code = entity.code;
     formState.gender = entity.gender;
     formState.verificationMethod = entity.verificationMethod;
     formState.description = entity.description;
+
     entity.entries?.forEach(x => {
       entryState[x.entryName?.id!] = {
         values: [{ value: x.entryValue?.value || '' }],
@@ -61,7 +63,7 @@ const fetchEntries = () => {
 };
 onActivated(() => {
   fetchEntity();
-  fetchEntries();
+  // fetchEntries();
 });
 
 const toKeyValues = (enums: object, prefix?: string): Array<{ label: string; value: any }> => {
@@ -94,12 +96,13 @@ const objectTypeOptions = computed(() => toKeyValues(ChatObjectTypeEnums, 'Objec
 // );
 
 interface FormState {
+  parentId?: number;
   name?: string;
   code?: string;
   gender?: GenderEnums;
   verificationMethod?: VerificationMethodEnums;
   description?: string;
-  entries: { [key: string]: string };
+  // entries?: { [key: string]: string };
 }
 interface EntryState {
   [key: string]: {
@@ -111,7 +114,7 @@ interface EntryItemState {
   values: Array<{ value: string }>;
 }
 
-const formState: UnwrapRef<FormState> = reactive({ entries: {} });
+const formState: UnwrapRef<FormState> = reactive({});
 
 const parentName = computed(() => {
   const names = owner.value?.fullPathName?.split('/') || [];

@@ -682,7 +682,7 @@ code {
 
   .ant-input-affix-wrapper {
     color: var(--border-color);
-    background-color: rgba(38, 38, 38, 0.361);
+    background-color: unset;
     border-color: var(--border-color);
   }
   .ant-input-affix-wrapper .ant-input-clear-icon {

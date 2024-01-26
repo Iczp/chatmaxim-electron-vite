@@ -173,5 +173,11 @@
   "Rename": "\nRename",
   "Mute": "Mute",
   "MuteHelp": "Turn off notifications",
-  "Session Profile": "Profile"
+  "Session Profile": "Profile",
+  "ShopWaiter": "Waiter",
+  "WaiterAdd": "Add Waiter",
+  "Enabled": "Enabled",
+  "EnabledState": "State",
+  "Edit": "Edit",
+  "AccountHelp": "a-z,0-9"
 }

@@ -65,7 +65,7 @@ const slots = useSlots();
   align-items: center;
   flex-shrink: 0;
   padding: 0 var(--spacing-size);
-  cursor: default;
+  /* cursor: default; */
   /* user-select: none; */
   transition: all 0.3s;
 }
@@ -74,7 +74,8 @@ const slots = useSlots();
 }
 
 .hover:hover {
-  background-color: rgba(230, 230, 230, 0.813);
+  /* background-color: rgba(230, 230, 230, 0.813); */
+  background-color: var(--background-color-hover);
 }
 .header:first-child {
   margin-right: var(--spacing-size);

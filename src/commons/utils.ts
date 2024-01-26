@@ -2,6 +2,7 @@ import moment from 'moment';
 import { useRouter } from 'vue-router';
 import { router, chatHistorys } from '../routes';
 import {
+  ChatObjectDto,
   CmdContentDto,
   FileContentDto,
   ImageContentDto,
@@ -391,3 +392,12 @@ export const mapToImageContentDtoAsync = (file: File): Promise<ImageContentDto> 
     };
   });
 };
+
+export const getParentName = (entity?: ChatObjectDto): string | undefined => {
+  console.log('getParentName entity', entity);
+  const names = entity?.fullPathName?.split('/') || [];
+  return names.length == 2 ? names[0] : undefined;
+};
+
+export const getDisplayName = (entity: ChatObjectDto): string | undefined =>
+  entity.fullPathName?.replace('/', ':') || entity.name;

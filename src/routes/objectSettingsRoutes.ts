@@ -1,4 +1,5 @@
 import { RouteRecordRaw } from 'vue-router';
+import { ChatObjectTypeEnums } from '../apis/enums';
 
 export const objectSettingsRoutes: RouteRecordRaw[] = [
   {
@@ -17,6 +18,16 @@ export const objectSettingsRoutes: RouteRecordRaw[] = [
       title: 'Entries',
     },
     component: () => import('../views/object-settings/Entries.vue'),
+    props: true,
+  },
+  {
+    path: 'waiters/:chatObjectId(\\d+)',
+    name: 'object-settings-waiters',
+    meta: {
+      title: 'ShopWaiter',
+      objectTypes: [ChatObjectTypeEnums.ShopKeeper],
+    },
+    component: () => import('../views/object-settings/Waiters.vue'),
     props: true,
   },
 ];

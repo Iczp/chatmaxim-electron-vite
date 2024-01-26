@@ -32,6 +32,12 @@
 .svg-icon.s24 {
   scale: calc(24 / 24);
 }
+.svg-icon-36,
+.svg-icon.s36 {
+  fill: currentColor;
+  scale: calc(36 / 24);
+}
+
 
 
 .svg-icon-\[var\(--size\)\] {
