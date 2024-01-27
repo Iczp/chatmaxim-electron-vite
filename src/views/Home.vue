@@ -18,7 +18,7 @@ import { navToChat } from '../commons/utils';
 import { router, chatHistorys } from '../routes';
 import { message } from 'ant-design-vue';
 import { BadgeDto } from '../apis/dtos';
-import { useChatObjectList } from '../commons/useChatObjectList';
+import { useBadges } from '../commons/useBadges';
 import { useWebsocket } from '../commons/useWebsocket';
 import { setWindow } from '../ipc/setWindow';
 import { openAppSettings } from '../ipc/openAppSettings';
@@ -26,7 +26,7 @@ import { useI18n } from 'vue-i18n';
 const { t } = useI18n();
 const route = useRoute();
 const { connectionText, connectionState, retryCount } = useWebsocket();
-const { badge, badgeItems } = useChatObjectList();
+const { badge, badgeItems } = useBadges();
 // const router = useRouter();
 
 const navToChatHitory = (item: BadgeDto) => {
@@ -247,3 +247,4 @@ const getKey = (route: RouteLocationNormalizedLoaded, component: any): string | 
 }
 </style>
 ../ipc/setWindow../ipc/openAppSettings
+../commons/useBadges

@@ -1,7 +1,7 @@
 import { computed } from 'vue';
 import { useImStore } from '../stores/im';
 
-export const useChatObjectList = () => {
+export const useBadges = () => {
   const store = useImStore();
   store.getChatObjectByCurrentUser();
   store.getBadgeByCurrentUser();
