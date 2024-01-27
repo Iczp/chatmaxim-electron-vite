@@ -180,5 +180,6 @@
   "EnabledState": "状态",
   "Edit": "编辑",
   "AccountHelp": "a-z,0-9",
-  "PasswordHelp": "a-z,0-9"
+  "PasswordHelp": "a-z,0-9",
+  "Markets": "市场"
 }

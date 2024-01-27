@@ -1,12 +1,12 @@
 <script setup lang="ts">
 import { computed } from 'vue';
-import { MessageDto, TextContentDto } from '../../../apis/dtos';
+import { LinkContentDto, MessageDto, TextContentDto } from '../../../apis/dtos';
 import Bubble from '../../../components/Bubble.vue';
 import TextViewer from '../../../components/TextViewer.vue';
 const props = defineProps<{
   item: MessageDto;
 }>();
-const content = computed(() => props.item.content as TextContentDto);
+const content = computed(() => props.item.content as LinkContentDto);
 </script>
 
 <template>
@@ -16,8 +16,10 @@ const content = computed(() => props.item.content as TextContentDto);
     <br />
     indexOf:{{ content?.text?.indexOf('\n') }}
     <br /> -->
-    image
-    <TextViewer :value="content?.text!" />
+    <a>
+      {{ content.title }}
+      {{ content.url }}
+    </a>
   </Bubble>
 </template>
 

@@ -401,3 +401,13 @@ export const getParentName = (entity?: ChatObjectDto): string | undefined => {
 
 export const getDisplayName = (entity: ChatObjectDto): string | undefined =>
   entity.fullPathName?.replace('/', ':') || entity.name;
+
+export const enumToKeyValues = (
+  enums: object,
+  prefix?: string,
+  t?: any,
+): Array<{ label: string; value: any }> => {
+  return Object.entries(enums)
+    .filter(([a, b]) => Number(b) >= 0)
+    .map(([key, value]) => ({ label: t(prefix + key), value }));
+};

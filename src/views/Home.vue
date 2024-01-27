@@ -103,8 +103,14 @@ const getKey = (route: RouteLocationNormalizedLoaded, component: any): string | 
             <SketchOutlined />
           </div> -->
 
-          <div class="nav-item"><ClockCircleOutlined /></div>
-          <div class="nav-item"><Diversity2 class="svg-icon" /></div>
+          <!-- <div class="nav-item"><ClockCircleOutlined /></div> -->
+          <div
+            class="nav-item"
+            @click="goto('/markets')"
+            :class="{ active: route.name == 'markets' }"
+          >
+            <Diversity2 class="svg-icon" />
+          </div>
           <div class="nav-item" @click="goto('/apps')" :class="{ active: route.name == 'apps' }">
             <AppstoreOutlined />
           </div>

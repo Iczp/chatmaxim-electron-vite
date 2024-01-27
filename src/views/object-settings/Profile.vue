@@ -3,16 +3,16 @@ import { UnwrapRef, computed, reactive, ref, toRaw, onActivated } from 'vue';
 import { useI18n } from 'vue-i18n';
 import { ContentCopy } from '../../icons';
 import { ChatObjectTypeEnums, GenderEnums, VerificationMethodEnums } from '../../apis/enums';
-import { ChatObjectService, EntryNameService, EntryService } from '../../apis';
+import { ChatObjectService, EntryNameService } from '../../apis';
 import { message } from 'ant-design-vue';
 import { useOwner } from './commons/useOwner';
 import { EntryNameDto } from '../../apis/dtos/EntryNameDto';
-import { setWindow } from '../../ipc/setWindow';
 import { ChatObjectDto } from '../../apis/dtos/ChatObjectDto';
 import { usePayload } from '../../commons/usePayload';
 import { sendPickerResult } from '../../ipc/openChildWindow';
 import { useRoute } from 'vue-router';
 import { useClipboard } from '@vueuse/core';
+import { useEnums } from '../../commons/useEnums';
 const route = useRoute();
 const { t } = useI18n();
 const props = defineProps<{ chatObjectId: string }>();
@@ -66,34 +66,7 @@ onActivated(() => {
   // fetchEntries();
 });
 
-const toKeyValues = (enums: object, prefix?: string): Array<{ label: string; value: any }> => {
-  return Object.entries(enums)
-    .filter(([a, b]) => Number(b) >= 0)
-    .map(([key, value]) => ({ label: t(prefix + key), value }));
-};
-
-const genderOptions = computed(() => toKeyValues(GenderEnums, 'Gender:'));
-
-const verificationMethodOptions = computed(() =>
-  toKeyValues(VerificationMethodEnums, 'VerificationMethod:'),
-);
-const objectTypeOptions = computed(() => toKeyValues(ChatObjectTypeEnums, 'ObjectType:'));
-
-// objectTypeOptions.map(x => `t('${x.label}')`);
-
-// console.log('---objectTypeOptions----', objectTypeOptions.map(x => `t('${x.label}')`).join('\n'));
-
-// const objectTypes = ref(
-//   Object.keys(ChatObjectTypeEnums)
-//     .filter(x => !isNaN(Number(x)))
-//     .map((key, index) => {
-//       return {
-//         key: ChatObjectTypeEnums[Number(key)],
-//         text: ChatObjectTypeEnumText[index as ChatObjectTypeEnums],
-//         value: key,
-//       };
-//     }),
-// );
+const { genderOptions, verificationMethodOptions, objectTypeOptions } = useEnums();
 
 interface FormState {
   parentId?: number;

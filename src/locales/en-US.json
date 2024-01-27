@@ -179,5 +179,6 @@
   "Enabled": "Enabled",
   "EnabledState": "State",
   "Edit": "Edit",
-  "AccountHelp": "a-z,0-9"
+  "AccountHelp": "a-z,0-9",
+  "Markets": "Markets"
 }
