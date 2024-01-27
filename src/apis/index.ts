@@ -22,11 +22,11 @@ export type { IczpNet_Chat_ChatObjectCategorys_Dtos_ChatObjectCategoryUpdateInpu
 export { IczpNet_Chat_ChatObjects_ChatObjectInfo } from './models/IczpNet_Chat_ChatObjects_ChatObjectInfo';
 export { IczpNet_Chat_ChatObjects_Dtos_ChatObjectCreateInput } from './models/IczpNet_Chat_ChatObjects_Dtos_ChatObjectCreateInput';
 export { IczpNet_Chat_ChatObjects_Dtos_ChatObjectDetailDto } from './models/IczpNet_Chat_ChatObjects_Dtos_ChatObjectDetailDto';
-export { IczpNet_Chat_ChatObjects_Dtos_ChatObjectDto } from './models/IczpNet_Chat_ChatObjects_Dtos_ChatObjectDto';
-export { IczpNet_Chat_ChatObjects_Dtos_ChatObjectSimpleDto } from './models/IczpNet_Chat_ChatObjects_Dtos_ChatObjectSimpleDto';
+// export { ChatObjectDto } from './models/ChatObjectDto';
+// export { ChatObjectDto } from './models/ChatObjectDto';
 export type { ChatObjectUpdateInput } from './models/ChatObjectUpdateInput';
 export type { IczpNet_Chat_ChatObjectTypes_Dtos_ChatObjectTypeCreateInput } from './models/IczpNet_Chat_ChatObjectTypes_Dtos_ChatObjectTypeCreateInput';
-export type { IczpNet_Chat_ChatObjectTypes_Dtos_ChatObjectTypeDetailDto } from './models/IczpNet_Chat_ChatObjectTypes_Dtos_ChatObjectTypeDetailDto';
+// export type { IczpNet_Chat_ChatObjectTypes_Dtos_ChatObjectTypeDetailDto } from './models/IczpNet_Chat_ChatObjectTypes_Dtos_ChatObjectTypeDetailDto';
 export type { IczpNet_Chat_ChatObjectTypes_Dtos_ChatObjectTypeDto } from './models/IczpNet_Chat_ChatObjectTypes_Dtos_ChatObjectTypeDto';
 export type { IczpNet_Chat_ChatObjectTypes_Dtos_ChatObjectTypeUpdateInput } from './models/IczpNet_Chat_ChatObjectTypes_Dtos_ChatObjectTypeUpdateInput';
 export type { IczpNet_Chat_Connections_Dtos_ConnectionCreateInput } from './models/IczpNet_Chat_Connections_Dtos_ConnectionCreateInput';

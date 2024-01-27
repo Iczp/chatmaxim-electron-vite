@@ -60,7 +60,7 @@ h6 {
 }
 a {
   font-weight: 500;
-  color: #646cff;
+  /* color: #646cff; */
   text-decoration: inherit;
 }
 .cursor-pointer {

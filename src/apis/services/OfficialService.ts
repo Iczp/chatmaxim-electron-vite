@@ -2,26 +2,27 @@
 /* istanbul ignore file */
 /* tslint:disable */
 /* eslint-disable */
-import type { IczpNet_Chat_ChatObjects_Dtos_ChatObjectDto } from '../models/IczpNet_Chat_ChatObjects_Dtos_ChatObjectDto';
+
 import type { IczpNet_Chat_OfficialSections_Officials_Dtos_OfficialCreateInput } from '../models/IczpNet_Chat_OfficialSections_Officials_Dtos_OfficialCreateInput';
 import type { SessionUnitOwnerDto } from '../dtos/SessionUnitOwnerDto';
 
 import type { CancelablePromise } from '../core/CancelablePromise';
 import { OpenAPI } from '../core/OpenAPI';
 import { request as __request } from '../core/request';
+import { ChatObjectDto } from '../dtos';
 
 export class OfficialService {
 
     /**
      * 创建公众号
-     * @returns IczpNet_Chat_ChatObjects_Dtos_ChatObjectDto Success
+     * @returns ChatObjectDto Success
      * @throws ApiError
      */
     public static postApiChatOfficial({
 requestBody,
 }: {
 requestBody?: IczpNet_Chat_OfficialSections_Officials_Dtos_OfficialCreateInput,
-}): CancelablePromise<IczpNet_Chat_ChatObjects_Dtos_ChatObjectDto> {
+}): CancelablePromise<ChatObjectDto> {
         return __request(OpenAPI, {
             method: 'POST',
             url: '/api/chat/official',

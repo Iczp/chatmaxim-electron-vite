@@ -79,13 +79,14 @@ export const useFetchList = <TInput extends GetListInput, TDto extends IdDto>({
     v => {
       console.warn('query', toRaw(v));
       const k = key(v as TInput);
-      if (caches.value.has(k)) {
-        const cache = caches.value.get(k);
-        // list.value = cache?.items || [];
-        console.log('caches.value', k, cache);
-      } else {
-        fetchData({ ...(v as TInput), skipCount: 0, keyword: v?.keyword });
-      }
+      fetchData({ ...(v as TInput), skipCount: 0, keyword: v?.keyword });
+      // if (caches.value.has(k)) {
+      //   const cache = caches.value.get(k);
+      //   // list.value = cache?.items || [];
+      //   console.log('caches.value', k, cache);
+      // } else {
+      //   fetchData({ ...(v as TInput), skipCount: 0, keyword: v?.keyword });
+      // }
     },
     {
       deep: true,
@@ -95,6 +96,7 @@ export const useFetchList = <TInput extends GetListInput, TDto extends IdDto>({
   const fetchData = async (input: TInput): Promise<TDto[]> => {
     const req = input;
     console.log('fetchData input', req);
+
     const ret = currentCache.value || defaultResultValue();
     if (ret.isEof) {
       console.error('ret.isEof', ret.isEof, ret);
@@ -105,6 +107,7 @@ export const useFetchList = <TInput extends GetListInput, TDto extends IdDto>({
     }
     ret.query = input;
     ret.isPending = true;
+    // caches.value.set(key(query.value as TInput), ret);
 
     const { items, totalCount } = await service(req);
     console.log('fetchData', items);

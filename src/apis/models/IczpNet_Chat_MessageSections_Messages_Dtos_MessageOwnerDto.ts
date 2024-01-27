@@ -3,7 +3,7 @@
 /* tslint:disable */
 /* eslint-disable */
 
-import type { IczpNet_Chat_ChatObjects_Dtos_ChatObjectDto } from './IczpNet_Chat_ChatObjects_Dtos_ChatObjectDto';
+import { ChatObjectDto } from "../dtos";
 
 export type IczpNet_Chat_MessageSections_Messages_Dtos_MessageOwnerDto = {
     id?: number;
@@ -25,7 +25,7 @@ export type IczpNet_Chat_MessageSections_Messages_Dtos_MessageOwnerDto = {
      * 朋友Id
      */
     friendshipSessionUnitId?: string | null;
-    sender?: IczpNet_Chat_ChatObjects_Dtos_ChatObjectDto;
+    sender?: ChatObjectDto;
     /**
      * 转发来源Id(转发才有)
      */

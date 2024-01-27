@@ -3,7 +3,7 @@
 /* tslint:disable */
 /* eslint-disable */
 
-import type { IczpNet_Chat_ChatObjects_Dtos_ChatObjectSimpleDto } from './IczpNet_Chat_ChatObjects_Dtos_ChatObjectSimpleDto';
+import { ChatObjectDto } from "../dtos";
 
 export type IczpNet_Chat_SessionSections_SessionRequests_Dtos_SessionRequestDto = {
     id?: string;
@@ -16,8 +16,8 @@ export type IczpNet_Chat_SessionSections_SessionRequests_Dtos_SessionRequestDto 
      * 被请求者Id
      */
     destinationId?: number | null;
-    owner?: IczpNet_Chat_ChatObjects_Dtos_ChatObjectSimpleDto;
-    destination?: IczpNet_Chat_ChatObjects_Dtos_ChatObjectSimpleDto;
+    owner?: ChatObjectDto;
+    destination?: ChatObjectDto;
     /**
      * 是否处理过
      */

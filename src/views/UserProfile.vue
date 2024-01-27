@@ -71,7 +71,7 @@ const getDescription = (item: ChatObjectDto): string =>
           <!-- <template #footer>footer</template> -->
         </chat-object>
         <div class="object-list">
-          <div v-for="(item, index) in ret.items" :key="item.appUserId!" class="object-item">
+          <div v-for="(item, index) in ret.items" :key="item.id!" class="object-item">
             <a-card hoverable style="width: 240px">
               <!-- <template #cover>
                 <div class="div-image"></div>
@@ -102,12 +102,12 @@ const getDescription = (item: ChatObjectDto): string =>
   display: flex;
   /* width: 100%; */
   align-items: center;
-  justify-content: center;
+  /* justify-content: center; */
   flex-wrap: wrap;
 }
 .object-item {
   display: flex;
-  margin: 20px;
+  padding: 20px;
   width: 25%;
 }
 

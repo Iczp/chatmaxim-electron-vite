@@ -2,7 +2,7 @@
 /* istanbul ignore file */
 /* tslint:disable */
 /* eslint-disable */
-import type { IczpNet_Chat_ChatObjects_Dtos_ChatObjectDto } from '../models/IczpNet_Chat_ChatObjects_Dtos_ChatObjectDto';
+import { ChatObjectDto } from "../dtos";;
 import type { RoomCreateInput } from '../models/RoomCreateInput';
 import type { IczpNet_Chat_RoomSections_Rooms_InviteInput } from '../models/IczpNet_Chat_RoomSections_Rooms_InviteInput';
 import type { IczpNet_Chat_SessionSections_SessionUnits_SessionUnitSenderInfo } from '../models/IczpNet_Chat_SessionSections_SessionUnits_SessionUnitSenderInfo';
@@ -16,14 +16,14 @@ import { request as __request } from '../core/request';
 export class RoomAdminService {
 
     /**
-     * @returns IczpNet_Chat_ChatObjects_Dtos_ChatObjectDto Success
+     * @returns ChatObjectDto Success
      * @throws ApiError
      */
     public static postApiChatRoomAdmin({
 requestBody,
 }: {
 requestBody?: RoomCreateInput,
-}): CancelablePromise<IczpNet_Chat_ChatObjects_Dtos_ChatObjectDto> {
+}): CancelablePromise<ChatObjectDto> {
         return __request(OpenAPI, {
             method: 'POST',
             url: '/api/chat/room-admin',
@@ -34,14 +34,14 @@ requestBody?: RoomCreateInput,
     }
 
     /**
-     * @returns IczpNet_Chat_ChatObjects_Dtos_ChatObjectDto Success
+     * @returns ChatObjectDto Success
      * @throws ApiError
      */
     public static postApiChatRoomAdminByAllUsers({
 name,
 }: {
 name?: string,
-}): CancelablePromise<IczpNet_Chat_ChatObjects_Dtos_ChatObjectDto> {
+}): CancelablePromise<ChatObjectDto> {
         return __request(OpenAPI, {
             method: 'POST',
             url: '/api/chat/room-admin/by-all-users',
@@ -186,7 +186,7 @@ targetSessionUnitId?: string,
     }
 
     /**
-     * @returns IczpNet_Chat_ChatObjects_Dtos_ChatObjectDto Success
+     * @returns ChatObjectDto Success
      * @throws ApiError
      */
     public static postApiChatRoomAdminUpdateName({
@@ -195,7 +195,7 @@ name,
 }: {
 sessionUnitId: string,
 name?: string,
-}): CancelablePromise<IczpNet_Chat_ChatObjects_Dtos_ChatObjectDto> {
+}): CancelablePromise<ChatObjectDto> {
         return __request(OpenAPI, {
             method: 'POST',
             url: '/api/chat/room-admin/update-name/{sessionUnitId}',
@@ -210,7 +210,7 @@ name?: string,
     }
 
     /**
-     * @returns IczpNet_Chat_ChatObjects_Dtos_ChatObjectDto Success
+     * @returns ChatObjectDto Success
      * @throws ApiError
      */
     public static postApiChatRoomAdminUpdatePortrait({
@@ -219,7 +219,7 @@ portrait,
 }: {
 sessionUnitId: string,
 portrait?: string,
-}): CancelablePromise<IczpNet_Chat_ChatObjects_Dtos_ChatObjectDto> {
+}): CancelablePromise<ChatObjectDto> {
         return __request(OpenAPI, {
             method: 'POST',
             url: '/api/chat/room-admin/update-portrait/{sessionUnitId}',

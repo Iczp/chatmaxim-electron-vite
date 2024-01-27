@@ -3,7 +3,7 @@
 /* tslint:disable */
 /* eslint-disable */
 
-import type { IczpNet_Chat_ChatObjects_Dtos_ChatObjectDto } from './IczpNet_Chat_ChatObjects_Dtos_ChatObjectDto';
+import { ChatObjectDto } from "../dtos";
 
 export type IczpNet_Chat_Cantacts_Dtos_ContactsDto = {
     /**
@@ -14,5 +14,5 @@ export type IczpNet_Chat_Cantacts_Dtos_ContactsDto = {
      * 显示名称
      */
     displayName?: string | null;
-    destination?: IczpNet_Chat_ChatObjects_Dtos_ChatObjectDto;
+    destination?: ChatObjectDto;
 };

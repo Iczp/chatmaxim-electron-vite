@@ -107,7 +107,7 @@ export const forwardMessage = ({
       MessageSenderService.postApiChatMessageSenderForward({
         sessionUnitId,
         messageId,
-        requestBody: v.selectedItems?.map(x => x.id!) || [],
+        requestBody: v.selectedItems?.map(x => x.id!.toString()) || [],
       })
         .then(res => {
           message.success({ content: t('Message forwarding successful'), key });

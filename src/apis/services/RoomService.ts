@@ -1,4 +1,4 @@
-import type { IczpNet_Chat_ChatObjects_Dtos_ChatObjectDto } from '../models/IczpNet_Chat_ChatObjects_Dtos_ChatObjectDto';
+import { ChatObjectDto } from "../dtos";;
 import type { RoomCreateInput } from '../models/RoomCreateInput';
 import type { IczpNet_Chat_RoomSections_Rooms_InviteInput } from '../models/IczpNet_Chat_RoomSections_Rooms_InviteInput';
 import type { IczpNet_Chat_SessionSections_SessionUnits_SessionUnitSenderInfo } from '../models/IczpNet_Chat_SessionSections_SessionUnits_SessionUnitSenderInfo';
@@ -8,12 +8,11 @@ import type { Volo_Abp_Application_Dtos_PagedResultDto_1 } from '../models/Volo_
 import type { CancelablePromise } from '../core/CancelablePromise';
 import { OpenAPI } from '../core/OpenAPI';
 import { request as __request } from '../core/request';
-import { ChatObjectDto } from '../dtos';
 
 export class RoomService {
   /**
    * 创建群
-   * @returns IczpNet_Chat_ChatObjects_Dtos_ChatObjectDto Success
+   * @returns ChatObjectDto Success
    * @throws ApiError
    */
   public static postApiChatCreateRoom(input: RoomCreateInput): CancelablePromise<ChatObjectDto> {
@@ -175,7 +174,7 @@ export class RoomService {
 
   /**
    * 更新群名称并群内公告
-   * @returns IczpNet_Chat_ChatObjects_Dtos_ChatObjectDto Success
+   * @returns ChatObjectDto Success
    * @throws ApiError
    */
   public static postApiChatRoomUpdateName({
@@ -205,7 +204,7 @@ export class RoomService {
 
   /**
    * 修改群头像
-   * @returns IczpNet_Chat_ChatObjects_Dtos_ChatObjectDto Success
+   * @returns ChatObjectDto Success
    * @throws ApiError
    */
   public static postApiChatRoomUpdatePortrait({

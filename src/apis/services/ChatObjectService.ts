@@ -5,9 +5,8 @@
 import type { IczpNet_Chat_ChatObjects_ChatObjectInfo } from '../models/IczpNet_Chat_ChatObjects_ChatObjectInfo';
 // import type { IczpNet_Chat_ChatObjects_ChatObjectInfo_IczpNet_Chat_Domain_Shared_Version_0_1_1_0_Culture_neutral_PublicKeyToken_null_ } from '../models/IczpNet_Chat_ChatObjects_ChatObjectInfo_IczpNet_Chat_Domain_Shared_Version_0_1_1_0_Culture_neutral_PublicKeyToken_null_';
 import type { IczpNet_Chat_ChatObjects_Dtos_ChatObjectCreateInput } from '../models/IczpNet_Chat_ChatObjects_Dtos_ChatObjectCreateInput';
-import type { IczpNet_Chat_ChatObjects_Dtos_ChatObjectDetailDto } from '../models/IczpNet_Chat_ChatObjects_Dtos_ChatObjectDetailDto';
-import type { IczpNet_Chat_ChatObjects_Dtos_ChatObjectDto } from '../models/IczpNet_Chat_ChatObjects_Dtos_ChatObjectDto';
-// import type { IczpNet_Chat_ChatObjects_Dtos_ChatObjectDto_IczpNet_Chat_Application_Contracts_Version_0_1_1_0_Culture_neutral_PublicKeyToken_null_ } from '../models/IczpNet_Chat_ChatObjects_Dtos_ChatObjectDto_IczpNet_Chat_Application_Contracts_Version_0_1_1_0_Culture_neutral_PublicKeyToken_null_';
+
+// import type { ChatObjectDto_IczpNet_Chat_Application_Contracts_Version_0_1_1_0_Culture_neutral_PublicKeyToken_null_ } from '../models/ChatObjectDto_IczpNet_Chat_Application_Contracts_Version_0_1_1_0_Culture_neutral_PublicKeyToken_null_';
 import type { ChatObjectUpdateInput } from '../models/ChatObjectUpdateInput';
 import type { Volo_Abp_Application_Dtos_PagedResultDto_1 } from '../models/Volo_Abp_Application_Dtos_PagedResultDto_1';
 
@@ -18,18 +17,19 @@ import { PagedResultDto } from '../dtos/PagedResultDto';
 import { ChatObjectTypeEnums } from '../enums';
 import { ChatObjectDetailDto, ChatObjectDto, GetListInput } from '../dtos';
 import { AxiosProgressEvent } from 'axios';
+import { ChatObjectGetListInput } from '../dtos/ChatObjectGetListInput';
 
 export class ChatObjectService {
   /**
    * 新增
-   * @returns IczpNet_Chat_ChatObjects_Dtos_ChatObjectDto Success
+   * @returns ChatObjectDto Success
    * @throws ApiError
    */
   public static postApiChatChatObject({
     requestBody,
   }: {
     requestBody?: IczpNet_Chat_ChatObjects_Dtos_ChatObjectCreateInput;
-  }): CancelablePromise<IczpNet_Chat_ChatObjects_Dtos_ChatObjectDto> {
+  }): CancelablePromise<ChatObjectDto> {
     return __request(OpenAPI, {
       method: 'POST',
       url: '/api/chat/chat-object',
@@ -40,10 +40,10 @@ export class ChatObjectService {
 
   /**
    * 列表
-   * @returns Volo_Abp_Application_Dtos_PagedResultDto_1<IczpNet_Chat_ChatObjects_Dtos_ChatObjectDto_IczpNet_Chat_Application_Contracts_Version_0_1_1_0_Culture_neutral_PublicKeyToken_null_> Success
+   * @returns Volo_Abp_Application_Dtos_PagedResultDto_1<ChatObjectDto_IczpNet_Chat_Application_Contracts_Version_0_1_1_0_Culture_neutral_PublicKeyToken_null_> Success
    * @throws ApiError
    */
-  public static getApiChatChatObject({
+  public static getApiChatChatObjectList({
     chatObjectTypeId,
     isStatic,
     isPublic,
@@ -59,65 +59,7 @@ export class ChatObjectService {
     maxResultCount,
     skipCount,
     sorting,
-  }: {
-    /**
-     * 聊天对象类型Id
-     */
-    chatObjectTypeId?: string;
-    /**
-     * 是否固定
-     */
-    isStatic?: boolean;
-    /**
-     * 是否公开
-     */
-    isPublic?: boolean;
-    /**
-     * 是否可用
-     */
-    isEnabled?: boolean;
-    /**
-     * 是否默认
-     */
-    isDefault?: boolean;
-    /**
-     * 聊天对象类型:个人|群|服务号等
-     */
-    objectType?: ChatObjectTypeEnums;
-    categoryIdList?: Array<string>;
-    /**
-     * 包含下级
-     */
-    isImportChildCategory?: boolean;
-    /**
-     * 是否启用 ParentId
-     */
-    isEnabledParentId?: boolean;
-    /**
-     * 父级Id,当IsEnabledParentId=false时,查询全部
-     */
-    parentId?: number;
-    /**
-     * 层级
-     */
-    depthList?: Array<number>;
-    /**
-     * 关键字(支持拼音)
-     */
-    keyword?: string;
-    /**
-     * 显示数量
-     */
-    maxResultCount?: number;
-    /**
-     * 跳过数量
-     */
-    skipCount?: number;
-    /**
-     * 排序
-     */
-    sorting?: string;
-  }): CancelablePromise<PagedResultDto<ChatObjectDto>> {
+  }: ChatObjectGetListInput): CancelablePromise<PagedResultDto<ChatObjectDto>> {
     return __request(OpenAPI, {
       method: 'GET',
       url: '/api/chat/chat-object',
@@ -143,14 +85,14 @@ export class ChatObjectService {
 
   /**
    * 创建聊天对象[机器人]
-   * @returns IczpNet_Chat_ChatObjects_Dtos_ChatObjectDto Success
+   * @returns ChatObjectDto Success
    * @throws ApiError
    */
   public static postApiChatChatObjectRobot({
     name,
   }: {
     name?: string;
-  }): CancelablePromise<IczpNet_Chat_ChatObjects_Dtos_ChatObjectDto> {
+  }): CancelablePromise<ChatObjectDto> {
     return __request(OpenAPI, {
       method: 'POST',
       url: '/api/chat/chat-object/robot',
@@ -162,14 +104,14 @@ export class ChatObjectService {
 
   /**
    * 创建聊天对象[掌柜]
-   * @returns IczpNet_Chat_ChatObjects_Dtos_ChatObjectDto Success
+   * @returns ChatObjectDto Success
    * @throws ApiError
    */
   public static postApiChatChatObjectShopKeeper({
     name,
   }: {
     name?: string;
-  }): CancelablePromise<IczpNet_Chat_ChatObjects_Dtos_ChatObjectDto> {
+  }): CancelablePromise<ChatObjectDto> {
     return __request(OpenAPI, {
       method: 'POST',
       url: '/api/chat/chat-object/shop-keeper',
@@ -181,7 +123,7 @@ export class ChatObjectService {
 
   /**
    * 创建聊天对象[店小二]
-   * @returns IczpNet_Chat_ChatObjects_Dtos_ChatObjectDto Success
+   * @returns ChatObjectDto Success
    * @throws ApiError
    */
   public static postApiChatChatObjectShopWaiter({
@@ -190,7 +132,7 @@ export class ChatObjectService {
   }: {
     shopKeeperId: number;
     name?: string;
-  }): CancelablePromise<IczpNet_Chat_ChatObjects_Dtos_ChatObjectDto> {
+  }): CancelablePromise<ChatObjectDto> {
     return __request(OpenAPI, {
       method: 'POST',
       url: '/api/chat/chat-object/shop-waiter/{shopKeeperId}',
@@ -205,14 +147,14 @@ export class ChatObjectService {
 
   /**
    * 创建聊天对象[聊天广场]
-   * @returns IczpNet_Chat_ChatObjects_Dtos_ChatObjectDto Success
+   * @returns ChatObjectDto Success
    * @throws ApiError
    */
   public static postApiChatChatObjectSquare({
     name,
   }: {
     name?: string;
-  }): CancelablePromise<IczpNet_Chat_ChatObjects_Dtos_ChatObjectDto> {
+  }): CancelablePromise<ChatObjectDto> {
     return __request(OpenAPI, {
       method: 'POST',
       url: '/api/chat/chat-object/square',
@@ -245,7 +187,7 @@ export class ChatObjectService {
 
   /**
    * 获取一条数据
-   * @returns IczpNet_Chat_ChatObjects_Dtos_ChatObjectDto Success
+   * @returns ChatObjectDto Success
    * @throws ApiError
    */
   public static getApiChatChatObject1({
@@ -255,7 +197,7 @@ export class ChatObjectService {
      * 主键Id
      */
     id: number;
-  }): CancelablePromise<IczpNet_Chat_ChatObjects_Dtos_ChatObjectDto> {
+  }): CancelablePromise<ChatObjectDto> {
     return __request(OpenAPI, {
       method: 'GET',
       url: '/api/chat/chat-object/{id}',
@@ -304,14 +246,14 @@ export class ChatObjectService {
 
   /**
    * 获取一条数据[code]
-   * @returns IczpNet_Chat_ChatObjects_Dtos_ChatObjectDto Success
+   * @returns ChatObjectDto Success
    * @throws ApiError
    */
   public static getApiChatChatObjectByCode({
     code,
   }: {
     code?: string;
-  }): CancelablePromise<IczpNet_Chat_ChatObjects_Dtos_ChatObjectDto> {
+  }): CancelablePromise<ChatObjectDto> {
     return __request(OpenAPI, {
       method: 'GET',
       url: '/api/chat/chat-object/by-code',
@@ -367,7 +309,7 @@ export class ChatObjectService {
 
   /**
    * 获取当前用户的聊天对象
-   * @returns Volo_Abp_Application_Dtos_PagedResultDto_1<IczpNet_Chat_ChatObjects_Dtos_ChatObjectDto_IczpNet_Chat_Application_Contracts_Version_0_1_1_0_Culture_neutral_PublicKeyToken_null_> Success
+   * @returns Volo_Abp_Application_Dtos_PagedResultDto_1<ChatObjectDto_IczpNet_Chat_Application_Contracts_Version_0_1_1_0_Culture_neutral_PublicKeyToken_null_> Success
    * @throws ApiError
    */
   public static getApiChatChatObjectByCurrentUser({
@@ -407,7 +349,7 @@ export class ChatObjectService {
 
   /**
    * 获取用户的聊天对象
-   * @returns Volo_Abp_Application_Dtos_PagedResultDto_1<IczpNet_Chat_ChatObjects_Dtos_ChatObjectDto_IczpNet_Chat_Application_Contracts_Version_0_1_1_0_Culture_neutral_PublicKeyToken_null_> Success
+   * @returns Volo_Abp_Application_Dtos_PagedResultDto_1<ChatObjectDto_IczpNet_Chat_Application_Contracts_Version_0_1_1_0_Culture_neutral_PublicKeyToken_null_> Success
    * @throws ApiError
    */
   public static getApiChatChatObjectByUserId({
@@ -461,7 +403,7 @@ export class ChatObjectService {
 
   /**
    * 获取多条数据
-   * @returns IczpNet_Chat_ChatObjects_Dtos_ChatObjectDto Success
+   * @returns ChatObjectDto Success
    * @throws ApiError
    */
   public static getApiChatChatObjectMany({
@@ -511,7 +453,7 @@ export class ChatObjectService {
 
   /**
    * 设置验证方式(好友|群|广场等)
-   * @returns IczpNet_Chat_ChatObjects_Dtos_ChatObjectDto Success
+   * @returns ChatObjectDto Success
    * @throws ApiError
    */
   public static postApiChatChatObjectSetVerificationMethod({
@@ -526,7 +468,7 @@ export class ChatObjectService {
      * 验证方式
      */
     verificationMethod?: 0 | 1 | 2;
-  }): CancelablePromise<IczpNet_Chat_ChatObjects_Dtos_ChatObjectDto> {
+  }): CancelablePromise<ChatObjectDto> {
     return __request(OpenAPI, {
       method: 'POST',
       url: '/api/chat/chat-object/{id}/set-verification-method',
@@ -541,7 +483,7 @@ export class ChatObjectService {
 
   /**
    * 修改
-   * @returns IczpNet_Chat_ChatObjects_Dtos_ChatObjectDto Success
+   * @returns ChatObjectDto Success
    * @throws ApiError
    */
   public static postApiChatChatObjectUpdate({
@@ -567,7 +509,7 @@ export class ChatObjectService {
 
   /**
    * 修改名称
-   * @returns IczpNet_Chat_ChatObjects_Dtos_ChatObjectDto Success
+   * @returns ChatObjectDto Success
    * @throws ApiError
    */
   public static postApiChatChatObjectUpdateName({
@@ -594,7 +536,7 @@ export class ChatObjectService {
 
   /**
    * 更新头像
-   * @returns IczpNet_Chat_ChatObjects_Dtos_ChatObjectDto Success
+   * @returns ChatObjectDto Success
    * @throws ApiError
    */
   public static postApiChatChatObjectUpdatePortrait({
