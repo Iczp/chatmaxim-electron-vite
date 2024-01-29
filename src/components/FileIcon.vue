@@ -18,7 +18,7 @@ const className = computed(() => props.suffix?.replace('.', 'icon-').toLowerCase
   border-radius: 4px;
 
   font-size: 28px;
-  background-color: var(--file-icon-background-color);
+  /* background-color: var(--file-icon-background-color);  */
   width: var(--icon-size);
   height: var(--icon-size);
   display: flex;

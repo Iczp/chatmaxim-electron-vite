@@ -259,8 +259,8 @@ const onConfirm = (): void => {
 }
 
 .footer {
-  /* justify-content: space-between;
-  padding: 0 24px; */
+  justify-content: space-between;
+  padding: 0 20px;
 }
 .select-result {
   /* color: gray; */
