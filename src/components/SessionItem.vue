@@ -168,7 +168,8 @@ const ondragstart = (event: DragEvent) => {
   background-color: var(--divider-color); */
 }
 .session-item:last-child::after {
-  background-color: rgba(242, 20, 20, 0.41);
+  /* display: none; */
+  /* background-color: rgba(242, 20, 20, 0.41); */
 }
 .session-item::before {
   /* display: none; */

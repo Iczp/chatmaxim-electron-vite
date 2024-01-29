@@ -9,6 +9,7 @@ import {
   onUnmounted,
   ref,
   watch,
+  toRaw,
 } from 'vue';
 import { useRoute } from 'vue-router';
 
@@ -21,6 +22,7 @@ import Loading from '../../components/Loading.vue';
 import ScrollView from '../../components/ScrollView.vue';
 import ChatInput from './widget/ChatInput.vue';
 
+import { NodeExpandOutlined } from '@ant-design/icons-vue';
 import { message } from 'ant-design-vue';
 import { useImStore } from '../../stores/im';
 import { MessageDto } from '../../apis/dtos';
@@ -28,7 +30,7 @@ import { ContextmenuInput, showContextMenuForMessage } from '../../commons/conte
 import QuoteMessage from './components/QuoteMessage.vue';
 import { useSessionUnitId } from '../../commons/useSessionUnit';
 import { useMessageList } from '../../commons/useMessageList';
-import { MessageStateEnums, MessageTypeEnums } from '../../apis/enums';
+import { ChatObjectTypeEnums, MessageStateEnums, MessageTypeEnums } from '../../apis/enums';
 import { useSessionUnitDetail } from '../../commons/useSessionUnitDetail';
 import { setReadedMessageId } from '../../commons/setting';
 import { sendMessage } from '../../commons/sendMessage';
@@ -41,7 +43,7 @@ import { useI18n } from 'vue-i18n';
 import { setWindow } from '../../ipc/setWindow';
 import { useWindowStore } from '../../stores/window';
 import { openChildWindow } from '../../ipc/openChildWindow';
-import { toRaw } from 'vue';
+
 const { t } = useI18n();
 const store = useImStore();
 const windowStore = useWindowStore();
@@ -68,8 +70,15 @@ const loadingHeight = ref(40);
 //   maxResultCount: 20,
 // });
 
-const { isInputEnabled, destination, destinationName, isImmersed, lastMessageId, readedMessageId } =
-  useSessionUnitId(sessionUnitId);
+const {
+  isInputEnabled,
+  destination,
+  destinationName,
+  isImmersed,
+  lastMessageId,
+  readedMessageId,
+  ownerObjectType,
+} = useSessionUnitId(sessionUnitId);
 
 const chatTitle = computed(
   () => destinationName.value || props.title || (route.query.title as string),
@@ -516,6 +525,11 @@ const onRemove = (entity: MessageDto) => {
   console.log('onRemove', entity);
   spliceItem(entity.autoId, []);
 };
+const isWaiter = computed(() =>
+  [ChatObjectTypeEnums.ShopWaiter, ChatObjectTypeEnums.ShopKeeper].some(
+    x => x == ownerObjectType.value,
+  ),
+);
 </script>
 
 <template>
@@ -534,6 +548,11 @@ const onRemove = (entity: MessageDto) => {
       <template v-if="isImmersed" v-slot:title>
         <!-- <icon type="mute" size="14" /> -->
         <icon type="mute" size="14" class="mute" />
+      </template>
+      <template #icon>
+        <a-button v-if="isWaiter" type="text" class="btn">
+          <NodeExpandOutlined />
+        </a-button>
       </template>
     </PageTitle>
 

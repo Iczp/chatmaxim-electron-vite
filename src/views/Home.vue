@@ -192,11 +192,11 @@ const getKey = (route: RouteLocationNormalizedLoaded, component: any): string | 
 }
 
 .nav-item.active {
-  background-color: rgb(65 65 65 / 84%);
+  background-color: var(--background-color);
   color: #1890ff;
 }
 .nav-item.active:hover {
-  background-color: rgba(77, 76, 76, 0.84);
+  /* background-color: rgba(77, 76, 76, 0.84); */
   color: #0084ff;
 }
 .nav-item:hover {
@@ -246,5 +246,4 @@ const getKey = (route: RouteLocationNormalizedLoaded, component: any): string | 
   height: 100%;
 }
 </style>
-../ipc/setWindow../ipc/openAppSettings
-../commons/useBadges
+../ipc/setWindow../ipc/openAppSettings ../commons/useBadges

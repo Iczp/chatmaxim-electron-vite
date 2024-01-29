@@ -57,6 +57,7 @@ const useComputedSessionUnit = (computedEntity: ComputedRef<SessionUnitOwnerDto 
 
   const objectType = computed(() => entity.value?.destination?.objectType);
 
+  const ownerObjectType = computed(() => entity.value?.ownerObjectType);
   // const sendTime = computed(() =>
   //   formatMessageTime(new Date(entity.value?.lastMessage?.creationTime!)),
   // );
@@ -127,6 +128,7 @@ const useComputedSessionUnit = (computedEntity: ComputedRef<SessionUnitOwnerDto 
     isImmersed,
     destination,
     objectType,
+    ownerObjectType,
     sendTime,
     badge,
     destinationName,

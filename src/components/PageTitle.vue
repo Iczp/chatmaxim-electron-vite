@@ -64,6 +64,7 @@ const toggleAlwayOnTop = () => {
     </div>
     <div class="page-title-right no-drag">
       <tool-bar>
+        <slot name="icon"></slot>
         <a-button
           v-if="top"
           type="text"
@@ -164,4 +165,3 @@ const toggleAlwayOnTop = () => {
   transform: rotate(-45deg);
 }
 </style>
-
