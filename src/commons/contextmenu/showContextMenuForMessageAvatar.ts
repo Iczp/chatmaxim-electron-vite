@@ -146,7 +146,7 @@ export const showContextMenuForMessageAvatar = ({
                 destinationId: entity.senderSessionUnit?.owner?.id!,
                 requestMessage: `你好:${entity.senderSessionUnit?.displayName || ''}`,
               },
-              destination: toRaw(entity.senderSessionUnit),
+              destination: toRaw(entity.senderSessionUnit?.owner),
             },
           })
             .then(res => {
@@ -179,10 +179,7 @@ export const showContextMenuForMessageAvatar = ({
           Modal.confirm({
             title: t('Remove from group chat'),
             icon: h(ExclamationCircleOutlined),
-            content: t(
-              'Ask remove group chat',
-              [entity.senderSessionUnit?.owner?.name],
-            ),
+            content: t('Ask remove group chat', [entity.senderSessionUnit?.owner?.name]),
             cancelText: t('Cancel'),
             okText: t('Confirm remove'),
             async onOk() {

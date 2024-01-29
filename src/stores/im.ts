@@ -6,6 +6,7 @@ import { defineStore } from 'pinia';
 import {
   BadgeDetialDto,
   BadgeDto,
+  ChatObjectDto,
   MessageDto,
   MessageOwnerDto,
   SessionItemDto,
@@ -88,6 +89,7 @@ export const useImStore = defineStore('im', {
         .map(([_, x]) => x.badge || 0)
         .reduce((partialSum, n) => partialSum + n, state.initBadge),
     badgeItems: (state): BadgeDetialDto[] => [...state.chatObjects].map(([_, x]) => x),
+    chatObjectItems: (state): ChatObjectDto[] => [...state.chatObjects].map(([_, x]) => x.owner!),
     // getSessionItems:
     //   state =>
     //   (chatObjectId: number, keyword?: string): SessionItemDto[] => {

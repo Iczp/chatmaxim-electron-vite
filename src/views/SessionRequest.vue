@@ -1,6 +1,6 @@
 <script setup lang="ts">
-import { computed, ref, toRaw, watch } from 'vue';
-import { SessionRequestInput, SessionUnitDestinationDto } from '../apis/dtos';
+import { computed, reactive, ref, toRaw, watch } from 'vue';
+import { ChatObjectDto, SessionRequestInput, SessionUnitDestinationDto } from '../apis/dtos';
 import { SessionRequestService } from '../apis';
 import { useTitle } from '@vueuse/core';
 import { onBeforeRouteLeave, onBeforeRouteUpdate, useRoute } from 'vue-router';
@@ -8,17 +8,18 @@ import { sendPickerResult } from '../ipc/openChildWindow';
 import { message } from 'ant-design-vue';
 import ChatObject from '../components/ChatObject.vue';
 import { useRemoteStore } from '../commons/useRemoteStore';
+import { useI18n } from 'vue-i18n';
+import { usePayload } from '../commons/usePayload';
+import { SessionRequestPayload } from '../ipc/sessionRequest';
 
+const { t } = useI18n();
 const route = useRoute();
 
 const title = useTitle((route.query.title as string) ?? '添加好友');
 
-const props = defineProps<{
-  title?: string;
-  chatObjectId: Number;
-}>();
+const payload = usePayload<SessionRequestPayload>();
 
-const formState = ref<SessionRequestInput>({
+const formState = reactive<SessionRequestInput>({
   ownerId: 0,
   destinationId: 0,
   requestMessage: `你好，我是 xxx`,
@@ -26,17 +27,15 @@ const formState = ref<SessionRequestInput>({
 
 const isLoading = ref(false);
 
-const destination = computed(() => remoteStore.value?.destination);
-
-const remoteStore = useRemoteStore<{
-  params: SessionRequestInput;
-  destination?: SessionUnitDestinationDto;
-}>();
+const destination = computed(() => payload.value?.destination);
 
 watch(
-  () => remoteStore.value?.params,
+  () => payload.value?.params,
   v => {
-    formState.value = v!;
+    if (v) {
+      formState.destinationId = v?.destinationId;
+      formState.requestMessage = v?.requestMessage;
+    }
   },
 );
 
@@ -54,18 +53,29 @@ onBeforeRouteUpdate((to, from) => {
 watch(route, v => {
   console.log('watch route', v);
 });
-const onCancle = (): void => {
+const onCancel = (): void => {
   sendPickerResult({
     event: route.query.event as string,
     success: false,
     message: 'User canceled!',
   });
 };
+const selectedIndex = ref<number>(0);
 
+const ownerList = computed(() => payload.value?.owners || []);
+
+const selectedItem = computed(() => ownerList.value[selectedIndex.value]);
+const visible = ref(false);
+const onSelect = (item: ChatObjectDto, index: number) => {
+  selectedIndex.value = index;
+  visible.value = false;
+  formState.ownerId = item.id!;
+  console.log('onSelect', formState);
+};
 const onConfirm = (): void => {
-  console.log('submit!', toRaw(formState.value));
+  console.log('submit!', toRaw(formState));
   isLoading.value = true;
-  SessionRequestService.postApiChatSessionRequest(toRaw<SessionRequestInput>(formState.value))
+  SessionRequestService.postApiChatSessionRequest(toRaw<SessionRequestInput>(formState))
     .then(res => {
       console.log(res);
       sendPickerResult({
@@ -86,27 +96,49 @@ const wrapperCol = { span: 12 };
 
 <template>
   <page :loading="isLoading">
-    <page-title :title="title || chatObjectId">
-      <chat-object :entity="destination?.owner" :size="24" />
-    </page-title>
+    <page-title :title="title"></page-title>
     <page-content>
       <scroll-view class="scroll-view">
+        <div>
+          <chat-object :entity="destination" :size="24" />
+        </div>
         <a-form :model="formState" :label-col="labelCol" :wrapper-col="wrapperCol">
-          <a-form-item label="请求消息">
+          <a-form-item>
             <a-textarea
               class="input-textarea"
               max-length="10"
               v-model:value="formState.requestMessage"
+              :placeholder="'...'"
             />
           </a-form-item>
         </a-form>
       </scroll-view>
     </page-content>
-    <page-footer>
-      <chat-object :entity="destination?.owner" :size="24" icon="arrow-drop-down" />
+    <page-footer class="page-footer">
+      <!-- <div> -->
+      <a-popover v-model:open="visible" trigger="click">
+        <template #content>
+          <scroll-view class="owner-scroll-view">
+            <!-- <div class="data-list"> -->
+            <div
+              v-for="(item, index) in ownerList"
+              :key="item.id"
+              class="data-item cursor-default"
+              :class="{ selected: selectedIndex == index }"
+              @click="onSelect(item, index)"
+            >
+              <chat-object :entity="item" :size="24" />
+            </div>
+            <!-- </div> -->
+          </scroll-view>
+        </template>
+        <chat-object :entity="selectedItem" :size="24" icon="arrow-drop-down" />
+      </a-popover>
+      <!-- </div> -->
+
       <a-space>
-        <a-button type="default" @click="onCancle">取消</a-button>
-        <a-button type="primary" @click="onConfirm">添加好友</a-button>
+        <a-button type="default" @click="onCancel">{{ t('Cancel') }}</a-button>
+        <a-button type="primary" @click="onConfirm">{{ t('Send') }}</a-button>
       </a-space>
     </page-footer>
   </page>
@@ -116,22 +148,35 @@ const wrapperCol = { span: 12 };
 </template>
 
 <style scoped>
+.owner-scroll-view {
+  height: 120px;
+}
+.section {
+  padding: 0 24px;
+}
 .scroll-view {
-  display: flex;
-  flex-direction: column;
-  background-color: rgba(241, 241, 241, 0.485);
-  flex: 1;
-
-  width: 100%;
-  box-sizing: border-box;
   padding: 0 24px;
 }
 
 .input-textarea {
   resize: unset;
-  height: 120px;
+  height: 112px;
   overflow: hidden;
   resize: none;
 }
+.page-footer {
+  justify-content: space-between;
+}
+.data-item {
+  padding: 0 8px;
+  border-radius: 8px;
+}
+.data-item.selected {
+  --background-color-active: rgba(66, 66, 66, 0.741);
+  background-color: var(--background-color-active);
+
+  color: #1677ff;
+  font-weight: 600;
+  background-color: rgba(51, 52, 70, 0.358);
+}
 </style>
-../ipc/openChildWindow

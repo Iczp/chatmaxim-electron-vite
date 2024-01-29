@@ -5,6 +5,7 @@ import {
   EllipsisOutlined,
   PlusOutlined,
 } from '@ant-design/icons-vue';
+import { PersonAdd } from '../../icons';
 import { getDisplayName } from '../../commons/utils';
 import { AppDto, ChatObjectDto } from '../../apis/dtos';
 import { useI18n } from 'vue-i18n';
@@ -12,12 +13,15 @@ import { useI18n } from 'vue-i18n';
 import { useEnums } from '../../commons/useEnums';
 import { useChatObjectList } from '../../commons/useChatObjectList';
 import ChatObject from '../../components/ChatObject.vue';
-import { onActivated } from 'vue';
+import Avatar from '../../components/Avatar.vue';
+import { onActivated, toRaw } from 'vue';
 import Loading from '../../components/Loading.vue';
+import { sessionRequest } from '../../ipc/sessionRequest';
+import { useImStore } from '../../stores/im';
 const { t } = useI18n();
 
 const { objectTypeOptions } = useEnums();
-
+const imStore = useImStore();
 const {
   totalCount,
   query,
@@ -58,6 +62,26 @@ const onItemClick = (item: ChatObjectDto) => {
 };
 const getDescription = (item: ChatObjectDto) => {};
 const openObjectProfile = (item: ChatObjectDto) => {};
+const add = (item: ChatObjectDto) => {
+  sessionRequest({
+    t,
+    payload: {
+      params: {
+        ownerId: imStore.chatObjectItems[0]?.id || 0,
+        destinationId: item.id!,
+        requestMessage: `from markets`,
+      },
+      destination: toRaw(item),
+      owners: imStore.chatObjectItems,
+    },
+  })
+    .then(res => {
+      console.log(`sessionRequest`, res);
+    })
+    .catch(err => {
+      console.error(`sessionRequest`, err);
+    });
+};
 </script>
 
 <template>
@@ -90,16 +114,19 @@ const openObjectProfile = (item: ChatObjectDto) => {};
                 <div class="div-image"></div>
               </template> -->
 
-                <a-card-meta :title="getDisplayName(item)" :description="item.description">
+                <a-card-meta :title="getDisplayName(item)">
                   <template #avatar>
-                    <a-avatar src="https://m.rctea.com/mobile/images/precomposed.png" />
+                    <avatar :entity="item" />
+                  </template>
+                  <template #description>
+                    <div class="description text-ellipsis">{{ item.description || '-' }}</div>
                   </template>
                 </a-card-meta>
 
                 <template #actions>
-                  <setting-outlined key="setting" @click="openObjectProfile(item)" />
-                  <edit-outlined key="edit" @click="openObjectProfile(item)" />
-                  <plus-outlined key="edit" @click="openObjectProfile(item)" />
+                  <plus-outlined key="edit" @click="add(item)" />
+                  <!-- <setting-outlined key="setting" @click="openObjectProfile(item)" /> -->
+                  <!-- <edit-outlined key="edit" @click="openObjectProfile(item)" /> -->
                   <ellipsis-outlined key="ellipsis" @click="openObjectProfile(item)" />
                 </template>
               </a-card>
@@ -167,5 +194,8 @@ const openObjectProfile = (item: ChatObjectDto) => {};
   padding: 8px;
   /* width: 25%; */
   justify-content: center;
+}
+.description {
+  min-height: 22px;
 }
 </style>

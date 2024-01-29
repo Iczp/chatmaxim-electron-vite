@@ -39,9 +39,9 @@ export const useFetchList = <TInput extends GetListInput, TDto extends IdDto>({
   selectable?: boolean;
   key?: (input: TInput) => string;
 }) => {
-  const caches = ref(new Map<string | undefined, ResultDto>());
+  const caches = reactive(new Map<string | undefined, ResultDto>());
 
-  const currentCache = computed(() => caches.value.get(key(query.value as TInput)));
+  const currentCache = computed(() => caches.get(key(query.value as TInput)));
   const totalCount = computed(() => currentCache.value?.totalCount);
   const isPending = computed(() => currentCache.value?.isPending);
   const isBof = computed(() => currentCache.value?.isBof);
@@ -62,7 +62,7 @@ export const useFetchList = <TInput extends GetListInput, TDto extends IdDto>({
   // const getKey = (input: TInput) => input.keyword || '';
 
   const clearCaches = () => {
-    caches.value.clear();
+    caches.clear();
   };
 
   const { t } = useI18n();
@@ -80,10 +80,10 @@ export const useFetchList = <TInput extends GetListInput, TDto extends IdDto>({
       console.warn('query', toRaw(v));
       const k = key(v as TInput);
       fetchData({ ...(v as TInput), skipCount: 0, keyword: v?.keyword });
-      // if (caches.value.has(k)) {
-      //   const cache = caches.value.get(k);
+      // if (caches.has(k)) {
+      //   const cache = caches.get(k);
       //   // list.value = cache?.items || [];
-      //   console.log('caches.value', k, cache);
+      //   console.log('caches', k, cache);
       // } else {
       //   fetchData({ ...(v as TInput), skipCount: 0, keyword: v?.keyword });
       // }
@@ -107,7 +107,7 @@ export const useFetchList = <TInput extends GetListInput, TDto extends IdDto>({
     }
     ret.query = input;
     ret.isPending = true;
-    // caches.value.set(key(query.value as TInput), ret);
+    // caches.set(key(query.value as TInput), ret);
 
     const { items, totalCount } = await service(req);
     console.log('fetchData', items);
@@ -116,7 +116,7 @@ export const useFetchList = <TInput extends GetListInput, TDto extends IdDto>({
     ret.isEof = items!.length < (req.maxResultCount || 10);
     ret.items = ret.query?.skipCount == 0 ? items! : ret.items.concat(items);
     // list.value = ret.items;
-    caches.value.set(key(query.value as TInput), ret);
+    caches.set(key(query.value as TInput), ret);
     return items!;
   };
 

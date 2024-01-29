@@ -1,7 +1,11 @@
-import { SessionRequestInput, SessionUnitDestinationDto } from '../apis/dtos';
+import { ChatObjectDto, SessionRequestInput, SessionUnitDestinationDto } from '../apis/dtos';
 import { WindowParams } from '../ipc-types';
 import { PickerResult, openChildWindow, sendPickerResult } from './openChildWindow';
-
+export type SessionRequestPayload = {
+  params: SessionRequestInput;
+  destination?: ChatObjectDto;
+  owners?: Array<ChatObjectDto>;
+};
 /**
  * 添加好友
  *
@@ -17,7 +21,7 @@ export const sessionRequest = ({
   window,
 }: {
   t: any;
-  payload: { params: SessionRequestInput; destination?: SessionUnitDestinationDto };
+  payload: SessionRequestPayload;
   window?: WindowParams;
 }): Promise<PickerResult> =>
   openChildWindow({

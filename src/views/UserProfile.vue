@@ -84,7 +84,7 @@ const getDescription = (item: ChatObjectDto): string =>
               </a-card-meta>
 
               <template #actions>
-                <setting-outlined key="setting" @click="openObjectProfile(item)" />
+                <!-- <setting-outlined key="setting" @click="openObjectProfile(item)" /> -->
                 <edit-outlined key="edit" @click="openObjectProfile(item)" />
                 <ellipsis-outlined key="ellipsis" @click="openObjectProfile(item)" />
               </template>
@@ -108,7 +108,8 @@ const getDescription = (item: ChatObjectDto): string =>
 .object-item {
   display: flex;
   padding: 20px;
-  width: 25%;
+  width: 33.33%;
+  justify-content: center;
 }
 
 .div-image {
