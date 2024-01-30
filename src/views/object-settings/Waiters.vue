@@ -44,8 +44,8 @@ const {
   getSelectItems,
 } = useWaitersList({
   input: {
+    isContainsShopKeeper: false,
     shopKeeperId: Number(props.chatObjectId),
-
     maxResultCount: 999,
   },
 });

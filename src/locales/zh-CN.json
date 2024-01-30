@@ -181,5 +181,7 @@
   "Edit": "编辑",
   "AccountHelp": "a-z,0-9",
   "PasswordHelp": "a-z,0-9",
-  "Markets": "市场"
+  "Markets": "市场",
+  "Transfer": "转接",
+  "Transfer To": "转接给"
 }

@@ -191,7 +191,6 @@ const onConfirm = (): void => {
         <template v-else-if="isEof" #after>{{ t('DividerEnd') }}</template>
         <template v-slot="{ item }">
           <div
-            :key="item.id"
             class="data-item"
             :class="{ checked: isChecked(item), disabled: isDisabled(item) }"
             @click="toggleChecked(item)"

@@ -180,5 +180,7 @@
   "EnabledState": "State",
   "Edit": "Edit",
   "AccountHelp": "a-z,0-9",
-  "Markets": "Markets"
+  "Markets": "Markets",
+  "Transfer": "Transfer",
+  "Transfer To": "Transfer To"
 }

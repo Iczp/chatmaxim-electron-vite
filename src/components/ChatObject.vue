@@ -14,6 +14,7 @@ const props = defineProps<{
   size?: number;
   badge?: string | number;
   dot?: boolean | null;
+  
 }>();
 
 // custom slot

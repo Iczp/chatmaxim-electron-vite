@@ -12,6 +12,7 @@ import type { CancelablePromise } from '../core/CancelablePromise';
 import { OpenAPI } from '../core/OpenAPI';
 import { request as __request } from '../core/request';
 import { ChatObjectDto, GetListInput, PagedResultDto } from '../dtos';
+import { ShopWaterGetListInput } from '../dtos/ShopWaterGetListInput';
 
 export class ShopWaiterService {
   /**
@@ -66,21 +67,18 @@ export class ShopWaiterService {
    * @throws ApiError
    */
   public static getApiChatShopWaiterList({
+    isContainsShopKeeper,
     shopKeeperId,
     keyword,
     maxResultCount,
     skipCount,
     sorting,
-  }: {
-    /**
-     * 掌柜Id[聊天对象]
-     */
-    shopKeeperId?: number;
-  } & GetListInput): CancelablePromise<PagedResultDto<ChatObjectDto>> {
+  }: ShopWaterGetListInput): CancelablePromise<PagedResultDto<ChatObjectDto>> {
     return __request(OpenAPI, {
       method: 'GET',
       url: '/api/chat/shop-waiter',
       query: {
+        IsContainsShopKeeper: isContainsShopKeeper,
         ShopKeeperId: shopKeeperId,
         Keyword: keyword,
         MaxResultCount: maxResultCount,

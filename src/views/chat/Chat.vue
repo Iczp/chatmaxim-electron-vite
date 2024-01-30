@@ -11,10 +11,11 @@ import {
   watch,
   toRaw,
 } from 'vue';
-import { useRoute } from 'vue-router';
+import { useRoute, useRouter } from 'vue-router';
 
 import ChatSetting from './widget/ChatSetting.vue';
 import DropViewer from './widget/DropViewer.vue';
+import TransferModal from './widget/TransferModal.vue';
 import MessageItem from './components/MessageItem.vue';
 
 import Loading from '../../components/Loading.vue';
@@ -23,7 +24,7 @@ import ScrollView from '../../components/ScrollView.vue';
 import ChatInput from './widget/ChatInput.vue';
 
 import { NodeExpandOutlined } from '@ant-design/icons-vue';
-import { message } from 'ant-design-vue';
+import { Transfer, message } from 'ant-design-vue';
 import { useImStore } from '../../stores/im';
 import { MessageDto } from '../../apis/dtos';
 import { ContextmenuInput, showContextMenuForMessage } from '../../commons/contextmenu';
@@ -45,6 +46,7 @@ import { useWindowStore } from '../../stores/window';
 import { openChildWindow } from '../../ipc/openChildWindow';
 
 const { t } = useI18n();
+const router = useRouter();
 const store = useImStore();
 const windowStore = useWindowStore();
 const props = defineProps<{
@@ -113,6 +115,8 @@ const scroll = ref<InstanceType<typeof ScrollView> | null>(null);
 const dropViewer = ref<InstanceType<typeof DropViewer> | null>(null);
 
 const chatSetting = ref<InstanceType<typeof ChatSetting> | null>(null);
+
+const transferModal = ref<InstanceType<typeof TransferModal> | null>(null);
 
 const scrollElement = computed(() => scroll.value?.getElement());
 
@@ -530,6 +534,25 @@ const isWaiter = computed(() =>
     x => x == ownerObjectType.value,
   ),
 );
+const onTransfer = () => {
+  const owner = detail.value?.owner;
+  const chatObjectId = owner?.parentId || owner?.id;
+  if (!chatObjectId) {
+    message.error({ content: 'Transfer fail' });
+    return;
+  }
+  transferModal.value?.open({
+    chatObjectId,
+    sessionUnitId,
+    owner,
+    onConfirm(destination) {
+      console.log('transfer to', destination);
+      // nav
+
+      router.push(`/chat/${owner?.id}`);
+    },
+  });
+};
 </script>
 
 <template>
@@ -550,7 +573,7 @@ const isWaiter = computed(() =>
         <icon type="mute" size="14" class="mute" />
       </template>
       <template #icon>
-        <a-button v-if="isWaiter" type="text" class="btn">
+        <a-button v-if="isWaiter" type="text" class="btn" @click="onTransfer">
           <NodeExpandOutlined />
         </a-button>
       </template>
@@ -558,6 +581,7 @@ const isWaiter = computed(() =>
 
     <page-content class="layout-content">
       <DropViewer ref="dropViewer" />
+      <TransferModal ref="transferModal" />
       <ChatSetting
         v-if="sessionUnitId"
         ref="chatSetting"

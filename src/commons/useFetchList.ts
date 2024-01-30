@@ -1,9 +1,10 @@
-import { UnwrapNestedRefs, computed, reactive, ref, toRaw, watch } from 'vue';
+import { computed, reactive, ref, toRaw, watch } from 'vue';
 import { CancelablePromise } from '../apis';
 import { GetListInput, IdDto, PagedResultDto } from '../apis/dtos';
 import { message } from 'ant-design-vue';
 import { PickerInput } from '../ipc/openChildWindow';
 import { useI18n } from 'vue-i18n';
+import { Input } from 'electron';
 
 type ResultDto = {
   query?: GetListInput;
@@ -27,7 +28,7 @@ const defaultResultValue = (): ResultDto => {
   return value;
 };
 export const useFetchList = <TInput extends GetListInput, TDto extends IdDto>({
-  input,
+  input: defaultInput,
   picker,
   service,
   selectable,
@@ -49,7 +50,7 @@ export const useFetchList = <TInput extends GetListInput, TDto extends IdDto>({
   const list = computed<TDto[]>(() => currentCache.value?.items || []);
   // const list = ref<TDto[]>([]);
 
-  const query = ref<TInput>(input);
+  const query = ref<TInput>(defaultInput);
 
   const selectableRef = ref(selectable);
   const selectedList = ref<IdDto[]>(picker?.selectedItems || []);
@@ -77,7 +78,7 @@ export const useFetchList = <TInput extends GetListInput, TDto extends IdDto>({
   watch(
     () => query.value,
     v => {
-      console.warn('query', toRaw(v));
+      console.warn('#watch query', toRaw(v));
       const k = key(v as TInput);
       fetchData({ ...(v as TInput), skipCount: 0, keyword: v?.keyword });
       // if (caches.has(k)) {
@@ -95,7 +96,7 @@ export const useFetchList = <TInput extends GetListInput, TDto extends IdDto>({
 
   const fetchData = async (input: TInput): Promise<TDto[]> => {
     const req = input;
-    console.log('fetchData input', req);
+    console.log('fetchData input:', req);
 
     const ret = currentCache.value || defaultResultValue();
     if (ret.isEof) {
@@ -110,7 +111,7 @@ export const useFetchList = <TInput extends GetListInput, TDto extends IdDto>({
     // caches.set(key(query.value as TInput), ret);
 
     const { items, totalCount } = await service(req);
-    console.log('fetchData', items);
+    console.log('fetchData item:', items);
     ret.totalCount = totalCount;
     ret.isPending = false;
     ret.isEof = items!.length < (req.maxResultCount || 10);
@@ -121,22 +122,23 @@ export const useFetchList = <TInput extends GetListInput, TDto extends IdDto>({
   };
 
   const fetchNext = async (input?: TInput): Promise<TDto[]> => {
-    // query.value = <any>{
-    //   ...query.value,
-    //   ...input,
-    //   skipCount: currentCache.value?.items.length,
-    // };
     query.value.skipCount = currentCache.value?.items.length;
-    return fetchData(query.value as TInput);
+    const q = {
+      ...query.value,
+      skipCount: currentCache.value?.items.length,
+    };
+    return fetchData(q as TInput);
   };
 
-  const refresh = async (): Promise<TDto[]> => {
+  const refresh = async (input?: TInput): Promise<TDto[]> => {
     console.log('refresh');
     clearCaches();
 
+    const q = input || query.value;
+
     // query.value = <any>{ ...input };
     // list.value = [];
-    return fetchData({ ...input } as TInput);
+    return fetchData(q as TInput);
   };
 
   const onReachStart = (event: CustomEvent) => {
@@ -155,9 +157,10 @@ export const useFetchList = <TInput extends GetListInput, TDto extends IdDto>({
     fetchNext();
   };
 
-  const isChecked = (item: TDto): boolean => selectedList.value.some(x => x.id == item.id);
+  const isChecked = (item: TDto): boolean =>
+    selectedList.value.some(x => x.id?.toString() == item.id?.toString());
   const isDisabled = ref((item: TDto, andPredicate?: boolean): boolean =>
-    disabledList.value.some(x => x.id == item.id),
+    disabledList.value.some(x => x.id?.toString() == item.id?.toString()),
   );
   // const isDisabled = (item: TDto, andPredicate?: boolean): boolean =>
   //   disabledList.value.some(x => x.id == item.id); //|| !item.setting?.isInputEnabled || false;
@@ -168,7 +171,7 @@ export const useFetchList = <TInput extends GetListInput, TDto extends IdDto>({
 
   const toggleMultipleChecked = (item: TDto): void => {
     if (isChecked(item)) {
-      const findIndex = selectedList.value.findIndex(x => x.id == item.id);
+      const findIndex = selectedList.value.findIndex(x => x.id?.toString() == item.id?.toString());
       if (findIndex != -1) {
         selectedList.value.splice(findIndex, 1);
       } else {
@@ -190,6 +193,11 @@ export const useFetchList = <TInput extends GetListInput, TDto extends IdDto>({
 
   const toggleChecked = (item: TDto): void => {
     console.log('item', item);
+    console.log('disabledList', disabledList.value, isDisabled.value(item), isDisabled.value);
+    console.log(
+      'disabledList1- some',
+      disabledList.value.some(x => x.id == item.id),
+    );
     if (isDisabled.value(item)) {
       return;
     }
