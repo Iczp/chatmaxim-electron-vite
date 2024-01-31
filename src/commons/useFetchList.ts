@@ -33,7 +33,7 @@ export const useFetchList = <TInput extends GetListInput, TDto extends IdDto>({
   picker,
   service,
   selectable,
-  key = (input: TInput) => input.keyword || '',
+  key = (input: TInput) => input?.keyword || '',
 }: {
   input: TInput;
   service: (input: TInput) => CancelablePromise<PagedResultDto<TDto>>;
@@ -77,11 +77,11 @@ export const useFetchList = <TInput extends GetListInput, TDto extends IdDto>({
   });
 
   watch(
-    () => query.value,
-    v => {
-      console.warn('#watch query', toRaw(v));
-      const k = key(v as TInput);
-      fetchData({ ...(v as TInput), skipCount: 0, keyword: v?.keyword });
+    () => query.value.keyword,
+    keyword => {
+      console.warn('#watch query', toRaw(keyword));
+      const k = key(keyword as TInput);
+      fetchData({ ...(query.value as TInput), skipCount: 0, keyword });
       // if (caches.has(k)) {
       //   const cache = caches.get(k);
       //   // list.value = cache?.items || [];
@@ -99,18 +99,21 @@ export const useFetchList = <TInput extends GetListInput, TDto extends IdDto>({
     return new Promise((resolve, reject) => {
       const req = input;
       console.log('fetchData input:', req);
-
-      const ret = currentCache.value || defaultResultValue();
+      const cacheKey = key(req as TInput)
+      if (!caches.has(key(req))) {
+        caches.set(cacheKey, defaultResultValue());
+      }
+      const ret = currentCache.value!;
       if (ret.isEof) {
         console.error('ret.isEof', ret.isEof, ret);
         throw new Error(t('EmptyData'));
       }
-      if (ret.isPending) {
-        throw new Error(t('Error:IsPending'));
-      }
+      // if (ret.isPending) {
+      //   throw new Error(t('Error:IsPending'));
+      // }
       ret.query = input;
       ret.isPending = true;
-      // caches.set(key(query.value as TInput), ret);
+
       service(req)
         .then(res => {
           const { items, totalCount } = res;
@@ -126,7 +129,7 @@ export const useFetchList = <TInput extends GetListInput, TDto extends IdDto>({
         })
         .finally(() => {
           ret.isPending = false;
-          caches.set(key(query.value as TInput), ret);
+          caches.set(cacheKey, ret);
         });
     });
   };
