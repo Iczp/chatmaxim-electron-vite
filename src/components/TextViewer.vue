@@ -4,49 +4,39 @@ import { formatWords, WordDto, WordTypeEnum } from '../commons/formatWords';
 const props = defineProps<{
   value: string;
 }>();
+const emits = defineEmits<{
+  // wordClick: [WordDto, Event?];
+  (e: 'wordClick', item: WordDto, event?: Event): void;
+}>();
 const words = computed<WordDto[]>(() => formatWords(props.value!));
-const onWordClick = (item: WordDto) => {
-  if (item.type) {
-    console.log('onWordClick', item);
-  }
+const onWordClick = (item: WordDto, event?: Event) => {
+  // console.log('onWordClick', item, event);
+  emits('wordClick', item, event);
 };
+
+const isObject = (item: WordDto): boolean => item.type != undefined;
 </script>
 
 <template>
-  <span class="word" :title="`count:${words.length}`">
+  <div class="word" :title="`count:${words.length}`">
     <!-- {{ words }} -->
     <!-- {{ value }} -->
     <template v-for="(item, index) in words" :key="index">
-      <template v-if="item.type == WordTypeEnum.uid">
-        <a :uid="item.value" :class="WordTypeEnum[item.type!]" @click="onWordClick(item)">
-          {{ item.text }}
-        </a>
-      </template>
-      <template v-else-if="item.type == WordTypeEnum.oid">
-        <a :oid="item.value" :class="WordTypeEnum[item.type!]" @click="onWordClick(item)">
-          {{ item.text }}
-        </a>
-      </template>
-      <template v-else-if="item.type == WordTypeEnum.url">
-        <a :url="item.value" :class="WordTypeEnum[item.type!]" @click="onWordClick(item)">
-          {{ item.text }}
-        </a>
-      </template>
-      <template v-else-if="item.type == WordTypeEnum.phone">
-        <a :phone="item.value" :class="WordTypeEnum[item.type!]" @click="onWordClick(item)">
-          {{ item.text }}
-        </a>
-      </template>
-      <template v-else-if="item.type == WordTypeEnum.email">
-        <a :email="item.value" :class="WordTypeEnum[item.type!]" @click="onWordClick(item)">
+      <template v-if="isObject(item)">
+        <a
+          :value="item.value"
+          :type="WordTypeEnum[item.type!]"
+          :class="WordTypeEnum[item.type!]"
+          @click.stop="onWordClick(item, $event)"
+        >
           {{ item.text }}
         </a>
       </template>
       <template v-else>
-        {{ item.text }}
+        <text>{{ item.text }}</text>
       </template>
     </template>
-  </span>
+  </div>
 </template>
 
 <style scoped>

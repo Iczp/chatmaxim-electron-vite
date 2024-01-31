@@ -44,6 +44,8 @@ import { useI18n } from 'vue-i18n';
 import { setWindow } from '../../ipc/setWindow';
 import { useWindowStore } from '../../stores/window';
 import { openChildWindow } from '../../ipc/openChildWindow';
+import ProfileModal from './widget/ProfileModal.vue';
+import { provide } from 'vue';
 
 const { t } = useI18n();
 const router = useRouter();
@@ -118,6 +120,8 @@ const chatSetting = ref<InstanceType<typeof ChatSetting> | null>(null);
 
 const transferModal = ref<InstanceType<typeof TransferModal> | null>(null);
 
+const profileModal = ref<InstanceType<typeof ProfileModal> | null>(null);
+
 const scrollElement = computed(() => scroll.value?.getElement());
 
 // const scroll = ref();
@@ -131,6 +135,8 @@ const isSendBtnEnabled = ref(true);
 const playMessageId = ref<number>();
 
 const { detail, fetchDetail } = useSessionUnitDetail({ sessionUnitId });
+// provide:profile
+provide('profile', profileModal);
 
 watch(
   () => sessionUnitId,
@@ -582,6 +588,7 @@ const onTransfer = () => {
     <page-content class="layout-content">
       <DropViewer ref="dropViewer" />
       <TransferModal ref="transferModal" />
+      <ProfileModal ref="profileModal" />
       <ChatSetting
         v-if="sessionUnitId"
         ref="chatSetting"

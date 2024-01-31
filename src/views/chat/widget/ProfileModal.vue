@@ -3,8 +3,7 @@ import {} from 'vue';
 
 import { ChatObjectDto } from '../../../apis/dtos';
 import ChatObject from '../../../components/ChatObject.vue';
-import EmptyData from '../../../components/EmptyData.vue';
-import Loading from '../../../components/Loading.vue';
+import FileItem from '../../../components/FileItem.vue';
 import { computed, ref } from 'vue';
 import { SearchOutlined, CloseCircleOutlined } from '@ant-design/icons-vue';
 import prettyBytes from 'pretty-bytes';
@@ -20,59 +19,24 @@ const emits = defineEmits<{
   cancel: [];
 }>();
 
-const {
-  totalCount,
-  query,
-  isPending,
-  list,
-  isBof,
-  isEof,
-  fetchData,
-  fetchNext,
-  refresh,
-  selectable,
-  isChecked,
-  toggleChecked,
-  selectedList,
-  disabledList,
-  isDisabled,
-  isMultiple,
-  maxSelectCount,
-  picker: pickerRef,
-  getSelectItems,
-} = useWaitersList({
-  input: {
-    isContainsShopKeeper: true,
-    shopKeeperId: undefined,
-    maxResultCount: 999,
-  },
-});
-
-// const list = ref<Array<ChatObjectDto>>([]);
-const text = ref<string>();
 const isOpen = ref(false);
+
 const okText = computed(() => t('Transfer'));
 
 const confirm = ref<(destination?: ChatObjectDto) => void>();
 const cancel = ref<() => void>();
 
 type ArgsType = {
-  chatObjectId: number;
-  sessionUnitId: string;
-  owner: ChatObjectDto;
+  chatObjectId?: number;
+  sessionUnitId?: string;
+  owner?: ChatObjectDto;
   onConfirm?: (destination?: ChatObjectDto) => void;
   onCancel?: () => void;
 };
 const openArgs = ref<ArgsType>();
 const open = (args: ArgsType) => {
   openArgs.value = args;
-  isMultiple.value = false;
-  query.value = {
-    isContainsShopKeeper: true,
-    shopKeeperId: args.chatObjectId,
-    maxResultCount: 999,
-  };
-  disabledList.value = [{ id: args.owner.id }];
+
   isOpen.value = true;
   confirm.value = args.onConfirm;
   cancel.value = args.onCancel;
@@ -92,28 +56,22 @@ const okButtonProps = reactive({
 const handleOk = (e: MouseEvent) => {
   console.log(e);
   confirmLoading.value = true;
-  const target = getSelectItems()[0];
+  // const target = getSelectItems()[0];
   const key = 'transfer';
-  CallCenterService.postApiChatCallCenterTransferTo({
-    sessionUnitId: openArgs.value!.sessionUnitId,
-    destinationId: target?.id!,
-  })
-    .then(() => {
-      isOpen.value = false;
-      confirmLoading.value = false;
-      confirm.value?.call(this, target);
-    })
-    .catch(err => {
-      message.error({ content: err?.body?.error?.message, duration: 2, key });
-      confirmLoading.value = false;
-    })
-    .finally(() => {});
-};
-const onDelete = (index: number): void => {
-  list.value.splice(index, 1);
-  if (list.value.length == 0) {
-    isOpen.value = false;
-  }
+  // CallCenterService.postApiChatCallCenterTransferTo({
+  //   sessionUnitId: openArgs.value!.sessionUnitId,
+  //   destinationId: target?.id!,
+  // })
+  //   .then(() => {
+  //     isOpen.value = false;
+  //     confirmLoading.value = false;
+  //     confirm.value?.call(this, target);
+  //   })
+  //   .catch(err => {
+  //     message.error({ content: err?.body?.error?.message, duration: 2, key });
+  //     confirmLoading.value = false;
+  //   })
+  //   .finally(() => {});
 };
 
 // Expose
@@ -121,6 +79,8 @@ defineExpose({
   open,
   close,
 });
+
+const loading = ref(false);
 </script>
 
 <template>
@@ -132,46 +92,22 @@ defineExpose({
     :ok-text="okText"
     :confirmLoading="confirmLoading"
     :okButtonProps="okButtonProps"
-    :cancel-text="t('Cancel')"
     @ok="handleOk"
     @cancel="handleCancel"
   >
     <page class="transfer-modal">
       <page-content>
-        <div class="section-search">
-          <a-input
-            v-model:value="query.keyword"
-            :allowClear="true"
-            :placeholder="t('Search')"
-            enter-button
-          >
-            <template #addonAfter>
-              <div><SearchOutlined /></div>
-            </template>
-          </a-input>
-        </div>
         <scroll-view class="scroll-view">
-          <div class="data-list">
-            <div
-              v-for="(item, index) in list"
-              :class="{ checked: isChecked(item), disabled: isDisabled(item) }"
-              @click="toggleChecked(item)"
-              class="data-item hover"
-            >
-              <chat-object :entity="item" :sub="'5'" :size="44"></chat-object>
-              <a-checkbox
-                :checked="isChecked(item)"
-                :disabled="isDisabled(item)"
-                class="check-box"
-              ></a-checkbox>
-              
-            </div>
-            <Loading v-if="isPending" />
-              <EmptyData v-if="!isPending && list.length == 0" />
-          </div>
+          <chat-object :entity="undefined" :sub="'5'" :size="44"></chat-object>
         </scroll-view>
       </page-content>
     </page>
+
+    <template #footer>
+      <!-- <a-button key="back" @click="handleCancel">Return</a-button> -->
+      <a-button key="submit" type="text" :loading="loading" @click="handleOk">Add</a-button>
+      <a-button key="submit" type="text" :loading="loading" @click="handleOk">Send</a-button>
+    </template>
   </a-modal>
 </template>
 
@@ -204,7 +140,7 @@ defineExpose({
   height: 160px;
 }
 
-.data-list {
+.waiter-list {
   display: flex;
   flex-direction: column;
   /* padding: 12px; */

@@ -5,6 +5,7 @@ import { message } from 'ant-design-vue';
 import { PickerInput } from '../ipc/openChildWindow';
 import { useI18n } from 'vue-i18n';
 import { Input } from 'electron';
+import { resolve } from '../apis/core/request';
 
 type ResultDto = {
   query?: GetListInput;
@@ -94,34 +95,43 @@ export const useFetchList = <TInput extends GetListInput, TDto extends IdDto>({
     },
   );
 
-  const fetchData = async (input: TInput): Promise<TDto[]> => {
-    const req = input;
-    console.log('fetchData input:', req);
+  const fetchData = (input: TInput): Promise<ResultDto> => {
+    return new Promise((resolve, reject) => {
+      const req = input;
+      console.log('fetchData input:', req);
 
-    const ret = currentCache.value || defaultResultValue();
-    if (ret.isEof) {
-      console.error('ret.isEof', ret.isEof, ret);
-      throw new Error(t('EmptyData'));
-    }
-    if (ret.isPending) {
-      throw new Error(t('Error:IsPending'));
-    }
-    ret.query = input;
-    ret.isPending = true;
-    // caches.set(key(query.value as TInput), ret);
+      const ret = currentCache.value || defaultResultValue();
+      if (ret.isEof) {
+        console.error('ret.isEof', ret.isEof, ret);
+        throw new Error(t('EmptyData'));
+      }
+      if (ret.isPending) {
+        throw new Error(t('Error:IsPending'));
+      }
+      ret.query = input;
+      ret.isPending = true;
+      // caches.set(key(query.value as TInput), ret);
+      service(req)
+        .then(res => {
+          const { items, totalCount } = res;
+          console.log('fetchData item:', items);
+          ret.totalCount = totalCount;
 
-    const { items, totalCount } = await service(req);
-    console.log('fetchData item:', items);
-    ret.totalCount = totalCount;
-    ret.isPending = false;
-    ret.isEof = items!.length < (req.maxResultCount || 10);
-    ret.items = ret.query?.skipCount == 0 ? items! : ret.items.concat(items);
-    // list.value = ret.items;
-    caches.set(key(query.value as TInput), ret);
-    return items!;
+          ret.isEof = items!.length < (req.maxResultCount || 10);
+          ret.items = ret.query?.skipCount == 0 ? items! : ret.items.concat(items);
+          resolve(ret);
+        })
+        .then(err => {
+          reject(err);
+        })
+        .finally(() => {
+          ret.isPending = false;
+          caches.set(key(query.value as TInput), ret);
+        });
+    });
   };
 
-  const fetchNext = async (input?: TInput): Promise<TDto[]> => {
+  const fetchNext = async (input?: TInput): Promise<ResultDto> => {
     query.value.skipCount = currentCache.value?.items.length;
     const q = {
       ...query.value,
@@ -130,7 +140,7 @@ export const useFetchList = <TInput extends GetListInput, TDto extends IdDto>({
     return fetchData(q as TInput);
   };
 
-  const refresh = async (input?: TInput): Promise<TDto[]> => {
+  const refresh = async (input?: TInput): Promise<ResultDto> => {
     console.log('refresh');
     clearCaches();
 

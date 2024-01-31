@@ -32,6 +32,7 @@ const destination = computed(() => payload.value?.destination);
 watch(
   () => payload.value?.params,
   v => {
+    console.log('#watch payload.params', v);
     if (v) {
       formState.destinationId = v?.destinationId;
       formState.requestMessage = v?.requestMessage;

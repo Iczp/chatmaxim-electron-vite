@@ -6,6 +6,10 @@ export type WordDto = {
 
 export enum WordTypeEnum {
   /**
+   *
+   */
+  text,
+  /**
    * sessionUnitId(session unit id)
    */
   uid,

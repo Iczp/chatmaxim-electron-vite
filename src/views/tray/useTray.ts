@@ -34,7 +34,7 @@ export const useTray = () => {
   };
   watch(
     () => isOver.value,
-    isOver => sendCententOver({ isOver }),
+    isOver => sendCententOver({ name: 'tray', isOver }),
   );
 
   const onItemClick = (item: SessionUnitOwnerDto, index: number): void => {

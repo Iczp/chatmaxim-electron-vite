@@ -3,10 +3,15 @@ import { computed } from 'vue';
 import { MessageDto, TextContentDto } from '../../../apis/dtos';
 import Bubble from '../../../components/Bubble.vue';
 import TextViewer from '../../../components/TextViewer.vue';
+import { WordDto } from '../../../commons/formatWords';
 const props = defineProps<{
   item: MessageDto;
 }>();
 const content = computed(() => props.item.content as TextContentDto);
+const onWordClick = (item: WordDto, event?: Event) => {
+  console.log('onWordClick', item, event);
+
+};
 </script>
 
 <template>
@@ -16,7 +21,7 @@ const content = computed(() => props.item.content as TextContentDto);
     <br />
     indexOf:{{ content?.text?.indexOf('\n') }}
     <br /> -->
-    <TextViewer :value="content?.text!" />
+    <TextViewer :value="content?.text!" @word-click="onWordClick"/>
   </Bubble>
 </template>
 
