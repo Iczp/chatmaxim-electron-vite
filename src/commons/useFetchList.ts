@@ -78,14 +78,13 @@ export const useFetchList = <TInput extends GetListInput, TDto extends IdDto>({
     () => query.value.keyword,
     keyword => {
       console.warn('#watch query', toRaw(keyword));
-      const k = key(query.value as TInput);
-      // fetchData({ ...(toRaw(query.value) as TInput), skipCount: 0, keyword });
-      if (caches.has(k)) {
-        const cache = caches.get(k);
-        // list.value = cache?.items || [];
-        console.log('caches', k, cache);
-      } else {
-        fetchData({ ...(toRaw(query.value) as TInput), skipCount: 0, keyword });
+      const input = toRaw(query.value) as TInput;
+      const cacheKey = key(input);
+      const cache = caches.get(cacheKey);
+      console.log('caches', cacheKey, cache);
+      if (!caches.has(cacheKey)) {
+        fetchData({ ...input, skipCount: 0, keyword });
+        return;
       }
     },
     {
