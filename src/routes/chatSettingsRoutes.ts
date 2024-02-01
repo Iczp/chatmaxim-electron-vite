@@ -26,12 +26,12 @@ export const chatSettingsRoutes: RouteRecordRaw[] = [
     name: 'session-members',
     meta: {
       title: 'Session Members',
-      objectTypes: [
-        ChatObjectTypeEnums.Room,
-        ChatObjectTypeEnums.Square,
-        ChatObjectTypeEnums.ShopKeeper,
-        ChatObjectTypeEnums.ShopWaiter,
-      ],
+      // objectTypes: [
+      //   ChatObjectTypeEnums.Room,
+      //   ChatObjectTypeEnums.Square,
+      //   ChatObjectTypeEnums.ShopKeeper,
+      //   ChatObjectTypeEnums.ShopWaiter,
+      // ],
     },
     component: () => import('../views/chat-settings/Members.vue'),
     props: true,

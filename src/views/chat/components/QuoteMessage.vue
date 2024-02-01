@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { MessageSimpleDto } from '../../../apis/dtos';
-import { useMessage } from '../../../commons/useMessage';
+import { useMessageEntity } from '../../../commons/useMessageEntity';
 import MessageProview from '../../../components/MessageProview.vue';
 import { CloseCircleOutlined } from '@ant-design/icons-vue';
 const props = defineProps<{
@@ -12,7 +12,7 @@ const props = defineProps<{
 const emits = defineEmits<{
   remove: [Event];
 }>();
-const { senderName } = useMessage(props.entity);
+const { senderName } = useMessageEntity(props.entity);
 </script>
 
 <template>
@@ -80,3 +80,4 @@ const { senderName } = useMessage(props.entity);
   font-size: 14px;
 }
 </style>
+../../../commons/useMessageEntity

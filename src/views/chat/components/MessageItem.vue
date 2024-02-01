@@ -24,7 +24,7 @@ import MsgRollback from './MsgRollback.vue';
 
 import { SelfImprovement, PersonPin } from '../../../icons';
 import { ContextmenuInput, LabelType as LabelType, MouseButton } from '../../../commons/contextmenu';
-import { useMessage } from '../../../commons/useMessage';
+import { useMessageEntity } from '../../../commons/useMessageEntity';
 
 const props = defineProps<{
   sessionUnitId: string;
@@ -44,7 +44,7 @@ const emits = defineEmits<{
 
 
 
-const { senderName, messageType, isRollbacked, sendTime, sendTimeTitle, state } = useMessage(
+const { senderName, messageType, isRollbacked, sendTime, sendTimeTitle, state } = useMessageEntity(
   props.entity,
 );
 
@@ -297,3 +297,4 @@ const onMessageClick = (event: MouseEvent, mouseButton: MouseButton) => {
   padding: 4px;
 }
 </style>
+../../../commons/useMessageEntity

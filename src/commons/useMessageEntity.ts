@@ -4,7 +4,7 @@ import { computed, onUnmounted, ref } from 'vue';
 import { formatMessageTime, getSenderNameForMessage } from './utils';
 import { MessageDto } from '../apis/dtos';
 
-export const useMessage = (entity: MessageDto | undefined) => {
+export const useMessageEntity = (entity: MessageDto | undefined) => {
   const senderName = computed(() => getSenderNameForMessage(entity));
 
   const messageType = computed(() => entity?.messageType);

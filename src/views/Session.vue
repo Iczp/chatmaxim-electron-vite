@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { computed, onMounted, onUnmounted, reactive, ref, watch } from 'vue';
+import { computed, onActivated, onMounted, onUnmounted, reactive, ref, watch } from 'vue';
 import { onBeforeRouteLeave, onBeforeRouteUpdate, useRoute } from 'vue-router';
 import { router, chatHistorys } from '../routes';
 import { SessionUnitOwnerDto, SessionUnitService } from '../apis';
@@ -121,7 +121,11 @@ const navToChat = (item: SessionItemDto) => {
 
 // 与 beforeRouteLeave 相同，无法访问 `this`
 onBeforeRouteLeave((to, from) => {
-  console.log('onBeforeRouteLeave', to, from);
+  // console.log('onBeforeRouteLeave', to, from);
+});
+
+onActivated(() => {
+  console.log('onActivated');
 });
 
 // 与 onBeforeRouteUpdate 相同，无法访问 `this`
@@ -429,7 +433,7 @@ const onPlus = () => {
 
   /* width: 100%; */
 }
-.search-bar:deep(.ant-input-group-addon){
+.search-bar:deep(.ant-input-group-addon) {
   /* width: 32px; */
   padding: 0;
 }
