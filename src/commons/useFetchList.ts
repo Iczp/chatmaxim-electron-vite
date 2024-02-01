@@ -4,8 +4,6 @@ import { GetListInput, IdDto, PagedResultDto } from '../apis/dtos';
 import { message } from 'ant-design-vue';
 import { PickerInput } from '../ipc/openChildWindow';
 import { useI18n } from 'vue-i18n';
-import { Input } from 'electron';
-import { resolve } from '../apis/core/request';
 
 type ResultDto = {
   query?: GetListInput;
@@ -48,7 +46,7 @@ export const useFetchList = <TInput extends GetListInput, TDto extends IdDto>({
   const isPending = computed(() => currentCache.value?.isPending);
   const isBof = computed(() => currentCache.value?.isBof);
   const isEof = computed(() => currentCache.value?.isEof);
-  const list = computed<TDto[]>(() => currentCache.value?.items || []);
+  const list = computed<TDto[]>(() => caches.get(key(query.value as TInput))?.items || []);
   // const list = ref<TDto[]>([]);
 
   const query = ref<TInput>(defaultInput);
@@ -80,15 +78,15 @@ export const useFetchList = <TInput extends GetListInput, TDto extends IdDto>({
     () => query.value.keyword,
     keyword => {
       console.warn('#watch query', toRaw(keyword));
-      const k = key(keyword as TInput);
-      fetchData({ ...(toRaw(query.value) as TInput), skipCount: 0, keyword });
-      // if (caches.has(k)) {
-      //   const cache = caches.get(k);
-      //   // list.value = cache?.items || [];
-      //   console.log('caches', k, cache);
-      // } else {
-      //   fetchData({ ...(v as TInput), skipCount: 0, keyword: v?.keyword });
-      // }
+      const k = key(query.value as TInput);
+      // fetchData({ ...(toRaw(query.value) as TInput), skipCount: 0, keyword });
+      if (caches.has(k)) {
+        const cache = caches.get(k);
+        // list.value = cache?.items || [];
+        console.log('caches', k, cache);
+      } else {
+        fetchData({ ...(toRaw(query.value) as TInput), skipCount: 0, keyword });
+      }
     },
     {
       deep: true,
