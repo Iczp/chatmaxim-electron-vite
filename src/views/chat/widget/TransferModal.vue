@@ -104,7 +104,8 @@ const handleOk = (e: MouseEvent) => {
       confirm.value?.call(this, target);
     })
     .catch(err => {
-      message.error({ content: err?.body?.error?.message, duration: 2, key });
+      console.error(err);
+      message.error({ content: err?.body?.error?.message || err.message, duration: 2, key });
       confirmLoading.value = false;
     })
     .finally(() => {});
@@ -164,10 +165,9 @@ defineExpose({
                 :disabled="isDisabled(item)"
                 class="check-box"
               ></a-checkbox>
-              
             </div>
             <Loading v-if="isPending" />
-              <EmptyData v-if="!isPending && list.length == 0" />
+            <EmptyData v-if="!isPending && list.length == 0" />
           </div>
         </scroll-view>
       </page-content>

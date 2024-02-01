@@ -81,7 +81,7 @@ export const useFetchList = <TInput extends GetListInput, TDto extends IdDto>({
     keyword => {
       console.warn('#watch query', toRaw(keyword));
       const k = key(keyword as TInput);
-      fetchData({ ...(query.value as TInput), skipCount: 0, keyword });
+      fetchData({ ...(toRaw(query.value) as TInput), skipCount: 0, keyword });
       // if (caches.has(k)) {
       //   const cache = caches.get(k);
       //   // list.value = cache?.items || [];
@@ -92,18 +92,19 @@ export const useFetchList = <TInput extends GetListInput, TDto extends IdDto>({
     },
     {
       deep: true,
+      immediate: false,
     },
   );
 
-  const fetchData = (input: TInput): Promise<ResultDto> => {
+  const fetchData = (input?: TInput): Promise<ResultDto> => {
     return new Promise((resolve, reject) => {
-      const req = input;
+      const req = input || (toRaw(query.value) as TInput);
       console.log('fetchData input:', req);
-      const cacheKey = key(req as TInput)
-      if (!caches.has(key(req))) {
+      const cacheKey = key(req as TInput);
+      if (!caches.has(cacheKey)) {
         caches.set(cacheKey, defaultResultValue());
       }
-      const ret = currentCache.value!;
+      let ret = caches.get(cacheKey)!;
       if (ret.isEof) {
         console.error('ret.isEof', ret.isEof, ret);
         throw new Error(t('EmptyData'));
@@ -148,8 +149,6 @@ export const useFetchList = <TInput extends GetListInput, TDto extends IdDto>({
     clearCaches();
 
     const q = input || query.value;
-
-    // query.value = <any>{ ...input };
     // list.value = [];
     return fetchData(q as TInput);
   };

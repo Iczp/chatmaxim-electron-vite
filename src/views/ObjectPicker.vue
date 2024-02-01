@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { ref, watch } from 'vue';
+import { ref, toRaw, watch } from 'vue';
 import { generateTickect } from '../apis/websockets';
 import { ContactsDto } from '../apis/dtos';
 import { ChatObjectTypeEnumText, ChatObjectTypeEnums } from '../apis/enums';
@@ -38,6 +38,7 @@ const {
   isBof,
   isEof,
   fetchData,
+  refresh,
   fetchNext,
   onReachStart,
   onReachEnd,
@@ -59,10 +60,11 @@ watch(
   payload,
   v => {
     console.log('windowStore payload', v);
-    query.value = {
-      ownerId: Number(props.chatObjectId),
-      objectTypes: payload.value?.objectTypes,
-    };
+    // query.value = {
+    //   ownerId: Number(props.chatObjectId),
+    //   objectTypes: payload.value?.objectTypes,
+    // };
+    // fetchData()
     picker.value = v;
     title.value = v?.title;
   },
@@ -79,6 +81,12 @@ watch(
       objectTypes: payload.value?.objectTypes,
       maxResultCount: 20,
     };
+    // refresh({
+    //   skipCount: 0,
+    //   ownerId: Number(props.chatObjectId),
+    //   objectTypes: toRaw(payload.value?.objectTypes),
+    //   maxResultCount: 20,
+    // });
   },
   { immediate: true },
 );

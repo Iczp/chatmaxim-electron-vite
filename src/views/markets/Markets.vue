@@ -18,6 +18,7 @@ import { onActivated, toRaw } from 'vue';
 import Loading from '../../components/Loading.vue';
 import { sessionRequest } from '../../ipc/sessionRequest';
 import { useImStore } from '../../stores/im';
+import EmptyData from '../../components/EmptyData.vue';
 const { t } = useI18n();
 
 const { objectTypeOptions } = useEnums();
@@ -55,6 +56,9 @@ onActivated(() => {
 
 const navTo = (item: { label: string; value: any }) => {
   query.value.objectType = item.value;
+  if (list.value.length == 0) {
+    refresh(query.value);
+  }
   console.log('navTo', item);
 };
 const onItemClick = (item: ChatObjectDto) => {
@@ -106,7 +110,7 @@ const add = (item: ChatObjectDto) => {
       <page-content class="page-content">
         <scroll-view>
           {{ isPending }}
-          <Loading v-if="isPending" />
+
           <div class="object-list">
             <div v-for="(item, index) in list" :key="item.id!" class="object-item">
               <a-card hoverable style="width: 240px">
@@ -132,6 +136,8 @@ const add = (item: ChatObjectDto) => {
               </a-card>
             </div>
           </div>
+          <Loading v-if="isPending" />
+          <EmptyData v-if="!isPending && list.length == 0" />
         </scroll-view>
       </page-content>
     </main>

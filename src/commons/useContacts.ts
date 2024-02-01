@@ -14,5 +14,5 @@ export const useContacts = ({
     service: ContactsService.getApiChatContacts,
     input,
     picker,
-    key: input => `${input.ownerId}-${input.objectTypes?.join('|')}-${input.keyword || ''}`,
+    key: input => `${input?.ownerId}-${input?.objectTypes?.join('|')}-${input?.keyword || ''}`,
   });
