@@ -182,5 +182,8 @@
   "AccountHelp": "a-z,0-9",
   "Markets": "Markets",
   "Transfer": "Transfer",
-  "Transfer To": "Transfer To"
+  "Transfer To": "Transfer To",
+  "MemberName": "Member Name",
+  "SomeSession": "Some Session",
+  "SomeDestination": "Some friends"
 }

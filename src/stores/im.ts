@@ -11,12 +11,15 @@ import {
   MessageOwnerDto,
   SessionItemDto,
   SessionUnitOwnerDto,
+  SessionUnitDestinationDto,
 } from '../apis/dtos';
+
 import { ChatObjectService, SessionUnitService } from '../apis';
 import { mapToSessionItemDto, sortSessionItemDto } from '../commons/utils';
 import { TrayPayload } from '../ipc-types';
 import { toRaw } from 'vue';
 import { setTray } from '../commons/setTray';
+import { resolve } from '../apis/core/request';
 
 interface State {
   chatObjects: Map<number, BadgeDetialDto>;
@@ -26,7 +29,15 @@ interface State {
    * @type {[key: string]: SessionUnitOwnerDto;}
    * @memberof State
    */
-  sessionUnitMap: Map<string, SessionUnitOwnerDto>;
+  ownerMap: Map<string, SessionUnitOwnerDto>;
+
+  /**
+   *
+   *
+   * @type {Map<string, SessionUnitDestinationDto>}
+   * @memberof State
+   */
+  destinationMap: Map<string, SessionUnitDestinationDto>;
   // sessionMap: Map<number, Array<SessionUnitOwnerDto>>;
   messageMap: Record<string, MessageDto[]>;
   /**
@@ -71,7 +82,8 @@ const key = (chatObjectId: number, keyword?: string) => `${chatObjectId}-${keywo
 const defaultValue: State = {
   chatObjects: new Map<number, BadgeDetialDto>(),
   initBadge: 0,
-  sessionUnitMap: new Map<string, SessionUnitOwnerDto>(),
+  ownerMap: new Map<string, SessionUnitOwnerDto>(),
+  destinationMap: new Map<string, SessionUnitDestinationDto>(),
   // sessionMap: new Map<number, Array<SessionUnitOwnerDto>>(),
   messageMap: {},
   sessionItemsMap: {},
@@ -115,7 +127,7 @@ export const useImStore = defineStore('im', {
   // state: () => ({ count: 0 })
   actions: {
     getSessionUnit(sessionUnitId: string): SessionUnitOwnerDto | undefined {
-      return this.sessionUnitMap.get(sessionUnitId);
+      return this.ownerMap.get(sessionUnitId);
     },
     getSessionItems(chatObjectId: number, keyword?: string): SessionItemDto[] {
       const items: SessionItemDto[] = Object.values(
@@ -159,7 +171,7 @@ export const useImStore = defineStore('im', {
       callback: (item: SessionUnitOwnerDto) => void,
       caller?: string,
     ): void {
-      const item = this.sessionUnitMap.get(sessionUnitId);
+      const item = this.ownerMap.get(sessionUnitId);
       if (!item) {
         console.warn('ifMap: sessionUnitMap undefined,sessionUnitId:', sessionUnitId, caller);
         return;
@@ -202,7 +214,7 @@ export const useImStore = defineStore('im', {
      * @param {SessionUnitOwnerDto} item
      */
     setItem(item: SessionUnitOwnerDto): void {
-      this.sessionUnitMap.set(item.id!, item);
+      this.ownerMap.set(item.id!, item);
       // store.set(item.id!, item);
     },
     /**
@@ -214,7 +226,7 @@ export const useImStore = defineStore('im', {
     setMany(items: Array<SessionUnitOwnerDto>, keyword?: string): void {
       // console.log('setMany', items);
       items.map(x => {
-        this.sessionUnitMap.set(x.id!, x);
+        this.ownerMap.set(x.id!, x);
         // store.set(x.id!, x);
       });
 
@@ -253,6 +265,36 @@ export const useImStore = defineStore('im', {
     async fetchSessionUnitItem(sessionUnitId: string): Promise<SessionUnitOwnerDto | null> {
       const items = await this.fetchSessionUnitMany([sessionUnitId]);
       return items.length > 0 ? items[0] : null;
+    },
+
+    /**
+     * 获取单个会话单元
+     *
+     * @param {string} sessionUnitId
+     * @return {*}  {(Promise<SessionUnitOwnerDto | null>)}
+     */
+    fetchDestinationItem(
+      sessionUnitId: string,
+      destinationId: string,
+      isCache: boolean = true,
+    ): Promise<SessionUnitDestinationDto | undefined> {
+      return new Promise((resolve, reject) => {
+        if (isCache && this.destinationMap.has(destinationId)) {
+          resolve(this.destinationMap.get(destinationId));
+          return;
+        }
+        SessionUnitService.getApiChatSessionUnitDestination({
+          id: sessionUnitId,
+          destinationId,
+        })
+          .then(entity => {
+            this.destinationMap.set(destinationId, entity);
+            resolve(entity);
+          })
+          .catch(err => {
+            reject(err);
+          });
+      });
     },
 
     /**
@@ -411,7 +453,7 @@ export const useImStore = defineStore('im', {
      * 更新托盘
      */
     updateTray() {
-      const items = [...this.sessionUnitMap.values()]
+      const items = [...this.ownerMap.values()]
         .filter(x => Number(x.publicBadge) > 0)
         .map(x => toRaw(x) as any);
       const totalBadge =

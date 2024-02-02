@@ -183,5 +183,8 @@
   "PasswordHelp": "a-z,0-9",
   "Markets": "市场",
   "Transfer": "转接",
-  "Transfer To": "转接给"
+  "Transfer To": "转接给",
+  "MemberName": "成员昵称",
+  "SomeSession": "共同会话",
+  "SomeDestination": "共同好友"
 }

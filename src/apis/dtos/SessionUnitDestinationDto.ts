@@ -71,5 +71,25 @@ export type SessionUnitDestinationDto = {
    *
    * @type {string}
    */
-  creationTime?:string
+  creationTime?: string;
+  /**
+   * 是否好友
+   *
+   * @type {boolean}
+   */
+  isFriendship?: boolean;
+
+  /**
+   * 好友名称
+   *
+   * @type {string}
+   */
+  friendshipName?: string;
+
+  /**
+   * 好友会话Id (Guid)
+   *
+   * @type {string}
+   */
+  friendshipSessionUnitId?: string;
 };

@@ -14,7 +14,7 @@ const props = defineProps<{
   </a-layout>
 </template>
 <style scoped>
-:deep(.ant-layout) {
+.unset:deep(.ant-layout) {
   color: var(--color);
   background-color: var(--background-color);
   background-color: unset;

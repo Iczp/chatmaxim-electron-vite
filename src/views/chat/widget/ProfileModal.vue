@@ -1,11 +1,13 @@
 <script setup lang="ts">
-import {} from 'vue';
+import { computed, ref, h } from 'vue';
 
-import { ChatObjectDto } from '../../../apis/dtos';
+import { ChatObjectDto, SessionUnitDestinationDto } from '../../../apis/dtos';
 import ChatObject from '../../../components/ChatObject.vue';
 import FileItem from '../../../components/FileItem.vue';
-import { computed, ref } from 'vue';
-import { SearchOutlined, CloseCircleOutlined } from '@ant-design/icons-vue';
+import LabelBox from '../../../components/LabelBox.vue';
+import { ChatOn, PersonAdd } from '../../../icons';
+
+import { SearchOutlined, CloseCircleOutlined, RightOutlined } from '@ant-design/icons-vue';
 import prettyBytes from 'pretty-bytes';
 import { useI18n } from 'vue-i18n';
 import { useWaitersList } from '../../object-settings/commons/useWaitersList';
@@ -13,6 +15,7 @@ import { reactive } from 'vue';
 import { CallCenterService } from '../../../apis';
 import { message } from 'ant-design-vue';
 import { useImStore } from '../../../stores/im';
+import Entity from 'ant-design-vue/es/_util/cssinjs/Cache';
 
 export type ProfileModalArgsType = {
   chatObjectId?: number;
@@ -35,6 +38,10 @@ const emits = defineEmits<{
 
 const isOpen = ref(false);
 
+const isPending = ref(false);
+
+const destinationSessionUnit = ref<SessionUnitDestinationDto>();
+
 const info = ref<ProfileModalArgsType>();
 const open = (args: ProfileModalArgsType) => {
   console.log('open args', args);
@@ -42,6 +49,16 @@ const open = (args: ProfileModalArgsType) => {
   info.value = args;
 
   isOpen.value = true;
+  isPending.value = true;
+  imState
+    .fetchDestinationItem(args.sessionUnitId, args.destinationSessionUnitId, false)
+    .then(res => {
+      console.log(res);
+      destinationSessionUnit.value = res;
+    })
+    .finally(() => {
+      isPending.value = false;
+    });
 };
 const close = () => {
   isOpen.value = false;
@@ -64,21 +81,68 @@ const loading = ref(false);
 </script>
 
 <template>
-  <a-modal class="transfer-page" v-model:open="isOpen" :width="360">
-    <page class="transfer-modal">
+  <a-modal class="transfer-modal" v-model:open="isOpen" :width="360" :maskClosable="true">
+    <page class="transfer-page">
       <page-content>
-        <scroll-view class="scroll-view">
-          <chat-object :entity="info?.entity" :size="44">
-            <template #title>{{ info?.name }}</template>
-          </chat-object>
-        </scroll-view>
+        <chat-object :entity="destinationSessionUnit?.owner" :size="48">
+          <!-- <template #title>{{ info?.name }}</template> -->
+          <template #sub>
+            <LabelBox class="chat-object-entry" title="账号">
+              {{ destinationSessionUnit?.owner?.code }}
+            </LabelBox>
+            <LabelBox class="chat-object-entry" :title="t('MemberName')">
+              {{ destinationSessionUnit?.setting?.memberName }}
+            </LabelBox>
+          </template>
+        </chat-object>
+
+        <!-- <a-divider>...</a-divider> -->
+        <!-- <a-badge-ribbon text="Hippies">
+          <a-card title="Pushes open the window" size="small">and raises the spyglass.</a-card>
+        </a-badge-ribbon> -->
+
+        <div class="others">
+          <LabelBox class="desc" :title="t('Description')">
+            <div class="text-ellipsis2" style="max-width: 180px">
+              {{ destinationSessionUnit?.owner?.description || '-' }}
+            </div>
+          </LabelBox>
+
+          <LabelBox class="desc" :title="t('SomeSession')">
+            <a-badge
+              :count="1"
+              :number-style="{ backgroundColor: '#52c41a' }"
+              size="small"
+            ></a-badge>
+            <RightOutlined />
+          </LabelBox>
+          <LabelBox class="desc" :title="t('SomeDestination')">1</LabelBox>
+        </div>
+
+        <!-- <scroll-view class="scroll-view">
+          
+        </scroll-view> -->
       </page-content>
     </page>
 
     <template #footer>
       <!-- <a-button key="back" @click="handleCancel">Return</a-button> -->
-      <a-button key="submit" type="text" :loading="loading" @click="handleOk">Add</a-button>
-      <a-button key="submit" type="text" :loading="loading" @click="handleOk">Send</a-button>
+      <div class="footer">
+        <a-space>
+          <a-button
+            v-if="destinationSessionUnit?.isFriendship"
+            class="btn"
+            type="text"
+            :icon="h(destinationSessionUnit, { class: 'svg-icon s16' })"
+          >
+            发送消息
+          </a-button>
+
+          <a-button v-else class="btn" type="text" :icon="h(PersonAdd, { class: 'svg-icon s16' })">
+            加为好友
+          </a-button>
+        </a-space>
+      </div>
     </template>
   </a-modal>
 </template>
@@ -88,67 +152,48 @@ const loading = ref(false);
 :deep(.ant-modal-content) {
   user-select: none;
 }
-:deep(.file-name) {
-  max-width: 180px;
+:deep(.sub-left) {
+  flex-direction: column;
 }
-
-.transfer-page {
+.transfer-modal:deep(.ant-modal .ant-modal-footer) {
+  text-align: center;
+}
+.transfer-modal {
   user-select: none;
   background-color: unset;
 }
-.transfer-modal {
+.transfer-page {
   user-select: none;
   /* background-color: white;
   --background-color: #f5f5f5; */
 }
-
-.section-search {
-  margin-bottom: 12px;
+.chat-object-entry {
+  padding: 0;
+  border: none;
+  justify-content: flex-start;
 }
-
-.scroll-view {
-  /* min-height: 150px; */
-  /* max-height: 300px; */
-  height: 160px;
+.chat-object-entry :deep(.title) {
+  /* color: gray; */
 }
-
-.waiter-list {
+.chat-object-entry :deep(.title)::after {
+  content: ':';
+  margin: 0 4px;
+}
+.footer {
   display: flex;
-  flex-direction: column;
-  /* padding: 12px; */
-  user-select: text;
-  /* background-color: var(--background-color); */
+  flex: 1;
+  justify-content: center;
 }
 
-.hover {
-  border-radius: 4px;
-  padding: 0 12px;
-  position: relative;
-  /* background-color: var(--background-color-hover); */
-  /* background-color: #b8b8b8; */
+.others {
+  margin-top: 20px;
 }
-.hover:last-child::after {
-  content: unset;
+
+.desc {
+  padding: 8px 0;
 }
-.hover::after {
-  content: '';
-  position: absolute;
-  left: 54px;
-  right: 0;
-  bottom: 0;
-  /* background-color: #383838; */
-  background-color: var(--divider-color);
-  height: 1px;
-  transform: translateY(0.25);
-  /* z-index: 1; */
-}
-.hover:hover {
-  background-color: var(--background-color-hover);
-}
-:deep(.delete) {
-  opacity: 0;
-}
-.hover:hover :deep(.delete) {
-  opacity: 1;
+.desc:deep(.title) {
+  /* color: var(--sub-title-color); */
+  color: gray;
 }
 </style>

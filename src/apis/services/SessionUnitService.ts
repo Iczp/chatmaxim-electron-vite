@@ -7,7 +7,7 @@ import type { IczpNet_Chat_SessionSections_SessionUnits_SessionUnitCacheItem } f
 import type { IczpNet_Chat_SessionSections_SessionUnits_SessionUnitCounterInfo } from '../models/IczpNet_Chat_SessionSections_SessionUnits_SessionUnitCounterInfo';
 // import type { IczpNet_Chat_SessionSections_SessionUnits_SessionUnitDisplayName_IczpNet_Chat_Domain_Shared_Version_0_1_1_0_Culture_neutral_PublicKeyToken_null_ } from '../models/IczpNet_Chat_SessionSections_SessionUnits_SessionUnitDisplayName_IczpNet_Chat_Domain_Shared_Version_0_1_1_0_Culture_neutral_PublicKeyToken_null_';
 
-import type { IczpNet_Chat_SessionUnits_Dtos_SessionUnitDestinationDto } from '../models/IczpNet_Chat_SessionUnits_Dtos_SessionUnitDestinationDto';
+// import type { IczpNet_Chat_SessionUnits_Dtos_SessionUnitDestinationDto } from '../models/IczpNet_Chat_SessionUnits_Dtos_SessionUnitDestinationDto';
 // import type { IczpNet_Chat_SessionUnits_Dtos_SessionUnitDestinationDto_IczpNet_Chat_Application_Contracts_Version_0_1_1_0_Culture_neutral_PublicKeyToken_null_ } from '../models/IczpNet_Chat_SessionUnits_Dtos_SessionUnitDestinationDto_IczpNet_Chat_Application_Contracts_Version_0_1_1_0_Culture_neutral_PublicKeyToken_null_';
 // import type { IczpNet_Chat_SessionUnits_Dtos_SessionUnitDto_IczpNet_Chat_Application_Contracts_Version_0_1_1_0_Culture_neutral_PublicKeyToken_null_ } from '../models/IczpNet_Chat_SessionUnits_Dtos_SessionUnitDto_IczpNet_Chat_Application_Contracts_Version_0_1_1_0_Culture_neutral_PublicKeyToken_null_';
 // import type { SessionUnitDetailDto } from '../models/IczpNet_Chat_SessionUnits_Dtos_SessionUnitOwnerDetailDto';
@@ -269,7 +269,7 @@ id: string,
  * 目标会话单元Id
  */
 destinationId: string,
-}): CancelablePromise<IczpNet_Chat_SessionUnits_Dtos_SessionUnitDestinationDto> {
+}): CancelablePromise<SessionUnitDestinationDto> {
         return __request(OpenAPI, {
             method: 'GET',
             url: '/api/chat/session-unit/{id}/destination/{destinationId}',
