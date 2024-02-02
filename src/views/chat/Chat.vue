@@ -82,6 +82,8 @@ const {
   lastMessageId,
   readedMessageId,
   ownerObjectType,
+  objectType,
+  isWaiter,
 } = useSessionUnitId(sessionUnitId);
 
 const chatTitle = computed(
@@ -141,7 +143,16 @@ provide('profile', profileModal);
 watch(
   () => sessionUnitId,
   (sessionUnitId, old) => {
-    console.warn('watch scroll', sessionUnitId, old);
+    console.warn('#watch sessionUnitId', sessionUnitId, old);
+    provide('sessionUnitId', sessionUnitId);
+  },
+  { immediate: true },
+);
+watch(
+  () => chatObjectId,
+  (chatObjectId, old) => {
+    console.warn('#watch chatObjectId', chatObjectId, old);
+    provide('chatObjectId', chatObjectId);
   },
   { immediate: true },
 );
@@ -535,11 +546,17 @@ const onRemove = (entity: MessageDto) => {
   console.log('onRemove', entity);
   spliceItem(entity.autoId, []);
 };
-const isWaiter = computed(() =>
-  [ChatObjectTypeEnums.ShopWaiter, ChatObjectTypeEnums.ShopKeeper].some(
-    x => x == ownerObjectType.value,
-  ),
-);
+// const isWaiter = computed(
+//   () =>
+//     [ChatObjectTypeEnums.ShopWaiter, ChatObjectTypeEnums.ShopKeeper].some(
+//       x => x == ownerObjectType.value,
+//     ) &&
+//     [
+//       ChatObjectTypeEnums.Personal,
+//       ChatObjectTypeEnums.Customer,
+//       ChatObjectTypeEnums.Anonymous,
+//     ].some(x => x == objectType.value),
+// );
 const onTransfer = () => {
   const owner = detail.value?.owner;
   const chatObjectId = owner?.parentId || owner?.id;

@@ -100,11 +100,18 @@ export type SessionUnitOwnerDto = SessionItemDto & {
    * @type {number}
    */
   followingCount?: number;
-  
+
   /**
    *
    *
    * @type {number}
    */
   ticks?: number;
+
+  /**
+   * 是否客服
+   *
+   * @type {number}
+   */
+  isWaiter?: number;
 };
