@@ -1,23 +1,41 @@
 <script setup lang="ts">
-import { computed, createVNode } from 'vue';
+import { computed, createVNode, ref, Ref, inject } from 'vue';
 import { MessageDto, CmdContentDto } from '../../../apis/dtos';
 import TextViewer from '../../../components/TextViewer.vue';
-import { WordDto } from '../../../commons/formatWords';
+import { WordDto, WordTypeEnum } from '../../../commons/formatWords';
 import { Modal } from 'ant-design-vue';
 import { ExclamationCircleOutlined } from '@ant-design/icons-vue';
 import ProfileModal from './widget/ProfileModal.vue';
-import { inject } from 'vue';
-import { Ref } from 'vue';
+import { ProfileModalArgsType } from '../widget/ProfileModal.vue';
+import { useRoute } from 'vue-router';
+const route = useRoute();
 const props = defineProps<{
   item: MessageDto;
 }>();
 const content = computed(() => props.item.content as CmdContentDto);
-const profileModal: Ref<InstanceType<typeof ProfileModal> | null> = inject(
-  'profile',
-) as Ref<InstanceType<typeof ProfileModal> | null>;
+const profileModal = inject('profile') as Ref<InstanceType<typeof ProfileModal> | null>;
+// const profileModal = ref<InstanceType<typeof ProfileModal> | null>(null);
+const chatObjectId = inject<number>('chatObjectId') || Number(route.params.chatObjectId);
+const sessionUnitId = inject<string>('sessionUnitId') || (route.params.sessionUnitId as string);
+const open = (args: ProfileModalArgsType) => profileModal.value?.open(args);
 const onWordClick = (item: WordDto, event?: Event) => {
   console.log('onWordClick', item, event);
-  profileModal?.value.open({});
+
+  switch (item.type) {
+    case WordTypeEnum.uid:
+      if (sessionUnitId) {
+        open({
+          chatObjectId: chatObjectId,
+          sessionUnitId: sessionUnitId,
+          destinationSessionUnitId: item.value!,
+          name: item.text,
+        });
+      }
+      break;
+    case WordTypeEnum.oid:
+      break;
+  }
+
   return;
   Modal.confirm({
     title: 'Are you sure delete this task?',
@@ -38,6 +56,7 @@ const onWordClick = (item: WordDto, event?: Event) => {
 
 <template>
   <!-- <Bubble :r="item.isSelf"> -->
+  <!-- <ProfileModal ref="profileModal" /> -->
   <div class="msg-cmd">
     <TextViewer :value="content.text!" @word-click="onWordClick" />
   </div>

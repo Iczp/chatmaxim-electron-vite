@@ -18,8 +18,10 @@ import { computed } from 'vue';
 
 const windowStore = useWindowStore();
 const colorScheme = computed(() => windowStore.colorScheme as 'dark' | 'light' | 'auto');
-
+import { useTextSelection } from '@vueuse/core';
+import { reactive } from 'vue';
 const { t } = useI18n();
+
 const props = withDefaults(
   defineProps<{
     disabled?: boolean;
@@ -46,12 +48,41 @@ const emits = defineEmits<{
   ];
 }>();
 
+const selectionState = useTextSelection();
 const inputValue = ref('');
 // const isSendDisabled = ref(false);
 const textarea = ref(null as HTMLInputElement | null);
 
-const onInput = (e: InputEvent) => {
-  console.log('onInput', e.data, (e.target as HTMLInputElement).value);
+const selection = reactive({
+  start: 0,
+  end: 0,
+});
+
+const onInput = (e: any) => {
+  console.log('onInput', e.data);
+  const el = e.target as HTMLInputElement;
+  console.log('=====', el.selectionStart, el.selectionEnd);
+};
+
+const onInputClick = (e: any) => {
+  const el = e.target as HTMLInputElement;
+  console.log('onInputClick', el.selectionStart, el.selectionEnd, e);
+};
+const onBlur = (e: any) => {
+  const el = e.target as HTMLInputElement;
+  console.log('onBlur', el.selectionStart, el.selectionEnd, e);
+};
+const onInputChange = (e: any) => {
+  const el = e.target as HTMLInputElement;
+  console.log('onInputChange', el.selectionStart, el.selectionEnd);
+};
+
+const onTextChange = (...e: any) => {
+  console.log('onTextChange', ...e);
+};
+
+const onTextSelect = (e: any) => {
+  console.log('onTextChange', e);
 };
 const send = (event: MouseEvent | PointerEvent | undefined): void => {
   emits('send', {
@@ -156,6 +187,13 @@ defineExpose({
     </div>
     <div class="input-body">
       <div class="input-area">
+        <!-- <textarea
+          rows="2"
+          @input="onInput"
+          @change="onInputChange"
+          @click="onInputClick"
+          @blur="onBlur"
+        ></textarea> -->
         <scroll-view>
           <a-mentions
             class="textarea"
@@ -167,7 +205,9 @@ defineExpose({
             :autofocus="false"
             :disabled="disabled"
             @keydown.ctrl.enter="send"
-            @input="onInput"
+            @change="onTextChange"
+            @select="onTextSelect"
+            @blur="onBlur"
           ></a-mentions>
           <!-- <br /> <br /> <br /> <br /> <br /> -->
         </scroll-view>
@@ -201,7 +241,7 @@ defineExpose({
 .v3-group h5 {
   color: var(--v3picker-fg);
 }
-.emoji-popover.ant-popover .ant-popover-inner{
+.emoji-popover.ant-popover .ant-popover-inner {
   padding: 0;
 }
 </style>
@@ -216,14 +256,12 @@ defineExpose({
   padding: 0;
 }
 
-.emoji-popover.ant-popover .ant-popover-inner
-:deep(.emoji-popover.ant-popover .ant-popover-inner) {
+.emoji-popover.ant-popover .ant-popover-inner :deep(.emoji-popover.ant-popover .ant-popover-inner) {
   background-color: unset;
   padding: 0;
   --antd-arrow-background-color: red;
 }
-.emoji-popover.ant-popover .ant-popover-inner
-:deep(.ant-popover .ant-popover-inner) {
+.emoji-popover.ant-popover .ant-popover-inner :deep(.ant-popover .ant-popover-inner) {
   padding: 0 !important;
 }
 :deep(.emoji-picker.v3-emoji-picker .v3-body) {

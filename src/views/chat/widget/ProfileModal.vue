@@ -12,8 +12,22 @@ import { useWaitersList } from '../../object-settings/commons/useWaitersList';
 import { reactive } from 'vue';
 import { CallCenterService } from '../../../apis';
 import { message } from 'ant-design-vue';
-const { t } = useI18n();
+import { useImStore } from '../../../stores/im';
 
+export type ProfileModalArgsType = {
+  chatObjectId?: number;
+  sessionUnitId: string;
+  destinationSessionUnitId: string;
+  name?: string;
+  entity?: ChatObjectDto;
+};
+const imState = useImStore();
+const { t } = useI18n();
+computed(() => {
+  if (info.value?.sessionUnitId) {
+    return imState.getSessionUnit(info.value?.sessionUnitId)?.destination;
+  }
+});
 const emits = defineEmits<{
   // confirm: [{ files?: Array<any>; text?: string }];
   cancel: [];
@@ -21,59 +35,25 @@ const emits = defineEmits<{
 
 const isOpen = ref(false);
 
-const okText = computed(() => t('Transfer'));
+const info = ref<ProfileModalArgsType>();
+const open = (args: ProfileModalArgsType) => {
+  console.log('open args', args);
 
-const confirm = ref<(destination?: ChatObjectDto) => void>();
-const cancel = ref<() => void>();
-
-type ArgsType = {
-  chatObjectId?: number;
-  sessionUnitId?: string;
-  owner?: ChatObjectDto;
-  onConfirm?: (destination?: ChatObjectDto) => void;
-  onCancel?: () => void;
-};
-const openArgs = ref<ArgsType>();
-const open = (args: ArgsType) => {
-  openArgs.value = args;
+  info.value = args;
 
   isOpen.value = true;
-  confirm.value = args.onConfirm;
-  cancel.value = args.onCancel;
 };
 const close = () => {
   isOpen.value = false;
 };
 
-const handleCancel = (e: MouseEvent) => {
-  // emits('cancel');
-  cancel.value?.call(this);
-};
 const confirmLoading = ref(false);
-const okButtonProps = reactive({
-  disabled: false,
-});
+
 const handleOk = (e: MouseEvent) => {
   console.log(e);
   confirmLoading.value = true;
-  // const target = getSelectItems()[0];
-  const key = 'transfer';
-  // CallCenterService.postApiChatCallCenterTransferTo({
-  //   sessionUnitId: openArgs.value!.sessionUnitId,
-  //   destinationId: target?.id!,
-  // })
-  //   .then(() => {
-  //     isOpen.value = false;
-  //     confirmLoading.value = false;
-  //     confirm.value?.call(this, target);
-  //   })
-  //   .catch(err => {
-  //     message.error({ content: err?.body?.error?.message, duration: 2, key });
-  //     confirmLoading.value = false;
-  //   })
-  //   .finally(() => {});
 };
-
+const displayName = ref('8888');
 // Expose
 defineExpose({
   open,
@@ -84,21 +64,13 @@ const loading = ref(false);
 </script>
 
 <template>
-  <a-modal
-    class="transfer-page"
-    v-model:open="isOpen"
-    :width="360"
-    :title="t('Transfer To')"
-    :ok-text="okText"
-    :confirmLoading="confirmLoading"
-    :okButtonProps="okButtonProps"
-    @ok="handleOk"
-    @cancel="handleCancel"
-  >
+  <a-modal class="transfer-page" v-model:open="isOpen" :width="360">
     <page class="transfer-modal">
       <page-content>
         <scroll-view class="scroll-view">
-          <chat-object :entity="undefined" :sub="'5'" :size="44"></chat-object>
+          <chat-object :entity="info?.entity" :size="44">
+            <template #title>{{ info?.name }}</template>
+          </chat-object>
         </scroll-view>
       </page-content>
     </page>
