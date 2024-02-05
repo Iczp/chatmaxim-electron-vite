@@ -66,6 +66,7 @@ const fallback = () => {};
   flex-direction: column;
   justify-content: center;
   align-items: center;
+  margin: 0 12px;
 }
 :deep(img.error),
 .error img {

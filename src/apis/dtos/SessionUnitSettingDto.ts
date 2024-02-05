@@ -41,9 +41,12 @@ export type SessionUnitSettingDto = SessionUnitSettingSimpleDto & {
   isShowReaded?: boolean | null;
 
   /**
+   * 是否显示角标
+   */
+  isHideBadge?: boolean | null;
+
+  /**
    * 聊天背景，默认为 null
    */
   backgroundImage?: string | null;
-
-  
 };

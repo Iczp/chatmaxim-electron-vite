@@ -46,6 +46,7 @@ import { useWindowStore } from '../../stores/window';
 import { openChildWindow } from '../../ipc/openChildWindow';
 import ProfileModal from './widget/ProfileModal.vue';
 import { provide } from 'vue';
+import { MessageContent } from '../../apis/dtos/message/messageContent';
 
 const { t } = useI18n();
 const router = useRouter();
@@ -204,7 +205,7 @@ let startShortcutWatch = () => {
     ticks => {
       const inputValue = chatInput.value?.inputValue;
       console.warn('CommandOrControl+Enter', ticks, inputValue);
-      onSend({ value: inputValue });
+      onSend({ messageType: MessageTypeEnums.Text, content: { text: inputValue! } });
     },
   );
 };
@@ -278,17 +279,21 @@ if (isSeparated) {
   onDeactivated(_onDeactivated);
 }
 
-const onSend = async ({ event, value }: any) => {
-  if (!value) {
-    message.error({ content: t('Please Enter'), key: 'send-message' });
-    return;
-  }
+const onSend = async ({
+  event,
+  messageType,
+  content,
+  file,
+}: {
+  messageType: MessageTypeEnums;
+  content: MessageContent;
+  event?: MouseEvent | PointerEvent;
+  file?: Blob | File | any;
+}) => {
   sendMessageContent({
     isClearInput: true,
-    messageType: MessageTypeEnums.Text,
-    content: {
-      text: value,
-    },
+    messageType,
+    content,
   });
 };
 
@@ -496,37 +501,42 @@ const dropHandle = (ev: DragEvent, { files, text }: { files?: any[]; text?: stri
           messageType: MessageTypeEnums.Text,
           content: { text },
         });
-      }
-      if (files?.length != 0) {
-        files!.forEach(async file => {
-          const suffix = `.${file.name.split('.').pop().toLowerCase()}`;
-          switch (suffix) {
-            case '.jpg':
-            case '.jpeg':
-            case '.gif':
-            case '.png':
-            case '.tiff':
-              const content = await mapToImageContentDtoAsync(file);
-              sendMessageContent({
-                file,
-                isClearInput: false,
-                messageType: MessageTypeEnums.Image,
-                content: content,
-              });
-              break;
-
-            default:
-              sendMessageContent({
-                file,
-                isClearInput: false,
-                messageType: MessageTypeEnums.File,
-                content: mapToFileContentDto(file),
-              });
-              break;
-          }
-        });
+      } else {
+        handleFiles(files);
       }
     },
+  });
+};
+
+const handleFiles = (files?: any[]) => {
+  if (files?.length == 0) {
+    return;
+  }
+  files!.forEach(async file => {
+    const suffix = `.${file.name.split('.').pop().toLowerCase()}`;
+    switch (suffix) {
+      case '.jpg':
+      case '.jpeg':
+      case '.gif':
+      case '.png':
+      case '.tiff':
+        const content = await mapToImageContentDtoAsync(file);
+        sendMessageContent({
+          file,
+          isClearInput: false,
+          messageType: MessageTypeEnums.Image,
+          content: content,
+        });
+        break;
+      default:
+        sendMessageContent({
+          file,
+          isClearInput: false,
+          messageType: MessageTypeEnums.File,
+          content: mapToFileContentDto(file),
+        });
+        break;
+    }
   });
 };
 
@@ -651,6 +661,7 @@ const onTransfer = () => {
         :disabled="!isInputEnabled"
         v-model:value="textValue"
         @send="onSend"
+        @open="handleFiles"
       >
         <QuoteMessage
           v-if="quoteMessage"

@@ -20,6 +20,9 @@ const windowStore = useWindowStore();
 const colorScheme = computed(() => windowStore.colorScheme as 'dark' | 'light' | 'auto');
 import { useTextSelection } from '@vueuse/core';
 import { reactive } from 'vue';
+import { MessageInput, TextContentDto } from '../../../apis/dtos';
+import { MessageTypeEnums } from '../../../apis/enums';
+import { MessageContent } from '../../../apis/dtos/message/messageContent';
 const { t } = useI18n();
 
 const props = withDefaults(
@@ -40,12 +43,20 @@ const props = withDefaults(
 );
 
 const emits = defineEmits<{
-  send: [
+  send1: [
     {
       value: string;
       event: MouseEvent | PointerEvent | undefined;
     },
   ];
+  send: [
+    {
+      messageType: MessageTypeEnums;
+      content: MessageContent;
+      event?: MouseEvent | PointerEvent | undefined;
+    },
+  ];
+  open: [File[]];
 }>();
 
 const selectionState = useTextSelection();
@@ -58,6 +69,7 @@ const selection = reactive({
   end: 0,
 });
 
+const isSendBtnDisabled = computed(() => inputValue.value.length == 0);
 const onInput = (e: any) => {
   console.log('onInput', e.data);
   const el = e.target as HTMLInputElement;
@@ -84,10 +96,13 @@ const onTextChange = (...e: any) => {
 const onTextSelect = (e: any) => {
   console.log('onTextChange', e);
 };
-const send = (event: MouseEvent | PointerEvent | undefined): void => {
+const send = (event?: MouseEvent | PointerEvent): void => {
   emits('send', {
+    messageType: MessageTypeEnums.Text,
+    content: <TextContentDto>{
+      text: inputValue.value,
+    },
     event,
-    value: inputValue.value,
   });
 };
 const clear = (): void => {
@@ -106,9 +121,18 @@ const { files, open, reset, onChange } = useFileDialog({
   directory: false, // Select directories instead of files if set true
 });
 
-onChange((files: any) => {
+onChange((files: FileList | null) => {
   /** do something with files */
   console.warn('files', files);
+
+  const items: File[] = [];
+  // Print each format files
+  for (let i = 0; i < (files || []).length; i++) {
+    const file = files![i];
+    items.push(file!);
+  }
+
+  emits('open', items);
 });
 
 const visible = ref<boolean>(false);
@@ -124,9 +148,9 @@ function onSelectEmoji(emoji: any) {
   hide();
   /*
     // result
-    { 
-        i: "😚", 
-        n: ["kissing face"], 
+    {
+        i: "😚",
+        n: ["kissing face"],
         r: "1f61a", // with skin tone
         t: "neutral", // skin tone
         u: "1f61a" // without tone
@@ -221,7 +245,7 @@ defineExpose({
           <a-button
             type="primary"
             @click="send"
-            :disabled="disabled"
+            :disabled="isSendBtnDisabled"
             class="btn-send"
             :title="t('SendShortcuts')"
           >
