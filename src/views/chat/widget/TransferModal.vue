@@ -159,7 +159,9 @@ defineExpose({
               @click="toggleChecked(item)"
               class="data-item hover"
             >
-              <chat-object :entity="item" :sub="'5'" :size="44"></chat-object>
+              <chat-object :entity="item" :size="44">
+                <template #sub>status:{{ item.serviceStatus }}</template>
+              </chat-object>
               <a-checkbox
                 :checked="isChecked(item)"
                 :disabled="isDisabled(item)"

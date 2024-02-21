@@ -7,16 +7,19 @@ import { HeartTwoTone, HeartFilled } from '@ant-design/icons-vue';
 import { ChatObjectTypeEnums } from '../apis/enums';
 import ChatObject from '../components/ChatObject.vue';
 import MessageProview from '../components/MessageProview.vue';
-import { useSessionUnitId } from '../commons/useSessionUnit';
+import {  useSessionUnitId,useComputedSessionUnit } from '../commons/useSessionUnit';
 import { useImStore } from '../stores/im';
 import { env } from '../env';
 import { useI18n } from 'vue-i18n';
+import { toRaw } from 'vue';
+import { computed } from 'vue';
 const { t } = useI18n();
 const props = defineProps<{
-  title?: string;
+  // title?: string;
   active?: boolean;
   flash?: boolean;
   entity?: SessionUnitOwnerDto;
+  id?: string;
   index?: number;
 }>();
 const emits = defineEmits<{
@@ -28,15 +31,18 @@ const emits = defineEmits<{
     },
   ];
 }>();
-
-watch(
-  () => props.entity?.setting?.isImmersed,
-  v => {
-    console.log('watch isImmersed:', v, props.entity?.id, props.index);
-  },
-);
 const store = useImStore();
-// const lastMessage = computed(() => store.getItem(props.entity?.id!).lastMessage);
+
+const entity = computed(() => store.getSessionUnit(props.id!));
+
+// watch(
+//   () => entity.value?.setting?.isImmersed,
+//   v => {
+//     console.log('watch isImmersed:', v, entity.value?.id, props.index);
+//   },
+// );
+
+// const lastMessage = computed(() => store.getItem(entity?.id!).lastMessage);
 const {
   followingCount,
   isTopping,
@@ -51,19 +57,26 @@ const {
   senderName,
   remindCount,
   displaySenderName,
-} = useSessionUnitId(props.entity?.id!);
-// const isTopping = computed(() => Number(props.entity?.sorting) > 0);
+} = useComputedSessionUnit(entity);
+// const isTopping = computed(() => Number(entity?.sorting) > 0);
 
 const ondragstart = (event: DragEvent) => {
   // event.preventDefault()
 
   event.dataTransfer?.setData(
     'text',
-    `${env.url_scheme}://./to/${props.entity?.ownerId}/${props.entity?.id}`,
+    `${env.url_scheme}://./to/${entity.value?.ownerId}/${entity.value?.id}`,
   );
   console.log('ondragstart', event);
 };
+
+const onItemClick = (event: MouseEvent | PointerEvent) => {
+  console.log('onItemClick', props.id, toRaw(entity));
+
+  emits('contextmenu', { t, entity: entity.value, event });
+};
 </script>
+
 
 <template>
   <chat-object
@@ -76,14 +89,14 @@ const ondragstart = (event: DragEvent) => {
     :class="{ active, flash }"
     :object-type="objectType?.toString()"
     :size="44"
-    @click.right.native="emits('contextmenu', { t, entity, event: $event })"
+    @click.right.native="onItemClick"
     sub
     sub-right
     title-right
   >
     <template #title>
       <div class="object-name" :title="destinationName!">
-        <span v-if="env.isDev">{{ entity?.ownerId }} -</span>
+        <span v-if="env.isDev">{{ entity?.ownerId }}-</span>
         <span class="text-ellipsis">{{ destinationName }}</span>
         <a-tag v-if="objectType == ChatObjectTypeEnums.Robot" color="blue" class="object-type-tag">
           机器人

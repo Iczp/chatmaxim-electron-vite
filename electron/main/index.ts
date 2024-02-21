@@ -14,7 +14,7 @@ process.env.VITE_PUBLIC = process.env.VITE_DEV_SERVER_URL
   ? join(process.env.DIST_ELECTRON, '../public')
   : process.env.DIST;
 
-import { app, BrowserWindow, ipcMain, webContents, screen, dialog, protocol, shell } from 'electron';
+import { app, BrowserWindow, ipcMain, webContents, screen, dialog, protocol, shell, powerMonitor } from 'electron';
 import { release } from 'node:os';
 import { join } from 'node:path';
 import Store from 'electron-store';
@@ -41,6 +41,10 @@ import { sheelHandle } from './handles/sheelHandle';
 
 setAppProtocol();
 
+//当前用户的空闲时间
+setInterval(() => {
+  console.log('System Idle Time',powerMonitor.getSystemIdleTime())
+}, 3000)
 // import {Test} from '../../public/Test.ts'
 
 //

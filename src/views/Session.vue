@@ -13,12 +13,10 @@ import { openChildWindow } from '../ipc/openChildWindow';
 import { useI18n } from 'vue-i18n';
 import { Plus } from '../icons';
 import { createRoom } from '../commons/createRoom';
+import { useSessionUnitList } from '../commons/useSessionUnitList';
 const { t } = useI18n();
 const props = defineProps<{
   chatObjectId: number | undefined;
-}>();
-const emits = defineEmits<{
-  // contextmenu: [item: SessionItemDto, e: any];
 }>();
 
 // defaultDisplayCount
@@ -31,6 +29,18 @@ const displayCount = ref(20);
 const route = useRoute();
 // const router = useRouter();
 const store = useImStore();
+
+const {
+  list,
+  isBof,
+  isEof,
+  maxMessageId,
+  minMessageId,
+  fetchLatest,
+  fetchHistorical,
+  isPendingOfFetchLatest,
+  isPendingOfFetchHistorical,
+} = useSessionUnitList({ ownerId: Number(props.chatObjectId!) });
 
 const acitveSessionUnitId = computed(() => route.params.sessionUnitId);
 
@@ -364,6 +374,7 @@ const onPlus = () => {
           <SessionItem
             v-for="(item, index) in displayItems"
             :key="item.id"
+            :id="item.id"
             :entity="store.getSessionUnit(item.id!)"
             :index="index"
             :active="acitveSessionUnitId == item.id"

@@ -40,7 +40,7 @@ export const useSessionUnit = (entity: SessionUnitOwnerDto | undefined) => {
   return useComputedSessionUnit(computedEntity);
 };
 
-const useComputedSessionUnit = (computedEntity: ComputedRef<SessionUnitOwnerDto | undefined>) => {
+export const useComputedSessionUnit = (computedEntity: ComputedRef<SessionUnitOwnerDto | undefined>) => {
   const entity = computedEntity;
   const isTopping = computed(() => Number(entity.value?.sorting) > 0);
 

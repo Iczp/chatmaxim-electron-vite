@@ -130,7 +130,7 @@ export const useImStore = defineStore('im', {
       return this.ownerMap.get(sessionUnitId);
     },
     getSessionItems(chatObjectId: number, keyword?: string): SessionItemDto[] {
-      const items: SessionItemDto[] = Object.values(
+      const items = Object.values(
         this.sessionItemsMap[key(chatObjectId, keyword)] || [],
       );
       items.sort(sortSessionItemDto);
