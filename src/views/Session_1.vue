@@ -44,7 +44,6 @@ const setFlash = (sessionUnitId: string) => {
   }, 1000);
 };
 
-
 const dragend = (item: SessionItemDto) => {
   onItemDbClick(item);
 };
@@ -74,7 +73,6 @@ const onItemClick = (item: SessionItemDto) => {
   const entity = store.getSessionUnit(item.id!);
   console.log('onItemClick', item, entity);
   navToChat(item);
-
 };
 
 const navToChat = (item: SessionItemDto) => {
@@ -90,13 +88,10 @@ const navToChat = (item: SessionItemDto) => {
   });
 };
 
-
 const displayItems = computed<SessionItemDto[]>(
-  () => store.searchSessionItems(props.chatObjectId!, keyword.value)
-  .filter(x => !x.isSeparated)
+  () => store.searchSessionItems(props.chatObjectId!, keyword.value).filter(x => !x.isSeparated),
   // .slice(0, displayCount.value),
 );
-
 
 const keyword = ref<string>('');
 
@@ -106,7 +101,6 @@ const onSearch = (e: any) => {
 
 const onReachStart = (event: CustomEvent) => {
   console.info('onReachStart');
-
 };
 const onReachEnd = (event: CustomEvent) => {
   // const el = event.target as HTMLElement;
@@ -153,27 +147,9 @@ onActivated(() => {
               <div class="plus-label"><Plus @click="onPlus" class="svg-icon cursor-pointer" /></div>
             </template>
           </a-input>
-
-          <!-- <a-input-search
-            :bordered="true"
-            :allowClear="true"
-            v-model:value="keyword"
-            :placeholder="`${t('Search')}:${record.minMessageId}`"
-            style="width: 100%"
-            @search="onSearch"
-          /> -->
         </a-space>
       </div>
-      <!-- <scroll-view v-if="keyword.length != 0">
-        <div>搜索：{{ keyword }}</div>
-      </scroll-view> -->
-      <!-- <scroll-view
-        class="session-scroll-view"
-        ref="scroll"
-        @ps-scroll-y="onScroll"
-        @ps-y-reach-end="onReachEnd"
-        @ps-y-reach-start="onReachStart"
-      > -->
+
       <div class="session-list"></div>
       <RecycleScroller
         class="scroller"
@@ -184,13 +160,6 @@ onActivated(() => {
         @scroll-end="onReachEnd"
       >
         <template v-slot="{ item, index }: { item: SessionItemDto, index: number }">
-          <!-- <div
-            ref="session"
-            v-for="(item, index) in ret.items"
-            :key="item.id"
-            @click="navToChat(item)"
-            class="session-item-wraper"
-          > -->
           <SessionItem
             :id="item.id"
             :index="index"
@@ -201,14 +170,9 @@ onActivated(() => {
             @contextmenu="showContextMenuForSession"
           />
         </template>
-        <!-- </div> -->
-        <!-- <Loading v-if="ret.isPosting && !ret.isEof" :height="64" /> -->
-        <!-- </div> -->
-        <!-- <div ref="footerObserver"></div> -->
       </RecycleScroller>
     </aside>
 
-    <!-- <p>{{ router }}</p> -->
     <main class="content">
       <!-- <router-view></router-view> -->
       <router-view v-slot="{ Component, route }">
@@ -319,17 +283,4 @@ onActivated(() => {
   flex-direction: column;
   width: 100%;
 }
-/* .session-item-wraper {
-  position: relative;
-}
-.session-item-wraper::after {
-  content: '';
-  height: 1px;
-  left: 72px;
-  right: 0px;
-  position: absolute;
-  transform: scaleY(0.5);
-  overflow: hidden;
-  background-color:rgba(223, 223, 223, 0.41);
-} */
 </style>
