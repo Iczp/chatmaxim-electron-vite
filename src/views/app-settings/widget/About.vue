@@ -6,6 +6,8 @@ import { ContentCopy } from '../../../icons';
 import { useClipboard } from '@vueuse/core';
 import { message } from 'ant-design-vue';
 import { useI18n } from 'vue-i18n';
+import CopyBox from '../../../components/CopyBox.vue';
+import { computed } from 'vue';
 const { t } = useI18n();
 interface FormState {
   name: string;
@@ -31,17 +33,11 @@ const versions = ref(process.versions);
 const { appId, appName, author, websize, version, copyright } = useAppInfo();
 const iconClass = ref({ class: 'svg-icon s16' });
 
-const { copy, isSupported } = useClipboard();
-
-const copyContent = () => {
-  let contentText = Object.entries(versions.value)
+const versionInfo = computed(() =>
+  Object.entries(versions.value)
     .map(([key, value]) => `${key}:${value}`)
-    .join('\n');
-
-  copy(contentText).then(v => {
-    message.success({ content: `${t('Copied')}!`, duration: 2 });
-  });
-};
+    .join('\n'),
+);
 const title = ref('');
 </script>
 
@@ -59,21 +55,12 @@ const title = ref('');
           :column="2"
         >
           <template #extra>
-            <!-- <ContentCopy class="svg-icon-14" /> -->
-            <a-button type="text" @click="copyContent">
-              <ContentCopy class="svg-icon-14" />
-              {{ t('Copy') }}
-            </a-button>
+            <CopyBox :value="versionInfo" :text="t('Copy')" />
           </template>
           <a-descriptions-item v-for="(value, key) in versions" :key="key" :label="key">
             {{ value }}
           </a-descriptions-item>
         </a-descriptions>
-
-        <!-- <div v-for="(value, key) in versions" :key="key">
-          <span class="label">{{ key }}</span>
-          <span class="value">{{ value }}</span>
-        </div> -->
       </scroll-view>
     </page-content>
   </page>

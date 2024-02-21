@@ -11,8 +11,8 @@ import { ChatObjectDto } from '../../apis/dtos/ChatObjectDto';
 import { usePayload } from '../../commons/usePayload';
 import { sendPickerResult } from '../../ipc/openChildWindow';
 import { useRoute } from 'vue-router';
-import { useClipboard } from '@vueuse/core';
 import { useEnums } from '../../commons/useEnums';
+import CopyBox from '../../components/CopyBox.vue';
 const route = useRoute();
 const { t } = useI18n();
 const props = defineProps<{ chatObjectId: string }>();
@@ -138,16 +138,7 @@ const onCancel = () => {
   //   visiblity: false,
   // });
 };
-const { copy, isSupported } = useClipboard();
-const copyContent = (contentText: string | undefined) => {
-  // let contentText = machineId.value || '';
-  if (!contentText) {
-    return;
-  }
-  copy(contentText).then(v => {
-    message.success({ content: `${t('Copied')}!`, duration: 2 });
-  });
-};
+
 
 const labelCol = { style: { width: '150px' } };
 const wrapperCol = { span: 14 };
@@ -176,7 +167,7 @@ const wrapperCol = { span: 14 };
             <!-- <a-input v-model:value="formState.code" :readOnly="true"></a-input> -->
             <a-input v-model:value="formState.code" readonly disabled>
               <template #addonAfter>
-                <div @click="copyContent(formState.code)"><ContentCopy class="svg-icon-14" /></div>
+                <CopyBox :value="formState.code" />
               </template>
             </a-input>
             <!-- {{ formState.code }} -->

@@ -2,11 +2,11 @@
 import { UnwrapRef, reactive, ref, toRaw } from 'vue';
 import { useI18n } from 'vue-i18n';
 import { useDestination } from './commons/useDestination';
+import CopyBox from '../../components/CopyBox.vue';
 const { sessionUnit, memberCount } = useDestination();
 
 const { t } = useI18n();
 const props = defineProps<{ sessionUnitId: string }>();
-
 
 // const isTopping = ref(Number(props.entity?.sorting) > 0);
 // const isImmersed = ref(setting?.isImmersed);
@@ -58,11 +58,20 @@ const wrapperCol = { span: 14 };
             {{ sessionUnit?.destination?.name }}
             <!-- <a-input v-model:value="formState.name" :readOnly="true"/> -->
           </a-form-item>
+
           <a-form-item :label="t('Rename')" :help="t('RenameHelp')">
             <a-input v-model:value="formState.rename" :placeholder="formState.name" />
           </a-form-item>
           <a-form-item :label="t('Mute')" :help="t('MuteHelp')">
             <a-switch v-model:checked="formState.isMuted" />
+          </a-form-item>
+
+          <a-form-item :label="t('SessionUnitId')">
+            <a-input :value="props.sessionUnitId" readonly>
+              <template #addonAfter>
+                <CopyBox :value="props.sessionUnitId" />
+              </template>
+            </a-input>
           </a-form-item>
 
           <!-- <a-form-item :wrapper-col="{ span: 16, offset: 8 }">
@@ -77,9 +86,9 @@ const wrapperCol = { span: 14 };
     <page-footer class="flex-end">
       <a-space>
         <a-button>{{ t('Cancel') }}</a-button>
-            <a-button type="primary" style="margin-left: 10px" @click="onSubmit">
-              {{ t('Confirm') }}
-            </a-button>
+        <a-button type="primary" style="margin-left: 10px" @click="onSubmit">
+          {{ t('Confirm') }}
+        </a-button>
       </a-space>
     </page-footer>
   </page>

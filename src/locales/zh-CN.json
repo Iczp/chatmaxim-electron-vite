@@ -186,5 +186,6 @@
   "Transfer To": "转接给",
   "MemberName": "成员昵称",
   "SomeSession": "共同会话",
-  "SomeDestination": "共同好友"
+  "SomeDestination": "共同好友",
+  "SessionUnitId": "会话单元Id"
 }

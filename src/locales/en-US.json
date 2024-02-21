@@ -185,5 +185,6 @@
   "Transfer To": "Transfer To",
   "MemberName": "Member Name",
   "SomeSession": "Some Session",
-  "SomeDestination": "Some friends"
+  "SomeDestination": "Some friends",
+  "SessionUnitId": "Session Unit Id"
 }

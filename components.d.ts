@@ -48,6 +48,7 @@ declare module 'vue' {
     Badge: typeof import('./src/components/Badge.vue')['default']
     Bubble: typeof import('./src/components/Bubble.vue')['default']
     ChatObject: typeof import('./src/components/ChatObject.vue')['default']
+    CopyBox: typeof import('./src/components/CopyBox.vue')['default']
     DragBar: typeof import('./src/components/DragBar.vue')['default']
     EmptyData: typeof import('./src/components/EmptyData.vue')['default']
     FileIcon: typeof import('./src/components/FileIcon.vue')['default']

@@ -1,32 +1,21 @@
 <script setup lang="ts">
 import { ref } from 'vue';
-import { ContentCopy } from '../../../icons';
-import { useClipboard } from '@vueuse/core';
-import { message } from 'ant-design-vue';
 import { useWindowStore } from '../../../stores/window';
 import { useAppInfo } from '../../../commons/useAppInfo';
 import { useI18n } from 'vue-i18n';
 import { setShell } from '../../../ipc/setShell';
 import { Link} from '../../../icons'
+import CopyBox from '../../../components/CopyBox.vue';
 const { t } = useI18n();
 const labelCol = { style: { width: '150px' } };
 const wrapperCol = { span: 14 };
 const windowStore = useWindowStore();
 
 const machineId = ref(windowStore.machineId);
-const { copy, isSupported } = useClipboard();
+
 const platform = ref(process.platform);
 // console.log('process', process);
 
-const copyContent = (contentText: string | undefined) => {
-  // let contentText = machineId.value || '';
-  if (!contentText) {
-    return;
-  }
-  copy(contentText).then(v => {
-    message.success({ content: `${t('Copied')}!`, duration: 2 });
-  });
-};
 const title = ref('');
 const { appId, appName, author, websize, version, copyright } = useAppInfo();
 
@@ -48,14 +37,14 @@ const openUrl = (url: string) => {
           <a-form-item :label="t('AppId')">
             <a-input v-model:value="appId" readonly>
               <template #addonAfter>
-                <div @click="copyContent(appId)"><ContentCopy class="svg-icon-14" /></div>
+                <CopyBox :value="appId" />
               </template>
             </a-input>
           </a-form-item>
           <a-form-item :label="t('MachineId')">
             <a-input v-model:value="machineId" readonly>
               <template #addonAfter>
-                <div @click="copyContent(machineId)"><ContentCopy class="svg-icon-14" /></div>
+                <CopyBox :value="machineId" />
               </template>
             </a-input>
           </a-form-item>
