@@ -22,6 +22,8 @@ const route = useRoute();
 
 const store = useImStore();
 
+const scrollerRef = ref();
+
 const {
   list,
   isBof,
@@ -33,6 +35,7 @@ const {
   isPendingOfFetchLatest,
   isPendingOfFetchHistorical,
 } = useSessionUnitList({ ownerId: Number(props.chatObjectId!) });
+
 const acitveSessionUnitId = computed(() => route.params.sessionUnitId);
 
 const flashSessionUnitId = ref<string>();
@@ -124,6 +127,11 @@ const onPlus = () => {
 };
 
 onActivated(() => {
+  console.log('scrollerRef', scrollerRef.value?.scrollToItem);
+  setTimeout(() => {
+    console.log('scroll to item');
+    scrollerRef.value.scrollToPosition(0);
+  }, 0);
   fetchLatest({
     caller: 'onActivated',
   });
@@ -152,6 +160,7 @@ onActivated(() => {
 
       <div class="session-list"></div>
       <RecycleScroller
+        ref="scrollerRef"
         class="scroller"
         :items="displayItems"
         :item-size="64"
