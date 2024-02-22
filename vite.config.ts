@@ -142,5 +142,13 @@ export default defineConfig(({ command }) => {
         // },
       },
     },
+    resolve: {
+      alias: {
+          // @ 替代为 src
+        '@': resolve(__dirname, 'src'),
+         // @component 替代为 src/component
+        '@components': resolve(__dirname, 'src/components'),
+      },
+    },
   };
 });

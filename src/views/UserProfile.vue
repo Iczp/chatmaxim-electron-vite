@@ -1,17 +1,16 @@
 <script setup lang="ts">
-import { Ref, onMounted, reactive, ref, toRaw } from 'vue';
-import { SettingOutlined, EditOutlined, EllipsisOutlined } from '@ant-design/icons-vue';
-import { ChatObjectService, SessionUnitService } from '../apis';
-import { ChatObjectDto, PagedResultDto, ResultValue } from '../apis/dtos';
-import LayoutItem from '../components/LayoutItem.vue';
+import { onMounted, reactive, ref } from 'vue';
+import { EditOutlined, EllipsisOutlined } from '@ant-design/icons-vue';
+import { ChatObjectService } from '../apis';
+import { ChatObjectDto, ResultValue } from '../apis/dtos';
 import ChatObject from '../components/ChatObject.vue';
 import { useI18n } from 'vue-i18n';
 import { openChildWindow } from '../ipc/openChildWindow';
 import { useWindowStore } from '../stores/window';
 import { env } from '../env';
 import { ChatObjectTypeEnums } from '../apis/enums';
-import { computed } from 'vue';
 import { getDisplayName } from '../commons/utils';
+import VideoPlayer from '@/components/VideoPlayer.vue';
 const { t } = useI18n();
 const windowStore = useWindowStore();
 // defineProps<{ msg: string }>();
@@ -21,6 +20,19 @@ const ret = reactive<ResultValue<ChatObjectDto>>({
   isEof: false,
   totalCount: 0,
   items: [],
+});
+
+const videoOption = ref({
+  autoplay: false,
+  controls: true,
+  width: 480,
+  height: 360,
+  sources: [
+    {
+      src: 'https://upload.wikimedia.org/wikipedia/commons/f/f1/Sintel_movie_4K.webm',
+      type: 'video/mp4',
+    },
+  ],
 });
 
 const fetchEntity = () => {
@@ -55,8 +67,6 @@ const openObjectProfile = (item: ChatObjectDto) => {
 
 const getDescription = (item: ChatObjectDto): string =>
   t(`ObjectType:${ChatObjectTypeEnums[item.objectType!]}`);
-
-
 </script>
 
 <template>
@@ -91,6 +101,8 @@ const getDescription = (item: ChatObjectDto): string =>
             </a-card>
           </div>
         </div>
+
+        <VideoPlayer :options="videoOption" />
       </scroll-view>
     </page-content>
   </page>
