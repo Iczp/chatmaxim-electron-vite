@@ -7,6 +7,7 @@ import ChatObject from '../../components/ChatObject.vue';
 import { useDestination } from './commons/useDestination';
 import { computed } from 'vue';
 import { ChatObjectTypeEnums } from '../../apis/enums';
+
 const { t } = useI18n();
 const route = useRoute();
 const router = useRouter();

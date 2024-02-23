@@ -116,6 +116,7 @@ export const showContextMenuForMessageContent = ({
         // hidden: ![MessageTypeEnums.File, MessageTypeEnums.Image].some(x => x == item.messageType),
         onClick: e => {
           console.log('contextmenu item click', entity);
+          // download file and save as...
           message.success({ content: t('Save As'), duration: 2 });
         },
       },
