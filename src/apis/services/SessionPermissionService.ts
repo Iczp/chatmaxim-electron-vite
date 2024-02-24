@@ -10,7 +10,7 @@ import type { PermissionGrantValue } from '../models/PermissionGrantValue';
 import type { CancelablePromise } from '../core/CancelablePromise';
 import { OpenAPI } from '../core/OpenAPI';
 import { request as __request } from '../core/request';
-import { IdDto, PagedResultDto } from '../dtos';
+import { GetListInput, IdDto, PagedResultDto } from '../dtos';
 import { SessionPermissionDefinitionDetailDto } from '../models/SessionPermissionDefinitionDetailDto';
 import { SessionPermissionGrantedDto } from '../models/SessionPermissionGrantedDto';
 
@@ -27,9 +27,7 @@ export class SessionPermissionService {
      * 会话角色Id
      */
     sessionRoleId: string;
-  }): CancelablePromise<
-    Record<string, PermissionGrantValue>
-  > {
+  }): CancelablePromise<Record<string, PermissionGrantValue>> {
     return __request(OpenAPI, {
       method: 'GET',
       url: '/api/chat/session-permission/granted-by-session-role/{sessionRoleId}',
@@ -147,24 +145,7 @@ export class SessionPermissionService {
     maxResultCount,
     skipCount,
     sorting,
-  }: IdDto & {
-    /**
-     * 关键字(支持拼音)
-     */
-    keyword?: string;
-    /**
-     * 显示数量
-     */
-    maxResultCount?: number;
-    /**
-     * 跳过数量
-     */
-    skipCount?: number;
-    /**
-     * 排序
-     */
-    sorting?: string;
-  }): CancelablePromise<PagedResultDto<SessionPermissionGrantedDto>> {
+  }: IdDto & GetListInput): CancelablePromise<PagedResultDto<SessionPermissionGrantedDto>> {
     return __request(OpenAPI, {
       method: 'GET',
       url: '/api/chat/session-permission/granted-by-session-unit/{id}',

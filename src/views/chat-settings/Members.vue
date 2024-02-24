@@ -26,6 +26,8 @@ const {
   list,
   isBof,
   isEof,
+  onReachStart,
+    onReachEnd,
   fetchData,
   fetchNext,
   refresh,
@@ -46,10 +48,10 @@ const {
   },
 });
 
-const onReachStart = (event: CustomEvent) => {
+const onReachStart1 = (event: CustomEvent) => {
   console.info('onReachStart', event);
 };
-const onReachEnd = (event: CustomEvent) => {
+const onReachEnd1 = (event: CustomEvent) => {
   console.info('onReachEnd', event);
   // const el = event.target as HTMLElement;
 

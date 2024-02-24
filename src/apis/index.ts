@@ -123,13 +123,13 @@ export type { IczpNet_Chat_SessionSections_SessionPermissions_Dtos_SessionPermis
 export type { PermissionGrantValue as IczpNet_Chat_SessionSections_SessionPermissions_PermissionGrantValue } from './models/PermissionGrantValue';
 export type { SessionRequestDetailDto as IczpNet_Chat_SessionSections_SessionRequests_Dtos_SessionRequestDetailDto } from './dtos/SessionRequestDetailDto';
 export type { IczpNet_Chat_SessionSections_SessionRequests_Dtos_SessionRequestDto } from './models/IczpNet_Chat_SessionSections_SessionRequests_Dtos_SessionRequestDto';
-export type { IczpNet_Chat_SessionSections_SessionRoles_Dtos_SessionRoleCreateBySessionUnitInput } from './models/IczpNet_Chat_SessionSections_SessionRoles_Dtos_SessionRoleCreateBySessionUnitInput';
+export type { SessionRoleBySessionUnitCreateInput as IczpNet_Chat_SessionSections_SessionRoles_Dtos_SessionRoleCreateBySessionUnitInput } from './models/SessionRoleBySessionUnitCreateInput';
 export type { SessionRolePostInput as IczpNet_Chat_SessionSections_SessionRoles_Dtos_SessionRoleCreateInput } from './models/SessionRolePostInput';
 export type { SessionRoleDetailDto as IczpNet_Chat_SessionSections_SessionRoles_Dtos_SessionRoleDetailDto } from './models/SessionRoleDetailDto';
 export type { IczpNet_Chat_SessionSections_SessionRoles_Dtos_SessionRoleDto } from './models/IczpNet_Chat_SessionSections_SessionRoles_Dtos_SessionRoleDto';
 export type { IczpNet_Chat_SessionSections_SessionRoles_Dtos_SessionRolePermissionDto } from './models/IczpNet_Chat_SessionSections_SessionRoles_Dtos_SessionRolePermissionDto';
 export type { IczpNet_Chat_SessionSections_SessionRoles_Dtos_SessionRoleSimpleDto } from './models/IczpNet_Chat_SessionSections_SessionRoles_Dtos_SessionRoleSimpleDto';
-export type { IczpNet_Chat_SessionSections_SessionRoles_Dtos_SessionRoleUpdateInput } from './models/IczpNet_Chat_SessionSections_SessionRoles_Dtos_SessionRoleUpdateInput';
+export type { SessionRoleBySessionUnitUpdateInput as IczpNet_Chat_SessionSections_SessionRoles_Dtos_SessionRoleUpdateInput } from './models/SessionRoleBySessionUnitUpdateInput';
 export type { IczpNet_Chat_SessionSections_Sessions_Dtos_SessionDetailDto } from './models/IczpNet_Chat_SessionSections_Sessions_Dtos_SessionDetailDto';
 export type { IczpNet_Chat_SessionSections_Sessions_Dtos_SessionDto } from './models/IczpNet_Chat_SessionSections_Sessions_Dtos_SessionDto';
 export type { IczpNet_Chat_SessionSections_SessionTags_Dtos_SessionTagCreateInput } from './models/IczpNet_Chat_SessionSections_SessionTags_Dtos_SessionTagCreateInput';

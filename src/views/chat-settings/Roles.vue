@@ -1,8 +1,13 @@
 <script setup lang="ts">
-import { ref } from 'vue';
+import { onMounted, ref } from 'vue';
 import { useI18n } from 'vue-i18n';
 import { useRoleList } from './commons/useRoleList';
 import RoleFromModal from './widget/RoleFormModal.vue';
+import { onActivated } from 'vue';
+import { SessionRoleDetailDto } from '../../apis/models/SessionRoleDetailDto';
+import Loading from '../../components/Loading.vue';
+import { MoreOutlined } from '@ant-design/icons-vue';
+import EmptyData from '../../components/EmptyData.vue';
 const { t } = useI18n();
 const props = defineProps<{ sessionUnitId: string }>();
 const formModal = ref<InstanceType<typeof RoleFromModal> | null>();
@@ -13,6 +18,7 @@ const {
   list,
   isBof,
   isEof,
+  isEmptyData,
   fetchData,
   fetchNext,
   refresh,
@@ -28,7 +34,7 @@ const {
   getSelectItems,
 } = useRoleList({
   input: {
-    // id: props.sessionUnitId,
+    sessionUnitId: props.sessionUnitId,
     maxResultCount: 999,
   },
 });
@@ -47,8 +53,12 @@ const add = () => {
   activeKey.value = `newTab${++newTabIndex.value}`;
   panes.value.push({ title: 'New Tab', content: 'Content of new Tab', key: activeKey.value });
 
+  formModal.value?.open({});
+};
+const edit = (item: SessionRoleDetailDto) => {
   formModal.value?.open({
-    entity: undefined,
+    id: item.id,
+    sessionUnitId: props.sessionUnitId,
   });
 };
 
@@ -76,12 +86,16 @@ const onEdit = (targetKey: string | MouseEvent, action: string) => {
     remove(targetKey as string);
   }
 };
+
+onActivated(() => {
+  refresh();
+});
 </script>
 
 <template>
   <page>
     <page-title :title="t('Session Roles')" description="managermemt" />
-    <RoleFromModal ref="formModal" />
+    <RoleFromModal ref="formModal" @change="refresh" />
     <page-content>
       <div>
         <a-button type="text" @click="add">add</a-button>
@@ -94,12 +108,53 @@ const onEdit = (targetKey: string | MouseEvent, action: string) => {
           <scroll-view>5555</scroll-view>
         </a-tab-pane>
       </a-tabs>
+
+      <RecycleScroller
+        ref="scroller"
+        class="scroller"
+        :items="list"
+        :item-size="56"
+        key-field="id"
+        @scroll-start="onReachStart"
+        @scroll-end="onReachEnd"
+      >
+        <template #after>
+          <Loading v-if="isPending" />
+          <div v-else-if="isEof">{{ t('DividerEnd') }}</div>
+
+          <div class="section">总数:{{ list.length }}/{{ totalCount }}</div>
+        </template>
+
+        <template v-if="isEmptyData" #empty>
+          <EmptyData />
+        </template>
+
+        <template v-slot="{ item }: { item: SessionRoleDetailDto }">
+          <div
+            :key="item.id"
+            class="data-item"
+            :class="{ checked: isChecked(item), disabled: isDisabled(item) }"
+            @click="toggleChecked(item)"
+          >
+            <a-checkbox :checked="isChecked(item)" :disabled="isDisabled(item)" class="check-box">
+              <div>{{ item.name }}</div>
+            </a-checkbox>
+
+            <a-button class="btn-item" type="text" @click="edit(item)"><MoreOutlined /></a-button>
+          </div>
+        </template>
+      </RecycleScroller>
     </page-content>
   </page>
 </template>
 
 <style scoped>
 :deep(.page-content) {
-  margin-left: 20px;
+  margin-left: 0px;
+}
+.data-item {
+  padding: 0 12px;
+  height: 48px;
+  align-items: center;
 }
 </style>

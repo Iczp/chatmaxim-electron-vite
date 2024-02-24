@@ -40,6 +40,10 @@ const acitveSessionUnitId = computed(() => route.params.sessionUnitId);
 
 const flashSessionUnitId = ref<string>();
 
+const displayItems = computed<SessionItemDto[]>(() =>
+  store.searchSessionItems(props.chatObjectId!, keyword.value).filter(x => !x.isSeparated),
+);
+
 const setFlash = (sessionUnitId: string) => {
   flashSessionUnitId.value = sessionUnitId;
   setTimeout(() => {
@@ -91,11 +95,6 @@ const navToChat = (item: SessionItemDto) => {
   });
 };
 
-const displayItems = computed<SessionItemDto[]>(
-  () => store.searchSessionItems(props.chatObjectId!, keyword.value).filter(x => !x.isSeparated),
-  // .slice(0, displayCount.value),
-);
-
 const keyword = ref<string>('');
 
 const onSearch = (e: any) => {
@@ -107,10 +106,10 @@ const onReachStart = (event: CustomEvent) => {
 };
 const onReachEnd = (event: CustomEvent) => {
   // const el = event.target as HTMLElement;
-  console.info('onReachEnd');
+  console.info('onReachEnd', displayItems.value.length);
 
-  if (isEof.value) {
-    console.warn('fetchData isFetchSession');
+  if (isBof.value) {
+    console.warn('onReachEnd isBof');
     return;
   }
   fetchHistorical();

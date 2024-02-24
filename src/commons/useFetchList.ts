@@ -46,8 +46,14 @@ export const useFetchList = <TInput extends GetListInput, TDto extends IdDto>({
   const isPending = computed(() => currentCache.value?.isPending);
   const isBof = computed(() => currentCache.value?.isBof);
   const isEof = computed(() => currentCache.value?.isEof);
+
   const list = computed<TDto[]>(() => caches.get(key(query.value as TInput))?.items || []);
   // const list = ref<TDto[]>([]);
+
+  const isEmptyData = computed(() => {
+    // console.log('isEmptyData', !isPending.value, list.value.length == 0);
+    return !isPending.value && list.value.length == 0;
+  });
 
   const query = ref<TInput>(defaultInput);
 
@@ -228,6 +234,7 @@ export const useFetchList = <TInput extends GetListInput, TDto extends IdDto>({
     list,
     isBof,
     isEof,
+    isEmptyData,
     fetchData,
     fetchNext,
     refresh,

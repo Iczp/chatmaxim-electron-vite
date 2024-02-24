@@ -7,7 +7,7 @@ import type { SessionRolePostInput } from '../models/SessionRolePostInput';
 import type { SessionRoleDetailDto } from '../models/SessionRoleDetailDto';
 // import type { IczpNet_Chat_SessionSections_SessionRoles_Dtos_SessionRoleDto_IczpNet_Chat_Application_Contracts_Version_0_1_1_0_Culture_neutral_PublicKeyToken_null_ } from '../models/IczpNet_Chat_SessionSections_SessionRoles_Dtos_SessionRoleDto_IczpNet_Chat_Application_Contracts_Version_0_1_1_0_Culture_neutral_PublicKeyToken_null_';
 import type { IczpNet_Chat_SessionSections_SessionRoles_Dtos_SessionRolePermissionDto } from '../models/IczpNet_Chat_SessionSections_SessionRoles_Dtos_SessionRolePermissionDto';
-import type { IczpNet_Chat_SessionSections_SessionRoles_Dtos_SessionRoleUpdateInput } from '../models/IczpNet_Chat_SessionSections_SessionRoles_Dtos_SessionRoleUpdateInput';
+import type { SessionRoleBySessionUnitUpdateInput } from '../models/SessionRoleBySessionUnitUpdateInput';
 import type { Volo_Abp_Application_Dtos_PagedResultDto_1 } from '../models/Volo_Abp_Application_Dtos_PagedResultDto_1';
 
 import type { CancelablePromise } from '../core/CancelablePromise';
@@ -211,7 +211,7 @@ export class SessionRoleService {
      * 主键Id
      */
     id: string;
-    requestBody?: IczpNet_Chat_SessionSections_SessionRoles_Dtos_SessionRoleUpdateInput;
+    requestBody?: SessionRoleBySessionUnitUpdateInput;
   }): CancelablePromise<SessionRoleDetailDto> {
     return __request(OpenAPI, {
       method: 'POST',

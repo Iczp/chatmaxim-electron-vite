@@ -187,5 +187,7 @@
   "MemberName": "成员昵称",
   "SomeSession": "共同会话",
   "SomeDestination": "共同好友",
-  "SessionUnitId": "会话单元Id"
+  "SessionUnitId": "会话单元Id",
+  "UpdateSuccessful": "修改成功",
+  "RoleEdit": "编辑角色"
 }

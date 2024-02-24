@@ -44,6 +44,7 @@ declare module 'vue' {
     ATabs: typeof import('ant-design-vue/es')['Tabs']
     ATag: typeof import('ant-design-vue/es')['Tag']
     ATextarea: typeof import('ant-design-vue/es')['Textarea']
+    ATree: typeof import('ant-design-vue/es')['Tree']
     Avatar: typeof import('./src/components/Avatar.vue')['default']
     Badge: typeof import('./src/components/Badge.vue')['default']
     Bubble: typeof import('./src/components/Bubble.vue')['default']

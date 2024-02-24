@@ -186,5 +186,7 @@
   "MemberName": "Member Name",
   "SomeSession": "Some Session",
   "SomeDestination": "Some friends",
-  "SessionUnitId": "Session Unit Id"
+  "SessionUnitId": "Session Unit Id",
+  "UpdateSuccessful": "Update Successful",
+  "RoleEdit": "Edit Role"
 }
