@@ -195,7 +195,6 @@ code {
   background: rgba(169, 169, 169, 0.084);
   -webkit-box-shadow: inset 0 0 5px rgba(0, 0, 0, 0);
   display: none;
-
 }
 /* 滚动条滑块 */
 ::-webkit-scrollbar-thumb {
@@ -464,7 +463,7 @@ code {
   --loading-color: rgba(128, 128, 128, 0.5);
 
   --disabled-color: rgba(70, 70, 70, 0.675);
-  
+
   --disabled-background-color: rgba(48, 48, 48, 0.147);
 
   /* file-icon */
@@ -730,7 +729,6 @@ code {
 
   .ant-input-disabled,
   .ant-input[disabled] {
-
     color: var(--disabled-color);
     background-color: var(--disabled-background-color);
   }
@@ -849,6 +847,25 @@ code {
     background-color: rgba(51, 52, 70, 0.358);
   }
 
+  .ant-tree {
+    color: var(--color);
+    background-color: var(--background-color);
+  }
+  .ant-tree .ant-tree-checkbox .ant-tree-checkbox-inner {
+    background-color: #ffffff00;
+  }
+  .ant-tree .ant-tree-checkbox-checked .ant-tree-checkbox-inner {
+    background-color: #1677ff;
+    border-color: #1677ff;
+  }
+  .ant-tree .ant-tree-checkbox .ant-tree-checkbox-inner {
+    /* background-color: #ffffff00;  */
+    /* border: 1px solid #5e5e5e7c; */
+  }
+
+  .ant-tree .ant-tree-treenode-disabled .ant-tree-node-content-wrapper {
+    color: rgba(175, 175, 175, 0.438);
+  }
   .ps .ps__rail-x:hover,
   .ps .ps__rail-y:hover,
   .ps .ps__rail-x:focus,

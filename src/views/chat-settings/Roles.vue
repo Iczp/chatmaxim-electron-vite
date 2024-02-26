@@ -53,7 +53,9 @@ const add = () => {
   activeKey.value = `newTab${++newTabIndex.value}`;
   panes.value.push({ title: 'New Tab', content: 'Content of new Tab', key: activeKey.value });
 
-  formModal.value?.open({});
+  formModal.value?.open({
+    sessionUnitId: props.sessionUnitId,
+  });
 };
 const edit = (item: SessionRoleDetailDto) => {
   formModal.value?.open({
@@ -100,14 +102,14 @@ onActivated(() => {
       <div>
         <a-button type="text" @click="add">add</a-button>
       </div>
-      <a-tabs v-model:activeKey="activeKey" size="small" @edit="onEdit">
+      <!-- <a-tabs v-model:activeKey="activeKey" size="small" @edit="onEdit">
         <template #rightExtra>
           <a-button type="text">Add</a-button>
         </template>
         <a-tab-pane v-for="item in list" :key="item.id" :tab="item.name" :closable="true">
           <scroll-view>5555</scroll-view>
         </a-tab-pane>
-      </a-tabs>
+      </a-tabs> -->
 
       <RecycleScroller
         ref="scroller"
@@ -120,7 +122,7 @@ onActivated(() => {
       >
         <template #after>
           <Loading v-if="isPending" />
-          <div v-else-if="isEof">{{ t('DividerEnd') }}</div>
+          <!-- <div v-else-if="isEof">{{ t('DividerEnd') }}</div> -->
 
           <div class="section">总数:{{ list.length }}/{{ totalCount }}</div>
         </template>
@@ -136,9 +138,10 @@ onActivated(() => {
             :class="{ checked: isChecked(item), disabled: isDisabled(item) }"
             @click="toggleChecked(item)"
           >
-            <a-checkbox :checked="isChecked(item)" :disabled="isDisabled(item)" class="check-box">
-              <div>{{ item.name }}</div>
-            </a-checkbox>
+            <!-- <a-checkbox :checked="isChecked(item)" :disabled="isDisabled(item)" class="check-box">
+              
+            </a-checkbox> -->
+            <div @click="edit(item)">{{ item.name }}</div>
 
             <a-button class="btn-item" type="text" @click="edit(item)"><MoreOutlined /></a-button>
           </div>
@@ -155,6 +158,11 @@ onActivated(() => {
 .data-item {
   padding: 0 12px;
   height: 48px;
+  flex-direction: row;
   align-items: center;
+}
+.check-box{
+  display: flex;
+  /* flex: 1;  */
 }
 </style>

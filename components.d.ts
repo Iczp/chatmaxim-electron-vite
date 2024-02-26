@@ -49,7 +49,6 @@ declare module 'vue' {
     Badge: typeof import('./src/components/Badge.vue')['default']
     Bubble: typeof import('./src/components/Bubble.vue')['default']
     ChatObject: typeof import('./src/components/ChatObject.vue')['default']
-    copy: typeof import('./src/components/CopyBox copy.vue')['default']
     CopyBox: typeof import('./src/components/CopyBox.vue')['default']
     DragBar: typeof import('./src/components/DragBar.vue')['default']
     EmptyData: typeof import('./src/components/EmptyData.vue')['default']
@@ -76,6 +75,5 @@ declare module 'vue' {
     TextViewer: typeof import('./src/components/TextViewer.vue')['default']
     TooBar: typeof import('./src/components/TooBar.vue')['default']
     VideoPlayer: typeof import('./src/components/VideoPlayer.vue')['default']
-    VidieoPlayer: typeof import('./src/components/VidieoPlayer.vue')['default']
   }
 }

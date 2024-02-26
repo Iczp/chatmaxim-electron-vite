@@ -4,23 +4,30 @@ import { ChatObjectDto } from '../../../apis/dtos';
 import { useI18n } from 'vue-i18n';
 
 import { message } from 'ant-design-vue';
-import { SessionRoleBySessionUnitService } from '../../../apis';
+import { SessionPermissionService, SessionRoleBySessionUnitService } from '../../../apis';
 import { SessionRoleDetailDto } from '../../../apis/models/SessionRoleDetailDto';
 import { PermissionGrantValue } from '../../../apis/models/PermissionGrantValue';
 
 import type { TreeProps } from 'ant-design-vue';
+import { SessionPermissionDefinitionTreeDto } from '../../../apis/models/SessionPermissionDefinitionTreeDto';
+import { DataNode } from 'ant-design-vue/es/tree';
+type Args = { entity?: SessionRoleDetailDto; id?: string; sessionUnitId: string };
+type TreeType = TreeProps['treeData'];
+
 const { t } = useI18n();
+
 defineProps<{
   destination?: ChatObjectDto;
   open?: boolean;
 }>();
+
 interface FormState {
   name?: string | null;
   description?: string | null;
   isDefault?: boolean;
   permissionGrant?: Record<string, PermissionGrantValue> | null;
 }
-type Args = { entity?: SessionRoleDetailDto; id?: string; sessionUnitId?: string };
+
 const formTitle = computed(() => (isCreate.value ? t('RoleAdd') : t('RoleEdit')));
 const isCreate = computed(() => !args.value?.id);
 const formState = ref<FormState>({
@@ -51,8 +58,9 @@ const cancel = ref<() => void>();
 const isPending = ref(false);
 const id = ref('');
 const args = ref<Args>();
+
 const open = (input: Args) => {
-  entity.value = input.entity;
+  initData();
   isOpen.value = true;
   args.value = input;
   console.log('open input', input);
@@ -67,12 +75,14 @@ const open = (input: Args) => {
       .then(res => {
         console.log('getItem', res);
         formState.value = res as FormState;
+        checkedKeys.value = Object.keys(res.permissionGrant!);
       })
       .finally(() => {
         isPending.value = false;
       });
   }
 };
+
 const close = () => {
   isOpen.value = false;
 };
@@ -86,10 +96,12 @@ const handleOk = (e: MouseEvent) => {
   console.log(e);
   confirmLoading.value = true;
   const key = 'session-request-handle';
+  const postData = toRaw(formState.value);
+  postData.permissionGrant = formatChecked();
   SessionRoleBySessionUnitService.createOrUpdate({
     id: args.value?.id,
     sessionUnitId: args.value?.sessionUnitId!,
-    requestBody: toRaw(formState.value),
+    requestBody: postData,
   })
     .then(res => {
       isOpen.value = false;
@@ -107,27 +119,48 @@ const handleOk = (e: MouseEvent) => {
     });
 };
 
-function dig(path = '0', level = 3) {
-  const list: TreeProps['treeData'] = [];
-  for (let i = 0; i < 10; i += 1) {
-    const key = `${path}-${i}`;
-    // TreeProps['treeData'][number]
-    const treeNode: any = {
-      title: key,
-      key,
-    };
+const treeData = ref<TreeType>([]);
+const selectedKeys = ref<string[]>([]);
+const checkedKeys = ref<string[]>([]);
 
-    if (level > 0) {
-      treeNode.children = dig(key, level - 1);
-    }
+const initData = () => {
+  selectedKeys.value = [];
+  checkedKeys.value = [];
+  fetchPermission();
+};
+const fetchPermission = () => {
+  SessionPermissionService.getDefinitions().then(items => {
+    treeData.value = formatChildren(items);
+  });
+};
 
-    list.push(treeNode);
-  }
-  return list;
-}
+const formatChildren = (items: SessionPermissionDefinitionTreeDto[]): TreeType => {
+  return items.map(
+    x =>
+      <DataNode>{
+        title: x.title,
+        key: x.id,
+        checkable: true,
+        selectable: false,
+        disabled: x.isGroup && x.children?.length == 0,
+        children: formatChildren(x.children!),
+      },
+  );
+};
 
-const selectedKeys = ref<string[]>(['0-0-0', '0-0-1']);
-const checkedKeys = ref<string[]>(['0-0-0', '0-0-1']);
+const formatChecked = (): Record<string, PermissionGrantValue> => {
+  const obj: Record<string, PermissionGrantValue> = {};
+  checkedKeys.value
+    .filter(x => !x.startsWith('groupid:'))
+    .map(x => {
+      obj[x] = <PermissionGrantValue>{
+        isEnabled: true,
+        value: 1,
+      };
+    });
+  return obj;
+};
+
 watch(selectedKeys, () => {
   console.log('selectedKeys', selectedKeys);
 });
@@ -177,10 +210,9 @@ defineExpose({
         <a-tree
           v-model:selectedKeys="selectedKeys"
           v-model:checkedKeys="checkedKeys"
-          default-expand-all
           checkable
-          :height="233"
-          :tree-data="dig()"
+          :height="240"
+          :tree-data="treeData"
         >
           <template #title="{ title, key }">
             <span v-if="key === '0-0-1-0'" style="color: #1890ff">{{ title }}</span>

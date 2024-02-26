@@ -13,6 +13,7 @@ import { request as __request } from '../core/request';
 import { GetListInput, IdDto, PagedResultDto } from '../dtos';
 import { SessionPermissionDefinitionDetailDto } from '../models/SessionPermissionDefinitionDetailDto';
 import { SessionPermissionGrantedDto } from '../models/SessionPermissionGrantedDto';
+import { SessionPermissionDefinitionTreeDto } from '../models/SessionPermissionDefinitionTreeDto';
 
 export class SessionPermissionService {
   /**
@@ -158,6 +159,18 @@ export class SessionPermissionService {
         SkipCount: skipCount,
         Sorting: sorting,
       },
+    });
+  }
+
+  /**
+   * 获取列表(Tree)
+   * @returns
+   * @throws ApiError
+   */
+  public static getDefinitions(): CancelablePromise<Array<SessionPermissionDefinitionTreeDto>> {
+    return __request(OpenAPI, {
+      method: 'GET',
+      url: '/api/chat/session-permission/definitions',
     });
   }
 }
