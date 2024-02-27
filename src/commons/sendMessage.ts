@@ -74,6 +74,7 @@ export const uploadFileMork = ({
 export const sendMessage = async ({
   sessionUnitId,
   quoteMessage,
+  remindList,
   messageType,
   content,
   senderSessionUnit,
@@ -91,6 +92,7 @@ export const sendMessage = async ({
   senderSessionUnit?: SessionUnitSenderDto;
   lastItem?: MessageDto;
   quoteMessage?: MessageOwnerDto;
+  remindList?: Array<string>;
   file?: Blob | File | any;
   onBefore?: (input: MessageDto) => void;
   onProgress?: (progressEvent: AxiosProgressEvent) => void;
@@ -125,17 +127,40 @@ export const sendMessage = async ({
 
   const progressStore = useProgressStore();
 
-  const _send = () => {
-    MessageSenderService.send({
+  const quoteMessageId = quoteMessage?.id;
+
+  const senderService = (): CancelablePromise<MessageOwnerDto> => {
+    if (file) {
+      return MessageSenderService.sendUpload({
+        sessionUnitId,
+        quoteMessageId,
+        remindList,
+        file,
+        onUploadProgress(progressEvent) {
+          progressStore.set(
+            `${autoId}`,
+            { percent: Math.floor(Number(progressEvent.progress) * 100), sessionUnitId },
+            true,
+            1500,
+          );
+          onProgress?.call(this, progressEvent);
+        },
+      });
+    }
+    return MessageSenderService.send({
       messageType,
-      sessionUnitId: sessionUnitId,
+      sessionUnitId,
       requestBody: {
-        quoteMessageId: quoteMessage?.id,
+        quoteMessageId,
         ignoreConnections: null,
-        remindList: [],
+        remindList,
         content,
       },
-    })
+    });
+  };
+
+  const _send = () => {
+    senderService()
       .then(res => {
         console.log('sendRet', res);
         store.setMaxMessageId(res.id!);
@@ -158,8 +183,11 @@ export const sendMessage = async ({
       });
   };
 
+  _send();
+  return;
   if (!file) {
     _send();
+
     return;
   }
 

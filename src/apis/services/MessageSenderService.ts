@@ -16,6 +16,7 @@ import { FileContentDto } from '../dtos/message/FileContentDto';
 import { ContactsContentDto } from '../dtos/message/ContactsContentDto';
 import { ImageContentDto } from '../dtos/message/ImageContentDto';
 import { MessageTypeEnums } from '../enums';
+import { AxiosProgressEvent } from 'axios';
 
 export class MessageSenderService {
   /**
@@ -23,7 +24,7 @@ export class MessageSenderService {
    * @returns IczpNet_Chat_MessageSections_Messages_Dtos_MessageDto Success
    * @throws ApiError
    */
-  public static postApiChatMessageSenderForward({
+  public static forward({
     sessionUnitId,
     messageId,
     requestBody,
@@ -58,7 +59,7 @@ export class MessageSenderService {
    * @returns number Success
    * @throws ApiError
    */
-  public static postApiChatMessageSenderRollback({
+  public static rollback({
     messageId,
   }: {
     /**
@@ -80,7 +81,7 @@ export class MessageSenderService {
    * @returns MessageOwnerDto Success
    * @throws ApiError
    */
-  public static postApiChatMessageSenderSendCmd({
+  public static sendCmd({
     sessionUnitId,
     requestBody,
   }: {
@@ -106,7 +107,7 @@ export class MessageSenderService {
    * @returns CancelablePromise<MessageOwnerDto>
    * @throws ApiError
    */
-  public static postApiChatMessageSenderSendContacts({
+  public static sendContacts({
     sessionUnitId,
     requestBody,
   }: {
@@ -132,7 +133,7 @@ export class MessageSenderService {
    * @returns CancelablePromise<MessageOwnerDto>
    * @throws ApiError
    */
-  public static postApiChatMessageSenderSendFile({
+  public static sendFile({
     sessionUnitId,
     requestBody,
   }: {
@@ -158,7 +159,7 @@ export class MessageSenderService {
    * @returns CancelablePromise<MessageOwnerDto>
    * @throws ApiError
    */
-  public static postApiChatMessageSenderSendHistory({
+  public static sendHistory({
     sessionUnitId,
     requestBody,
   }: {
@@ -184,7 +185,7 @@ export class MessageSenderService {
    * @returns CancelablePromise<MessageOwnerDto>
    * @throws ApiError
    */
-  public static postApiChatMessageSenderSendHtml({
+  public static sendHtml({
     sessionUnitId,
     requestBody,
   }: {
@@ -210,7 +211,7 @@ export class MessageSenderService {
    * @returns CancelablePromise<MessageOwnerDto>
    * @throws ApiError
    */
-  public static postApiChatMessageSenderSendImage({
+  public static sendImage({
     sessionUnitId,
     requestBody,
   }: {
@@ -236,7 +237,7 @@ export class MessageSenderService {
    * @returns CancelablePromise<MessageOwnerDto>
    * @throws ApiError
    */
-  public static postApiChatMessageSenderSendLink({
+  public static sendLink({
     sessionUnitId,
     requestBody,
   }: {
@@ -262,7 +263,7 @@ export class MessageSenderService {
    * @returns CancelablePromise<MessageOwnerDto>
    * @throws ApiError
    */
-  public static postApiChatMessageSenderSendLocation({
+  public static sendLocation({
     sessionUnitId,
     requestBody,
   }: {
@@ -288,7 +289,7 @@ export class MessageSenderService {
    * @returns CancelablePromise<MessageOwnerDto>
    * @throws ApiError
    */
-  public static postApiChatMessageSenderSendRedEnvelope({
+  public static sendRedEnvelope({
     sessionUnitId,
     requestBody,
   }: {
@@ -314,7 +315,7 @@ export class MessageSenderService {
    * @returns CancelablePromise<MessageOwnerDto>
    * @throws ApiError
    */
-  public static postApiChatMessageSenderSendSound({
+  public static sendSound({
     sessionUnitId,
     requestBody,
   }: {
@@ -340,7 +341,7 @@ export class MessageSenderService {
    * @returns CancelablePromise<MessageOwnerDto>
    * @throws ApiError
    */
-  public static postApiChatMessageSenderSendText({
+  public static sendText({
     sessionUnitId,
     requestBody,
   }: {
@@ -366,7 +367,7 @@ export class MessageSenderService {
    * @returns CancelablePromise<MessageOwnerDto>
    * @throws ApiError
    */
-  public static postApiChatMessageSenderSendVideo({
+  public static sendVideo({
     sessionUnitId,
     requestBody,
   }: {
@@ -387,6 +388,60 @@ export class MessageSenderService {
     });
   }
 
+  /**
+   * 上传并发送
+   * @returns MessageOwnerDto Success
+   * @throws ApiError
+   */
+  public static sendUpload({
+    sessionUnitId,
+    quoteMessageId,
+    remindList,
+    file,
+    onUploadProgress,
+  }: {
+    /**
+     * 主建Id
+     */
+    sessionUnitId?: string;
+    /**
+     * 引用消息Id
+     *
+     * @type {number}
+     */
+    quoteMessageId?: number;
+    /**
+     * 提醒（@XXX） sessionUnitId
+     *
+     * @type {Array<string>}
+     */
+    remindList?: Array<string>;
+    /**
+     * file
+     *
+     * @type {Blob}
+     */
+    file: Blob;
+    onUploadProgress?: (progressEvent: AxiosProgressEvent) => void;
+  }): CancelablePromise<MessageOwnerDto> {
+    return __request(OpenAPI, {
+      method: 'POST',
+      url: '/api/chat/message-sender/send-upload/{sessionUnitId}',
+      path: {
+        sessionUnitId,
+      },
+      query: {
+        quoteMessageId,
+        remindList,
+      },
+      formData: {
+        file,
+      },
+      mediaType: 'multipart/form-data',
+      onUploadProgress,
+    });
+  }
+
   public static send(args: {
     /**
      * 会话单元Id
@@ -404,19 +459,19 @@ export class MessageSenderService {
     const _args = { sessionUnitId, requestBody };
     switch (messageType) {
       case MessageTypeEnums.Text:
-        return this.postApiChatMessageSenderSendText(_args);
+        return this.sendText(_args);
       case MessageTypeEnums.Image:
-        return this.postApiChatMessageSenderSendImage(_args);
+        return this.sendImage(_args);
       case MessageTypeEnums.File:
-        return this.postApiChatMessageSenderSendFile(_args);
+        return this.sendFile(_args);
       case MessageTypeEnums.Sound:
-        return this.postApiChatMessageSenderSendSound(_args);
+        return this.sendSound(_args);
       case MessageTypeEnums.Video:
-        return this.postApiChatMessageSenderSendVideo(_args);
+        return this.sendVideo(_args);
       case MessageTypeEnums.Contacts:
-        return this.postApiChatMessageSenderSendContacts(_args);
+        return this.sendContacts(_args);
       case MessageTypeEnums.History:
-        return this.postApiChatMessageSenderSendHistory(_args);
+        return this.sendHistory(_args);
     }
     throw new Error(`messageType error;${messageType}`);
   }

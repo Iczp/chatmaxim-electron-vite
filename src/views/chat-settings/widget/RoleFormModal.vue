@@ -68,6 +68,7 @@ const open = (input: Args) => {
 
   if (input.id) {
     isPending.value = true;
+    okBtnDisabled.value = true;
     SessionRoleBySessionUnitService.getItem({
       id: input.id!,
       sessionUnitId: input.sessionUnitId!,
@@ -76,6 +77,7 @@ const open = (input: Args) => {
         console.log('getItem', res);
         formState.value = res as FormState;
         checkedKeys.value = Object.keys(res.permissionGrant!);
+        okBtnDisabled.value = false;
       })
       .finally(() => {
         isPending.value = false;
@@ -211,7 +213,7 @@ defineExpose({
           v-model:selectedKeys="selectedKeys"
           v-model:checkedKeys="checkedKeys"
           checkable
-          :height="240"
+          :height="180"
           :tree-data="treeData"
         >
           <template #title="{ title, key }">

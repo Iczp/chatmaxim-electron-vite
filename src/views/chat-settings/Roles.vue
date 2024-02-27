@@ -6,8 +6,9 @@ import RoleFromModal from './widget/RoleFormModal.vue';
 import { onActivated } from 'vue';
 import { SessionRoleDetailDto } from '../../apis/models/SessionRoleDetailDto';
 import Loading from '../../components/Loading.vue';
-import { MoreOutlined } from '@ant-design/icons-vue';
+import { MoreOutlined, SearchOutlined } from '@ant-design/icons-vue';
 import EmptyData from '../../components/EmptyData.vue';
+import { Plus } from '../../icons';
 const { t } = useI18n();
 const props = defineProps<{ sessionUnitId: string }>();
 const formModal = ref<InstanceType<typeof RoleFromModal> | null>();
@@ -99,9 +100,24 @@ onActivated(() => {
     <page-title :title="t('Session Roles')" description="managermemt" />
     <RoleFromModal ref="formModal" @change="refresh" />
     <page-content>
-      <div>
-        <a-button type="text" @click="add">add</a-button>
+      <div class="section">
+        <div class="section-search">
+          <a-input
+            v-model:value="query.keyword"
+            :allowClear="true"
+            :placeholder="t('Search')"
+            enter-button
+          >
+            <template #addonAfter>
+              <div><SearchOutlined /></div>
+            </template>
+          </a-input>
+        </div>
+        <a-button type="text" @click="add">
+          <Plus class="svg-icon cursor-pointer" />
+        </a-button>
       </div>
+
       <!-- <a-tabs v-model:activeKey="activeKey" size="small" @edit="onEdit">
         <template #rightExtra>
           <a-button type="text">Add</a-button>
@@ -155,13 +171,26 @@ onActivated(() => {
 :deep(.page-content) {
   margin-left: 0px;
 }
+.section {
+  display: flex;
+  flex-direction: column;
+  padding: 20px;
+  flex-direction: row;
+  justify-content: space-between;
+}
+.section-search {
+  display: flex;
+  /* flex: 1; */
+  border-bottom: 1px solid var(--divider-color);
+}
+
 .data-item {
-  padding: 0 12px;
+  padding: 0 20px;
   height: 48px;
   flex-direction: row;
   align-items: center;
 }
-.check-box{
+.check-box {
   display: flex;
   /* flex: 1;  */
 }

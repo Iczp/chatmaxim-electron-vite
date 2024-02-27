@@ -104,7 +104,7 @@ export const forwardMessage = ({
 
       message.loading({ content: t('Message forwarding'), key });
 
-      MessageSenderService.postApiChatMessageSenderForward({
+      MessageSenderService.forward({
         sessionUnitId,
         messageId,
         requestBody: v.selectedItems?.map(x => x.id!.toString()) || [],
@@ -155,7 +155,7 @@ export const rollbackMessage = ({
         // }).catch(() => console.log('Oops errors!'));
 
         const key = new Date().toString();
-        MessageSenderService.postApiChatMessageSenderRollback({
+        MessageSenderService.rollback({
           messageId,
         })
           .then(res => {
