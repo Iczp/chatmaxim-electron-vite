@@ -18,11 +18,9 @@ const uploadFile = ({
   onProgress?: (progressEvent: AxiosProgressEvent) => void;
 }): CancelablePromise<ChatObjectDto> => {
   return new CancelablePromise<ChatObjectDto>((resolve, reject) => {
-    ChatObjectService.postApiChatChatObjectUpdatePortrait({
+    ChatObjectService.uploadPortrait({
       id: 13,
-      formData: {
-        file,
-      },
+      file,
       onUploadProgress(progressEvent) {
         console.log('uploadFile onUploadProgress', progressEvent);
         onProgress?.call(this, progressEvent);

@@ -3,11 +3,10 @@ import { UnwrapRef, reactive, ref, toRaw } from 'vue';
 import { useI18n } from 'vue-i18n';
 import { useDestination } from './commons/useDestination';
 import CopyBox from '../../components/CopyBox.vue';
-const { sessionUnit, memberCount } = useDestination();
 
 const { t } = useI18n();
 const props = defineProps<{ sessionUnitId: string }>();
-
+const { sessionUnit, memberCount } = useDestination(props.sessionUnitId);
 // const isTopping = ref(Number(props.entity?.sorting) > 0);
 // const isImmersed = ref(setting?.isImmersed);
 // const isContacts = ref(setting?.isContacts);

@@ -472,17 +472,7 @@ const onReachEnd = (event: CustomEvent) => {
     return;
   }
 };
-const uploadFile = (file: Blob) => {
-  ChatObjectService.postApiChatChatObjectUpdatePortrait({
-    id: 13,
-    formData: {
-      file,
-    },
-    onUploadProgress(progressEvent) {
-      console.log('uploadFile onUploadProgress', progressEvent);
-    },
-  });
-};
+
 const dropHandle = (ev: DragEvent, { files, text }: { files?: any[]; text?: string }) => {
   console.log('dropHandle', ev, { files, text });
   if (!(Number(files?.length) > 0 || text)) {

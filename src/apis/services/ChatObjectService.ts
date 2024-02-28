@@ -539,27 +539,27 @@ export class ChatObjectService {
    * @returns ChatObjectDto Success
    * @throws ApiError
    */
-  public static postApiChatChatObjectUpdatePortrait({
+  public static uploadPortrait({
     id,
-    formData,
+    file,
     onUploadProgress,
   }: {
     /**
      * 主建Id
      */
     id?: number;
-    formData?: {
-      file?: Blob;
-    };
+    file?: Blob;
     onUploadProgress?: (progressEvent: AxiosProgressEvent) => void;
   }): CancelablePromise<ChatObjectDto> {
     return __request(OpenAPI, {
       method: 'POST',
-      url: '/api/chat/ChatObject/UpdatePortrait',
-      query: {
+      url: '/api/chat/chat-object/{id}/upload-portrait',
+      path: {
         id: id,
       },
-      formData: formData,
+      formData: {
+        file,
+      },
       mediaType: 'multipart/form-data',
       onUploadProgress,
     });

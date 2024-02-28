@@ -4,7 +4,7 @@ import { ChatObjectDto } from '../apis/dtos';
 import { Person, Group, Groups, SmartToy, Services, ShoppingBag } from '../icons';
 import { computed, ref } from 'vue';
 import { ChatObjectTypeEnums } from '../apis/enums';
-import { env } from '../env';
+import { formatUrl } from '../commons/utils';
 const props = defineProps<{
   name?: string | null;
   entity?: ChatObjectDto;
@@ -15,15 +15,8 @@ const svgClass = computed(() => 'svg-icon svg-icon-' + (Number(props.size) || 48
 
 // File/831C11D5-A3DF-6943-E20D-3A10F706CCA7
 
-const src = computed(() => {
-  if (!props.entity?.portrait) {
-    return undefined;
-  }
-  if (props.entity?.portrait.startsWith('/')) {
-    return `${env.base_url}${props.entity?.portrait}`;
-  }
-  return props.entity?.portrait;
-});
+const src = computed(() => formatUrl(props.entity?.portrait));
+
 </script>
 
 <template>

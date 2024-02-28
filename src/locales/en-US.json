@@ -188,5 +188,7 @@
   "SomeDestination": "Some friends",
   "SessionUnitId": "Session Unit Id",
   "UpdateSuccessful": "Update Successful",
-  "RoleEdit": "Edit Role"
+  "RoleEdit": "Edit Role",
+  "Uploading": "Pending",
+  "UploadSuccessful": "Upload successful"
 }

@@ -1,5 +1,6 @@
 import moment from 'moment';
 import { useRouter } from 'vue-router';
+import { env } from '../env';
 import { router, chatHistorys } from '../routes';
 import {
   ChatObjectDto,
@@ -410,4 +411,14 @@ export const enumToKeyValues = (
   return Object.entries(enums)
     .filter(([a, b]) => Number(b) >= 0)
     .map(([key, value]) => ({ label: t(prefix + key), value }));
+};
+
+export const formatUrl = (url?: string): string | undefined => {
+  if (!url) {
+    return undefined;
+  }
+  if (url.startsWith('/')) {
+    return `${env.base_url}${url}`;
+  }
+  return url;
 };
