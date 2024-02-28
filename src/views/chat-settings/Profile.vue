@@ -55,7 +55,7 @@ const wrapperCol = { span: 14 };
           style="margin-top: 50px"
         >
           <a-form-item :label="t('Name')">
-            {{ sessionUnit?.destination?.name }}
+            {{ sessionUnit?.destination?.name }}(id:{{ sessionUnit?.destination?.id }})
             <!-- <a-input v-model:value="formState.name" :readOnly="true"/> -->
           </a-form-item>
 

@@ -24,7 +24,7 @@ import ScrollView from '../../components/ScrollView.vue';
 import ChatInput from './widget/ChatInput.vue';
 
 import { NodeExpandOutlined } from '@ant-design/icons-vue';
-import {  message } from 'ant-design-vue';
+import { message } from 'ant-design-vue';
 import { useImStore } from '../../stores/im';
 import { MessageDto } from '../../apis/dtos';
 import { ContextmenuInput, showContextMenuForMessage } from '../../commons/contextmenu';
@@ -138,23 +138,24 @@ const playMessageId = ref<number>();
 const { detail, fetchDetail } = useSessionUnitDetail({ sessionUnitId });
 // provide:profile
 provide('profile', profileModal);
-
-watch(
-  () => sessionUnitId,
-  (sessionUnitId, old) => {
-    console.warn('#watch sessionUnitId', sessionUnitId, old);
-    provide('sessionUnitId', sessionUnitId);
-  },
-  { immediate: true },
-);
-watch(
-  () => chatObjectId,
-  (chatObjectId, old) => {
-    console.warn('#watch chatObjectId', chatObjectId, old);
-    provide('chatObjectId', chatObjectId);
-  },
-  { immediate: true },
-);
+provide('sessionUnitId', sessionUnitId);
+provide('chatObjectId', chatObjectId);
+// watch(
+//   () => sessionUnitId,
+//   (sessionUnitId, old) => {
+//     console.warn('#watch sessionUnitId', sessionUnitId, old);
+//     provide('sessionUnitId', sessionUnitId);
+//   },
+//   { immediate: true },
+// );
+// watch(
+//   () => chatObjectId,
+//   (chatObjectId, old) => {
+//     console.warn('#watch chatObjectId', chatObjectId, old);
+//     provide('chatObjectId', chatObjectId);
+//   },
+//   { immediate: true },
+// );
 
 // watch(
 //   () => route.fullPath,

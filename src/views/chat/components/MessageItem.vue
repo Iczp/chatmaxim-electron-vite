@@ -108,7 +108,7 @@ const onMessageClick = (event: MouseEvent, mouseButton: MouseButton) => {
       <section class="msg-body" :class="{ reverse: entity.isSelf }">
         <aside class="msg-aside">
           <Avatar
-            :item="entity.senderSessionUnit?.owner"
+            :entity="entity.senderSessionUnit?.owner"
             :size="40"
             :name="senderName"
             @click.stop.native="onAvatarClick($event, MouseButton.Click)"

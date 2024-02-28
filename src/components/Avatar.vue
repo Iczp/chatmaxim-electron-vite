@@ -2,8 +2,9 @@
 import { UserOutlined } from '@ant-design/icons-vue';
 import { ChatObjectDto } from '../apis/dtos';
 import { Person, Group, Groups, SmartToy, Services, ShoppingBag } from '../icons';
-import { computed } from 'vue';
+import { computed, ref } from 'vue';
 import { ChatObjectTypeEnums } from '../apis/enums';
+import { env } from '../env';
 const props = defineProps<{
   name?: string | null;
   entity?: ChatObjectDto;
@@ -11,10 +12,29 @@ const props = defineProps<{
 }>();
 const objectType = computed(() => props.entity?.objectType);
 const svgClass = computed(() => 'svg-icon svg-icon-' + (Number(props.size) || 48) / 2);
+
+// File/831C11D5-A3DF-6943-E20D-3A10F706CCA7
+
+const src = computed(() => {
+  if (!props.entity?.portrait) {
+    return undefined;
+  }
+  if (props.entity?.portrait.startsWith('/')) {
+    return `${env.base_url}${props.entity?.portrait}`;
+  }
+  return props.entity?.portrait;
+});
 </script>
 
 <template>
-  <a-avatar shape="circle" :size="size || 40" class="avatar" :alt="name" :object-type="objectType">
+  <a-avatar
+    :src="src"
+    shape="circle"
+    :size="size || 40"
+    class="avatar"
+    :alt="name"
+    :object-type="objectType"
+  >
     <template #icon>
       <Group v-if="objectType == ChatObjectTypeEnums.Room" :class="svgClass" />
       <Groups v-else-if="objectType == ChatObjectTypeEnums.Square" :class="svgClass" />
