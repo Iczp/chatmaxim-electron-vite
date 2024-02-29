@@ -239,14 +239,14 @@ export class RoomService {
    * @throws ApiError
    */
   public static uploadPortrait({
-    sessionUnitId: id,
+    sessionUnitId,
     file,
     onUploadProgress,
   }: {
     /**
      * 主建Id
      */
-    sessionUnitId?: number;
+    sessionUnitId?: string;
     file?: Blob;
     onUploadProgress?: (progressEvent: AxiosProgressEvent) => void;
   }): CancelablePromise<ChatObjectDto> {
@@ -254,7 +254,7 @@ export class RoomService {
       method: 'POST',
       url: '/api/chat/room/upload-portrait/{sessionUnitId}',
       path: {
-        id: id,
+        sessionUnitId,
       },
       formData: {
         file,

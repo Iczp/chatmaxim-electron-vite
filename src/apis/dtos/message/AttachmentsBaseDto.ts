@@ -1,14 +1,14 @@
-import { AttachmentsBaseDto } from "./AttachmentsBaseDto";
-
 /**
- * 文件消息
+ * 附件消息
  */
-export type FileContentDto = AttachmentsBaseDto & {
+export type AttachmentsBaseDto = {
   id?: string | null;
   /**
-   * FileName
+   *
+   *
+   * @type {(string | null)}
    */
-  fileName?: string | null;
+  blobId?: string | null;
   /**
    * 文件地址
    */

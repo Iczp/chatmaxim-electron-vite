@@ -1,7 +1,9 @@
+import { AttachmentsBaseDto } from "./AttachmentsBaseDto";
+
 /**
  * 图片消息
  */
-export type ImageContentDto = {
+export type ImageContentDto = AttachmentsBaseDto & {
   id?: string | null;
   /**
    * 图片地址

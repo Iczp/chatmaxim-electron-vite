@@ -209,7 +209,7 @@ defineExpose({
 .data-list {
   display: flex;
   flex-direction: column;
-  /* padding: 12px; */
+  padding: 0;
   user-select: text;
   /* background-color: var(--background-color); */
 }

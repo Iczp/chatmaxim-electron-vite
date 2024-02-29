@@ -358,7 +358,7 @@ export const mapToFileContentDto = (file: File): FileContentDto => {
   return <FileContentDto>{
     fileName: file.name,
     contentType: file.type,
-    contentLength: file.size,
+    size: file.size,
     path: file.path,
     suffix: `.${file.name.split('.').pop()}`,
     lastModifiedDate: file.lastModified,

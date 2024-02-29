@@ -1,7 +1,9 @@
+import { AttachmentsBaseDto } from "./AttachmentsBaseDto";
+
 /**
  * 视频消息
  */
-export type VideoContentDto = {
+export type VideoContentDto = AttachmentsBaseDto & {
   id?: string | null;
   /**
    * 视频地址

@@ -4,6 +4,7 @@ import { EditOutlined, EllipsisOutlined } from '@ant-design/icons-vue';
 import { ChatObjectService } from '../apis';
 import { ChatObjectDto, ResultValue } from '../apis/dtos';
 import ChatObject from '../components/ChatObject.vue';
+import Avatar from '../components/Avatar.vue';
 import { useI18n } from 'vue-i18n';
 import { openChildWindow } from '../ipc/openChildWindow';
 import { useWindowStore } from '../stores/window';
@@ -89,7 +90,7 @@ const getDescription = (item: ChatObjectDto): string =>
 
               <a-card-meta :title="getDisplayName(item)" :description="getDescription(item)">
                 <template #avatar>
-                  <a-avatar src="https://m.rctea.com/mobile/images/precomposed.png" />
+                  <Avatar :entity="item" />
                 </template>
               </a-card-meta>
 

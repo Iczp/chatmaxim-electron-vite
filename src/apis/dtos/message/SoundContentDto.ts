@@ -1,7 +1,7 @@
 /**
  * 语音消息
  */
-export type SoundContentDto = {
+export type SoundContentDto =  {
   id?: string | null;
   /**
    * 语音地址

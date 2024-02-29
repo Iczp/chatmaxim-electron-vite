@@ -16,10 +16,10 @@ const content = computed(() => props.item.content as FileContentDto);
     <file-item
       :name="content?.fileName"
       :suffix="content?.suffix"
-      :size="content?.contentLength"
+      :size="content?.size"
     ></file-item>
     <div class="footer">
-      <div>{{ prettyBytes(content?.contentLength || 0) }}</div>
+      <div>{{ prettyBytes(content?.size || 0) }}</div>
       <div>{{ content?.suffix }}</div>
     </div>
   </Bubble>

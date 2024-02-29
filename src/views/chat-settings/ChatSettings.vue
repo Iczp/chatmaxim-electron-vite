@@ -7,8 +7,8 @@ import ChatObject from '../../components/ChatObject.vue';
 import { useDestination } from './commons/useDestination';
 import { computed } from 'vue';
 import { ChatObjectTypeEnums } from '../../apis/enums';
-
 const { t } = useI18n();
+const props = defineProps<{ sessionUnitId: string }>();
 const route = useRoute();
 const router = useRouter();
 const objectType = computed(() => sessionUnit.value?.destination?.objectType);
@@ -21,7 +21,7 @@ const navItems = computed(() =>
   ),
 );
 
-const { sessionUnit, memberCount } = useDestination();
+const { sessionUnit, memberCount } = useDestination(props.sessionUnitId);
 
 const onTabClick = (item: any, index: number) => {
   // console.log(item, index);
