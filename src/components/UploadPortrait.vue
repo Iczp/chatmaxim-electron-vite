@@ -11,6 +11,7 @@ import { useFileDialog, useObjectUrl } from '@vueuse/core';
 import { formatUrl } from '../commons/utils';
 import { usePayload } from '../commons/usePayload';
 import { ChatObjectDto } from '../apis/dtos';
+import { Plus } from '../icons';
 const { t } = useI18n();
 const props = defineProps<{
   id: string | number;
@@ -151,7 +152,10 @@ const realTime = (data: any) => {
     <page-content>
       <div class="header">
         <div class="preview-wrapper" @click="chooseFile">
-          <img v-if="!currentImg" :src="portrait" class="portrait-img" />
+          <div v-if="!currentImg" class="preview-icon-wrapper">
+            <img v-if="portrait" :src="portrait" class="portrait-img" />
+            <Plus v-else class="svg-icon-32 cursor-pointer" />
+          </div>
           <div v-else :style="previewStyle">
             <div :style="previews.div">
               <img :src="previews.url" :style="previews.img" />
@@ -232,6 +236,14 @@ const realTime = (data: any) => {
   background-color: rgba(123, 123, 123, 0.506);
   overflow: hidden;
   border-radius: 50%;
+  justify-content: center;
+  align-items: center;
+}
+.preview-icon-wrapper {
+  display: flex;
+
+  justify-items: center;
+  align-items: center;
 }
 .portrait-img {
   width: 100%;

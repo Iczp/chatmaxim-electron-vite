@@ -3,7 +3,7 @@ import { ChatObjectTypeEnums } from '../apis/enums';
 
 export const chatSettingsRoutes: RouteRecordRaw[] = [
   {
-    path: 'profile/:sessionUnitId',
+    path: ':sessionUnitId/profile',
     name: 'session-profile',
     meta: {
       title: 'Session Profile',
@@ -12,7 +12,7 @@ export const chatSettingsRoutes: RouteRecordRaw[] = [
     props: true,
   },
   {
-    path: 'name/:sessionUnitId',
+    path: ':sessionUnitId/name',
     name: 'session-name',
     meta: {
       title: 'Session Name',
@@ -37,7 +37,7 @@ export const chatSettingsRoutes: RouteRecordRaw[] = [
     props: true,
   },
   {
-    path: 'organiztions/:sessionUnitId',
+    path: ':sessionUnitId/organiztions',
     name: 'session-organiztions',
     meta: {
       title: 'Session Organiztions',
@@ -47,7 +47,7 @@ export const chatSettingsRoutes: RouteRecordRaw[] = [
     props: true,
   },
   {
-    path: 'roles/:sessionUnitId',
+    path: ':sessionUnitId/roles',
     name: 'session-roles',
     meta: {
       title: 'Session Roles',
@@ -57,7 +57,7 @@ export const chatSettingsRoutes: RouteRecordRaw[] = [
     props: true,
   },
   {
-    path: 'permissions/:sessionUnitId',
+    path: ':sessionUnitId/permissions',
     name: 'session-permissions',
     meta: {
       title: 'Session Permissions',
@@ -67,7 +67,7 @@ export const chatSettingsRoutes: RouteRecordRaw[] = [
     props: true,
   },
   {
-    path: 'request/:sessionUnitId',
+    path: ':sessionUnitId/request',
     name: 'session-request-list',
     meta: {
       title: 'Session Request',
@@ -77,7 +77,7 @@ export const chatSettingsRoutes: RouteRecordRaw[] = [
     props: true,
   },
   {
-    path: 'portrait/:sessionUnitId',
+    path: ':sessionUnitId/portrait',
     name: 'session-portrait',
     meta: {
       title: 'Session Portrait',

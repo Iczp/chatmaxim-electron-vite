@@ -179,7 +179,7 @@ const openChatSettings = () => {
     t,
     window: {
       name: `${windowStore.name}:chat-settings`,
-      path: `/chat-settings/profile/${sessionUnitId}?chatObjectId=${chatObjectId}`,
+      path: `/chat-settings/${sessionUnitId}/profile?ownerId=${chatObjectId}`,
       payload: {
         sessionUnit: toRaw(sessionUnit.value),
         memberCount: detail.value?.sessionUnitCount,
