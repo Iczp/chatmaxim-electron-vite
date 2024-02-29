@@ -8,6 +8,7 @@ import type { Volo_Abp_Application_Dtos_PagedResultDto_1 } from '../models/Volo_
 import type { CancelablePromise } from '../core/CancelablePromise';
 import { OpenAPI } from '../core/OpenAPI';
 import { request as __request } from '../core/request';
+import { AxiosProgressEvent } from "axios";
 
 export class RoomService {
   /**
@@ -229,6 +230,37 @@ export class RoomService {
       query: {
         portrait: portrait,
       },
+    });
+  }
+
+  /**
+   * 上传群头像
+   * @returns ChatObjectDto Success
+   * @throws ApiError
+   */
+  public static uploadPortrait({
+    sessionUnitId: id,
+    file,
+    onUploadProgress,
+  }: {
+    /**
+     * 主建Id
+     */
+    sessionUnitId?: number;
+    file?: Blob;
+    onUploadProgress?: (progressEvent: AxiosProgressEvent) => void;
+  }): CancelablePromise<ChatObjectDto> {
+    return __request(OpenAPI, {
+      method: 'POST',
+      url: '/api/chat/room/upload-portrait/{sessionUnitId}',
+      path: {
+        id: id,
+      },
+      formData: {
+        file,
+      },
+      mediaType: 'multipart/form-data',
+      onUploadProgress,
     });
   }
 }
