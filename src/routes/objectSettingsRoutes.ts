@@ -3,7 +3,7 @@ import { ChatObjectTypeEnums } from '../apis/enums';
 
 export const objectSettingsRoutes: RouteRecordRaw[] = [
   {
-    path: 'profile/:chatObjectId(\\d+)',
+    path: ':chatObjectId(\\d+)/profile',
     name: 'object-settings-profile',
     meta: {
       title: 'Profile',
@@ -12,7 +12,7 @@ export const objectSettingsRoutes: RouteRecordRaw[] = [
     props: true,
   },
   {
-    path: 'entries/:chatObjectId(\\d+)',
+    path: ':chatObjectId(\\d+)/entries',
     name: 'object-settings-entries',
     meta: {
       title: 'Entries',
@@ -21,13 +21,22 @@ export const objectSettingsRoutes: RouteRecordRaw[] = [
     props: true,
   },
   {
-    path: 'waiters/:chatObjectId(\\d+)',
+    path: ':chatObjectId(\\d+)/waiters',
     name: 'object-settings-waiters',
     meta: {
       title: 'ShopWaiter',
       objectTypes: [ChatObjectTypeEnums.ShopKeeper],
     },
     component: () => import('../views/object-settings/Waiters.vue'),
+    props: true,
+  },
+  {
+    path: ':chatObjectId(\\d+)/portrait',
+    name: 'user-portrait',
+    meta: {
+      title: 'User Portrait',
+    },
+    component: () => import('../views/object-settings/Portrait.vue'),
     props: true,
   },
 ];

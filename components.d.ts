@@ -74,6 +74,7 @@ declare module 'vue' {
     Text: typeof import('./src/components/Text.vue')['default']
     TextViewer: typeof import('./src/components/TextViewer.vue')['default']
     TooBar: typeof import('./src/components/TooBar.vue')['default']
+    UploadPortrait: typeof import('./src/components/UploadPortrait.vue')['default']
     VideoPlayer: typeof import('./src/components/VideoPlayer.vue')['default']
   }
 }

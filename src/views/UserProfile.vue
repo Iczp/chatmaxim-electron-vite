@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { onMounted, reactive, ref } from 'vue';
+import { onActivated, onMounted, reactive, ref } from 'vue';
 import { EditOutlined, EllipsisOutlined } from '@ant-design/icons-vue';
 import { ChatObjectService } from '../apis';
 import { ChatObjectDto, ResultValue } from '../apis/dtos';
@@ -36,14 +36,14 @@ const videoOption = ref({
   ],
 });
 
-const fetchEntity = () => {
+const fetchList = () => {
   ChatObjectService.getApiChatChatObjectByCurrentUser({}).then(res => {
     console.log('getApiChatChatObjectByCurrentUser', res);
     ret.items = res.items!;
   });
 };
-onMounted(() => {
-  fetchEntity();
+onActivated(() => {
+  fetchList();
 });
 
 const openObjectProfile = (item: ChatObjectDto) => {
@@ -51,7 +51,7 @@ const openObjectProfile = (item: ChatObjectDto) => {
     t,
     window: {
       name: `${windowStore.name}:object-settings`,
-      path: `/object-settings/profile/${item.id}`,
+      path: `/object-settings/${item.id}/profile`,
       payload: {
         chatObjectId: item.id,
         owner: item,
@@ -62,7 +62,7 @@ const openObjectProfile = (item: ChatObjectDto) => {
       visiblity: true,
     },
   }).finally(() => {
-    fetchEntity();
+    fetchList();
   });
 };
 
