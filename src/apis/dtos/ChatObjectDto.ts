@@ -90,6 +90,12 @@ export type ChatObjectDto = IdDto & {
   /**
    *
    *
+   * @type {(string | null)}
+   */
+  thumbnail?: string;
+  /**
+   *
+   *
    * @type {(string )}
    */
   appUserId?: string;

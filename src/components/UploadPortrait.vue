@@ -107,7 +107,7 @@ const onSubmit = () => {
     service(file)
       .then(res => {
         message.success({ content: t('UploadSuccessful'), key });
-        const url = formatUrl(`/file/${res.id}`);
+        const url = formatUrl(res.portrait);
         tryChangePortrait(url!);
         emits('change', url!);
         currentImg.value = undefined;
