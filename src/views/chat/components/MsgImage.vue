@@ -48,7 +48,7 @@ const src = computed(() => content.value.path || formatUrl(content.value.thumbna
       :src="src"
       :class="{ error: isError }"
       :preview="false"
-      :width="rect.width"
+      
       :height="rect.height"
       @click="visible = true"
       @error="onError"
