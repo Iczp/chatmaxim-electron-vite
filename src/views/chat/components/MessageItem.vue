@@ -113,6 +113,7 @@ const onMessageClick = (event: MouseEvent, mouseButton: MouseButton) => {
             :name="senderName"
             @click.stop.native="onAvatarClick($event, MouseButton.Click)"
             @click.right.stop.native="onAvatarClick($event, MouseButton.Right)"
+            thumb
           />
         </aside>
 

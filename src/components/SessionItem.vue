@@ -93,6 +93,7 @@ const onItemClick = (event: MouseEvent | PointerEvent) => {
     sub
     sub-right
     title-right
+    thumb
   >
     <template #title>
       <div class="object-name" :title="destinationName!">

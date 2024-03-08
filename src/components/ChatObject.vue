@@ -14,7 +14,7 @@ const props = defineProps<{
   size?: number;
   badge?: string | number;
   dot?: boolean | null;
-  
+  thumb?: boolean;
 }>();
 
 // custom slot
@@ -30,7 +30,7 @@ const displayName = computed(
   <layout-item class="chat-object" v-bind="attrs" header>
     <template #header>
       <a-badge :count="badge" :overflow-count="99" size="default" :dot="dot">
-        <avatar :entity="entity" :size="size" />
+        <avatar :entity="entity" :size="size" :thumb="thumb" />
       </a-badge>
     </template>
     <template #title>

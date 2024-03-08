@@ -9,14 +9,18 @@ const props = defineProps<{
   name?: string | null;
   entity?: ChatObjectDto;
   size?: number | string;
+  thumb?: boolean;
 }>();
 const objectType = computed(() => props.entity?.objectType);
 const svgClass = computed(() => 'svg-icon svg-icon-' + (Number(props.size) || 48) / 2);
 
 // File/831C11D5-A3DF-6943-E20D-3A10F706CCA7
 
-const src = computed(() => formatUrl(props.entity?.portrait));
-
+const src = computed(() =>
+  formatUrl(
+    props.thumb ? props.entity?.thumbnail || props.entity?.portrait : props.entity?.portrait,
+  ),
+);
 </script>
 
 <template>

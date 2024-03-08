@@ -11,12 +11,13 @@ const props = defineProps<{
 const content = computed(() => props.item.content as ImageContentDto);
 
 import { ref } from 'vue';
+import { formatUrl } from '../../../commons/utils';
 const visible = ref(false);
 // https://zos.alipayobjects.com/rmsportal/jkjgkEfvpUPVyRjUImniVslZfWPnJuuZ.png?1703916163985
 const url = computed(() => content.value.url);
 const width = computed(() => content.value.width || 180);
-const height = computed(() => content.value.height || 240);
-const isError = ref(true);
+const height = computed(() => content.value.height);
+const isError = ref(false);
 const errMessage = ref('加载错误');
 const onError = (event: Event) => {
   isError.value = true;
@@ -26,6 +27,8 @@ const showErr = () => {
   console.warn('showErr');
 };
 const fallback = () => {};
+
+const src = computed(() => formatUrl(content.value.thumbnailUrl!));
 </script>
 
 <template>
@@ -34,13 +37,12 @@ const fallback = () => {};
   </Bubble> -->
 
   <div class="msg-image">
-    <div v-if="isError" class="empty" @click.stop.prevent="showErr">{{ errMessage }}</div>
+    <!-- <div v-if="isError" class="empty" @click.stop.prevent="showErr">{{ errMessage }}</div> -->
     <a-image
-      v-else
+      :src="src"
       :class="{ error: isError }"
       :preview="false"
-      :width="width"
-      :height="height"
+      :width="180"
       @click="visible = true"
       @error="onError"
     />
@@ -50,16 +52,16 @@ const fallback = () => {};
 <style scoped>
 .msg-image {
   user-select: none;
-  padding: 1px;
+  /* padding: 1px; */
   min-height: 40px;
   min-width: 24px;
-  line-height: 24px;
+  /* line-height: 24px; */
   max-width: var(--message-max-width);
   overflow: hidden;
   /* background-image: url(https://gw.alipayobjects.com/zos/antfincdn/LlvErxo8H9/photo-1503185912284-5271ff81b9a8.webp); */
   background-size: cover;
-  width: 180px;
-  height: 240px;
+  /* width: 180px; */
+  /* height: 240px; */
   background-color: rgb(228, 228, 228);
   border-radius: 4px;
   display: flex;
