@@ -393,7 +393,7 @@ export class MessageSenderService {
    * @returns MessageOwnerDto Success
    * @throws ApiError
    */
-  public static sendUpload({
+  public static sendUploadFile({
     sessionUnitId,
     quoteMessageId,
     remindList,
@@ -427,6 +427,60 @@ export class MessageSenderService {
     return __request(OpenAPI, {
       method: 'POST',
       url: '/api/chat/message-sender/send-upload/{sessionUnitId}',
+      path: {
+        sessionUnitId,
+      },
+      query: {
+        quoteMessageId,
+        remindList,
+      },
+      formData: {
+        file,
+      },
+      mediaType: 'multipart/form-data',
+      onUploadProgress,
+    });
+  }
+
+  /**
+   * 上传图片并发送
+   * @returns MessageOwnerDto Success
+   * @throws ApiError
+   */
+  public static sendUploadImage({
+    sessionUnitId,
+    quoteMessageId,
+    remindList,
+    file,
+    onUploadProgress,
+  }: {
+    /**
+     * 主建Id
+     */
+    sessionUnitId?: string;
+    /**
+     * 引用消息Id
+     *
+     * @type {number}
+     */
+    quoteMessageId?: number;
+    /**
+     * 提醒（@XXX） sessionUnitId
+     *
+     * @type {Array<string>}
+     */
+    remindList?: Array<string>;
+    /**
+     * file
+     *
+     * @type {Blob}
+     */
+    file: Blob;
+    onUploadProgress?: (progressEvent: AxiosProgressEvent) => void;
+  }): CancelablePromise<MessageOwnerDto> {
+    return __request(OpenAPI, {
+      method: 'POST',
+      url: '/api/chat/message-sender/send-upload-image/{sessionUnitId}',
       path: {
         sessionUnitId,
       },

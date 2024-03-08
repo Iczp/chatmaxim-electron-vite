@@ -4,7 +4,7 @@ import { ChatObjectDto, MessageDto, MessageOwnerDto, SessionUnitSenderDto } from
 import { MessageStateEnums, MessageTypeEnums } from '../apis/enums';
 import { useImStore } from '../stores/im';
 import { useProgressStore } from '../stores/progress';
-import { formatMessage } from './utils';
+import { formatMessage, isImageMime } from './utils';
 export type SendMessageError = {
   message: string;
   detail: ApiError | any;
@@ -129,21 +129,28 @@ export const sendMessage = async ({
 
   const senderService = (): CancelablePromise<MessageOwnerDto> => {
     if (file) {
-      return MessageSenderService.sendUpload({
+      console.log('file', file);
+
+      const onUploadProgress = (progressEvent: AxiosProgressEvent): void => {
+        progressStore.set(
+          `${autoId}`,
+          { percent: Math.floor(Number(progressEvent.progress) * 100), sessionUnitId },
+          true,
+          1500,
+        );
+        onProgress?.call(this, progressEvent);
+      };
+      const postData = {
         sessionUnitId,
         quoteMessageId,
         remindList,
         file,
-        onUploadProgress(progressEvent) {
-          progressStore.set(
-            `${autoId}`,
-            { percent: Math.floor(Number(progressEvent.progress) * 100), sessionUnitId },
-            true,
-            1500,
-          );
-          onProgress?.call(this, progressEvent);
-        },
-      });
+        onUploadProgress,
+      };
+      if (isImageMime(file.type)) {
+        return MessageSenderService.sendUploadImage(postData);
+      }
+      return MessageSenderService.sendUploadFile(postData);
     }
     return MessageSenderService.send({
       messageType,

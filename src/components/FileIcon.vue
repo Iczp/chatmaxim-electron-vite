@@ -41,7 +41,7 @@ const className = computed(() => props.suffix?.replace('.', 'icon-').toLowerCase
   align-items: center;
   justify-content: center;
   color: var(--file-icon-suffix-color);
-  font-size: 16px;
+  font-size: 10px;
 }
 
 .icon-lnk {
@@ -49,7 +49,6 @@ const className = computed(() => props.suffix?.replace('.', 'icon-').toLowerCase
 }
 .icon-lnk:after {
   content: 'lnk';
-  font-size: 10px;
 }
 
 .icon-exe {
@@ -57,7 +56,6 @@ const className = computed(() => props.suffix?.replace('.', 'icon-').toLowerCase
 }
 .icon-exe:after {
   content: 'exe';
-  font-size: 10px;
   color: rgb(207, 45, 45);
 }
 
@@ -66,7 +64,6 @@ const className = computed(() => props.suffix?.replace('.', 'icon-').toLowerCase
 }
 .icon-md:after {
   content: 'md';
-  font-size: 10px;
 }
 
 .icon-txt {
@@ -81,7 +78,6 @@ const className = computed(() => props.suffix?.replace('.', 'icon-').toLowerCase
 }
 .icon-json::after {
   content: '{...}';
-  font-size: 10px;
 }
 
 .icon-html,
@@ -95,7 +91,6 @@ const className = computed(() => props.suffix?.replace('.', 'icon-').toLowerCase
 .icon-cs::after,
 .icon-js::after {
   content: '< / >';
-  font-size: 10px;
   color: rgb(135, 238, 101);
 }
 
@@ -104,7 +99,6 @@ const className = computed(() => props.suffix?.replace('.', 'icon-').toLowerCase
 }
 .icon-png::after {
   content: 'png';
-  font-size: 10px;
 }
 
 .icon-jpg {
@@ -112,7 +106,6 @@ const className = computed(() => props.suffix?.replace('.', 'icon-').toLowerCase
 }
 .icon-jpg::after {
   content: 'jpg';
-  font-size: 10px;
 }
 
 .icon-gif {
@@ -120,7 +113,13 @@ const className = computed(() => props.suffix?.replace('.', 'icon-').toLowerCase
 }
 .icon-gif::after {
   content: 'gif';
-  font-size: 10px;
+}
+
+.icon-pdf {
+  color: rgb(229, 75, 9);
+}
+.icon-pdf::after {
+  content: 'PDF';
 }
 
 .icon-xls,

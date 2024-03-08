@@ -11,12 +11,18 @@ const props = defineProps<{
 const content = computed(() => props.item.content as ImageContentDto);
 
 import { ref } from 'vue';
-import { formatUrl } from '../../../commons/utils';
+import { formatImageRect, formatUrl } from '../../../commons/utils';
 const visible = ref(false);
 // https://zos.alipayobjects.com/rmsportal/jkjgkEfvpUPVyRjUImniVslZfWPnJuuZ.png?1703916163985
 const url = computed(() => content.value.url);
-const width = computed(() => content.value.width || 180);
-const height = computed(() => content.value.height);
+
+const maxWidth = 240;
+const maxHeight = 180;
+
+const rect = computed(() =>
+  formatImageRect(content.value.width || 0, content.value.height || 0, maxWidth, maxHeight),
+);
+
 const isError = ref(false);
 const errMessage = ref('加载错误');
 const onError = (event: Event) => {
@@ -28,7 +34,7 @@ const showErr = () => {
 };
 const fallback = () => {};
 
-const src = computed(() => formatUrl(content.value.thumbnailUrl!));
+const src = computed(() => content.value.path || formatUrl(content.value.thumbnailUrl!));
 </script>
 
 <template>
@@ -42,7 +48,8 @@ const src = computed(() => formatUrl(content.value.thumbnailUrl!));
       :src="src"
       :class="{ error: isError }"
       :preview="false"
-      :width="180"
+      :width="rect.width"
+      :height="rect.height"
       @click="visible = true"
       @error="onError"
     />

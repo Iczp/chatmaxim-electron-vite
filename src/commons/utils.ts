@@ -20,6 +20,7 @@ import { message } from 'ant-design-vue';
 import { SoundContentDto } from '../apis/dtos/message/SoundContentDto';
 import { LinkContentDto } from '../apis/dtos/message/LinkContentDto';
 import { HistoryContentOutput } from '../apis/dtos/message/HistoryContentOutput';
+import { useObjectUrl } from '@vueuse/core';
 /**
  * toQueryString
  *
@@ -366,17 +367,17 @@ export const mapToFileContentDto = (file: File): FileContentDto => {
 };
 export const mapToImageContentDtoAsync = (file: File): Promise<ImageContentDto> => {
   return new Promise<ImageContentDto>((resolve, reject) => {
-    const blob = URL.createObjectURL(file);
+    const blob = useObjectUrl(file);
     console.log('blob', file.name, blob);
     let img = new Image();
-    img.src = blob;
+    img.src = blob.value!;
     img.onload = () => {
       console.log({ height: img.height, width: img.width });
-      resolve(<ImageContentDto>{
+      const imageContentDto = <ImageContentDto>{
         text: file.name,
         contentType: file.type,
         size: file.size,
-        path: file.path,
+        path: blob.value,
         suffix: `.${file.name.split('.').pop()}`,
         lastModifiedDate: file.lastModified,
         width: img.width,
@@ -385,7 +386,9 @@ export const mapToImageContentDtoAsync = (file: File): Promise<ImageContentDto> 
         // orientation: '',
         // thumbnailActionUrl: '',
         // thumbnailUrl: '',
-      });
+      };
+      console.log('imageContentDto', imageContentDto);
+      resolve(imageContentDto);
     };
     img.onerror = err => {
       console.error('load image error:', file.path, err);
@@ -421,4 +424,28 @@ export const formatUrl = (url?: string): string | undefined => {
     return `${env.base_url}${url}`;
   }
   return url;
+};
+
+export const isImageMime = (contentType?: string): boolean => {
+  if (!contentType) {
+    return false;
+  }
+  const imageContentTypes = ['image/jpg', 'image/jpeg', 'image/png', 'image/gif'];
+  return imageContentTypes.some(x => x == contentType.toLocaleLowerCase());
+};
+
+export const formatImageRect = (
+  w: number,
+  h: number,
+  maxWidth: number,
+  maxHeight: number,
+): { width: number; height: number } => {
+  const p = w / h;
+  let width = p > 1 ? maxWidth : maxHeight * p;
+  let height = p > 1 ? maxWidth / p : maxHeight;
+  if (height > maxHeight) {
+    height = maxHeight;
+    width = maxHeight * p;
+  }
+  return { width, height };
 };
