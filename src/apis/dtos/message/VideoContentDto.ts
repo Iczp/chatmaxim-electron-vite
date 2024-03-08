@@ -1,4 +1,4 @@
-import { AttachmentsBaseDto } from "./AttachmentsBaseDto";
+import { AttachmentsBaseDto } from './AttachmentsBaseDto';
 
 /**
  * 视频消息
@@ -41,4 +41,9 @@ export type VideoContentDto = AttachmentsBaseDto & {
    * 选定视频的时间长度，单位为 （毫秒）
    */
   duration?: number;
+
+  /**
+   * 视频Gif
+   */
+  gifUrl?: string | null;
 };

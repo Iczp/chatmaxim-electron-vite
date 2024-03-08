@@ -33,6 +33,12 @@ export type AttachmentsBaseDto = {
    * 大小 ContentLength(Size)
    */
   size?: number | null;
+
+  /**
+   * 说明
+   */
+  description?: string | null;
+
   /**
    * 文件创建时间
    */

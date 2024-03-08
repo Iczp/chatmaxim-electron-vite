@@ -139,4 +139,24 @@ const className = computed(() => props.suffix?.replace('.', 'icon-').toLowerCase
 .icon-docx:after {
   content: 'W';
 }
+
+.icon-zip {
+  color: rgb(38, 157, 253);
+}
+.icon-zip::after {
+  content: 'ZIP';
+}
+
+.icon-mp4 {
+  color: rgb(255, 223, 78);
+}
+.icon-mp4::after {
+  content: 'MP4';
+}
+.icon-mp3 {
+  color: rgb(161, 255, 78);
+}
+.icon-mp3::after {
+  content: 'MP3';
+}
 </style>
