@@ -118,6 +118,12 @@ export const routes = <RouteRecordRaw[]>[
     children: objectSettingsRoutes,
   },
   {
+    path: '/message-viewer/:messageId(\\d+)',
+    name: 'message-viewer',
+    component: () => import('../views/message-viewer/MediaViewer.vue'),
+    props: true,
+  },
+  {
     path: '/object-picker/:chatObjectId(\\d+)',
     name: 'object-picker',
     meta: { keep: true },

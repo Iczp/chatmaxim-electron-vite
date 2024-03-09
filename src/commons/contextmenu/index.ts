@@ -6,6 +6,10 @@ import { showContextMenuForMessageSelect } from './showContextMenuForMessageSele
 import { setProfile } from '../../ipc/setProfile';
 import { useWindowStore } from '../../stores/window';
 import { ComposerTranslation, VueMessageType } from 'vue-i18n';
+import { openChildWindow } from '../../ipc/openChildWindow';
+import { env } from '../../env';
+import { MessageTypeEnums } from '../../apis/enums';
+import { ViewerPayload } from '../../views/message-viewer/commons/ViewerPayload';
 export { showContextMenuForSession } from './showContextMenuForSession';
 export { showContextMenuForMessageContent } from './showContextMenuForMessageContent';
 export { showContextMenuForMessageAvatar } from './showContextMenuForMessageAvatar';
@@ -52,9 +56,12 @@ export const getTheme = () => {
   return windowStore.colorScheme == 'dark' ? 'dark' : 'default';
 };
 
+export const openMediaViewer = (item: MessageDto) => {};
+
 export const showContextMenuForMessage = (args: MessageContextMenuInput & ContextmenuInput) => {
-  const { event, entity, selectable, mouseButton, labelType, chatObjectId } = args;
+  const { event, entity, selectable, mouseButton, labelType, chatObjectId, sessionUnit } = args;
   console.log('click', mouseButton, labelType, entity);
+  const windowStore = useWindowStore();
   if (mouseButton == MouseButton.Click) {
     // console.log('click', entity);
 
@@ -82,6 +89,28 @@ export const showContextMenuForMessage = (args: MessageContextMenuInput & Contex
         focus: true,
       });
       return;
+    } else if (labelType == LabelType.Content) {
+      const message = args.entity;
+      if ([MessageTypeEnums.Image, MessageTypeEnums.Video].some(x => x == message.messageType))
+        openChildWindow({
+          t: args.t,
+          window: {
+            name: `message-viewer`,
+            path: `/message-viewer/${message.id}`,
+            payload: <ViewerPayload>{
+              currentIndex: 0,
+              chatObjectId,
+              sessionUnit,
+              messages: [entity],
+            },
+            // isModel: !env.isDev,
+            // parent: windowStore.name,
+            isPreventClose: true,
+            visiblity: true,
+          },
+        }).finally(() => {
+          // fetchList();
+        });
     }
     if (selectable.value) {
       entity.checked = !entity.checked;

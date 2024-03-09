@@ -286,6 +286,7 @@ export const sendRequest = async <T>(
     headers,
     data: body ?? formData,
     method: options.method,
+    responseType: options.responseType,
     withCredentials: config.WITH_CREDENTIALS,
     cancelToken: source.token,
     onUploadProgress: options.onUploadProgress,

@@ -13,7 +13,7 @@ const props = defineProps<{ sessionUnitId: string }>();
 
 const detailModal = ref<InstanceType<typeof RequestDetailModal> | null>();
 
-const { sessionUnit, memberCount } = useDestination();
+const { sessionUnit, memberCount } = useDestination(props.sessionUnitId);
 
 const destinationId = computed(() => 13 || sessionUnit.value?.destination?.id);
 const {
