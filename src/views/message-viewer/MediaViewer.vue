@@ -10,7 +10,7 @@ import { ChatObjectDto } from '../../apis/dtos';
 import { formatUrl } from '../../commons/utils';
 import { useObjectUrl } from '@vueuse/core';
 import { FileService } from '../../apis/services/FileService';
-import log from 'video.js/dist/types/utils/log';
+import VideoPlayer from '@/components/VideoPlayer.vue';
 
 const { t } = useI18n();
 const route = useRoute();
@@ -18,6 +18,8 @@ const router = useRouter();
 
 const payload = usePayload<ViewerPayload>();
 const currentIndex = ref(payload.value?.currentIndex || 0);
+
+
 
 const msg = computed(() => payload.value?.messages[currentIndex.value]);
 const messageType = computed(() => msg.value?.messageType);
@@ -59,6 +61,21 @@ watch(
     immediate: true,
   },
 );
+
+
+const videoOption = ref({
+  autoplay: false,
+  controls: true,
+  width: 480,
+  height: 360,
+  sources: [
+    {
+      src: `http://10.0.5.20:8044/file?id=9477cc54-5375-f33f-d358-3a1134bc1962`,
+      type: 'video/mp4',
+    },
+  ],
+});
+
 </script>
 
 <template>
@@ -70,6 +87,7 @@ watch(
     </page-header> -->
 
     <page-content class="page-content">
+      <!-- <VideoPlayer :options="videoOption" /> -->
       <div class="viewer-container">
         <img class="image" :src="imgUrl" />
       </div>

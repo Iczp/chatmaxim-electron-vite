@@ -1,8 +1,8 @@
 <script setup lang="ts">
-import { ref } from 'vue';
+import { onBeforeMount, ref } from 'vue';
 import videojs from 'video.js';
 import { onMounted } from 'vue';
-import 'video.js/dist/video-js.css'
+import 'video.js/dist/video-js.css';
 const props = defineProps<{
   options?: Object;
 }>();
@@ -13,6 +13,10 @@ onMounted(() => {
   player = videojs(videoPlayer.value, props.options, () => {
     player.log('onPlayerReady', this);
   });
+});
+
+onBeforeMount(() => {
+  player?.dispose();
 });
 </script>
 
