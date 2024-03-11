@@ -8,6 +8,7 @@ import {
   FileContentDto,
   ImageContentDto,
   MessageDto,
+  MessageOwnerDto,
   MessageSimpleDto,
   SessionItemDto,
   SessionUnitOwnerDto,
@@ -426,12 +427,19 @@ export const formatUrl = (url?: string): string | undefined => {
   return url;
 };
 
-export const isImageMime = (contentType?: string): boolean => {
+export const isImageMime = (contentType?: string | null): boolean => {
   if (!contentType) {
     return false;
   }
   const imageContentTypes = ['image/jpg', 'image/jpeg', 'image/png', 'image/gif'];
   return imageContentTypes.some(x => x == contentType.toLocaleLowerCase());
+};
+
+export const isVideoMime = (contentType?: string | null): boolean => {
+  if (!contentType) {
+    return false;
+  }
+  return contentType.startsWith('video/');
 };
 
 export const formatImageRect = (
@@ -448,4 +456,32 @@ export const formatImageRect = (
     width = maxHeight * p;
   }
   return { width, height };
+};
+
+export const isImageOfMessage = (message?: MessageOwnerDto): boolean => {
+  if (!message) {
+    return false;
+  }
+  if (message.messageType == MessageTypeEnums.Image) {
+    return true;
+  }
+  if (message.messageType == MessageTypeEnums.File) {
+    const content = message.content as FileContentDto;
+    return isImageMime(content.contentType);
+  }
+  return false;
+};
+
+export const isVideoOfMessage = (message?: MessageOwnerDto): boolean => {
+  if (!message) {
+    return false;
+  }
+  if (message.messageType == MessageTypeEnums.Video) {
+    return true;
+  }
+  if (message.messageType == MessageTypeEnums.File) {
+    const content = message.content as FileContentDto;
+    return isVideoMime(content.contentType);
+  }
+  return false;
 };

@@ -74,6 +74,8 @@ const setClose = () => setWindow({ close: true });
   font-size: 12px;
   border-radius: 0;
   outline: none;
+  opacity: 0.5;
+  -webkit-app-region: no-drag;
 }
 .btn-close:hover {
   background-color: rgb(253, 61, 61);

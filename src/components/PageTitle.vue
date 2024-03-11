@@ -104,6 +104,10 @@ const toggleAlwayOnTop = () => {
   /* background: linear-gradient(135deg,#f5f5f5ac, rgba(1, 156, 148, 0.2)) border-box; */
   /* background: linear-gradient(135deg, #f5f5f5ac, rgba(1, 156, 148, 0.2)) border-box; */
 }
+.page-title:hover {
+  -webkit-app-region: drag;
+  user-select: none;
+}
 .btn {
   width: 32px;
   height: 32px;

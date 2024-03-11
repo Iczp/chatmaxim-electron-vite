@@ -1,5 +1,10 @@
 import { HtmlHTMLAttributes, Ref, toRaw } from 'vue';
-import { MessageDto, SessionUnitOwnerDto, SessionUnitSenderDto } from '../../apis/dtos';
+import {
+  FileContentDto,
+  MessageDto,
+  SessionUnitOwnerDto,
+  SessionUnitSenderDto,
+} from '../../apis/dtos';
 import { showContextMenuForMessageAvatar } from './showContextMenuForMessageAvatar';
 import { showContextMenuForMessageContent } from './showContextMenuForMessageContent';
 import { showContextMenuForMessageSelect } from './showContextMenuForMessageSelect';
@@ -10,6 +15,7 @@ import { openChildWindow } from '../../ipc/openChildWindow';
 import { env } from '../../env';
 import { MessageTypeEnums } from '../../apis/enums';
 import { ViewerPayload } from '../../views/message-viewer/commons/ViewerPayload';
+import { isImageMime, isVideoMime } from '../utils';
 export { showContextMenuForSession } from './showContextMenuForSession';
 export { showContextMenuForMessageContent } from './showContextMenuForMessageContent';
 export { showContextMenuForMessageAvatar } from './showContextMenuForMessageAvatar';
@@ -91,7 +97,14 @@ export const showContextMenuForMessage = (args: MessageContextMenuInput & Contex
       return;
     } else if (labelType == LabelType.Content) {
       const message = args.entity;
-      if ([MessageTypeEnums.Image, MessageTypeEnums.Video].some(x => x == message.messageType))
+      let isMedia = [MessageTypeEnums.Image, MessageTypeEnums.Video].some(
+        x => x == message.messageType,
+      );
+      if (message.messageType == MessageTypeEnums.File) {
+        const content = message.content as FileContentDto;
+        isMedia = isImageMime(content.contentType) || isVideoMime(content.contentType);
+      }
+      if (isMedia)
         openChildWindow({
           t: args.t,
           window: {
