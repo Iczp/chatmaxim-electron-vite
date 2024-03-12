@@ -490,7 +490,8 @@ const dropHandle = (ev: DragEvent, { files, text }: { files?: any[]; text?: stri
           messageType: MessageTypeEnums.Text,
           content: { text },
         });
-      } else {
+      }
+      if (files) {
         handleFiles(files);
       }
     },

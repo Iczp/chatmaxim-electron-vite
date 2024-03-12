@@ -50,12 +50,14 @@ export const preventClose = (win: BrowserWindow, isListening: boolean) => {
   }): void => {
     if (!globalState.isAppQuitting) {
       e.preventDefault();
+      // win.off('close', preventCloseHandle);
       console.log(`window(id:${win.id}) will close stoped:hide`);
       win.hide();
     }
   };
+  // win.off('close', preventCloseHandle);
   if (isListening) {
-    win.on('close', preventCloseHandle);
+    win.once('close', preventCloseHandle);
   } else {
     win.off('close', preventCloseHandle);
   }

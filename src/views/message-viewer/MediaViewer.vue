@@ -17,6 +17,7 @@ import { FileService } from '../../apis/services/FileService';
 import VideoPlayer from '@/components/VideoPlayer.vue';
 import ToolBar from '../../components/TooBar.vue';
 import ImageViewer from '../../components/ImageViewer.vue';
+import { useDownload } from '../../commons/useDownload';
 const { t } = useI18n();
 const route = useRoute();
 const router = useRouter();
@@ -35,41 +36,7 @@ const isVideo = computed(() => isVideoOfMessage(msg.value));
 
 const messageType = computed(() => msg.value?.messageType);
 
-const objectUrl = ref<string>();
-const error = ref<string>();
-const isPending = ref(false);
-const blobMap = new Map<string, string>();
-const downloadFile = (url: string) => {
-  // console.log('url', url);
-  var blobValue = blobMap.get(url);
-  if (blobValue) {
-    objectUrl.value = blobValue;
-    return;
-  }
-  objectUrl.value = undefined;
-  isPending.value = true;
-  FileService.download({
-    url,
-    onDownloadProgress(progressEvent) {
-      console.log('onDownloadProgress', progressEvent);
-    },
-  })
-    .then(res => {
-      console.log('file', typeof res);
-      const blob = useObjectUrl(res);
-      objectUrl.value = blob.value;
-      console.log('blob', blob);
-      blobMap.set(url, blob.value!);
-    })
-    .catch(err => {
-      objectUrl.value = undefined;
-      error.value = 'load error';
-      console.log('err', err);
-    })
-    .finally(() => {
-      isPending.value = false;
-    });
-};
+const { downloadFile, isPending, error, objectUrl } = useDownload();
 
 watch(
   () => msg.value?.content?.url,
