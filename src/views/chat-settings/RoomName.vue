@@ -10,7 +10,7 @@ import { message } from 'ant-design-vue';
 const { t } = useI18n();
 const props = defineProps<{ sessionUnitId: string }>();
 
-const { sessionUnit, memberCount } = useDestination();
+const { sessionUnit, memberCount } = useDestination(props.sessionUnitId);
 
 const description = computed(() => {
   switch (sessionUnit.value?.destination?.objectType) {

@@ -7,7 +7,7 @@ export type ChatSettingsPayload = {
   sessionUnit: SessionUnitOwnerDto;
   memberCount?: number;
 };
-export const useDestination = (sessionUnitId: string) => {
+export const useDestination = (sessionUnitId?: string) => {
   const imStore = useImStore();
   // imStore.fetchSessionUnitMany([sessionUnitId]);
   // const sessionUnit = ref<SessionUnitOwnerDto>();

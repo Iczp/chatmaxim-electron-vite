@@ -29,6 +29,8 @@ const isVideo = computed(() => isVideoOfMessage(msg.value));
 const messageType = computed(() => msg.value?.messageType);
 
 const objectUrl = ref<string>();
+const error = ref<string>();
+const isPending = ref(false);
 const blobMap = new Map<string, string>();
 const downloadFile = (url: string) => {
   // console.log('url', url);
@@ -37,6 +39,8 @@ const downloadFile = (url: string) => {
     objectUrl.value = blobValue;
     return;
   }
+  objectUrl.value = undefined;
+  isPending.value = true;
   FileService.download({
     url,
     onDownloadProgress(progressEvent) {
@@ -51,7 +55,12 @@ const downloadFile = (url: string) => {
       blobMap.set(url, blob.value!);
     })
     .catch(err => {
+      objectUrl.value = undefined;
+      error.value = 'load error';
       console.log('err', err);
+    })
+    .finally(() => {
+      isPending.value = false;
     });
 };
 
@@ -93,7 +102,7 @@ const videoOption = computed(() => ({
     </page-header> -->
 
     <page-content class="page-content">
-      <ImageViewer :src="objectUrl" v-if="isImage"></ImageViewer>
+      <ImageViewer :src="objectUrl" v-if="isImage" :error="error"></ImageViewer>
       <VideoPlayer v-else-if="isVideo" :options="videoOption" :src="objectUrl" />
     </page-content>
   </page>

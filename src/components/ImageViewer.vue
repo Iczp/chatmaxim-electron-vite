@@ -2,6 +2,7 @@
 const props = defineProps<{
   options?: Object;
   src?: string;
+  error?: string;
 }>();
 
 defineExpose({});
@@ -9,7 +10,8 @@ defineExpose({});
 
 <template>
   <div class="viewer-container">
-    <img class="image no-drag" :src="src" />
+    
+    <img class="image" :src="src" />
   </div>
 </template>
 
