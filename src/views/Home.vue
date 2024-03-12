@@ -23,6 +23,7 @@ import { useWebsocket } from '../commons/useWebsocket';
 import { setWindow } from '../ipc/setWindow';
 import { openAppSettings } from '../ipc/openAppSettings';
 import { useI18n } from 'vue-i18n';
+import Sound from '../components/Sound.vue';
 const { t } = useI18n();
 const route = useRoute();
 const { connectionText, connectionState, retryCount } = useWebsocket();
@@ -76,6 +77,11 @@ const getKey = (route: RouteLocationNormalizedLoaded, component: any): string | 
               <HomeOutlined />
             </a-badge>
           </div>
+
+          <div class="nav-item">
+            <Sound src="http://10.0.5.20:8044/file?id=e8137e1c-fb26-c605-6346-3a114264fdcc"/>
+          </div>
+
           <div
             class="nav-item"
             v-for="(item, index) in badgeItems"
@@ -111,6 +117,7 @@ const getKey = (route: RouteLocationNormalizedLoaded, component: any): string | 
           >
             <Diversity2 class="svg-icon" />
           </div>
+
           <div class="nav-item" @click="goto('/apps')" :class="{ active: route.name == 'apps' }">
             <AppstoreOutlined />
           </div>

@@ -7,6 +7,7 @@ import 'video.js/dist/video-js.css';
 const props = defineProps<{
   options?: Object;
   src?: string;
+  type?: string;
 }>();
 let player: any;
 const videoPlayer = ref();
@@ -16,24 +17,46 @@ var videoOption = reactive({
   mouted: true,
   controls: true,
   bigPlayButton: true,
-  userActions: false,
+
   // width: '100vw',
   // height: '100vh',
   width: 480,
   height: 360,
   sources: [],
+  controlBar: {
+    // 是否显示画中画按钮
+    pictureInPictureToggle: false,
+    // 是否显示全屏按钮
+    fullscreenToggle: false,
+  },
+  userActions: {
+    // 是否允许单击
+    click: true,
+    // 是否允许双击
+    doubleClick: false,
+    // 是否允许快捷键，也是一个Object，包括全屏、静音和播放/暂停。
+    hotkeys: false,
+  },
 });
 
 watch(
-  () => props.src,
-  src => {
-    console.log('src', src);
-    player.muted(true);
+  () => props,
+  ({ src, type }) => {
+    console.log('src', src, type);
+    // try {
+    player.reset();
     player.src({
       src,
-      type: 'video/mp4',
+      type,
     });
     player.play('muted');
+    // player.muted(true);
+    // } catch (err) {
+    //   player.error('Error:fail');
+    // }
+  },
+  {
+    deep: true,
   },
 );
 onMounted(() => {
@@ -43,7 +66,7 @@ onMounted(() => {
     videoOption.sources = <never[]>[
       {
         src: props.src,
-        type: 'video/mp4',
+        type: props.type,
       },
     ];
   }
@@ -115,5 +138,11 @@ defineExpose({
 /*隐藏一些不需要的按钮*/
 .vjs-picture-in-picture-control vjs-control vjs-button {
   display: none !important;
+}
+
+:deep(.vjs-modal-dialog .vjs-modal-dialog-content) {
+  display: flex;
+  justify-content: center;
+  align-items: center;
 }
 </style>

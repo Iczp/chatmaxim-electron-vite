@@ -32,7 +32,7 @@ export const openChildWindow = (args: {
     const event = args.event || `e-${new Date().getTime()}`;
     // args.payload = args.payload || {};
     if (window?.payload) {
-      localStorage.setItem(event, JSON.stringify(window.payload));
+      // localStorage.setItem(event, JSON.stringify(window.payload));
     }
     const params = JSON.parse(JSON.stringify({ event, window }));
     ipcRenderer

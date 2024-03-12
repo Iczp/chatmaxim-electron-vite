@@ -13,6 +13,7 @@ import {
   SessionItemDto,
   SessionUnitOwnerDto,
   TextContentDto,
+  VideoContentDto,
 } from '../apis/dtos';
 import { MessageStateEnums, MessageTypeEnums } from '../apis/enums';
 import { formatText } from './formatWords';
@@ -484,4 +485,16 @@ export const isVideoOfMessage = (message?: MessageOwnerDto): boolean => {
     return isVideoMime(content.contentType);
   }
   return false;
+};
+
+export const getVideoOfMessage = (message?: MessageOwnerDto): string | undefined => {
+  if (!message) {
+    return;
+  }
+  if (message.messageType == MessageTypeEnums.Video) {
+    return (message.content as VideoContentDto).contentType || undefined;
+  }
+  if (message.messageType == MessageTypeEnums.File) {
+    return (message.content as FileContentDto).contentType || undefined;
+  }
 };

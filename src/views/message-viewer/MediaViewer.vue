@@ -6,7 +6,12 @@ import { useI18n } from 'vue-i18n';
 import ChatObject from '../../components/ChatObject.vue';
 import { usePayload } from '../../commons/usePayload';
 import { ChatObjectDto } from '../../apis/dtos';
-import { formatUrl, isImageOfMessage, isVideoOfMessage } from '../../commons/utils';
+import {
+  formatUrl,
+  isImageOfMessage,
+  isVideoOfMessage,
+  getVideoOfMessage,
+} from '../../commons/utils';
 import { useObjectUrl } from '@vueuse/core';
 import { FileService } from '../../apis/services/FileService';
 import VideoPlayer from '@/components/VideoPlayer.vue';
@@ -21,6 +26,8 @@ const payload = usePayload<ViewerPayload>();
 const currentIndex = ref(payload.value?.currentIndex || 0);
 
 const msg = computed(() => payload.value?.messages[currentIndex.value]);
+
+const videoType = computed(() => getVideoOfMessage(msg.value));
 
 const isImage = computed(() => isImageOfMessage(msg.value));
 
@@ -103,7 +110,7 @@ const videoOption = computed(() => ({
 
     <page-content class="page-content">
       <ImageViewer :src="objectUrl" v-if="isImage" :error="error"></ImageViewer>
-      <VideoPlayer v-else-if="isVideo" :options="videoOption" :src="objectUrl" />
+      <VideoPlayer v-else-if="isVideo" :options="videoOption" :src="objectUrl" :type="videoType" />
     </page-content>
   </page>
 </template>
