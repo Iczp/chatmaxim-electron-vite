@@ -23,7 +23,7 @@ import {
 import { MessageContextMenuInput, getTheme, iconClass } from '.';
 import { useClipboard } from '@vueuse/core';
 import { formatMessageContent } from '../utils';
-import { saveAsOfMessage } from '../saveAs';
+import { saveAsOfMessage } from '../../ipc/saveAs';
 
 export const showContextMenuForMessageContent = ({
   t,

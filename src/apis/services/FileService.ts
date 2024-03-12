@@ -41,6 +41,7 @@ export class FileService {
       method: 'GET',
       url,
       responseType: 'blob',
+      // responseAll: true,
       onDownloadProgress,
     });
   }

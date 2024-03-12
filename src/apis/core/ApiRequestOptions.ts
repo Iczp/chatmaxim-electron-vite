@@ -18,6 +18,7 @@ export type ApiRequestOptions = {
   readonly body?: any;
   readonly responseType?: ResponseType;
   readonly mediaType?: string;
+  readonly responseAll?: boolean;
   readonly responseHeader?: string;
   readonly errors?: Record<number, string>;
   readonly onUploadProgress?: ((progressEvent: AxiosProgressEvent) => void) | undefined;

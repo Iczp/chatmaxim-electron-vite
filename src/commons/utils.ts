@@ -23,6 +23,7 @@ import { SoundContentDto } from '../apis/dtos/message/SoundContentDto';
 import { LinkContentDto } from '../apis/dtos/message/LinkContentDto';
 import { HistoryContentOutput } from '../apis/dtos/message/HistoryContentOutput';
 import { useObjectUrl } from '@vueuse/core';
+import { AttachmentsBaseDto } from '../apis/dtos/message/AttachmentsBaseDto';
 /**
  * toQueryString
  *
@@ -499,4 +500,15 @@ export const getVideoOfMessage = (message?: MessageOwnerDto): string | undefined
   }
 };
 
+export const getFileNameOfMessage = (message?: MessageOwnerDto): string => {
+  let { fileName, suffix, id } = message?.content;
 
+  if (!fileName) {
+    fileName = `${env.app_name}_${id || new Date().getTime()}${suffix || '.unknown'}`;
+  }
+  // if (!suffix) {
+  //   suffix = '.unknown';
+  // }
+
+  return `${fileName}`;
+};

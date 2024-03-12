@@ -326,6 +326,18 @@ export const getResponseBody = (response: AxiosResponse<any>): any => {
   return undefined;
 };
 
+export const getFileNameFormHeaders = (response: AxiosResponse<any>): string | undefined => {
+  const contentDisposition = response.headers['content-disposition'];
+  let fileName: string | undefined;
+  if (contentDisposition) {
+    const fileNameMatch = contentDisposition.match(/filename="(.+)"/);
+    if (fileNameMatch.length === 2) {
+      fileName = fileNameMatch[1];
+    }
+  }
+  return fileName;
+};
+
 export const catchErrorCodes = (options: ApiRequestOptions, result: ApiResult): void => {
   const errors: Record<number, string> = {
     // 200: '服务器成功返回请求的数据。',
@@ -419,10 +431,14 @@ export const request = <T>(
           statusText: response.statusText,
           body: responseHeader ?? responseBody,
         };
+        if (options.responseType == 'blob') {
+          var fileName = getFileNameFormHeaders(response);
+          result.body.fileName = fileName;
+        }
 
         catchErrorCodes(options, result);
 
-        resolve(result.body);
+        resolve(options.responseAll ? { result, response } : result.body);
       }
     } catch (error) {
       reject(error);

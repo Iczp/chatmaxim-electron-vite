@@ -3,7 +3,14 @@ import { FileService } from '../apis/services/FileService';
 import { useObjectUrl } from '@vueuse/core';
 import { AxiosProgressEvent } from 'axios';
 
-export const blobMap = new Map<string, string>();
+export type BlobCacheItem = {
+  url: string;
+  objectUrl: string;
+  blob: Blob;
+  date: Date;
+};
+
+export const blobStore = new Map<string, BlobCacheItem>();
 
 export const useDownload = () => {
   const blobUrl = ref<string>();
@@ -19,7 +26,7 @@ export const useDownload = () => {
   const onDownloadProgress = ref<(progressEvent: AxiosProgressEvent) => void>();
 
   const downloadFile = (url: string) =>
-    new Promise<string>((resolve, reject) => {
+    new Promise<BlobCacheItem>((resolve, reject) => {
       // console.log('url', url);
       blobUrl.value = undefined;
 
@@ -29,14 +36,20 @@ export const useDownload = () => {
 
       progress.value = undefined;
 
-      var blobValue = blobMap.get(url);
+      var cacheItem = blobStore.get(url);
 
-      if (blobValue) {
-        blobUrl.value = blobValue;
+      if (cacheItem) {
+        blobUrl.value = cacheItem.objectUrl;
+        blob.value = cacheItem.blob;
+        console.log(`downloadFile is loaded: ${blobUrl.value}`);
+        resolve(cacheItem);
         return;
+        // url = blobValue;
       }
 
       isPending.value = true;
+
+      console.log(`downloadFile: ${url}`);
 
       FileService.download({
         url,
@@ -47,13 +60,23 @@ export const useDownload = () => {
         },
       })
         .then(res => {
-          blob.value = res;
-          console.log('file', typeof res);
+          console.log('file', res);
+          // console.log('res.response.headers', );
+          // const fileName = decodeURI(res.response.headers["content-disposition"].split(" ")[1].replace("filename*=UTF-8''", ""));
+
           const objUrl = useObjectUrl(res);
           blobUrl.value = objUrl.value;
-          console.log('blob', objUrl);
-          blobMap.set(url, objUrl.value!);
-          resolve(objUrl.value!);
+          blob.value = res;
+          
+          const cacheItem = <BlobCacheItem>{
+            url,
+            blob: res,
+            objectUrl: objUrl.value!,
+            date: new Date(),
+          };
+          console.log('cacheItem', cacheItem);
+          blobStore.set(url, cacheItem);
+          resolve(cacheItem);
         })
         .catch(err => {
           blobUrl.value = undefined;
