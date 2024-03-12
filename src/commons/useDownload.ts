@@ -6,8 +6,7 @@ import { AxiosProgressEvent } from 'axios';
 export const blobMap = new Map<string, string>();
 
 export const useDownload = () => {
-  
-  const objectUrl = ref<string>();
+  const blobUrl = ref<string>();
 
   const error = ref<string>();
 
@@ -15,49 +14,57 @@ export const useDownload = () => {
 
   const progress = ref<number>();
 
+  const blob = ref<Blob>();
+
   const onDownloadProgress = ref<(progressEvent: AxiosProgressEvent) => void>();
 
-  const downloadFile = (url: string) => {
-    // console.log('url', url);
-    objectUrl.value = undefined;
+  const downloadFile = (url: string) =>
+    new Promise<string>((resolve, reject) => {
+      // console.log('url', url);
+      blobUrl.value = undefined;
 
-    error.value = undefined;
+      blob.value = undefined;
 
-    progress.value = undefined;
+      error.value = undefined;
 
-    var blobValue = blobMap.get(url);
+      progress.value = undefined;
 
-    if (blobValue) {
-      objectUrl.value = blobValue;
-      return;
-    }
+      var blobValue = blobMap.get(url);
 
-    isPending.value = true;
+      if (blobValue) {
+        blobUrl.value = blobValue;
+        return;
+      }
 
-    FileService.download({
-      url,
-      onDownloadProgress(progressEvent) {
-        console.log('onDownloadProgress', progressEvent);
-        progress.value = progressEvent.progress;
-        onDownloadProgress.value?.(progressEvent);
-      },
-    })
-      .then(res => {
-        console.log('file', typeof res);
-        const blob = useObjectUrl(res);
-        objectUrl.value = blob.value;
-        console.log('blob', blob);
-        blobMap.set(url, blob.value!);
+      isPending.value = true;
+
+      FileService.download({
+        url,
+        onDownloadProgress(progressEvent) {
+          console.log('onDownloadProgress', progressEvent);
+          progress.value = progressEvent.progress;
+          onDownloadProgress.value?.(progressEvent);
+        },
       })
-      .catch(err => {
-        objectUrl.value = undefined;
-        error.value = 'load error';
-        console.log('err', err);
-      })
-      .finally(() => {
-        isPending.value = false;
-      });
-  };
+        .then(res => {
+          blob.value = res;
+          console.log('file', typeof res);
+          const objUrl = useObjectUrl(res);
+          blobUrl.value = objUrl.value;
+          console.log('blob', objUrl);
+          blobMap.set(url, objUrl.value!);
+          resolve(objUrl.value!);
+        })
+        .catch(err => {
+          blobUrl.value = undefined;
+          error.value = 'load error';
+          console.log('err', err);
+          reject(err);
+        })
+        .finally(() => {
+          isPending.value = false;
+        });
+    });
 
-  return { downloadFile, isPending, error, objectUrl, onDownloadProgress };
+  return { downloadFile, isPending, error, blobUrl, blob, onDownloadProgress };
 };

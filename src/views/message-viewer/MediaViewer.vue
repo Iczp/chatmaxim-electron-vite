@@ -36,7 +36,7 @@ const isVideo = computed(() => isVideoOfMessage(msg.value));
 
 const messageType = computed(() => msg.value?.messageType);
 
-const { downloadFile, isPending, error, objectUrl } = useDownload();
+const { downloadFile, isPending, error,  blobUrl } = useDownload();
 
 watch(
   () => msg.value?.content?.url,
@@ -76,8 +76,8 @@ const videoOption = computed(() => ({
     </page-header> -->
 
     <page-content class="page-content">
-      <ImageViewer :src="objectUrl" v-if="isImage" :error="error"></ImageViewer>
-      <VideoPlayer v-else-if="isVideo" :options="videoOption" :src="objectUrl" :type="videoType" />
+      <ImageViewer :src="blobUrl" v-if="isImage" :error="error"></ImageViewer>
+      <VideoPlayer v-else-if="isVideo" :options="videoOption" :src="blobUrl" :type="videoType" />
     </page-content>
   </page>
 </template>

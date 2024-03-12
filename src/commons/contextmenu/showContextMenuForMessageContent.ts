@@ -23,6 +23,7 @@ import {
 import { MessageContextMenuInput, getTheme, iconClass } from '.';
 import { useClipboard } from '@vueuse/core';
 import { formatMessageContent } from '../utils';
+import { saveAsOfMessage } from '../saveAs';
 
 export const showContextMenuForMessageContent = ({
   t,
@@ -117,6 +118,7 @@ export const showContextMenuForMessageContent = ({
         onClick: e => {
           console.log('contextmenu item click', entity);
           // download file and save as...
+          saveAsOfMessage(entity);
           message.success({ content: t('Save As'), duration: 2 });
         },
       },

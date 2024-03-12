@@ -38,6 +38,7 @@ import { setColorSchemeHandle } from './handles/setColorSchemeHandle';
 import { loginItemSettingsHandle } from './handles/loginItemSettingsHandle';
 import { setLanguageHandle } from './handles/setLanguageHandle';
 import { sheelHandle } from './handles/sheelHandle';
+import { saveAsHandle } from './handles/saveAsHandle';
 
 setAppProtocol();
 
@@ -136,6 +137,7 @@ ipcMain.handle(setColorSchemeHandle.channel, setColorSchemeHandle.handle);
 ipcMain.handle(loginItemSettingsHandle.channel, loginItemSettingsHandle.handle);
 ipcMain.handle(setLanguageHandle.channel, setLanguageHandle.handle);
 ipcMain.handle(sheelHandle.channel, sheelHandle.handle);
+ipcMain.handle(saveAsHandle.channel, saveAsHandle.handle);
 //
 // macOS
 app.on('open-url', (event, url) => {

@@ -498,3 +498,5 @@ export const getVideoOfMessage = (message?: MessageOwnerDto): string | undefined
     return (message.content as FileContentDto).contentType || undefined;
   }
 };
+
+
