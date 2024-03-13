@@ -193,5 +193,7 @@
   "Uploading": "上传中",
   "UploadSuccessful": "上传成功",
   "Choose": "选择...",
-  "User Portrait": "头像"
+  "User Portrait": "头像",
+  "SaveAsSuccessful": "另存为 '{0}'",
+  "SaveAsFail": "另存为失败"
 }

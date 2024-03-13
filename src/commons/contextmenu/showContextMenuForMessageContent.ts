@@ -118,8 +118,16 @@ export const showContextMenuForMessageContent = ({
         onClick: e => {
           console.log('contextmenu item click', entity);
           // download file and save as...
-          saveAsOfMessage(entity);
-          message.success({ content: t('Save As'), duration: 2 });
+          const key = 'save as';
+          saveAsOfMessage(entity)
+            .then(res => {
+              console.log('saveAsOfMessage', res);
+
+              message.success({ content: t('SaveAsSuccessful', [res.filePath]), duration: 2, key });
+            })
+            .catch(err => {
+              message.error({ content: t('SaveAsFail'), duration: 2, key });
+            });
         },
       },
       {

@@ -192,5 +192,7 @@
   "Uploading": "Pending",
   "UploadSuccessful": "Upload successful",
   "Choose": "Choose...",
-  "User Portrait": "User Protrait"
+  "User Portrait": "User Protrait",
+  "SaveAsSuccessful": "Save As '{0}'",
+  "SaveAsFail": "Save As Fail"
 }
