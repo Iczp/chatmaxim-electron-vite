@@ -16,7 +16,7 @@ export const useDownload = () => {
   const blobUrl = ref<string>();
   const error = ref<string>();
   const isPending = ref(false);
-  const progress = ref<number>();
+  const percent = ref<number>();
   const blob = ref<Blob>();
   const onDownloadProgress = ref<(progressEvent: AxiosProgressEvent) => void>();
 
@@ -26,7 +26,7 @@ export const useDownload = () => {
       blobUrl.value = undefined;
       blob.value = undefined;
       error.value = undefined;
-      progress.value = undefined;
+      percent.value = undefined;
       const cacheKey = url;
       var cacheItem = blobStore.get(cacheKey);
       if (cacheItem) {
@@ -44,7 +44,7 @@ export const useDownload = () => {
         url,
         onDownloadProgress(progressEvent) {
           console.log('onDownloadProgress', progressEvent);
-          progress.value = progressEvent.progress;
+          percent.value = Math.floor((progressEvent.progress || 0) * 100);
           onDownloadProgress.value?.(progressEvent);
         },
       })
@@ -78,5 +78,5 @@ export const useDownload = () => {
         });
     });
 
-  return { downloadFile, isPending, error, blobUrl, blob, onDownloadProgress };
+  return { downloadFile, isPending, error, blobUrl, blob, onDownloadProgress,  percent };
 };

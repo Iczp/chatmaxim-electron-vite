@@ -194,5 +194,6 @@
   "Choose": "Choose...",
   "User Portrait": "User Protrait",
   "SaveAsSuccessful": "Save As '{0}'",
-  "SaveAsFail": "Save As Fail"
+  "SaveAsFail": "Save As Fail",
+  "LoadError": "load error"
 }

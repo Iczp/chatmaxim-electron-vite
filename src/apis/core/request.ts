@@ -425,6 +425,8 @@ export const request = <T>(
           onCancel,
           axiosClient,
         );
+        console.log('response', response);
+
         const responseBody = getResponseBody(response);
         const responseHeader = getResponseHeader(response, options.responseHeader);
 

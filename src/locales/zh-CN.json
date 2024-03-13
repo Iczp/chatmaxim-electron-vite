@@ -195,5 +195,6 @@
   "Choose": "选择...",
   "User Portrait": "头像",
   "SaveAsSuccessful": "另存为 '{0}'",
-  "SaveAsFail": "另存为失败"
+  "SaveAsFail": "另存为失败",
+  "LoadError": "加载错误"
 }
