@@ -2,6 +2,12 @@ import { BrowserWindow, app, dialog, webContents } from 'electron';
 import { IpcMainHandle } from '../IpcMainHandle';
 import { outputFile } from 'fs-extra';
 import { join } from 'node:path';
+
+export type SaveResult = Electron.SaveDialogReturnValue & {
+  success?: boolean;
+  message?: string;
+  error?: any;
+};
 export const saveAsHandle: IpcMainHandle = {
   channel: 'save-as',
   handle: (
@@ -15,8 +21,8 @@ export const saveAsHandle: IpcMainHandle = {
       fileName: string;
       title?: string;
     },
-  ): Promise<string> => {
-    return new Promise<string>((resolve, reject) => {
+  ): Promise<SaveResult> => {
+    return new Promise<SaveResult>((resolve, reject) => {
       console.log('fileName', fileName);
       console.log('fileData', fileData.length);
       var senderWindow = BrowserWindow.fromWebContents(webContents.fromId(_.sender.id));
@@ -26,23 +32,27 @@ export const saveAsHandle: IpcMainHandle = {
         .showSaveDialog(senderWindow, {
           title,
           defaultPath,
-          properties: [],
+          // properties: [],
         })
         .then(res => {
           console.log('showSaveDialog', res);
-          outputFile(res.filePath, fileData, err => {
-            if (err) {
-              console.log('err', err);
-              reject(err);
+          if (res.canceled) {
+            resolve({ ...res, message: 'User Canceled' });
+            return;
+          }
+          outputFile(res.filePath, fileData, error => {
+            if (error) {
+              console.error('err', error);
+              resolve({ ...res, error, message: 'OutputFile Fail' });
               // event.sender.send(ERROR, err.message)
             } else {
               console.log('save as:ok', res.filePath);
-              resolve(res.filePath);
+              resolve(<SaveResult>{ ...res, success: true });
             }
           });
         })
-        .catch(err => {
-          reject(err);
+        .catch(error => {
+          reject({ error, message: 'ShowSaveDialog Fail' });
         });
     });
   },

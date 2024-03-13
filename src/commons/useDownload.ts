@@ -14,30 +14,21 @@ export const blobStore = new Map<string, BlobCacheItem>();
 
 export const useDownload = () => {
   const blobUrl = ref<string>();
-
   const error = ref<string>();
-
   const isPending = ref(false);
-
   const progress = ref<number>();
-
   const blob = ref<Blob>();
-
   const onDownloadProgress = ref<(progressEvent: AxiosProgressEvent) => void>();
 
   const downloadFile = (url: string) =>
     new Promise<BlobCacheItem>((resolve, reject) => {
       // console.log('url', url);
       blobUrl.value = undefined;
-
       blob.value = undefined;
-
       error.value = undefined;
-
       progress.value = undefined;
 
       var cacheItem = blobStore.get(url);
-
       if (cacheItem) {
         blobUrl.value = cacheItem.objectUrl;
         blob.value = cacheItem.blob;
@@ -46,9 +37,7 @@ export const useDownload = () => {
         return;
         // url = blobValue;
       }
-
       isPending.value = true;
-
       console.log(`downloadFile: ${url}`);
 
       FileService.download({
@@ -61,13 +50,9 @@ export const useDownload = () => {
       })
         .then(res => {
           console.log('file', res);
-          // console.log('res.response.headers', );
-          // const fileName = decodeURI(res.response.headers["content-disposition"].split(" ")[1].replace("filename*=UTF-8''", ""));
-
           const objUrl = useObjectUrl(res);
           blobUrl.value = objUrl.value;
           blob.value = res;
-          
           const cacheItem = <BlobCacheItem>{
             url,
             blob: res,

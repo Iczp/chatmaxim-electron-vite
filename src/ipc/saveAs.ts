@@ -6,12 +6,20 @@ import { useDownload } from '../commons/useDownload';
 import { toRaw } from 'vue';
 import { ipcRenderer } from 'electron';
 import { getFileNameOfMessage } from '../commons/utils';
+
 export type SaveResult = {
   success?: boolean;
   message?: string;
   filePath?: string;
   error: any;
 };
+
+/**
+ * 保存消息附件
+ *
+ * @param {MessageOwnerDto} [message]
+ * @return {*}  {Promise<SaveResult>}
+ */
 export const saveAsOfMessage = (message?: MessageOwnerDto): Promise<SaveResult> =>
   new Promise<SaveResult>((resolve, reject) => {
     const rejectError = (error: any, message?: string): void => {
@@ -37,7 +45,9 @@ export const saveAsOfMessage = (message?: MessageOwnerDto): Promise<SaveResult> 
               .then(filePath => {
                 resolve(<SaveResult>{ filePath, success: true });
               })
-              .catch(rejectError);
+              .catch((err: any) => {
+                rejectError(err, err.canceled ? 'User Cancel' : undefined);
+              });
           })
           .catch(err => rejectError(err, 'Download fail'));
         break;
@@ -46,9 +56,32 @@ export const saveAsOfMessage = (message?: MessageOwnerDto): Promise<SaveResult> 
         break;
     }
   });
-export const saveBlob = async (blob: Blob, fileName: string): Promise<string> => {
-  var buffers = await blob.arrayBuffer();
-  let fileData = new Int8Array(buffers);
-  console.log('blob', blob, buffers, fileData);
-  return await ipcRenderer.invoke('save-as', { fileName, fileData });
+
+/**
+ * 保存 Blob
+ *
+ * @param {Blob} blob
+ * @param {string} fileName
+ * @return {*}  {Promise<string>}
+ */
+export const saveBlob = (blob: Blob, fileName: string): Promise<string> => {
+  return new Promise<string>(async (resolve, reject) => {
+    var buffers = await blob.arrayBuffer();
+    let fileData = new Int8Array(buffers);
+    console.log('blob', blob, buffers, fileData);
+    ipcRenderer
+      .invoke('save-as', { fileName, fileData })
+      .then(res => {
+        console.log('save-as', res);
+        if (res.success) {
+          resolve(res.filePath);
+        } else {
+          reject(res);
+        }
+      })
+      .catch((err: any) => {
+        console.error(JSON.stringify(err));
+        reject(err);
+      });
+  });
 };

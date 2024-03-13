@@ -119,14 +119,16 @@ export const showContextMenuForMessageContent = ({
           console.log('contextmenu item click', entity);
           // download file and save as...
           const key = 'save as';
+          const duration = 2;
+          message.loading({ content: () => '', key });
           saveAsOfMessage(entity)
             .then(res => {
               console.log('saveAsOfMessage', res);
-
-              message.success({ content: t('SaveAsSuccessful', [res.filePath]), duration: 2, key });
+              message.success({ content: t('SaveAsSuccessful', [res.filePath]), duration, key });
             })
             .catch(err => {
-              message.error({ content: t('SaveAsFail'), duration: 2, key });
+              console.error('saveAsOfMessage', err);
+              message.error({ content: err.error.message || t('SaveAsFail'), duration, key });
             });
         },
       },
