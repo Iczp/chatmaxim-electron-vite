@@ -11,23 +11,46 @@ import { MessageTypeEnums } from '../apis/enums';
 import { useImStore } from '../stores/im';
 import { useWindowStore } from '../stores/window';
 import { useRemoteStore } from './useRemoteStore';
+import { usePayload } from './usePayload';
+
+export const computedSessionUnitEntity = (sessionUnitId: string) => {
+  const windowStore = useWindowStore();
+  const isMainWindow = windowStore.name == 'main';
+  if (!isMainWindow) {
+    const payload = usePayload<{ sessionUnit: SessionUnitOwnerDto }>();
+    console.log('payload', payload.value?.sessionUnit);
+    return computed(() => payload.value?.sessionUnit);
+  }
+  const store = useImStore();
+  return computed(() => store.getSessionUnit(sessionUnitId!));
+};
 
 export const useSessionUnitId = (sessionUnitId: string) => {
+  const computedEntity = computedSessionUnitEntity(sessionUnitId);
+  return useComputedSessionUnit(computedEntity);
+};
+export const useSessionUnitId_back = (sessionUnitId: string) => {
   const windowStore = useWindowStore();
   const isMainWindow = windowStore.name == 'main';
   const store = useImStore();
   if (!isMainWindow) {
-    const remoteStore = useRemoteStore<{ sessionUnit: SessionUnitOwnerDto }>();
-    console.log('remoteStore', remoteStore.value?.sessionUnit);
-    watch(
-      () => remoteStore.value,
-      v => {
-        console.log('remoteStore#watch', v);
-        if (v) {
-          store.setMany([v?.sessionUnit!]);
-        }
-      },
-    );
+    // const remoteStore = useRemoteStore<{ sessionUnit: SessionUnitOwnerDto }>();
+    // console.log('remoteStore', remoteStore.value?.sessionUnit);
+
+    // watch(
+    //   () => remoteStore.value,
+    //   v => {
+    //     console.log('remoteStore#watch', v);
+    //     if (v) {
+    //       store.setMany([v?.sessionUnit!]);
+    //     }
+    //   },
+    // );
+
+    const payload = usePayload<{ sessionUnit: SessionUnitOwnerDto }>();
+    console.log('payload', payload.value?.sessionUnit);
+    const computedEntity = computed(() => payload.value?.sessionUnit);
+    return useComputedSessionUnit(computedEntity);
   }
 
   // store.getItem(sessionUnitId);
@@ -40,7 +63,9 @@ export const useSessionUnit = (entity: SessionUnitOwnerDto | undefined) => {
   return useComputedSessionUnit(computedEntity);
 };
 
-export const useComputedSessionUnit = (computedEntity: ComputedRef<SessionUnitOwnerDto | undefined>) => {
+export const useComputedSessionUnit = (
+  computedEntity: ComputedRef<SessionUnitOwnerDto | undefined>,
+) => {
   const entity = computedEntity;
   const isTopping = computed(() => Number(entity.value?.sorting) > 0);
 

@@ -23,7 +23,7 @@ export type SaveResult = {
 export const saveAsOfMessage = (message?: MessageOwnerDto): Promise<SaveResult> =>
   new Promise<SaveResult>((resolve, reject) => {
     const rejectError = (error: any, message?: string): void => {
-      reject(<SaveResult>{ error, success: false });
+      reject(<SaveResult>{ error: error || { message }, success: false });
     };
     if (!message) {
       console.warn('message fail');
@@ -68,7 +68,7 @@ export const saveBlob = (blob: Blob, fileName: string): Promise<string> => {
   return new Promise<string>(async (resolve, reject) => {
     var buffers = await blob.arrayBuffer();
     let fileData = new Int8Array(buffers);
-    console.log('blob', blob, buffers, fileData);
+    // console.log('blob', blob, buffers, fileData);
     ipcRenderer
       .invoke('save-as', { fileName, fileData })
       .then(res => {

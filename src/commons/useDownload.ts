@@ -31,11 +31,11 @@ export const useDownload = () => {
       var cacheItem = blobStore.get(url);
       if (cacheItem) {
         blobUrl.value = cacheItem.objectUrl;
-        blob.value = cacheItem.blob;
+        // blob.value = cacheItem.blob;
         console.log(`downloadFile is loaded: ${blobUrl.value}`);
-        resolve(cacheItem);
-        return;
-        // url = blobValue;
+        // resolve(cacheItem);
+        // return;
+        url = cacheItem.objectUrl;
       }
       isPending.value = true;
       console.log(`downloadFile: ${url}`);
@@ -50,18 +50,22 @@ export const useDownload = () => {
       })
         .then(res => {
           console.log('file', res);
-          const objUrl = useObjectUrl(res);
-          blobUrl.value = objUrl.value;
+          if (!cacheItem) {
+            const objUrl = useObjectUrl(res);
+            blobUrl.value = objUrl.value;
+          }
           blob.value = res;
-          const cacheItem = <BlobCacheItem>{
+          const blobItem = <BlobCacheItem>{
             url,
-            blob: res,
-            objectUrl: objUrl.value!,
+            // blob: res,
+            objectUrl: blobUrl.value!,
             date: new Date(),
           };
-          console.log('cacheItem', cacheItem);
-          blobStore.set(url, cacheItem);
-          resolve(cacheItem);
+          console.log('blobItem', blobItem);
+          blobStore.set(url, blobItem);
+          // blobItem.blob = res;
+          resolve({ ...blobItem, blob: res });
+          console.log('blobStore', blobStore);
         })
         .catch(err => {
           blobUrl.value = undefined;

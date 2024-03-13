@@ -24,6 +24,17 @@ export type ShortcutState = {
 export const shortcutDevaultValue = (): ShortcutState => {
   const defaultValue: ShortcutState = {
     'CommandOrControl+Enter': 0,
+    'CommandOrControl+C': 0,
+    'CommandOrControl+D': 0,
+    'CommandOrControl+V': 0,
+    'CommandOrControl+E': 0,
+    'CommandOrControl+R': 0,
+    'CommandOrControl+G': 0,
+    'CommandOrControl+K': 0,
+    'CommandOrControl+Left': 0,
+    'CommandOrControl+Right': 0,
+    'CommandOrControl+Up': 0,
+    'CommandOrControl+Down': 0,
     'Alt+S': 0,
     // Shift: 0,
     // Ctrl: 0,

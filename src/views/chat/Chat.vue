@@ -29,7 +29,7 @@ import { useImStore } from '../../stores/im';
 import { MessageDto } from '../../apis/dtos';
 import { ContextmenuInput, showContextMenuForMessage } from '../../commons/contextmenu';
 import QuoteMessage from './components/QuoteMessage.vue';
-import { useSessionUnitId } from '../../commons/useSessionUnit';
+import { computedSessionUnitEntity, useSessionUnitId } from '../../commons/useSessionUnit';
 import { useMessageList } from '../../commons/useMessageList';
 import { MessageStateEnums, MessageTypeEnums } from '../../apis/enums';
 import { useSessionUnitDetail } from '../../commons/useSessionUnitDetail';
@@ -64,7 +64,7 @@ const sessionUnitId = props.sessionUnitId;
 
 const chatObjectId = Number(route.params.chatObjectId);
 
-const sessionUnit = computed(() => store.getSessionUnit(sessionUnitId));
+const sessionUnit = computedSessionUnitEntity(sessionUnitId);
 
 const loadingHeight = ref(40);
 
@@ -88,6 +88,7 @@ const {
 const chatTitle = computed(
   () => destinationName.value || props.title || (route.query.title as string),
 );
+// const chatTitle = ref(destinationName.value || props.title || (route.query.title as string));
 
 const activeLastMessageId = ref<number | null | undefined>();
 

@@ -114,7 +114,7 @@ export const showContextMenuForMessageContent = ({
         label: t('Save As'),
         icon: h(FileDownload, iconClass),
         disabled: false,
-        // hidden: ![MessageTypeEnums.File, MessageTypeEnums.Image].some(x => x == item.messageType),
+        hidden: ![MessageTypeEnums.File, MessageTypeEnums.Image, MessageTypeEnums.Video].some(x => x == entity.messageType),
         onClick: e => {
           console.log('contextmenu item click', entity);
           // download file and save as...
@@ -128,7 +128,7 @@ export const showContextMenuForMessageContent = ({
             })
             .catch(err => {
               console.error('saveAsOfMessage', err);
-              message.error({ content: err.error.message || t('SaveAsFail'), duration, key });
+              message.error({ content: err.error?.message || t('SaveAsFail'), duration, key });
             });
         },
       },

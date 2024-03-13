@@ -148,6 +148,9 @@ export const getQueryString = (params: Record<string, any>): string => {
 };
 
 const getUrl = (config: OpenAPIConfig, options: ApiRequestOptions): string => {
+  if (options.url.startsWith('blob:http')) {
+    return options.url;
+  }
   const encoder = config.ENCODE_PATH || encodeURI;
 
   const path = options.url
@@ -406,6 +409,7 @@ export const request = <T>(
   return new CancelablePromise(async (resolve, reject, onCancel) => {
     try {
       const url = getUrl(config, options);
+      console.log('request url', url);
       const formData = getFormData(options);
       const body = getRequestBody(options);
       const headers = await getHeaders(config, options, formData);
