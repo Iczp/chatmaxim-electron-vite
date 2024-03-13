@@ -15,7 +15,8 @@ import { openChildWindow } from '../../ipc/openChildWindow';
 import { env } from '../../env';
 import { MessageTypeEnums } from '../../apis/enums';
 import { ViewerPayload } from '../../views/message-viewer/commons/ViewerPayload';
-import { isImageMime, isVideoMime } from '../utils';
+import { isMessageUrl, isImageMime, isVideoMime } from '../utils';
+import { message } from 'ant-design-vue';
 export { showContextMenuForSession } from './showContextMenuForSession';
 export { showContextMenuForMessageContent } from './showContextMenuForMessageContent';
 export { showContextMenuForMessageAvatar } from './showContextMenuForMessageAvatar';
@@ -64,67 +65,83 @@ export const getTheme = () => {
 
 export const openMediaViewer = (item: MessageDto) => {};
 
+export const onAvatarClick = ({
+  event,
+  chatObjectId,
+  entity,
+}: MessageContextMenuInput & ContextmenuInput) => {
+  const params = {
+    clientX: event.clientX,
+    clientY: event.clientY,
+  };
+  console.log('event', params, event);
+  const senderSessionUnit = entity.senderSessionUnit;
+  setProfile({
+    name: 'pop',
+    path: `/profile/${chatObjectId}/${senderSessionUnit?.id}`,
+    position: 'absolute',
+    isAlwaysOnTop: true,
+    x: event.clientX,
+    y: event.clientY,
+    size: {
+      width: 280,
+      height: senderSessionUnit?.isFriendship || false ? 360 : 180,
+    },
+    payload: toRaw(senderSessionUnit),
+    refer: '$sender',
+    visiblity: true,
+    focus: true,
+  });
+};
+
+export const onContentClick = ({
+  t,
+  sessionUnit,
+  chatObjectId,
+  entity,
+}: MessageContextMenuInput & ContextmenuInput) => {
+  if (!isMessageUrl(entity)) {
+    return;
+  }
+  let isMedia = [MessageTypeEnums.Image, MessageTypeEnums.Video].some(x => x == entity.messageType);
+  if (entity.messageType == MessageTypeEnums.File) {
+    const content = entity.content as FileContentDto;
+    isMedia = isImageMime(content.contentType) || isVideoMime(content.contentType);
+  }
+  if (isMedia)
+    openChildWindow({
+      t,
+      window: {
+        name: `message-viewer`,
+        path: `/message-viewer/${entity.id}`,
+        payload: <ViewerPayload>{
+          currentIndex: 0,
+          chatObjectId,
+          sessionUnit,
+          messages: [entity],
+        },
+        // isModel: !env.isDev,
+        // parent: windowStore.name,
+        isPreventClose: true,
+        visiblity: true,
+      },
+    }).finally(() => {
+      // fetchList();
+    });
+};
 export const showContextMenuForMessage = (args: MessageContextMenuInput & ContextmenuInput) => {
   const { event, entity, selectable, mouseButton, labelType, chatObjectId, sessionUnit } = args;
   console.log('click', mouseButton, labelType, entity);
   const windowStore = useWindowStore();
   if (mouseButton == MouseButton.Click) {
     // console.log('click', entity);
-
     if (labelType == LabelType.Avatar) {
-      const params = {
-        clientX: event.clientX,
-        clientY: event.clientY,
-      };
-      console.log('event', params, event);
-      const senderSessionUnit = entity.senderSessionUnit;
-      setProfile({
-        name: 'pop',
-        path: `/profile/${chatObjectId}/${senderSessionUnit?.id}`,
-        position: 'absolute',
-        isAlwaysOnTop: true,
-        x: event.clientX,
-        y: event.clientY,
-        size: {
-          width: 280,
-          height: senderSessionUnit?.isFriendship || false ? 360 : 180,
-        },
-        payload: toRaw(senderSessionUnit),
-        refer: '$sender',
-        visiblity: true,
-        focus: true,
-      });
-      return;
+      onAvatarClick(args);
     } else if (labelType == LabelType.Content) {
-      const message = args.entity;
-      let isMedia = [MessageTypeEnums.Image, MessageTypeEnums.Video].some(
-        x => x == message.messageType,
-      );
-      if (message.messageType == MessageTypeEnums.File) {
-        const content = message.content as FileContentDto;
-        isMedia = isImageMime(content.contentType) || isVideoMime(content.contentType);
-      }
-      if (isMedia)
-        openChildWindow({
-          t: args.t,
-          window: {
-            name: `message-viewer`,
-            path: `/message-viewer/${message.id}`,
-            payload: <ViewerPayload>{
-              currentIndex: 0,
-              chatObjectId,
-              sessionUnit,
-              messages: [entity],
-            },
-            // isModel: !env.isDev,
-            // parent: windowStore.name,
-            isPreventClose: true,
-            visiblity: true,
-          },
-        }).finally(() => {
-          // fetchList();
-        });
+      // const entity = args.entity;
+      onContentClick(args);
     }
+
     if (selectable.value) {
       entity.checked = !entity.checked;
       return;

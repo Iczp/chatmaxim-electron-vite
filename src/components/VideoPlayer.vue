@@ -3,12 +3,14 @@ import { onBeforeMount, reactive, ref, watch } from 'vue';
 import videojs from 'video.js';
 import { onMounted } from 'vue';
 import 'video.js/dist/video-js.css';
+import { useWindowStore } from '../stores/window';
 // https://cloud.tencent.com/developer/article/2318627
 const props = defineProps<{
   options?: Object;
   src?: string;
   type?: string;
 }>();
+const windowStore = useWindowStore();
 let player: any;
 const videoPlayer = ref();
 
@@ -38,7 +40,7 @@ var videoOption = reactive({
     hotkeys: false,
   },
 });
-
+const pause = () => player?.pause();
 watch(
   () => props,
   ({ src, type }) => {
@@ -99,8 +101,18 @@ onBeforeMount(() => {
   player?.dispose();
 });
 
+watch(
+  () => windowStore.isVisible,
+  visible => {
+    if (!visible) {
+      pause();
+    }
+  },
+);
+
 defineExpose({
   player,
+  pause,
 });
 </script>
 

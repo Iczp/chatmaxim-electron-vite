@@ -36,8 +36,13 @@
   fill: #3c3c3c;
 }
 
+:root {
+  --mx-menu-backgroud: #ffffffe2;
+}
+
 .mx-context-menu.dark,
 .mx-menu-bar.dark {
+  --mx-menu-backgroud: #303031e2;
   --mx-menu-text: #ffffffa3;
   --mx-menu-hover-text: #ffffffaa;
   --mx-menu-active-text: #ffffffaa;

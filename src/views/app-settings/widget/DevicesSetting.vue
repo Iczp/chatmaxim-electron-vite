@@ -6,6 +6,7 @@ import { useI18n } from 'vue-i18n';
 import { setShell } from '../../../ipc/setShell';
 import { Link} from '../../../icons'
 import CopyBox from '../../../components/CopyBox.vue';
+import Url from '../../../components/Url.vue';
 const { t } = useI18n();
 const labelCol = { style: { width: '150px' } };
 const wrapperCol = { span: 14 };
@@ -54,7 +55,8 @@ const openUrl = (url: string) => {
           <a-form-item :label="t('Websize')">
             <a-input v-model:value="websize" readonly>
               <template #addonAfter>
-                <div @click="openUrl(websize)"><Link class="svg-icon-14" /></div>
+                <!-- <div @click="openUrl(websize)"><Link class="svg-icon-14" /></div> -->
+                <Url value="websize"></Url>
               </template>
             </a-input>
           </a-form-item>

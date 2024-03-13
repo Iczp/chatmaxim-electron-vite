@@ -460,48 +460,48 @@ export const formatImageRect = (
   return { width, height };
 };
 
-export const isImageOfMessage = (message?: MessageOwnerDto): boolean => {
-  if (!message) {
+export const isImageOfMessage = (entity?: MessageOwnerDto): boolean => {
+  if (!entity) {
     return false;
   }
-  if (message.messageType == MessageTypeEnums.Image) {
+  if (entity.messageType == MessageTypeEnums.Image) {
     return true;
   }
-  if (message.messageType == MessageTypeEnums.File) {
-    const content = message.content as FileContentDto;
+  if (entity.messageType == MessageTypeEnums.File) {
+    const content = entity.content as FileContentDto;
     return isImageMime(content.contentType);
   }
   return false;
 };
 
-export const isVideoOfMessage = (message?: MessageOwnerDto): boolean => {
-  if (!message) {
+export const isVideoOfMessage = (entity?: MessageOwnerDto): boolean => {
+  if (!entity) {
     return false;
   }
-  if (message.messageType == MessageTypeEnums.Video) {
+  if (entity.messageType == MessageTypeEnums.Video) {
     return true;
   }
-  if (message.messageType == MessageTypeEnums.File) {
-    const content = message.content as FileContentDto;
+  if (entity.messageType == MessageTypeEnums.File) {
+    const content = entity.content as FileContentDto;
     return isVideoMime(content.contentType);
   }
   return false;
 };
 
-export const getVideoOfMessage = (message?: MessageOwnerDto): string | undefined => {
-  if (!message) {
+export const getVideoOfMessage = (entity?: MessageOwnerDto): string | undefined => {
+  if (!entity) {
     return;
   }
-  if (message.messageType == MessageTypeEnums.Video) {
-    return (message.content as VideoContentDto).contentType || undefined;
+  if (entity.messageType == MessageTypeEnums.Video) {
+    return (entity.content as VideoContentDto).contentType || undefined;
   }
-  if (message.messageType == MessageTypeEnums.File) {
-    return (message.content as FileContentDto).contentType || undefined;
+  if (entity.messageType == MessageTypeEnums.File) {
+    return (entity.content as FileContentDto).contentType || undefined;
   }
 };
 
-export const getFileNameOfMessage = (message?: MessageOwnerDto): string => {
-  let { fileName, suffix, id } = message?.content;
+export const getFileNameOfMessage = (entity?: MessageOwnerDto): string => {
+  let { fileName, suffix, id } = entity?.content;
 
   if (!fileName) {
     fileName = `${env.app_name}_${id || new Date().getTime()}${suffix || '.unknown'}`;
@@ -511,4 +511,13 @@ export const getFileNameOfMessage = (message?: MessageOwnerDto): string => {
   // }
 
   return `${fileName}`;
+};
+
+export const isMessageUrl = (entity: MessageOwnerDto): boolean => {
+  if (!entity.content?.url) {
+    const content = 'Url is null';
+    message.error({ content, key: 'message-viewer' });
+    return false;
+  }
+  return true;
 };

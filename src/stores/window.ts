@@ -101,6 +101,10 @@ export const useWindowStore = defineStore('window', {
         case 'minimize':
           this.isMinimized = true;
           break;
+        case 'hide':
+          this.isVisible = false;
+          break;
+        case 'show':
         case 'restore':
           this.isVisible = true;
           break;

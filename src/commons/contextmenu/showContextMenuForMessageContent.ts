@@ -22,7 +22,7 @@ import {
 } from '../../icons';
 import { MessageContextMenuInput, getTheme, iconClass } from '.';
 import { useClipboard } from '@vueuse/core';
-import { formatMessageContent } from '../utils';
+import { formatMessageContent, isMessageUrl } from '../utils';
 import { saveAsOfMessage } from '../../ipc/saveAs';
 
 export const showContextMenuForMessageContent = ({
@@ -119,6 +119,9 @@ export const showContextMenuForMessageContent = ({
         ),
         onClick: e => {
           console.log('contextmenu item click', entity);
+          if (!isMessageUrl(entity)) {
+            return;
+          }
           // download file and save as...
           const key = 'save as';
           const duration = 2;
