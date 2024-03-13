@@ -1,5 +1,4 @@
-import log from 'video.js/dist/types/utils/log';
-import { FileContentDto, MessageOwnerDto, VideoContentDto } from '../apis/dtos';
+import { MessageOwnerDto } from '../apis/dtos';
 import { AttachmentsBaseDto } from '../apis/dtos/message/AttachmentsBaseDto';
 import { MessageTypeEnums } from '../apis/enums';
 import { useDownload } from '../commons/useDownload';
@@ -12,6 +11,7 @@ export type SaveResult = {
   message?: string;
   filePath?: string;
   error: any;
+  blob?: Blob;
 };
 
 /**
@@ -20,7 +20,10 @@ export type SaveResult = {
  * @param {MessageOwnerDto} [message]
  * @return {*}  {Promise<SaveResult>}
  */
-export const saveAsOfMessage = (message?: MessageOwnerDto): Promise<SaveResult> =>
+export const saveAsOfMessage = (
+  message?: MessageOwnerDto,
+  onDownloadSuccess?: (blob: Blob) => void,
+): Promise<SaveResult> =>
   new Promise<SaveResult>((resolve, reject) => {
     const rejectError = (error: any, message?: string): void => {
       reject(<SaveResult>{ error: error || { message }, success: false });
@@ -30,6 +33,7 @@ export const saveAsOfMessage = (message?: MessageOwnerDto): Promise<SaveResult> 
       rejectError(null, `Message fail`);
       return;
     }
+
     const { downloadFile, blob } = useDownload();
 
     switch (message.messageType) {
@@ -37,19 +41,31 @@ export const saveAsOfMessage = (message?: MessageOwnerDto): Promise<SaveResult> 
       case MessageTypeEnums.Video:
       case MessageTypeEnums.File:
       case MessageTypeEnums.Sound:
-        const { url } = message.content as AttachmentsBaseDto;
-        downloadFile(url!)
-          .then(res => {
-            var fileName = getFileNameOfMessage(message);
-            saveBlob(toRaw(blob.value!), fileName)
-              .then(filePath => {
-                resolve(<SaveResult>{ filePath, success: true });
-              })
-              .catch((err: any) => {
-                rejectError(err, err.canceled ? 'User Cancel' : undefined);
-              });
-          })
-          .catch(err => rejectError(err, 'Download fail'));
+        const { url, blob: contentBlob } = message.content as AttachmentsBaseDto;
+
+        var fileName = getFileNameOfMessage(message);
+
+        const _saveToFile = (blob: Blob) => {
+          saveBlob(blob, fileName)
+            .then(filePath => {
+              resolve(<SaveResult>{ filePath, blob, success: true });
+            })
+            .catch((err: any) => {
+              rejectError(err, err.canceled ? 'User Cancel' : undefined);
+            });
+        };
+
+        if (contentBlob) {
+          _saveToFile(contentBlob);
+        } else {
+          downloadFile(url!)
+            .then(res => {
+              onDownloadSuccess?.(res.blob);
+              _saveToFile(toRaw(blob.value!));
+            })
+            .catch(err => rejectError(err, 'Download fail'));
+        }
+
         break;
       default:
         rejectError(null, `Message type:'${message.messageType}' not supported`);

@@ -114,14 +114,16 @@ export const showContextMenuForMessageContent = ({
         label: t('Save As'),
         icon: h(FileDownload, iconClass),
         disabled: false,
-        hidden: ![MessageTypeEnums.File, MessageTypeEnums.Image, MessageTypeEnums.Video].some(x => x == entity.messageType),
+        hidden: ![MessageTypeEnums.File, MessageTypeEnums.Image, MessageTypeEnums.Video].some(
+          x => x == entity.messageType,
+        ),
         onClick: e => {
           console.log('contextmenu item click', entity);
           // download file and save as...
           const key = 'save as';
           const duration = 2;
           message.loading({ content: () => '', key });
-          saveAsOfMessage(entity)
+          saveAsOfMessage(entity, blob => (entity.content.blob = blob))
             .then(res => {
               console.log('saveAsOfMessage', res);
               message.success({ content: t('SaveAsSuccessful', [res.filePath]), duration, key });

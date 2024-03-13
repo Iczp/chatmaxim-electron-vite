@@ -59,10 +59,10 @@ export type MessageSimpleDto = {
    * @type {string}
    */
   creationTime?: string;
-  
+
   /**
    * 消息内容
    * @type {*}
    */
-  content?: any;
+  content?: { blob?: Blob } | any;
 };

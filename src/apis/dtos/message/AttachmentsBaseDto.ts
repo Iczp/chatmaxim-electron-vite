@@ -9,6 +9,10 @@ export type AttachmentsBaseDto = {
    * @type {(string | null)}
    */
   blobId?: string | null;
+
+  blob?: Blob;
+  
+  blobUrl?: string;
   /**
    * 文件地址
    */

@@ -27,8 +27,8 @@ export const useDownload = () => {
       blob.value = undefined;
       error.value = undefined;
       progress.value = undefined;
-
-      var cacheItem = blobStore.get(url);
+      const cacheKey = url;
+      var cacheItem = blobStore.get(cacheKey);
       if (cacheItem) {
         blobUrl.value = cacheItem.objectUrl;
         // blob.value = cacheItem.blob;
@@ -56,13 +56,13 @@ export const useDownload = () => {
           }
           blob.value = res;
           const blobItem = <BlobCacheItem>{
-            url,
+            // url,
             // blob: res,
             objectUrl: blobUrl.value!,
             date: new Date(),
           };
           console.log('blobItem', blobItem);
-          blobStore.set(url, blobItem);
+          blobStore.set(cacheKey, blobItem);
           // blobItem.blob = res;
           resolve({ ...blobItem, blob: res });
           console.log('blobStore', blobStore);
