@@ -1,9 +1,7 @@
 <script setup lang="ts">
-import { ref } from 'vue';
 import { objectSettingsRoutes } from '../../routes/objectSettingsRoutes';
 import { useRouter, useRoute } from 'vue-router';
 import { useI18n } from 'vue-i18n';
-import ChatObject from '../../components/ChatObject.vue';
 import { useOwner } from './commons/useOwner';
 import { computed } from 'vue';
 import { ChatObjectTypeEnums } from '../../apis/enums';

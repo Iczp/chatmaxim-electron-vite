@@ -1,8 +1,7 @@
 <script setup lang="ts">
 import { computed } from 'vue';
-import { MessageDto, FileContentDto } from '../../../apis/dtos';
+import { MessageDto } from '../../../apis/dtos';
 import Bubble from '../../../components/Bubble.vue';
-import TextViewer from '../../../components/TextViewer.vue';
 import { ImageContentDto } from '../../../apis/dtos/message/ImageContentDto';
 const { t } = useI18n();
 const props = defineProps<{
@@ -14,7 +13,8 @@ import { ref } from 'vue';
 import { formatImageRect, formatUrl } from '../../../commons/utils';
 import { useDownload } from '../../../commons/useDownload';
 import { useI18n } from 'vue-i18n';
-import { ApiError } from '../../../apis';
+import prettyBytes from 'pretty-bytes';
+
 const visible = ref(false);
 // https://zos.alipayobjects.com/rmsportal/jkjgkEfvpUPVyRjUImniVslZfWPnJuuZ.png?1703916163985
 const url = computed(() => content.value.url);
@@ -35,14 +35,11 @@ const onError = (event: Event) => {
 const showErr = () => {
   console.warn('showErr');
 };
-const fallback = () => {};
-
-const showProgress = ref(false);
 
 const thumbnailUrl = computed(() => content.value.thumbnailUrl!);
 
 const src = computed(() => content.value.path || formatUrl(content.value.thumbnailUrl!));
-// const src = ref<string>();
+
 const { downloadFile, percent, blobUrl, isPending } = useDownload();
 
 if (thumbnailUrl.value) {
@@ -59,10 +56,23 @@ if (thumbnailUrl.value) {
 
   <div class="msg-image">
     <div v-if="isPending" class="abs pointer-events-none">
-      <a-progress type="circle" :percent="percent" :size="24" :strokeWidth="6" />
+      <a-progress
+        type="circle"
+        :percent="percent"
+        :size="24"
+        :strokeWidth="6"
+        trailColor="rgba(255, 255, 255, 0.3)"
+        strokeColor="rgba(255, 255, 255, 0.5)"
+        class="progress"
+      />
     </div>
     <div class="abs err-info">{{ errMessage }}</div>
-    <!-- <div v-if="isError" class="empty" @click.stop.prevent="showErr">{{ errMessage }}</div> -->
+
+    <div class="abs image-info">
+      <div>{{ prettyBytes(content?.size || 0) }}</div>
+      <div>{{ content?.suffix }}</div>
+    </div>
+
     <a-image
       :src="blobUrl || src"
       placeholder="..."
@@ -79,6 +89,7 @@ if (thumbnailUrl.value) {
 <style scoped>
 .msg-image {
   position: relative;
+  cursor: pointer;
   user-select: none;
   /* padding: 1px; */
   min-height: 40px;
@@ -86,7 +97,7 @@ if (thumbnailUrl.value) {
   /* line-height: 24px; */
   max-width: var(--message-max-width);
   overflow: hidden;
-  /* background-image: url(https://gw.alipayobjects.com/zos/antfincdn/LlvErxo8H9/photo-1503185912284-5271ff81b9a8.webp); */
+
   background-size: cover;
   /* width: 180px; */
   /* height: 240px; */
@@ -99,6 +110,12 @@ if (thumbnailUrl.value) {
   margin: 0 12px;
   color: var(--color);
 }
+.progress {
+  background-color: rgba(0, 0, 0, 0.05);
+  border-radius: 50%;
+  opacity: 0.5;
+}
+
 :deep(img.error),
 .error img {
   /* display: none; */
@@ -107,9 +124,26 @@ if (thumbnailUrl.value) {
 .empty {
   display: flex;
   font-size: 12px;
-  color: #ccc;
+  color: #cccccc9f;
 }
 
+.image-info {
+  top: unset;
+  font-size: 12px;
+  justify-content: space-between;
+  padding: 0 6px;
+  /* display: none; */
+  transition: all 0.3s linear;
+  /* opacity: 0; */
+  background-color: rgba(0, 0, 0, 0.301);
+  background: linear-gradient(0deg, rgba(0, 0, 0, 0.3), rgba(1, 1, 1, 0)) border-box;
+  bottom: -100%;
+}
+.msg-image:hover .image-info {
+  /* display: flex; */
+  /* opacity: 1; */
+  bottom: 0;
+}
 .progress {
   pointer-events: none;
 }

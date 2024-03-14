@@ -76,7 +76,7 @@ export const useDownload = () => {
         .finally(() => {
           setTimeout(() => {
             isPending.value = false;
-          }, 1000);
+          }, 0);
         });
     });
 

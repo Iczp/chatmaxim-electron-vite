@@ -1,14 +1,10 @@
 <script setup lang="ts">
 import { UnwrapRef, computed, reactive, ref, toRaw, onActivated } from 'vue';
 import { useI18n } from 'vue-i18n';
-import { useDestination } from '../chat-settings/commons/useDestination';
-import ChatObject from '../../components/ChatObject.vue';
-import Avatar from '../../components/Avatar.vue';
 import { ChatObjectTypeEnums, GenderEnums, VerificationMethodEnums } from '../../apis/enums';
 import { ChatObjectService, EntryNameService, EntryService } from '../../apis';
 import { message } from 'ant-design-vue';
 import { useOwner } from './commons/useOwner';
-import { useEntries } from './commons/useEntries';
 import { EntryNameDto } from '../../apis/dtos/EntryNameDto';
 import { setWindow } from '../../ipc/setWindow';
 const { t } = useI18n();

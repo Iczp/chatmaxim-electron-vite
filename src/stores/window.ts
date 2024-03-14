@@ -64,7 +64,7 @@ export const useWindowStore = defineStore('window', {
       this.payload = payload;
     },
     handle({ event, args }: { event: string; args: Array<any> }) {
-      console.log('handle', event, args);
+      // console.log('handle', event, args);
       switch (event) {
         case 'init':
           const state = <WindowState>args[0];

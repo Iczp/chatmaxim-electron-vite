@@ -4,7 +4,6 @@ import { formatUrl } from '../../commons/utils';
 import { usePayload } from '../../commons/usePayload';
 import { ChatObjectDto } from '../../apis/dtos';
 import { computed } from 'vue';
-import UploadPortrait from '../../components/UploadPortrait.vue';
 const { t } = useI18n();
 const props = defineProps<{ chatObjectId: number | string }>();
 const payload = usePayload<{ owner: ChatObjectDto }>();

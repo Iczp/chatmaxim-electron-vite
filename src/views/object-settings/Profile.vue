@@ -12,7 +12,6 @@ import { usePayload } from '../../commons/usePayload';
 import { sendPickerResult } from '../../ipc/openChildWindow';
 import { useRoute } from 'vue-router';
 import { useEnums } from '../../commons/useEnums';
-import CopyBox from '../../components/CopyBox.vue';
 const route = useRoute();
 const { t } = useI18n();
 const props = defineProps<{ chatObjectId: string }>();

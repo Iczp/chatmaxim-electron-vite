@@ -3,9 +3,9 @@ import { onActivated, onMounted, ref } from 'vue';
 import { useWaitersList } from './commons/useWaitersList';
 import { useI18n } from 'vue-i18n';
 import ChatObject from '../../components/ChatObject.vue';
-import Loading from '../../components/Loading.vue';
-import { Plus } from '../../icons';
 import WaiterFormModal from './widget/WaiterFormModal.vue';
+import { Plus } from '../../icons';
+
 import {
   PlusOutlined,
   PlusCircleOutlined,

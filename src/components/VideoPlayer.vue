@@ -5,17 +5,17 @@ import { onMounted } from 'vue';
 import 'video.js/dist/video-js.css';
 import { useWindowStore } from '../stores/window';
 import PlayIcon from './PlayIcon.vue';
+import { useDownload } from '../commons/useDownload';
 // https://cloud.tencent.com/developer/article/2318627
 const props = defineProps<{
   options?: Object;
   src?: string;
   type?: string;
-  percent?: number;
 }>();
 const windowStore = useWindowStore();
 let player: any;
 const videoPlayer = ref();
-
+const { downloadFile, isPending, error, percent, blobUrl } = useDownload();
 var videoOption = reactive({
   autoplay: false,
   mouted: true,
@@ -48,57 +48,21 @@ const pause = () => {
 };
 
 const play = (e: any) => player?.play(e);
-let timer: NodeJS.Timeout | undefined;
-watch(
-  () => props,
-  ({ src, type }) => {
-    console.log('src', src, type);
-    // try {
-    player.reset();
-    isPlaying.value = false;
-    if (timer) {
-      clearTimeout(timer);
-    }
-    pause();
-    timer = setTimeout(() => {
-      player.src({
-        src,
-        type,
-      });
-      pause();
-      player.play('muted');
-    }, 100);
-    // player.muted(true);
-    // } catch (err) {
-    //   player.error('Error:fail');
-    // }
-  },
-  {
-    deep: true,
-  },
-);
+
 const isPlaying = ref(false);
+
 onMounted(() => {
   console.log('onMounted');
-  // player?.dispose();
-  if (props.src) {
-    videoOption.sources = <never[]>[
-      {
-        src: props.src,
-        type: props.type,
-      },
-    ];
-  }
+
   player = videojs(videoPlayer.value, videoOption, () => {
     player.log('onPlayerReady', this);
-    // player.play('muted');
-    // player.muted(true);
   });
 
   player.on('play', (e: any) => {
     player.log('play', e);
     isPlaying.value = true;
   });
+  
   player.on('pause', (e: any) => {
     player.log('pause', e);
     isPlaying.value = false;
@@ -117,6 +81,34 @@ onBeforeUnmount(() => {
   console.log('onBeforeUnmount');
   player?.dispose();
 });
+
+const downloadAndPlay = ({ src, type }: { src?: string; type?: string }) => {
+  console.log('src', src, type);
+  isPlaying.value = false;
+  player?.reset();
+  downloadFile(src!)
+    .then(res => {
+      player.src({
+        src: res.objectUrl,
+        type,
+      });
+      player.play('muted');
+    })
+    .catch(err => {
+      console.error('err', err);
+      player?.error('download error');
+    });
+};
+watch(
+  () => props,
+  v => {
+    downloadAndPlay(v);
+  },
+  {
+    deep: true,
+    immediate: true,
+  },
+);
 
 watch(
   () => windowStore.isVisible,
