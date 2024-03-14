@@ -1,21 +1,23 @@
 <script setup lang="ts">
-import { onBeforeMount, reactive, ref, watch } from 'vue';
+import { onBeforeMount, onBeforeUnmount, reactive, ref, watch } from 'vue';
 import videojs from 'video.js';
 import { onMounted } from 'vue';
 import 'video.js/dist/video-js.css';
 import { useWindowStore } from '../stores/window';
+import PlayIcon from './PlayIcon.vue';
 // https://cloud.tencent.com/developer/article/2318627
 const props = defineProps<{
   options?: Object;
   src?: string;
   type?: string;
+  percent?: number;
 }>();
 const windowStore = useWindowStore();
 let player: any;
 const videoPlayer = ref();
 
 var videoOption = reactive({
-  autoplay: true,
+  autoplay: false,
   mouted: true,
   controls: true,
   bigPlayButton: true,
@@ -40,18 +42,32 @@ var videoOption = reactive({
     hotkeys: false,
   },
 });
-const pause = () => player?.pause();
+const pause = () => {
+  isPlaying.value = false;
+  player?.pause();
+};
+
+const play = (e: any) => player?.play(e);
+let timer: NodeJS.Timeout | undefined;
 watch(
   () => props,
   ({ src, type }) => {
     console.log('src', src, type);
     // try {
     player.reset();
-    player.src({
-      src,
-      type,
-    });
-    player.play('muted');
+    isPlaying.value = false;
+    if (timer) {
+      clearTimeout(timer);
+    }
+    pause();
+    timer = setTimeout(() => {
+      player.src({
+        src,
+        type,
+      });
+      pause();
+      player.play('muted');
+    }, 100);
     // player.muted(true);
     // } catch (err) {
     //   player.error('Error:fail');
@@ -61,6 +77,7 @@ watch(
     deep: true,
   },
 );
+const isPlaying = ref(false);
 onMounted(() => {
   console.log('onMounted');
   // player?.dispose();
@@ -74,30 +91,30 @@ onMounted(() => {
   }
   player = videojs(videoPlayer.value, videoOption, () => {
     player.log('onPlayerReady', this);
-    player.play('muted');
-    player.muted(true);
+    // player.play('muted');
+    // player.muted(true);
+  });
+
+  player.on('play', (e: any) => {
+    player.log('play', e);
+    isPlaying.value = true;
+  });
+  player.on('pause', (e: any) => {
+    player.log('pause', e);
+    isPlaying.value = false;
   });
 
   player.on('playing', (e: any) => {
     console.log('playing', e);
+    isPlaying.value = true;
     if (player.muted()) {
       console.log('已静音啦');
-      // player.muteDialog?.destroy();
-      // player.muteDialog = modal.showInfo({
-      //   titleTxt: "开启声音",
-      //   contentTxt: "浏览器已自动静音，请手动开启声音",
-      //   okTxt: "开启",
-      //   onConfirm: () => {
-      //     player.player.muted(false);
-      //     player.muteDialog = null;
-      //   }
-      // });
     }
   });
 });
 
-onBeforeMount(() => {
-  console.log('onBeforeMount');
+onBeforeUnmount(() => {
+  console.log('onBeforeUnmount');
   player?.dispose();
 });
 
@@ -113,19 +130,31 @@ watch(
 defineExpose({
   player,
   pause,
+  play,
 });
 </script>
 
 <template>
   <div class="video-container">
+    <PlayIcon v-if="!isPlaying" class="btn-play" :percent="percent" @click="play" />
     <video ref="videoPlayer" class="video-js"></video>
   </div>
 </template>
 
 <style scoped>
+.btn-play {
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  z-index: 1;
+  transform: translate(-50%, -50%);
+  cursor: pointer;
+}
 .video-container {
+  position: relative;
   width: 100%;
   height: 100%;
+  display: flex;
 }
 .video-js {
   width: 100%;

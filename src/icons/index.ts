@@ -55,6 +55,7 @@ import Remind from '../svgs/alternate_email_black_24dp.svg';
 import Link from '../svgs/link_black_24dp.svg';
 
 import VideoPlay from '../svgs/play_circle_black_24dp.svg';
+import PlayArrow from '../svgs/play_arrow_black_24dp.svg';
 import VideoPause from '../svgs/pause_circle_black_24dp.svg';
 import VideoStop from '../svgs/stop_circle_black_24dp.svg';
 
@@ -142,6 +143,7 @@ export {
   Link,
   Remind,
   VideoPlay,
+  PlayArrow,
   VideoPause,
   VideoStop,
   FileDownload,

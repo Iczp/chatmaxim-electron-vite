@@ -18,6 +18,7 @@ import VideoPlayer from '@/components/VideoPlayer.vue';
 import ToolBar from '../../components/TooBar.vue';
 import ImageViewer from '../../components/ImageViewer.vue';
 import { useDownload } from '../../commons/useDownload';
+import PlayButton from '../../components/PlayButton.vue';
 const { t } = useI18n();
 const route = useRoute();
 const router = useRouter();
@@ -36,7 +37,7 @@ const isVideo = computed(() => isVideoOfMessage(msg.value));
 
 const messageType = computed(() => msg.value?.messageType);
 
-const { downloadFile, isPending, error,  blobUrl } = useDownload();
+const { downloadFile, isPending, error, percent, blobUrl } = useDownload();
 
 watch(
   () => msg.value?.content?.url,
@@ -61,6 +62,10 @@ const videoOption = computed(() => ({
   //   },
   // ],
 }));
+
+onActivated(() => {
+  console.log('onActivated');
+});
 </script>
 
 <template>
@@ -76,8 +81,17 @@ const videoOption = computed(() => ({
     </page-header> -->
 
     <page-content class="page-content">
+      <!-- <div class="abs pointer-events-none">
+        <PlayButton :percent="percent" />
+      </div> -->
       <ImageViewer :src="blobUrl" v-if="isImage" :error="error"></ImageViewer>
-      <VideoPlayer v-else-if="isVideo" :options="videoOption" :src="blobUrl" :type="videoType" />
+      <VideoPlayer
+        :percent="percent"
+        v-else-if="isVideo"
+        :options="videoOption"
+        :src="blobUrl"
+        :type="videoType"
+      />
     </page-content>
   </page>
 </template>

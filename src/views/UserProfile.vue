@@ -11,7 +11,7 @@ import { useWindowStore } from '../stores/window';
 import { env } from '../env';
 import { ChatObjectTypeEnums } from '../apis/enums';
 import { getDisplayName } from '../commons/utils';
-import VideoPlayer from '@/components/VideoPlayer.vue';
+
 const { t } = useI18n();
 const windowStore = useWindowStore();
 // defineProps<{ msg: string }>();
@@ -21,19 +21,6 @@ const ret = reactive<ResultValue<ChatObjectDto>>({
   isEof: false,
   totalCount: 0,
   items: [],
-});
-
-const videoOption = ref({
-  autoplay: false,
-  controls: true,
-  width: 480,
-  height: 360,
-  sources: [
-    {
-      src: 'https://upload.wikimedia.org/wikipedia/commons/f/f1/Sintel_movie_4K.webm',
-      type: 'video/mp4',
-    },
-  ],
 });
 
 const fetchList = () => {
@@ -102,8 +89,6 @@ const getDescription = (item: ChatObjectDto): string =>
             </a-card>
           </div>
         </div>
-
-        <VideoPlayer :options="videoOption" />
       </scroll-view>
     </page-content>
   </page>

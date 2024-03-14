@@ -96,6 +96,21 @@ a:hover {
 .data-item:hover {
   background-color: var(--background-color-hover);
 }
+.abs {
+  position: absolute;
+  left: 0;
+  right: 0;
+  top: 0;
+  bottom: 0;
+  z-index: 1;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+.pointer-events-none,
+.events-none {
+  pointer-events: none;
+}
 body {
   margin: 0;
   /* display: flex; */

@@ -3,6 +3,12 @@
 .svg-icon-16,
 .svg-icon-18,
 .svg-icon-20,
+
+.svg-icon-24,
+.svg-icon-28,
+.svg-icon-32,
+.svg-icon-36,
+.svg-icon-48,
 .svg-icon {
   fill: currentColor;
   vertical-align: middle;
@@ -42,10 +48,14 @@
 }
 .svg-icon-36,
 .svg-icon.s36 {
-  fill: currentColor;
   scale: calc(36 / 24);
 }
 
+.svg-icon-48,
+.svg-icon.s48 {
+
+  scale: calc(48 / 24);
+}
 
 
 .svg-icon-\[var\(--size\)\] {

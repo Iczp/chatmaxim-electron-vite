@@ -26,7 +26,7 @@ export const useDownload = () => {
       blobUrl.value = undefined;
       blob.value = undefined;
       error.value = undefined;
-      percent.value = undefined;
+      percent.value = 0;
       const cacheKey = url;
       var cacheItem = blobStore.get(cacheKey);
       if (cacheItem) {
@@ -74,9 +74,11 @@ export const useDownload = () => {
           reject(err);
         })
         .finally(() => {
-          isPending.value = false;
+          setTimeout(() => {
+            isPending.value = false;
+          }, 1000);
         });
     });
 
-  return { downloadFile, isPending, error, blobUrl, blob, onDownloadProgress,  percent };
+  return { downloadFile, isPending, error, blobUrl, blob, onDownloadProgress, percent };
 };

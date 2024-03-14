@@ -58,7 +58,7 @@ if (thumbnailUrl.value) {
   </Bubble> -->
 
   <div class="msg-image">
-    <div v-if="isPending" class="abs progress">
+    <div v-if="isPending" class="abs pointer-events-none">
       <a-progress type="circle" :percent="percent" :size="24" :strokeWidth="6" />
     </div>
     <div class="abs err-info">{{ errMessage }}</div>
@@ -109,25 +109,14 @@ if (thumbnailUrl.value) {
   font-size: 12px;
   color: #ccc;
 }
-.abs {
-  position: absolute;
-  left: 0;
-  right: 0;
-  top: 0;
-  bottom: 0;
 
-  z-index: 1;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  font-size: 12px;
-  color: var(--sub-title-color);
-}
 .progress {
   pointer-events: none;
 }
 .err-info {
   display: flex;
+  color: var(--sub-title-color);
+  font-size: 12px;
 }
 :deep(.ant-progress.ant-progress-circle .ant-progress-text) {
   color: rgba(255, 255, 255, 0.88);
