@@ -22,8 +22,10 @@ export { showContextMenuForMessageContent } from './showContextMenuForMessageCon
 export { showContextMenuForMessageAvatar } from './showContextMenuForMessageAvatar';
 export enum LabelType {
   'All' = 0,
-  'Content' = 2,
   'Avatar' = 1,
+  'Content' = 2,
+  'QuoteAvatar' = 3,
+  'QuoteContent' = 4,
 }
 
 export enum MouseButton {
@@ -70,6 +72,7 @@ export const onAvatarClick = ({
   chatObjectId,
   entity,
 }: MessageContextMenuInput & ContextmenuInput) => {
+  console.log('onAvatarClick');
   const params = {
     clientX: event.clientX,
     clientY: event.clientY,
@@ -100,15 +103,17 @@ export const onContentClick = ({
   chatObjectId,
   entity,
 }: MessageContextMenuInput & ContextmenuInput) => {
-  if (!isMessageUrl(entity)) {
-    return;
-  }
+  console.log('onContentClick');
+
   let isMedia = [MessageTypeEnums.Image, MessageTypeEnums.Video].some(x => x == entity.messageType);
   if (entity.messageType == MessageTypeEnums.File) {
     const content = entity.content as FileContentDto;
     isMedia = isImageMime(content.contentType) || isVideoMime(content.contentType);
   }
-  if (isMedia)
+  if (isMedia) {
+    if (!isMessageUrl(entity)) {
+      return;
+    }
     openChildWindow({
       t,
       window: {
@@ -128,6 +133,7 @@ export const onContentClick = ({
     }).finally(() => {
       // fetchList();
     });
+  }
 };
 export const showContextMenuForMessage = (args: MessageContextMenuInput & ContextmenuInput) => {
   const { event, entity, selectable, mouseButton, labelType, chatObjectId, sessionUnit } = args;
@@ -135,11 +141,20 @@ export const showContextMenuForMessage = (args: MessageContextMenuInput & Contex
   const windowStore = useWindowStore();
   if (mouseButton == MouseButton.Click) {
     // console.log('click', entity);
-    if (labelType == LabelType.Avatar) {
-      onAvatarClick(args);
-    } else if (labelType == LabelType.Content) {
-      // const entity = args.entity;
-      onContentClick(args);
+
+    switch (labelType) {
+      case LabelType.Avatar:
+        onAvatarClick(args);
+        break;
+      case LabelType.Content:
+        onContentClick(args);
+        break;
+      case LabelType.QuoteAvatar:
+        // onContentClick(args);
+        break;
+      case LabelType.QuoteContent:
+        // onContentClick(args);
+        break;
     }
 
     if (selectable.value) {

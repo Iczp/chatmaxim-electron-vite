@@ -42,6 +42,7 @@ const content = computed(() => formatMessageContent(props.entity, t));
   overflow: hidden;
   white-space: nowrap;
   text-overflow: ellipsis;
+  cursor: default;
 }
 
 .message-type {

@@ -1,66 +1,30 @@
 <script setup lang="ts">
-import { computed, createVNode, ref, Ref, inject } from 'vue';
+import { computed } from 'vue';
 import { MessageDto, CmdContentDto } from '../../../apis/dtos';
 import TextViewer from '../../../components/TextViewer.vue';
 import { WordDto, WordTypeEnum } from '../../../commons/formatWords';
-import { Modal } from 'ant-design-vue';
-import { ExclamationCircleOutlined } from '@ant-design/icons-vue';
-import ProfileModal from './widget/ProfileModal.vue';
-import { ProfileModalArgsType } from '../widget/ProfileModal.vue';
-import { useRoute } from 'vue-router';
-const route = useRoute();
+import { useProfileModal } from '../commons/useProfileModal';
 const props = defineProps<{
   item: MessageDto;
 }>();
 const content = computed(() => props.item.content as CmdContentDto);
-const profileModal = inject('profile') as Ref<InstanceType<typeof ProfileModal> | null>;
-// const profileModal = ref<InstanceType<typeof ProfileModal> | null>(null);
-const chatObjectId = inject<number>('chatObjectId') || Number(route.params.chatObjectId);
-const sessionUnitId = inject<string>('sessionUnitId') || (route.params.sessionUnitId as string);
-const open = (args: ProfileModalArgsType) => profileModal.value?.open(args);
+const { showProfile } = useProfileModal();
 const onWordClick = (item: WordDto, event?: Event) => {
   console.log('onWordClick', item, event);
-
   switch (item.type) {
     case WordTypeEnum.uid:
-      if (sessionUnitId) {
-        open({
-          chatObjectId: chatObjectId,
-          sessionUnitId: sessionUnitId,
-          destinationSessionUnitId: item.value!,
-          name: item.text,
-        });
-      }
+      showProfile(item.value!, item.text);
       break;
     case WordTypeEnum.oid:
       break;
   }
-
-  return;
-  Modal.confirm({
-    title: 'Are you sure delete this task?',
-    icon: createVNode(ExclamationCircleOutlined),
-    content: 'Some descriptions',
-    okText: 'Yes',
-    okType: 'danger',
-    cancelText: 'No',
-    onOk() {
-      console.log('OK');
-    },
-    onCancel() {
-      console.log('Cancel');
-    },
-  });
 };
 </script>
 
 <template>
-  <!-- <Bubble :r="item.isSelf"> -->
-  <!-- <ProfileModal ref="profileModal" /> -->
   <div class="msg-cmd">
     <TextViewer :value="content.text!" @word-click="onWordClick" />
   </div>
-  <!-- </Bubble> -->
 </template>
 
 <style scoped>

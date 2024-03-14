@@ -445,19 +445,34 @@ export const isVideoMime = (contentType?: string | null): boolean => {
 };
 
 export const formatImageRect = (
-  w: number,
-  h: number,
+  // w: number,
+  // h: number,
+  ratio: number,
   maxWidth: number,
   maxHeight: number,
 ): { width: number; height: number } => {
-  const p = w / h;
-  let width = p > 1 ? maxWidth : maxHeight * p;
-  let height = p > 1 ? maxWidth / p : maxHeight;
+  // const ratio = w / h;
+  let width = ratio > 1 ? maxWidth : maxHeight * ratio;
+  let height = ratio > 1 ? maxWidth / ratio : maxHeight;
   if (height > maxHeight) {
     height = maxHeight;
-    width = maxHeight * p;
+    width = maxHeight * ratio;
   }
   return { width, height };
+};
+
+export const getImageRect = (imgUrl: string): Promise<{ width: number; height: number }> => {
+  return new Promise<{ width: number; height: number }>((resolve, reject) => {
+    let img = new Image();
+    img.src = imgUrl;
+    img.onload = () => {
+      console.log(`width:${img.width},height:${img.height}`);
+      resolve({ width: img.width, height: img.height });
+    };
+    img.onerror = err => {
+      reject(err);
+    };
+  });
 };
 
 export const isImageOfMessage = (entity?: MessageOwnerDto): boolean => {

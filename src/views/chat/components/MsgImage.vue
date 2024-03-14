@@ -10,7 +10,7 @@ const props = defineProps<{
 const content = computed(() => props.item.content as ImageContentDto);
 
 import { ref } from 'vue';
-import { formatImageRect, formatUrl } from '../../../commons/utils';
+import { formatImageRect, formatUrl, getImageRect } from '../../../commons/utils';
 import { useDownload } from '../../../commons/useDownload';
 import { useI18n } from 'vue-i18n';
 import prettyBytes from 'pretty-bytes';
@@ -22,8 +22,8 @@ const url = computed(() => content.value.url);
 const maxWidth = 240;
 const maxHeight = 180;
 
-const rect = computed(() =>
-  formatImageRect(content.value.width || 0, content.value.height || 0, maxWidth, maxHeight),
+const rect = ref(
+  formatImageRect((content.value.width || 0) / (content.value.height || 0), maxWidth, maxHeight),
 );
 
 const isError = ref(false);
@@ -43,9 +43,15 @@ const src = computed(() => content.value.path || formatUrl(content.value.thumbna
 const { downloadFile, percent, blobUrl, isPending } = useDownload();
 
 if (thumbnailUrl.value) {
-  downloadFile(thumbnailUrl.value).catch(err => {
-    console.error('downloadFile image:', props.item.id, content.value.url, JSON.stringify(err));
-  });
+  downloadFile(thumbnailUrl.value)
+    .then(res => {
+      // getImageRect(res.objectUrl).then(res => {
+      //   rect.value = formatImageRect(res.width / res.height, maxWidth, maxHeight);
+      // });
+    })
+    .catch(err => {
+      console.error('downloadFile image:', props.item.id, content.value.url, JSON.stringify(err));
+    });
 }
 </script>
 

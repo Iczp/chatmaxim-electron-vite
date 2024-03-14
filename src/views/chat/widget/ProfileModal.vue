@@ -1,21 +1,12 @@
 <script setup lang="ts">
 import { computed, ref, h } from 'vue';
-
 import { ChatObjectDto, SessionUnitDestinationDto } from '../../../apis/dtos';
 import ChatObject from '../../../components/ChatObject.vue';
-import FileItem from '../../../components/FileItem.vue';
 import LabelBox from '../../../components/LabelBox.vue';
 import { ChatOn, PersonAdd } from '../../../icons';
-
 import { SearchOutlined, CloseCircleOutlined, RightOutlined } from '@ant-design/icons-vue';
-import prettyBytes from 'pretty-bytes';
 import { useI18n } from 'vue-i18n';
-import { useWaitersList } from '../../object-settings/commons/useWaitersList';
-import { reactive } from 'vue';
-import { CallCenterService } from '../../../apis';
-import { message } from 'ant-design-vue';
 import { useImStore } from '../../../stores/im';
-import Entity from 'ant-design-vue/es/_util/cssinjs/Cache';
 
 export type ProfileModalArgsType = {
   chatObjectId?: number;

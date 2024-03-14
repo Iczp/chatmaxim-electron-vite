@@ -11,6 +11,8 @@ const props = defineProps<{
 
 const emits = defineEmits<{
   remove: [Event];
+  sender: [MouseEvent | PointerEvent];
+  content: [MouseEvent | PointerEvent];
 }>();
 const { senderName } = useMessageEntity(props.entity);
 </script>
@@ -19,8 +21,8 @@ const { senderName } = useMessageEntity(props.entity);
   <div class="quote-message">
     <div class="quote-message-body" :class="{ reserve: r }">
       <icon type="quote-left" class="icon-quote" />
-      <span class="sender-name">{{ senderName }}</span>
-      <MessageProview :entity="entity" />
+      <a class="sender-name" @click.stop="emits('sender', $event)">{{ senderName }}</a>
+      <MessageProview :entity="entity" @click.stop="emits('content', $event)" />
       <icon type="quote-right" class="icon-quote" />
     </div>
     <div v-if="removable" class="closable" @click="emits('remove', $event)" title="删除引用">
@@ -36,13 +38,12 @@ const { senderName } = useMessageEntity(props.entity);
 .quote-message {
   display: flex;
   flex-direction: row;
-
 }
 .quote-message-body {
   display: flex;
   padding: 2px 8px;
   border-radius: 12px;
-  
+
   background-color: var(--quote-message-background-color);
   font-size: 12px;
   align-items: center;
@@ -52,7 +53,7 @@ const { senderName } = useMessageEntity(props.entity);
 }
 
 .sender-name {
-  color:var(--quote-message-sender-name-color);
+  color: var(--quote-message-sender-name-color);
 }
 .sender-name::before {
   content: '[';
@@ -71,7 +72,6 @@ const { senderName } = useMessageEntity(props.entity);
   color: var(--quote-message-closable-hover-color);
 }
 .quote-message-body:hover {
-
   background-color: var(--quote-message-hover-background-color);
   border: 1px solid var(--quote-message-hover-border-color);
 }

@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { ref } from 'vue';
+import { nextTick, onMounted, ref } from 'vue';
 import {
   UploadOutlined,
   MehOutlined,
@@ -60,14 +60,21 @@ const emits = defineEmits<{
 }>();
 
 const selectionState = useTextSelection();
+const inputRef = ref();
 const inputValue = ref('');
+onMounted(() => {
+  console.log('inputRef', inputRef.value);
+  // nextTick(() => {
+  //   inputRef.value?.focus();
+  // });
+});
 // const isSendDisabled = ref(false);
 const textarea = ref(null as HTMLInputElement | null);
 
-const selection = reactive({
-  start: 0,
-  end: 0,
-});
+const selection = ref<{
+  start: number | null;
+  end: number | null;
+}>({ start: 0, end: 0 });
 
 const isSendBtnDisabled = computed(() => inputValue.value.length == 0);
 const onInput = (e: any) => {
@@ -78,11 +85,20 @@ const onInput = (e: any) => {
 
 const onInputClick = (e: any) => {
   const el = e.target as HTMLInputElement;
+
   console.log('onInputClick', el.selectionStart, el.selectionEnd, e);
 };
 const onBlur = (e: any) => {
   const el = e.target as HTMLInputElement;
+  selection.value = {
+    start: el.selectionStart,
+    end: el.selectionEnd,
+  };
   console.log('onBlur', el.selectionStart, el.selectionEnd, e);
+};
+const onFocus = (e: any) => {
+  const el = e.target as HTMLInputElement;
+  console.log('onFocus', el.selectionStart, el.selectionEnd, e);
 };
 const onInputChange = (e: any) => {
   const el = e.target as HTMLInputElement;
@@ -144,7 +160,22 @@ const hide = () => {
 // event callback
 function onSelectEmoji(emoji: any) {
   console.log(emoji);
-  inputValue.value += emoji.i;
+  const text = inputValue.value;
+
+  const { start, end } = selection.value;
+
+  let newValue = '';
+  if (start != null) {
+    newValue += text.substring(0, start!);
+  }
+  newValue += emoji.i;
+  if (end != null && end < text.length) {
+    newValue += text.substring(end);
+  }
+
+  inputValue.value = newValue;
+  selection.value.start += emoji.i.length;
+  selection.value.end += emoji.i.length;
   hide();
   /*
     // result
@@ -198,7 +229,7 @@ defineExpose({
         </a-popover>
 
         <a-button type="text" @click="open"><FolderOpenOutlined /></a-button>
-        <a-popconfirm title="Are you sure delete this task?" ok-text="Yes" cancel-text="No">
+        <!-- <a-popconfirm title="Are you sure delete this task?" ok-text="Yes" cancel-text="No">
           <a-button type="text"><VideoCameraOutlined /></a-button>
         </a-popconfirm>
 
@@ -206,7 +237,7 @@ defineExpose({
 
         <a-button type="text">
           <UploadOutlined />
-        </a-button>
+        </a-button> -->
       </a-space>
     </div>
     <div class="input-body">
@@ -220,6 +251,7 @@ defineExpose({
         ></textarea> -->
         <scroll-view>
           <a-mentions
+            ref="inputRef"
             class="textarea"
             v-model:value="inputValue"
             rows="5"
@@ -232,6 +264,7 @@ defineExpose({
             @change="onTextChange"
             @select="onTextSelect"
             @blur="onBlur"
+            @focus="onFocus"
           ></a-mentions>
           <!-- <br /> <br /> <br /> <br /> <br /> -->
         </scroll-view>

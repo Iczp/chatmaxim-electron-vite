@@ -23,7 +23,11 @@ import QuoteMessage from './QuoteMessage.vue';
 import MsgRollback from './MsgRollback.vue';
 
 import { SelfImprovement, PersonPin } from '../../../icons';
-import { ContextmenuInput, LabelType as LabelType, MouseButton } from '../../../commons/contextmenu';
+import {
+  ContextmenuInput,
+  LabelType as LabelType,
+  MouseButton,
+} from '../../../commons/contextmenu';
 import { useMessageEntity } from '../../../commons/useMessageEntity';
 
 const props = defineProps<{
@@ -41,8 +45,6 @@ const emits = defineEmits<{
   resend: [MessageDto?];
   remove: [MessageDto?];
 }>();
-
-
 
 const { senderName, messageType, isRollbacked, sendTime, sendTimeTitle, state } = useMessageEntity(
   props.entity,
@@ -83,6 +85,23 @@ const onMessageClick = (event: MouseEvent, mouseButton: MouseButton) => {
     event,
     labelType: LabelType.All,
     mouseButton,
+  });
+};
+
+const onQuoteSenderClick = (event: MouseEvent) => {
+  emits('contextmenu', {
+    entity: props.entity,
+    event,
+    labelType: LabelType.QuoteAvatar,
+    mouseButton: MouseButton.Click,
+  });
+};
+const onQuoteContentClick = (event: MouseEvent) => {
+  emits('contextmenu', {
+    entity: props.entity,
+    event,
+    labelType: LabelType.QuoteContent,
+    mouseButton: MouseButton.Click,
   });
 };
 </script>
@@ -161,12 +180,21 @@ const onMessageClick = (event: MouseEvent, mouseButton: MouseButton) => {
             <!-- 消息 End -->
             <div>
               <!-- messageState: {{ messageState }} -->
-              <MsgState :entity="entity" :state="messageState" @resend="emits('resend',entity)" @remove="emits('remove',entity)" />
+              <MsgState
+                :entity="entity"
+                :state="messageState"
+                @resend="emits('resend', entity)"
+                @remove="emits('remove', entity)"
+              />
             </div>
           </main>
 
           <footer v-if="entity.quoteMessage" class="msg-main-footer">
-            <QuoteMessage :entity="entity.quoteMessage" />
+            <QuoteMessage
+              :entity="entity.quoteMessage"
+              @sender="onQuoteSenderClick"
+              @content="onQuoteContentClick"
+            />
           </footer>
         </main>
       </section>
@@ -208,12 +236,10 @@ const onMessageClick = (event: MouseEvent, mouseButton: MouseButton) => {
   border-radius: 4px;
 }
 .selectable .msg-body-wraper:hover {
-  
   background-color: var(--message-body-wraper-selectable-background-color-hover);
   box-shadow: var(--message-body-wraper-selectable-hover-box-shadow);
 }
 .selectable.checked .msg-body-wraper {
-  
   background-color: var(--message-body-wraper-selectable-checked-background-color);
 }
 .checkbox-container {
@@ -298,4 +324,3 @@ const onMessageClick = (event: MouseEvent, mouseButton: MouseButton) => {
   padding: 4px;
 }
 </style>
-../../../commons/useMessageEntity
