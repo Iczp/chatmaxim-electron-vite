@@ -15,12 +15,14 @@ const props = defineProps<{
 }>();
 
 const content = computed(() => props.item.content as VideoContentDto);
+
+const url = computed(() => content.value.gifUrl || content.value.imageUrl);
 </script>
 
 <template>
   <MsgImg
     class="msg-image"
-    :url="content.imageUrl!"
+    :url="url"
     :path="content.path"
     :width="content.width"
     :height="content.height"

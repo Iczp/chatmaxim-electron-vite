@@ -27,11 +27,9 @@ const onError = (event: Event) => {
   errMessage.value = t('LoadError');
 };
 
-const thumbnailUrl = computed(() => props.url);
-const src = computed(() => props.path || formatUrl(props.url!));
 const { downloadFile, percent, blobUrl, isPending } = useDownload();
-if (thumbnailUrl.value) {
-  downloadFile(thumbnailUrl.value)
+if (props.url) {
+  downloadFile(props.url)
     .then(res => {
       // getImageRect(res.objectUrl).then(res => {
       //   rect.value = formatImageRect(res.width / res.height, maxWidth, maxHeight);
@@ -39,7 +37,17 @@ if (thumbnailUrl.value) {
     })
     .catch(err => {
       console.error('downloadFile image:', props.url, JSON.stringify(err));
+    })
+    .finally(() => {
+      if (!(props.path || blobUrl)) {
+        isError.value = true;
+        errMessage.value = 'url is null';
+      }
     });
+} else if (props.path) {
+} else {
+  isError.value = true;
+  errMessage.value = 'url is null';
 }
 </script>
 
@@ -64,7 +72,7 @@ if (thumbnailUrl.value) {
       <div>{{ suffix }}</div>
     </div>
     <a-image
-      :src="blobUrl || src"
+      :src="props.path || blobUrl"
       placeholder="..."
       :class="{ error: isError }"
       :preview="false"
@@ -83,7 +91,7 @@ if (thumbnailUrl.value) {
   user-select: none;
   /* padding: 1px; */
   min-height: 40px;
-  min-width: 24px;
+  min-width: 80px;
   /* line-height: 24px; */
   max-width: var(--message-max-width);
   overflow: hidden;
