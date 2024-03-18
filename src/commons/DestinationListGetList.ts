@@ -9,8 +9,8 @@ export class DestinationListGetList extends GetList<
 > {
   constructor(input: DestinationGetListInput) {
     super(input);
-    super.service = SessionUnitService.getApiChatSessionUnitDestinationList;
-    this.watch();
+    // super.service = SessionUnitService.getApiChatSessionUnitDestinationList;
+    // this.watch();
   }
 }
 

@@ -8,7 +8,7 @@ const props = defineProps<{
 }>();
 
 const content = computed(() => props.item.content as VideoContentDto);
-const url = computed(() => content.value.gifUrl || content.value.imageUrl);
+const url = computed(() => content.value.gifUrl || content.value.snapshotUrl);
 </script>
 
 <template>
