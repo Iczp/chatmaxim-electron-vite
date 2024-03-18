@@ -1,32 +1,36 @@
 <script setup lang="ts">
 import { computed } from 'vue';
-import { MessageDto, TextContentDto } from '../../../apis/dtos';
-import Bubble from '../../../components/Bubble.vue';
-import TextViewer from '../../../components/TextViewer.vue';
+import { MessageDto, VideoContentDto } from '../../../apis/dtos';
+import { ImageContentDto } from '../../../apis/dtos/message/ImageContentDto';
+import MsgImg from './MsgImg.vue';
+
 const props = defineProps<{
   item: MessageDto;
+  path?: string;
+  url: string;
+  width?: number;
+  height?: number;
+  size?: number;
+  suffix?: string;
 }>();
-const content = computed(() => props.item.content as TextContentDto);
+
+const content = computed(() => props.item.content as VideoContentDto);
 </script>
 
 <template>
-  <Bubble :r="item.isSelf" class="msg-image">
-    <!-- {{ item.id }} -->
-    <!-- {{ content?.text }}
-    <br />
-    indexOf:{{ content?.text?.indexOf('\n') }}
-    <br /> -->
-    image
-    <TextViewer :value="content?.text!" />
-  </Bubble>
+  <MsgImg
+    class="msg-image"
+    :url="content.imageUrl!"
+    :path="content.path"
+    :width="content.width"
+    :height="content.height"
+    :suffix="content.suffix"
+    :size="content.size"
+  >
+    <div class="abs pointer-events-none">
+      <PlayIcon class="btn-play" :percent="100" :size="36" />
+    </div>
+  </MsgImg>
 </template>
 
-<style scoped>
-.msg-image {
-  padding: 8px;
-  min-height: 40px;
-  min-width: 24px;
-  line-height: 24px;
-  max-width: var(--message-max-width);
-}
-</style>
+<style scoped></style>

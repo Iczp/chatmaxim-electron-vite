@@ -29,6 +29,7 @@ import {
   MouseButton,
 } from '../../../commons/contextmenu';
 import { useMessageEntity } from '../../../commons/useMessageEntity';
+import { useProfileModal } from '../commons/useProfileModal';
 
 const props = defineProps<{
   sessionUnitId: string;
@@ -51,6 +52,8 @@ const { senderName, messageType, isRollbacked, sendTime, sendTimeTitle, state } 
 );
 
 const messageState = computed(() => props.entity.state);
+
+const { showProfile } = useProfileModal();
 
 watch(
   () => props.entity?.state,
@@ -89,12 +92,19 @@ const onMessageClick = (event: MouseEvent, mouseButton: MouseButton) => {
 };
 
 const onQuoteSenderClick = (event: MouseEvent) => {
-  emits('contextmenu', {
-    entity: props.entity,
-    event,
-    labelType: LabelType.QuoteAvatar,
-    mouseButton: MouseButton.Click,
-  });
+  console.log('onQuoteSenderClick',props.entity);
+  
+  const sender = props.entity?.quoteMessage?.senderSessionUnit;
+  if (sender) {
+    showProfile(sender.id!, sender.owner?.name);
+  }
+  // emits('contextmenu', {
+  //   entity: props.entity,
+  //   event,
+  //   labelType: LabelType.QuoteAvatar,
+  //   mouseButton: MouseButton.Click,
+  // });
+
 };
 const onQuoteContentClick = (event: MouseEvent) => {
   emits('contextmenu', {

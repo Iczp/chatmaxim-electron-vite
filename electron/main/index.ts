@@ -43,9 +43,9 @@ import { saveAsHandle } from './handles/saveAsHandle';
 setAppProtocol();
 
 //当前用户的空闲时间
-setInterval(() => {
-  console.log('System Idle Time',powerMonitor.getSystemIdleTime())
-}, 3000)
+// setInterval(() => {
+//   console.log('System Idle Time',powerMonitor.getSystemIdleTime())
+// }, 3000)
 // import {Test} from '../../public/Test.ts'
 
 //

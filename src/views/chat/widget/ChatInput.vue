@@ -61,6 +61,7 @@ const emits = defineEmits<{
 
 const selectionState = useTextSelection();
 const inputRef = ref();
+const isInputFocus = ref(true);
 const inputValue = ref('');
 onMounted(() => {
   console.log('inputRef', inputRef.value);
@@ -157,9 +158,10 @@ const hide = () => {
   visible.value = false;
 };
 
-// event callback
-function onSelectEmoji(emoji: any) {
-  console.log(emoji);
+const appendText = (value: string, focus?: boolean) => {
+  if (!value) {
+    return;
+  }
   const text = inputValue.value;
 
   const { start, end } = selection.value;
@@ -168,25 +170,24 @@ function onSelectEmoji(emoji: any) {
   if (start != null) {
     newValue += text.substring(0, start!);
   }
-  newValue += emoji.i;
+  newValue += value;
   if (end != null && end < text.length) {
     newValue += text.substring(end);
   }
-
   inputValue.value = newValue;
-  selection.value.start += emoji.i.length;
-  selection.value.end += emoji.i.length;
+  selection.value = {
+    start: Number(start) + value.length,
+    end: Number(end) + value.length,
+  };
+  if (focus != null) {
+    isInputFocus.value = focus;
+  }
+};
+// event callback
+function onSelectEmoji(emoji: any) {
+  console.log(emoji);
+  appendText(emoji.i, true);
   hide();
-  /*
-    // result
-    {
-        i: "😚",
-        n: ["kissing face"],
-        r: "1f61a", // with skin tone
-        t: "neutral", // skin tone
-        u: "1f61a" // without tone
-    }
-    */
 }
 
 const groupNames = {
@@ -204,6 +205,7 @@ defineExpose({
   clear,
   send,
   inputValue,
+  appendText,
 });
 </script>
 
@@ -256,9 +258,8 @@ defineExpose({
             v-model:value="inputValue"
             rows="5"
             :placeholder="t('SendContentPlaceholder')"
-            :focus="true"
             :options="mentions"
-            :autofocus="false"
+            :autofocus="isInputFocus"
             :disabled="disabled"
             @keydown.ctrl.enter="send"
             @change="onTextChange"

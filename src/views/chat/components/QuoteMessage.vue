@@ -1,4 +1,5 @@
 <script setup lang="ts">
+import { ref } from 'vue';
 import { MessageSimpleDto } from '../../../apis/dtos';
 import { useMessageEntity } from '../../../commons/useMessageEntity';
 import MessageProview from '../../../components/MessageProview.vue';
@@ -7,6 +8,7 @@ const props = defineProps<{
   entity?: MessageSimpleDto;
   r?: boolean;
   removable?: boolean;
+  flash?: number;
 }>();
 
 const emits = defineEmits<{
@@ -15,10 +17,17 @@ const emits = defineEmits<{
   content: [MouseEvent | PointerEvent];
 }>();
 const { senderName } = useMessageEntity(props.entity);
+
+const flashSeconds = ref(props.flash || 0);
+if (props.flash) {
+  setTimeout(() => {
+    flashSeconds.value = 0;
+  }, props.flash);
+}
 </script>
 
 <template>
-  <div class="quote-message">
+  <div class="quote-message" :class="{ flash: Number(flashSeconds) > 0 }">
     <div class="quote-message-body" :class="{ reserve: r }">
       <icon type="quote-left" class="icon-quote" />
       <a class="sender-name" @click.stop="emits('sender', $event)">{{ senderName }}</a>
@@ -38,6 +47,9 @@ const { senderName } = useMessageEntity(props.entity);
 .quote-message {
   display: flex;
   flex-direction: row;
+}
+.flash .quote-message-body {
+  animation: flash 0.5s infinite;
 }
 .quote-message-body {
   display: flex;
@@ -79,5 +91,13 @@ const { senderName } = useMessageEntity(props.entity);
   color: var(--quote-message-icon-color);
   font-size: 14px;
 }
+
+@keyframes flash {
+  from {
+    background: rgba(255, 0, 0, 0.637);
+  }
+  to {
+    background: rgba(255, 0, 0, 0);
+  }
+}
 </style>
-../../../commons/useMessageEntity

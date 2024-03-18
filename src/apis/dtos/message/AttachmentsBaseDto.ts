@@ -32,7 +32,7 @@ export type AttachmentsBaseDto = {
   /**
    * 文件后缀名
    */
-  suffix?: string | null;
+  suffix?: string ;
   /**
    * 大小 ContentLength(Size)
    */

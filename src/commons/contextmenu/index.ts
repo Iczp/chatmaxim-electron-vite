@@ -17,6 +17,7 @@ import { MessageTypeEnums } from '../../apis/enums';
 import { ViewerPayload } from '../../views/message-viewer/commons/ViewerPayload';
 import { isMessageUrl, isImageMime, isVideoMime } from '../utils';
 import { message } from 'ant-design-vue';
+import { useProfileModal } from '../../views/chat/commons/useProfileModal';
 export { showContextMenuForSession } from './showContextMenuForSession';
 export { showContextMenuForMessageContent } from './showContextMenuForMessageContent';
 export { showContextMenuForMessageAvatar } from './showContextMenuForMessageAvatar';
@@ -58,6 +59,8 @@ export type MessageContextMenuInput = ContextmenuParams & {
 
 export type ContextmenuInput = ContextmenuParams & ContextmenuLabel;
 
+export type ArgsContext = MessageContextMenuInput & ContextmenuInput;
+
 export const iconClass: HtmlHTMLAttributes = { class: 'svg-icon s16' };
 
 export const getTheme = () => {
@@ -67,11 +70,17 @@ export const getTheme = () => {
 
 export const openMediaViewer = (item: MessageDto) => {};
 
-export const onAvatarClick = ({
-  event,
-  chatObjectId,
-  entity,
-}: MessageContextMenuInput & ContextmenuInput) => {
+export const onAvatarClick = ({ event, chatObjectId, entity }: ArgsContext) => {
+  console.log('onAvatarClick');
+  const { showProfile } = useProfileModal();
+  const sender = entity.senderSessionUnit;
+  if (sender) {
+    showProfile(sender.id!, sender.owner?.name);
+  }
+};
+
+
+export const onAvatarClick_Pop = ({ event, chatObjectId, entity }: ArgsContext) => {
   console.log('onAvatarClick');
   const params = {
     clientX: event.clientX,
@@ -97,12 +106,16 @@ export const onAvatarClick = ({
   });
 };
 
-export const onContentClick = ({
-  t,
-  sessionUnit,
-  chatObjectId,
-  entity,
-}: MessageContextMenuInput & ContextmenuInput) => {
+export const onQuoteAvatarClick = (args: ArgsContext) => {
+  console.log('onQuoteAvatarClick');
+  const entity = args.entity.quoteMessage;
+  if (!entity) {
+    return;
+  }
+  return onAvatarClick({ ...args, entity });
+};
+
+export const onContentClick = ({ t, sessionUnit, chatObjectId, entity }: ArgsContext) => {
   console.log('onContentClick');
 
   let isMedia = [MessageTypeEnums.Image, MessageTypeEnums.Video].some(x => x == entity.messageType);
@@ -135,7 +148,16 @@ export const onContentClick = ({
     });
   }
 };
-export const showContextMenuForMessage = (args: MessageContextMenuInput & ContextmenuInput) => {
+
+export const onQouteContentClick = (args: ArgsContext) => {
+  console.log('onContentClick');
+  const entity = args.entity.quoteMessage;
+  if (!entity) {
+    return;
+  }
+  return onContentClick({ ...args, entity });
+};
+export const showContextMenuForMessage = (args: ArgsContext) => {
   const { event, entity, selectable, mouseButton, labelType, chatObjectId, sessionUnit } = args;
   console.log('click', mouseButton, labelType, entity);
   const windowStore = useWindowStore();
@@ -144,16 +166,16 @@ export const showContextMenuForMessage = (args: MessageContextMenuInput & Contex
 
     switch (labelType) {
       case LabelType.Avatar:
-        onAvatarClick(args);
+        // onAvatarClick(args);
         break;
       case LabelType.Content:
         onContentClick(args);
         break;
       case LabelType.QuoteAvatar:
-        // onContentClick(args);
+        onQuoteAvatarClick(args);
         break;
       case LabelType.QuoteContent:
-        // onContentClick(args);
+        onQouteContentClick(args);
         break;
     }
 

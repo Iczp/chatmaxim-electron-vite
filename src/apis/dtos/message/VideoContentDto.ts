@@ -24,7 +24,7 @@ export type VideoContentDto = AttachmentsBaseDto & {
   /**
    * 视频封面
    */
-  imageUrl?: string | null;
+  imageUrl?: string;
   /**
    * 视频Width
    */

@@ -408,6 +408,7 @@ const showContextMenu = ({ labelType, mouseButton, event, entity }: ContextmenuI
     mouseButton,
     onRemind(entity) {
       console.log('remind:', entity);
+      chatInput.value?.appendText(`@${entity.owner?.name} `, true);
     },
     onQuote(entity) {
       console.log('onQuote', this, entity);
@@ -658,6 +659,7 @@ const onTransfer = () => {
           v-if="quoteMessage"
           :entity="quoteMessage"
           @remove="onRemoveQuoteMessage"
+          :flash="3000"
           removable
         />
       </ChatInput>
