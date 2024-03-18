@@ -191,40 +191,4 @@ export const sendMessage = async ({
   };
 
   _send();
-  return;
-  if (!file) {
-    _send();
-
-    return;
-  }
-
-  // upload file
-  // ...
-  uploadFile({
-    file,
-    onProgress(progressEvent) {
-      progressStore.set(
-        `${autoId}`,
-        { percent: Math.floor(Number(progressEvent.progress) * 100), sessionUnitId },
-        true,
-        1500,
-      );
-      onProgress?.call(this, progressEvent);
-    },
-  })
-    .then(res => {
-      _send();
-    })
-    .catch(err => {
-      console.error(err);
-      onError?.call(
-        this,
-        <SendMessageError>{
-          message: `上传失败:${err?.body?.error?.message || err?.message}`,
-          success: false,
-          detail: err,
-        },
-        input,
-      );
-    });
 };

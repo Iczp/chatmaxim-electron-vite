@@ -43,8 +43,8 @@ if (props.url) {
       }
     });
 } else if (props.path) {
-  isError.value = true;
-  errMessage.value = props.path;
+  // isError.value = true;
+  // errMessage.value = props.path;
 } else {
   // isError.value = true;
   // errMessage.value = 'url is null';
