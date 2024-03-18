@@ -4,7 +4,7 @@ import { ChatObjectDto, MessageDto, MessageOwnerDto, SessionUnitSenderDto } from
 import { MessageStateEnums, MessageTypeEnums } from '../apis/enums';
 import { useImStore } from '../stores/im';
 import { useProgressStore } from '../stores/progress';
-import { formatMessage, isImageMime } from './utils';
+import { formatMessage, isImageMime, isVideoMime } from './utils';
 export type SendMessageError = {
   message: string;
   detail: ApiError | any;
@@ -149,10 +149,12 @@ export const sendMessage = async ({
       };
       if (isImageMime(file.type)) {
         return MessageSenderService.sendUploadImage(postData);
+      }else if(isVideoMime(file.type)){
+        return MessageSenderService.sendUploadVideo(postData);
       }
       return MessageSenderService.sendUploadFile(postData);
     }
-    return MessageSenderService.send({
+    return MessageSenderService.sendContent({
       messageType,
       sessionUnitId,
       requestBody: {

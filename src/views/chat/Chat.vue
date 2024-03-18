@@ -37,7 +37,12 @@ import { setReadedMessageId } from '../../commons/setting';
 import { sendMessage } from '../../commons/sendMessage';
 import { useDrop } from '../../commons/useDrop';
 import { useShortcutStore } from '../../stores/shortcut';
-import { mapToFileContentDto, mapToImageContentDtoAsync } from '../../commons/utils';
+import {
+  isImageMime,
+  isVideoMime,
+  mapToFileContentDto,
+  mapToImageContentDtoAsync,
+} from '../../commons/utils';
 import { ChatObjectService } from '../../apis';
 import { useI18n } from 'vue-i18n';
 import { useWindowStore } from '../../stores/window';
@@ -505,30 +510,53 @@ const handleFiles = (files?: any[]) => {
     return;
   }
   files!.forEach(async file => {
-    const suffix = `.${file.name.split('.').pop().toLowerCase()}`;
-    switch (suffix) {
-      case '.jpg':
-      case '.jpeg':
-      case '.gif':
-      case '.png':
-      case '.tiff':
-        const content = await mapToImageContentDtoAsync(file);
-        sendMessageContent({
-          file,
-          isClearInput: false,
-          messageType: MessageTypeEnums.Image,
-          content: content,
-        });
-        break;
-      default:
-        sendMessageContent({
-          file,
-          isClearInput: false,
-          messageType: MessageTypeEnums.File,
-          content: mapToFileContentDto(file),
-        });
-        break;
+    if (isImageMime(file.type)) {
+      const content = await mapToImageContentDtoAsync(file);
+      sendMessageContent({
+        file,
+        isClearInput: false,
+        messageType: MessageTypeEnums.Image,
+        content: content,
+      });
+    } else if (isVideoMime(file.type)) {
+      sendMessageContent({
+        file,
+        isClearInput: false,
+        messageType: MessageTypeEnums.Video,
+        content: mapToFileContentDto(file),
+      });
+    } else {
+      sendMessageContent({
+        file,
+        isClearInput: false,
+        messageType: MessageTypeEnums.File,
+        content: mapToFileContentDto(file),
+      });
     }
+    // const suffix = `.${file.name.split('.').pop().toLowerCase()}`;
+    // switch (suffix) {
+    //   case '.jpg':
+    //   case '.jpeg':
+    //   case '.gif':
+    //   case '.png':
+    //   case '.tiff':
+    //     const content = await mapToImageContentDtoAsync(file);
+    //     sendMessageContent({
+    //       file,
+    //       isClearInput: false,
+    //       messageType: MessageTypeEnums.Image,
+    //       content: content,
+    //     });
+    //     break;
+    //   default:
+    //     sendMessageContent({
+    //       file,
+    //       isClearInput: false,
+    //       messageType: MessageTypeEnums.File,
+    //       content: mapToFileContentDto(file),
+    //     });
+    //     break;
+    // }
   });
 };
 

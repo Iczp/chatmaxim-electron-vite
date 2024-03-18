@@ -1,21 +1,19 @@
 <script setup lang="ts">
-import { computed } from 'vue';
-import { MessageDto } from '../../../apis/dtos';
 const { t } = useI18n();
 const props = defineProps<{
   path?: string;
-  url: string;
+  url?: string;
   width?: number;
   height?: number;
   size?: number;
   suffix?: string;
 }>();
-import { ref } from 'vue';
+import { computed, ref } from 'vue';
 import { formatImageRect, formatUrl, getImageRect } from '../../../commons/utils';
 import { useDownload } from '../../../commons/useDownload';
 import { useI18n } from 'vue-i18n';
 import prettyBytes from 'pretty-bytes';
-
+import EmptyImg from '../../../assets/empty.png';
 const visible = ref(false);
 const maxWidth = 240;
 const maxHeight = 180;
@@ -23,8 +21,8 @@ const rect = ref(formatImageRect((props.width || 0) / (props.height || 0), maxWi
 const isError = ref(false);
 const errMessage = ref<string>();
 const onError = (event: Event) => {
-  isError.value = true;
-  errMessage.value = t('LoadError');
+  // isError.value = true;
+  // errMessage.value = t('LoadError');
 };
 
 const { downloadFile, percent, blobUrl, isPending } = useDownload();
@@ -45,10 +43,14 @@ if (props.url) {
       }
     });
 } else if (props.path) {
-} else {
   isError.value = true;
-  errMessage.value = 'url is null';
+  errMessage.value = props.path;
+} else {
+  // isError.value = true;
+  // errMessage.value = 'url is null';
 }
+
+const src = computed(() => props.path || blobUrl.value || EmptyImg);
 </script>
 
 <template>
@@ -65,14 +67,14 @@ if (props.url) {
       />
     </div>
     <slot></slot>
-    <div class="abs err-info">{{ errMessage }}</div>
+    <div v-if="errMessage" class="abs err-info">{{ errMessage }}</div>
 
     <div class="abs image-info">
       <div>{{ prettyBytes(size || 0) }}</div>
       <div>{{ suffix }}</div>
     </div>
     <a-image
-      :src="props.path || blobUrl"
+      :src="src"
       placeholder="..."
       :class="{ error: isError }"
       :preview="false"

@@ -359,11 +359,24 @@ export const formatMessage = ({
 };
 
 export const mapToFileContentDto = (file: File): FileContentDto => {
+  const blob = useObjectUrl(file);
   return <FileContentDto>{
     fileName: file.name,
     contentType: file.type,
     size: file.size,
-    path: file.path,
+    path: blob.value,
+    suffix: `.${file.name.split('.').pop()}`,
+    lastModifiedDate: file.lastModified,
+  };
+};
+
+export const mapToVideoContentDto = (file: File): VideoContentDto => {
+  const blob = useObjectUrl(file);
+  return <VideoContentDto>{
+    fileName: file.name,
+    contentType: file.type,
+    size: file.size,
+    path: blob.value,
     suffix: `.${file.name.split('.').pop()}`,
     lastModifiedDate: file.lastModified,
   };

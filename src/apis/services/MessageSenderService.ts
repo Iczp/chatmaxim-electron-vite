@@ -389,7 +389,64 @@ export class MessageSenderService {
   }
 
   /**
-   * 上传并发送
+   * 上传[**]并发送
+   * @returns MessageOwnerDto Success
+   * @throws ApiError
+   */
+  public static sendUpload({
+    param,
+    sessionUnitId,
+    quoteMessageId,
+    remindList,
+    file,
+    onUploadProgress,
+  }: {
+    param?: '' | '-image' | '-video'| '-file';
+    /**
+     * 主建Id
+     */
+    sessionUnitId?: string;
+    /**
+     * 引用消息Id
+     *
+     * @type {number}
+     */
+    quoteMessageId?: number;
+    /**
+     * 提醒（@XXX） sessionUnitId
+     *
+     * @type {Array<string>}
+     */
+    remindList?: Array<string>;
+    /**
+     * file
+     *
+     * @type {Blob}
+     */
+    file: Blob;
+    onUploadProgress?: (progressEvent: AxiosProgressEvent) => void;
+  }): CancelablePromise<MessageOwnerDto> {
+    return __request(OpenAPI, {
+      method: 'POST',
+      url: '/api/chat/message-sender/send-upload{param}/{sessionUnitId}',
+      path: {
+        param,
+        sessionUnitId,
+      },
+      query: {
+        quoteMessageId,
+        remindList,
+      },
+      formData: {
+        file,
+      },
+      mediaType: 'multipart/form-data',
+      onUploadProgress,
+    });
+  }
+
+  /**
+   * 上传文件并发送
    * @returns MessageOwnerDto Success
    * @throws ApiError
    */
@@ -496,7 +553,61 @@ export class MessageSenderService {
     });
   }
 
-  public static send(args: {
+  /**
+   * 上传视频并发送
+   * @returns MessageOwnerDto Success
+   * @throws ApiError
+   */
+  public static sendUploadVideo({
+    sessionUnitId,
+    quoteMessageId,
+    remindList,
+    file,
+    onUploadProgress,
+  }: {
+    /**
+     * 主建Id
+     */
+    sessionUnitId?: string;
+    /**
+     * 引用消息Id
+     *
+     * @type {number}
+     */
+    quoteMessageId?: number;
+    /**
+     * 提醒（@XXX） sessionUnitId
+     *
+     * @type {Array<string>}
+     */
+    remindList?: Array<string>;
+    /**
+     * file
+     *
+     * @type {Blob}
+     */
+    file: Blob;
+    onUploadProgress?: (progressEvent: AxiosProgressEvent) => void;
+  }): CancelablePromise<MessageOwnerDto> {
+    return __request(OpenAPI, {
+      method: 'POST',
+      url: '/api/chat/message-sender/send-upload-video/{sessionUnitId}',
+      path: {
+        sessionUnitId,
+      },
+      query: {
+        quoteMessageId,
+        remindList,
+      },
+      formData: {
+        file,
+      },
+      mediaType: 'multipart/form-data',
+      onUploadProgress,
+    });
+  }
+
+  public static sendContent(args: {
     /**
      * 会话单元Id
      */

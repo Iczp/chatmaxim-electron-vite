@@ -6,12 +6,6 @@ import MsgImg from './MsgImg.vue';
 
 const props = defineProps<{
   item: MessageDto;
-  path?: string;
-  url: string;
-  width?: number;
-  height?: number;
-  size?: number;
-  suffix?: string;
 }>();
 
 const content = computed(() => props.item.content as ImageContentDto);
