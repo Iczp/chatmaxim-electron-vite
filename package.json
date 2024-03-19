@@ -1,7 +1,7 @@
 {
   "name": "chatmaxim",
   "productName": "数字日春",
-  "version": "2.0.4",
+  "version": "2.0.9",
   "main": "dist-electron/main/index.js",
   "description": "ChatMaxim.com",
   "author": "草鞋没号 <308487730@qq.com>",
@@ -22,6 +22,7 @@
       "VITE_DEV_SERVER_URL": "http://127.0.0.1:3344/"
     }
   },
+  
   "scripts": {
     "dev": "vite",
     "build": "vue-tsc --noEmit && vite build && electron-builder",
@@ -39,6 +40,7 @@
     "electron": "^26.0.0",
     "electron-builder": "^24.6.3",
     "electron-store": "^8.1.0",
+    "ffmpeg-static": "^5.2.0",
     "moment": "^2.29.4",
     "openapi-typescript-codegen": "^0.25.0",
     "pinia": "^2.1.7",
@@ -64,6 +66,7 @@
     "@vueuse/core": "^10.6.0",
     "electron-localshortcut": "^3.2.1",
     "electron-log": "^5.0.1",
+    "fluent-ffmpeg": "^2.1.2",
     "fs-extra": "^11.2.0",
     "mitt": "^3.0.1",
     "node-machine-id": "^1.1.12",

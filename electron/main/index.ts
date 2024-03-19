@@ -14,7 +14,17 @@ process.env.VITE_PUBLIC = process.env.VITE_DEV_SERVER_URL
   ? join(process.env.DIST_ELECTRON, '../public')
   : process.env.DIST;
 
-import { app, BrowserWindow, ipcMain, webContents, screen, dialog, protocol, shell, powerMonitor } from 'electron';
+import {
+  app,
+  BrowserWindow,
+  ipcMain,
+  webContents,
+  screen,
+  dialog,
+  protocol,
+  shell,
+  powerMonitor,
+} from 'electron';
 import { release } from 'node:os';
 import { join } from 'node:path';
 import Store from 'electron-store';
@@ -87,10 +97,58 @@ if (app.isPackaged) {
   console.log('getLoginItemSettings', appSetting);
 }
 
+const ffmpegTest = () => {
+  var ffmpeg = require('fluent-ffmpeg');
+  // console.log('ffmpeg', ffmpeg);
+
+  const dirname = env.isDev ? '../../' : '';
+  // 指定 ffmpeg 二进制文件的路径
+  const ffmpegPath = join(__dirname, dirname, 'node_modules', 'ffmpeg-static', 'ffmpeg');
+
+  console.error('ffmpegPath:', ffmpegPath);
+
+  ffmpeg.setFfmpegPath(ffmpegPath);
+
+  // 执行一个简单的命令，比如获取 ffmpeg 的版本信息
+  ffmpeg.getAvailableEncoders((err, encoders) => {
+    if (err) {
+      console.error('Error:', err);
+    } else {
+      console.log('Encoders:', 'ok');
+    }
+  });
+
+  let inputPath = 'C:\\Users\\ZP\\Videos\\2.7.mp4';
+  let outputPath = 'C:\\Users\\ZP\\Videos\\2.7____1.mp4';
+
+  var command = ffmpeg(inputPath)
+    .videoCodec('libx264')
+    .audioCodec('libmp3lame')
+    .on('start', function () {
+      console.log('start');
+
+      // Send SIGSTOP to suspend ffmpeg
+      // command.kill('SIGSTOP');
+
+      // doSomething(function() {
+      //   // Send SIGCONT to resume ffmpeg
+      //   command.kill('SIGCONT');
+      // });
+    })
+    .on('error', err => {
+      console.log('err: ', err);
+    })
+    .save(outputPath);
+
+  ffmpeg.ffprobe(inputPath, function (err, metadata) {
+    console.log('metadata', metadata);
+  });
+};
 app.whenReady().then(() => {
   createLoginWindow({ path: 'login', visiblity: true });
   // win = createMainWindow();
   // pop = createPopWindow({});
+  ffmpegTest();
 });
 app.on('activate', () => {
   const allWindows = BrowserWindow.getAllWindows();
@@ -144,11 +202,9 @@ app.on('open-url', (event, url) => {
   dialog.showErrorBox('Welcome Back', `You arrived from: ${url}`);
 });
 
-
-
 // Handle window controls via IPC
 ipcMain.on('shell:open', () => {
-  const pageDirectory = __dirname.replace('app.asar', 'app.asar.unpacked')
-  const pagePath = join('file://', pageDirectory, 'index.html')
-  shell.openExternal(pagePath)
-})
+  const pageDirectory = __dirname.replace('app.asar', 'app.asar.unpacked');
+  const pagePath = join('file://', pageDirectory, 'index.html');
+  shell.openExternal(pagePath);
+});
