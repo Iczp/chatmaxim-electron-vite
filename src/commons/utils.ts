@@ -106,6 +106,10 @@ export const formatHourStr = (date: Date) => {
   }
   return ret;
 };
+
+export const formatDurations = (duration: number): string => {
+  return moment(duration).format('mm:ss');
+};
 /**
  *
  *

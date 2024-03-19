@@ -131,7 +131,7 @@ const src = computed(() => props.path || blobUrl.value || EmptyImg);
   top: unset;
   font-size: 12px;
   justify-content: space-between;
-  padding: 0 6px;
+  padding: 0 4px;
   /* display: none; */
   transition: all 0.3s linear;
   /* opacity: 0; */
