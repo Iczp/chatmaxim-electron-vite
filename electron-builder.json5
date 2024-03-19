@@ -1,24 +1,22 @@
 /**
  * @see https://www.electron.build/configuration/configuration
  */
-
-// "extraResources": [
-//   {
-//     "from": "node_modules/ffmpeg-static",
-//     "to": "ffmpeg"
-//   }
-// ],
 {
   $schema: 'https://raw.githubusercontent.com/electron-userland/electron-builder/master/packages/app-builder-lib/scheme.json',
   appId: 'com.chatmaxim.electron',
   asar: true,
   productName: 'ChatMaxim',
   directories: {
-    output: 'release/v2.0.9',
+    output: 'release/v2.0.10',
   },
   icon: './public/logo.png',
   files: ['dist', 'dist-electron'],
-
+  extraResources: [
+    {
+      from: 'node_modules/ffmpeg-static',
+      to: 'ffmpeg',
+    },
+  ],
   mac: {
     target: ['dmg'],
     artifactName: '${productName}-Mac-${version}-Installer.${ext}',
