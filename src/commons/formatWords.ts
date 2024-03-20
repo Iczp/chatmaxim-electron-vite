@@ -45,6 +45,7 @@ export const formatWords = (input: string): Array<WordDto> => {
     .split(reg)
     .filter(x => x && x != '')
     .map<WordDto>(x => {
+      //uid
       let reg_uid = new RegExp('<a uid="([0-9a-f-]{36})">([^<]+)</a>', 'i');
       if (reg_uid.test(x)) {
         const v = x.split(reg_uid);
@@ -54,6 +55,7 @@ export const formatWords = (input: string): Array<WordDto> => {
           text: v[2],
         };
       }
+      //oid
       let reg_oid = new RegExp('<a oid="(\\d+)">([^<]+)</a>', 'i');
       if (reg_oid.test(x)) {
         const v2 = x.split(reg_oid);
