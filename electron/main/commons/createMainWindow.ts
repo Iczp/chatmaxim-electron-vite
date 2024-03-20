@@ -35,6 +35,7 @@ export const createMainWindow = (window: WindowParams, _?: Electron.IpcMainInvok
   });
   win.on('close', () => win.setSkipTaskbar(true));
   win.on('show', () => win.setSkipTaskbar(false));
+  // setWindow(win, { ...window, isPreventClose: true }, _);
   initWindowEvent(win, { name: 'main', path: window.path });
   preventClose(win, true);
   return win;

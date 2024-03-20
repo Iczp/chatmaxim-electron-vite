@@ -57,7 +57,7 @@ export const preventClose = (win: BrowserWindow, isListening: boolean) => {
   };
   // win.off('close', preventCloseHandle);
   if (isListening) {
-    win.once('close', preventCloseHandle);
+    win.on('close', preventCloseHandle);
   } else {
     win.off('close', preventCloseHandle);
   }

@@ -168,8 +168,9 @@ export const createTray = () => {
   tray.setContextMenu(contextMenu);
   tray.on('click', () => {
     const win = isAuthorized() ? windowManager.getMain() : windowManager.getLogin();
-    win.show();
-    win.focus();
+    setWindow(win, { isPreventClose: true, visiblity: true, focus: true }, null);
+    // win.show();
+    // win.focus();
     //
   });
   tray.on('double-click', e => {

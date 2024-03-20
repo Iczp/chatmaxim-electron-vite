@@ -123,58 +123,56 @@ const ffmpegTest = () => {
   let outputPath = 'C:\\Users\\ZP\\Videos\\2.7____1.mp4';
   const gifPath = join(outputDir, '2.7.gif');
   const inputFilePath = join(inputDir, 'VID_20240317_160514.mp4');
-  const compressedFilePath = join(outputDir, 'compressedVideo.mp4') ;
+  const compressedFilePath = join(outputDir, 'compressedVideo.mp4');
   const snapshotFilePath = join(outputDir, '/');
   const gifFilePath = join(outputDir, 'output.gif');
-
 
   ffmpeg.ffprobe(inputFilePath, function (err, metadata) {
     console.log('metadata', metadata);
   });
 
   ffmpeg(inputFilePath)
-  // 压缩视频
-  .videoCodec('libx264') // 使用 H.264 编码器
-  .audioCodec('aac') // 使用 AAC 音频编码器
-  .outputOptions('-preset veryfast') // 使用 veryfast 预设进行快速压缩
-  .output(compressedFilePath)
-  // .size('?x240')
-  .on('end', () => {
-    console.log('end generated video');
-  })
-  .on('error', (err) => {
-    console.error('error:', err);
-  })
-  .run();
+    // 压缩视频
+    .videoCodec('libx264') // 使用 H.264 编码器
+    .audioCodec('aac') // 使用 AAC 音频编码器
+    .outputOptions('-preset veryfast') // 使用 veryfast 预设进行快速压缩
+    .output(compressedFilePath)
+    // .size('?x240')
+    .on('end', () => {
+      console.log('end generated video');
+    })
+    .on('error', err => {
+      console.error('error:', err);
+    })
+    .run();
   ffmpeg(inputFilePath)
-  // 获取视频快照
-  .screenshots({
-    timestamps: ['0.01','50%'], // 获取视频的中间快照
-    folder: snapshotFilePath,
-    filename: 'snapshot-%s.png',
-    size: '?x360'
-  })
-// // 获取 GIF 图片
-// .fps(10) // 设置 GIF 的帧率为 10
-// .size('?x240') // 设置 GIF 的尺寸为 320x240
-// .duration(5) // 设置输出 GIF 的时长为 5 秒
-// .output(gifFilePath)
-  // 获取 GIF 图片
-  .output(gifFilePath)
-  // .duration(5) // 仅使用前 5 秒
-  // .fps(10) // GIF 的帧率为 10 帧/秒
-  // .size('?x240') // 设置 GIF 的尺寸为 320x240
-  .outputOptions('-vf', 'fps=5,scale=-1:240:flags=lanczos')
-  // .format('gif')
+    // 获取视频快照
+    .screenshots({
+      timestamps: ['0.01', '50%'], // 获取视频的中间快照
+      folder: snapshotFilePath,
+      filename: 'snapshot-%s.png',
+      size: '?x360',
+    })
+    // // 获取 GIF 图片
+    // .fps(10) // 设置 GIF 的帧率为 10
+    // .size('?x240') // 设置 GIF 的尺寸为 320x240
+    // .duration(5) // 设置输出 GIF 的时长为 5 秒
+    // .output(gifFilePath)
+    // 获取 GIF 图片
+    .output(gifFilePath)
+    // .duration(5) // 仅使用前 5 秒
+    // .fps(10) // GIF 的帧率为 10 帧/秒
+    // .size('?x240') // 设置 GIF 的尺寸为 320x240
+    .outputOptions('-vf', 'fps=5,scale=-1:240:flags=lanczos')
+    // .format('gif')
 
-  .on('end', () => {
-    console.log('end generated gif/snapshot');
-  })
-  .on('error', (err) => {
-    console.error('error:', err);
-  })
-  .run()
-
+    .on('end', () => {
+      console.log('end generated gif/snapshot');
+    })
+    .on('error', err => {
+      console.error('error:', err);
+    })
+    .run();
 
   // var command = ffmpeg(inputPath)
   //   .videoCodec('libx264')
@@ -194,11 +192,9 @@ const ffmpegTest = () => {
   //     console.log('err: ', err);
   //   })
   //   .save(outputPath);
-
-  
 };
 app.whenReady().then(() => {
-  createLoginWindow({ path: 'login', visiblity: true });
+  createLoginWindow({ path: 'login', visiblity: true, isPreventClose: true });
   // win = createMainWindow();
   // pop = createPopWindow({});
   ffmpegTest();
@@ -208,7 +204,7 @@ app.on('activate', () => {
   if (allWindows.length) {
     allWindows[0].focus();
   } else {
-    win = createMainWindow({ path: '/' });
+    win = createMainWindow({ path: '/', isPreventClose: true, isSkipTaskbar: true });
   }
 });
 app.on('window-all-closed', () => {

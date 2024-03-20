@@ -253,4 +253,3 @@ const getKey = (route: RouteLocationNormalizedLoaded, component: any): string | 
   height: 100%;
 }
 </style>
-../ipc/setWindow../ipc/openAppSettings ../commons/useBadges

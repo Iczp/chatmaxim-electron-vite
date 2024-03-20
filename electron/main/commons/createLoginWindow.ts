@@ -39,6 +39,7 @@ export const createLoginWindow = (window: WindowParams, _?: Electron.IpcMainInvo
   });
   win.on('close', () => win.setSkipTaskbar(true));
   win.on('show', () => win.setSkipTaskbar(false));
+  // setWindow(win, { ...window, isPreventClose: true }, _);
   initWindowEvent(win, { name: 'login', path: '/login' });
   preventClose(win, true);
   return win;
