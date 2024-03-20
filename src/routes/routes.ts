@@ -157,4 +157,11 @@ export const routes = <RouteRecordRaw[]>[
     },
     component: () => import('../views/tray/Tray.vue'),
   },
+  {
+    path: '/browser',
+    meta: {
+
+    },
+    component: () => import('../views/browser/Browser.vue'),
+  },
 ];

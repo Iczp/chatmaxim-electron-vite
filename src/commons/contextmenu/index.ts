@@ -18,6 +18,7 @@ import { ViewerPayload } from '../../views/message-viewer/commons/ViewerPayload'
 import { isMessageUrl, isImageMime, isVideoMime } from '../utils';
 import { message } from 'ant-design-vue';
 import { useProfileModal } from '../../views/chat/commons/useProfileModal';
+import { openBrowser } from '../../ipc/openBrowser';
 export { showContextMenuForSession } from './showContextMenuForSession';
 export { showContextMenuForMessageContent } from './showContextMenuForMessageContent';
 export { showContextMenuForMessageAvatar } from './showContextMenuForMessageAvatar';
@@ -78,7 +79,6 @@ export const onAvatarClick = ({ event, chatObjectId, entity }: ArgsContext) => {
     showProfile(sender.id!, sender.owner?.name);
   }
 };
-
 
 export const onAvatarClick_Pop = ({ event, chatObjectId, entity }: ArgsContext) => {
   console.log('onAvatarClick');
@@ -146,6 +146,8 @@ export const onContentClick = ({ t, sessionUnit, chatObjectId, entity }: ArgsCon
     }).finally(() => {
       // fetchList();
     });
+  } else {
+    openBrowser({ url: 'https://www.baidu.com' });
   }
 };
 
