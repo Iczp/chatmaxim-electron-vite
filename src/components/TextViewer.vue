@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { computed } from 'vue';
-import { formatWords, WordDto, WordTypeEnum } from '../commons/formatWords';
+import { formatWords, WordDto } from '../commons/formatWords';
 const props = defineProps<{
   value: string;
 }>();
@@ -14,7 +14,7 @@ const onWordClick = (item: WordDto, event?: Event) => {
   emits('wordClick', item, event);
 };
 
-const isObject = (item: WordDto): boolean => item.type != undefined;
+const isObject = (item: WordDto): boolean => item.type != 'text';
 </script>
 
 <template>
@@ -24,9 +24,10 @@ const isObject = (item: WordDto): boolean => item.type != undefined;
     <template v-for="(item, index) in words" :key="index">
       <template v-if="isObject(item)">
         <a
-          :value="item.value"
-          :type="WordTypeEnum[item.type!]"
-          :class="WordTypeEnum[item.type!]"
+          class="link"
+          
+          :type="item.type"
+          :class="item.type"
           @click.stop="onWordClick(item, $event)"
         >
           {{ item.text }}
@@ -45,7 +46,12 @@ const isObject = (item: WordDto): boolean => item.type != undefined;
   word-break: break-all;
   white-space: break-spaces;
 }
-
+.link{
+  /* color: var(--color); */
+}
+.link:hover {
+  text-decoration: underline;
+}
 .uid {
   color: blueviolet;
   cursor: pointer;

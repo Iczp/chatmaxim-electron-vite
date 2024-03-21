@@ -1,9 +1,23 @@
+import { parseContentArray } from './parseContent';
+
+/**
+ *
+ */
 export type WordDto = {
   text: string;
-  type?: WordTypeEnum;
+  type: WordType;
   value?: string;
 };
-
+/**
+ *
+ */
+export type WordType = 'url' | 'phone' | 'email' | 'text' | 'tel' | 'uid' | 'oid';
+/**
+ *
+ *
+ * @export
+ * @enum {number}
+ */
 export enum WordTypeEnum {
   /**
    *
@@ -26,12 +40,27 @@ export enum WordTypeEnum {
    */
   phone,
   /**
+   * tel(0595-28111111)
+   */
+  tel,
+  /**
    * email(1000@intry.cn)
    */
   email,
 }
 
-export const formatWords = (input: string): Array<WordDto> => {
+export const formatWords = (input: string): WordDto[] => {
+  const arr = parseWords(input);
+  parseContentArray(arr)
+  return arr;
+};
+/**
+ *
+ *
+ * @param {string} input
+ * @return {*}  {Array<WordDto>}
+ */
+export const parseWords = (input: string): WordDto[] => {
   if (!input) {
     return [];
   }
@@ -50,7 +79,7 @@ export const formatWords = (input: string): Array<WordDto> => {
       if (reg_uid.test(x)) {
         const v = x.split(reg_uid);
         return {
-          type: WordTypeEnum.uid,
+          type: 'uid',
           value: v[1],
           text: v[2],
         };
@@ -60,16 +89,23 @@ export const formatWords = (input: string): Array<WordDto> => {
       if (reg_oid.test(x)) {
         const v2 = x.split(reg_oid);
         return {
-          type: WordTypeEnum.oid,
+          type: 'oid',
           value: v2[1],
           text: v2[2],
           //   v2
         };
       }
-      return { text: x };
+      return { type: 'text', text: x, value: '' };
     });
 };
 
+/**
+ *
+ *
+ * @param {string} input
+ * @param {number} [maxLength]
+ * @return {*}  {string}
+ */
 export const formatText = (input: string, maxLength?: number): string => {
   const text: string = formatWords(input)
     .map(x => x.text)

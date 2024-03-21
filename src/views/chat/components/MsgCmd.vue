@@ -2,7 +2,7 @@
 import { computed } from 'vue';
 import { MessageDto, CmdContentDto } from '../../../apis/dtos';
 import TextViewer from '../../../components/TextViewer.vue';
-import { WordDto, WordTypeEnum } from '../../../commons/formatWords';
+import { WordDto } from '../../../commons/formatWords';
 import { useProfileModal } from '../commons/useProfileModal';
 const props = defineProps<{
   item: MessageDto;
@@ -12,10 +12,10 @@ const { showProfile } = useProfileModal();
 const onWordClick = (item: WordDto, event?: Event) => {
   console.log('onWordClick', item, event);
   switch (item.type) {
-    case WordTypeEnum.uid:
+    case 'uid':
       showProfile(item.value!, item.text);
       break;
-    case WordTypeEnum.oid:
+    case 'oid':
       break;
   }
 };
