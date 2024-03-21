@@ -545,6 +545,12 @@ export const getFileNameOfMessage = (entity?: MessageOwnerDto): string => {
   return `${fileName}`;
 };
 
+/**
+ * 消息内容中的附件下载地址
+ *
+ * @param {MessageOwnerDto} entity
+ * @return {*}  {boolean}
+ */
 export const isMessageUrl = (entity: MessageOwnerDto): boolean => {
   if (!entity.content?.url) {
     const content = 'Url is null';
@@ -552,4 +558,23 @@ export const isMessageUrl = (entity: MessageOwnerDto): boolean => {
     return false;
   }
   return true;
+};
+
+// 设置选中的节点
+export const setSelectedNode = (event?: Event): void => {
+  const selection = window.getSelection();
+  const range = document.createRange();
+  // console.log('setSelectedText', event, range);
+  range.selectNodeContents(event?.target as Node);
+  selection?.removeAllRanges();
+  selection?.addRange(range);
+};
+
+// 获取选中的文本
+export const getSelectedText = (): string | undefined => {
+  let selectedText;
+  if (window.getSelection) {
+    selectedText = window.getSelection()?.toString();
+  }
+  return selectedText;
 };

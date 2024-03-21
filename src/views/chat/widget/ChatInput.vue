@@ -64,10 +64,11 @@ const inputRef = ref();
 const isInputFocus = ref(true);
 const inputValue = ref('');
 onMounted(() => {
-  console.log('inputRef', inputRef.value);
-  // nextTick(() => {
-  //   inputRef.value?.focus();
-  // });
+  console.log('inputRef', inputRef);
+  nextTick(() => {
+    // inputRef.value?.focus();
+    console.log('inputRef', inputRef);
+  });
 });
 // const isSendDisabled = ref(false);
 const textarea = ref(null as HTMLInputElement | null);
@@ -80,29 +81,30 @@ const selection = ref<{
 const isSendBtnDisabled = computed(() => inputValue.value.length == 0);
 const onInput = (e: any) => {
   console.log('onInput', e.data);
-  const el = e.target as HTMLInputElement;
+  const el = (textareaRef.value = e.target as HTMLInputElement);
   console.log('=====', el.selectionStart, el.selectionEnd);
 };
-
+const textareaRef = ref<HTMLInputElement>();
 const onInputClick = (e: any) => {
   const el = e.target as HTMLInputElement;
 
   console.log('onInputClick', el.selectionStart, el.selectionEnd, e);
 };
 const onBlur = (e: any) => {
-  const el = e.target as HTMLInputElement;
+  const el = (textareaRef.value = e.target as HTMLInputElement);
   selection.value = {
     start: el.selectionStart,
     end: el.selectionEnd,
   };
+  // el?.focus();
   console.log('onBlur', el.selectionStart, el.selectionEnd, e);
 };
 const onFocus = (e: any) => {
-  const el = e.target as HTMLInputElement;
+  const el = (textareaRef.value = e.target as HTMLInputElement);
   console.log('onFocus', el.selectionStart, el.selectionEnd, e);
 };
 const onInputChange = (e: any) => {
-  const el = e.target as HTMLInputElement;
+  const el = (textareaRef.value = e.target as HTMLInputElement);
   console.log('onInputChange', el.selectionStart, el.selectionEnd);
 };
 
@@ -158,6 +160,21 @@ const hide = () => {
   visible.value = false;
 };
 
+const tryToSetCursorIndex = () => {
+  const el = textareaRef.value as HTMLInputElement;
+  console.log('appendText', el);
+  if (el) {
+    nextTick(() => {
+      const cursorIndex = selection.value.end;
+      // 设置光标位置
+      el.focus();
+      // 设置选中的范围
+      el.setSelectionRange(cursorIndex, cursorIndex);
+
+      console.log('appendText setSelectionRange', cursorIndex);
+    });
+  }
+};
 const appendText = (value: string, focus?: boolean) => {
   if (!value) {
     return;
@@ -179,9 +196,10 @@ const appendText = (value: string, focus?: boolean) => {
     start: Number(start) + value.length,
     end: Number(end) + value.length,
   };
-  if (focus != null) {
-    isInputFocus.value = focus;
-  }
+  tryToSetCursorIndex();
+  // if (focus != null) {
+  //   isInputFocus.value = focus;
+  // }
 };
 // event callback
 function onSelectEmoji(emoji: any) {

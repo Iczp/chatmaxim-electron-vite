@@ -10,18 +10,12 @@ const props = defineProps<{
 const content = computed(() => props.item.content as TextContentDto);
 const onWordClick = (item: WordDto, event?: Event) => {
   console.log('onWordClick', item, event);
-
 };
 </script>
 
 <template>
   <Bubble :r="item.isSelf" class="msg-text" :class="{ self: item.isSelf }">
-    <!-- {{ item.id }} -->
-    <!-- {{ content?.text }}
-    <br />
-    indexOf:{{ content?.text?.indexOf('\n') }}
-    <br /> -->
-    <TextViewer :value="content?.text!" @word-click="onWordClick"/>
+    <TextViewer :value="content?.text!" @word-click="onWordClick" />
   </Bubble>
 </template>
 

@@ -19,6 +19,8 @@ import { isMessageUrl, isImageMime, isVideoMime } from '../utils';
 import { message } from 'ant-design-vue';
 import { useProfileModal } from '../../views/chat/commons/useProfileModal';
 import { openBrowser } from '../../ipc/openBrowser';
+import { link } from 'original-fs';
+import { isUrl } from '@pureadmin/utils';
 export { showContextMenuForSession } from './showContextMenuForSession';
 export { showContextMenuForMessageContent } from './showContextMenuForMessageContent';
 export { showContextMenuForMessageAvatar } from './showContextMenuForMessageAvatar';
@@ -115,7 +117,7 @@ export const onQuoteAvatarClick = (args: ArgsContext) => {
   return onAvatarClick({ ...args, entity });
 };
 
-export const onContentClick = ({ t, sessionUnit, chatObjectId, entity }: ArgsContext) => {
+export const onContentClick = ({ t, sessionUnit, chatObjectId, entity, event }: ArgsContext) => {
   console.log('onContentClick');
 
   let isMedia = [MessageTypeEnums.Image, MessageTypeEnums.Video].some(x => x == entity.messageType);
@@ -123,6 +125,11 @@ export const onContentClick = ({ t, sessionUnit, chatObjectId, entity }: ArgsCon
     const content = entity.content as FileContentDto;
     isMedia = isImageMime(content.contentType) || isVideoMime(content.contentType);
   }
+  const el = event?.target as HTMLElement;
+  const classNames = el.className.split(' ');
+  // console.log('isUrl', isUrl);
+  console.log('classNames', el, el.title, classNames);
+
   if (isMedia) {
     if (!isMessageUrl(entity)) {
       return;
@@ -146,8 +153,10 @@ export const onContentClick = ({ t, sessionUnit, chatObjectId, entity }: ArgsCon
     }).finally(() => {
       // fetchList();
     });
-  } else {
-    openBrowser({ url: 'https://www.baidu.com' });
+  } else if (classNames.some(x => x == 'link')) {
+    if (classNames.some(x => x == 'url')) {
+      openBrowser({ url: el.title });
+    }
   }
 };
 
@@ -161,7 +170,7 @@ export const onQouteContentClick = (args: ArgsContext) => {
 };
 export const showContextMenuForMessage = (args: ArgsContext) => {
   const { event, entity, selectable, mouseButton, labelType, chatObjectId, sessionUnit } = args;
-  console.log('click', mouseButton, labelType, entity);
+  console.log('click', event, mouseButton, labelType, entity);
   const windowStore = useWindowStore();
   if (mouseButton == MouseButton.Click) {
     // console.log('click', entity);

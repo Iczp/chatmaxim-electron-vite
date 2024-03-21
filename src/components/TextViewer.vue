@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import { computed } from 'vue';
 import { formatWords, WordDto } from '../commons/formatWords';
+import { setSelectedNode } from '../commons/utils';
 const props = defineProps<{
   value: string;
 }>();
@@ -18,17 +19,19 @@ const isObject = (item: WordDto): boolean => item.type != 'text';
 </script>
 
 <template>
-  <div class="word" :title="`count:${words.length}`">
+  <div class="word">
+    <!-- <div v-html="result"></div> -->
     <!-- {{ words }} -->
     <!-- {{ value }} -->
     <template v-for="(item, index) in words" :key="index">
       <template v-if="isObject(item)">
         <a
           class="link"
-          
+          :title="item.value"
           :type="item.type"
           :class="item.type"
-          @click.stop="onWordClick(item, $event)"
+          @click="onWordClick(item, $event)"
+          @click.right.native="setSelectedNode"
         >
           {{ item.text }}
         </a>
@@ -46,7 +49,7 @@ const isObject = (item: WordDto): boolean => item.type != 'text';
   word-break: break-all;
   white-space: break-spaces;
 }
-.link{
+.link {
   /* color: var(--color); */
 }
 .link:hover {

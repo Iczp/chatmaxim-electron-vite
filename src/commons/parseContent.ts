@@ -68,8 +68,13 @@ export const isEqualsParsed = (nodes: WordDto[], str: string) => {
 };
 
 export const parseUrl = (str: string): WordDto[] => {
-  const reg = /((https?|app):\/\/[-A-Za-z0-9+&@#/%?=~_|!:,.;]+[-A-Za-z0-9+&@#/%=~_|])/g;
-  return parseString(str, 'url', reg, 3);
+  // const reg = /(((https?|app):\/\/)?[-A-Za-z0-9+&@#/%?=~_|!:,.;]+[-A-Za-z0-9+&@#/%=~_|])/g;
+  const reg =/((https?|app|ftp|rtsp|mms):\/\/([a-zA-Z0-9.-]+)([a-zA-Z]{2,3})[-A-Za-z0-9+&@#/%?=~_|!:,.;]*[-A-Za-z0-9+&@#/%=~_|])/g
+    // reg = new RegExp(
+  //   "(((https|http|ftp|rtsp|mms)?://)(([0-9]{1,3}.){3}[0-9]{1,3}|([0-9a-z_!~*'()-]+.)*([0-9a-z][0-9a-z-]{0,61})?[0-9a-z].[a-z]{2,6})(:[0-9]{1,5})?((/?)|(/[0-9a-z_!~*'().;?:@&=+$,%#-]+)+/?))",
+  //   'g',
+  // );
+  return parseString(str, 'url', reg, 5);
 };
 
 export const parseEmail = (str: string): WordDto[] => {

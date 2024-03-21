@@ -22,7 +22,7 @@ import {
 } from '../../icons';
 import { MessageContextMenuInput, getTheme, iconClass } from '.';
 import { useClipboard } from '@vueuse/core';
-import { formatMessageContent, isMessageUrl } from '../utils';
+import { formatMessageContent, getSelectedText, isMessageUrl } from '../utils';
 import { saveAsOfMessage } from '../../ipc/saveAs';
 
 export const showContextMenuForMessageContent = ({
@@ -61,11 +61,19 @@ export const showContextMenuForMessageContent = ({
         hidden: ![MessageTypeEnums.Text].some(x => x == entity.messageType),
         onClick: e => {
           console.log('contextmenu item click', entity);
-          const { contentText } = formatMessageContent(entity, t);
           const { copy, isSupported } = useClipboard();
-          copy(contentText).then(v => {
-            message.success({ content: t('Copied'), duration: 2 });
-          });
+          const selectedText = getSelectedText();
+          const setCopyText = (text: string) => {
+            copy(text).then(v => {
+              message.success({ content: t('Copied'), duration: 2 });
+            });
+          };
+          if (selectedText) {
+            setCopyText(selectedText);
+          } else {
+            const { contentText } = formatMessageContent(entity, t);
+            setCopyText(contentText);
+          }
         },
       },
       {
