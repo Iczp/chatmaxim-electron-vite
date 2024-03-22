@@ -712,8 +712,14 @@ code {
   .ant-btn:not(:disabled):focus-visible {
     outline: unset;
   }
-  .ant-btn-text {
+  .ant-btn-text:not(:disabled) {
     color: var(--color);
+    background-color: var(--background-color);
+    border-color: transparent;
+  }
+  .ant-btn.ant-btn-text[disabled],
+  .ant-btn-text:disabled:hover .ant-btn-text[disabled] {
+    color: #515151;
     background-color: var(--background-color);
     border-color: transparent;
   }

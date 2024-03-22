@@ -62,10 +62,15 @@ export const createBrowserWindow = (
   });
   initWindowEvent(win, { name: window.name, path: window.path });
 
-  
   const view = new BrowserView({});
   win.setBrowserView(view);
-  view.setBounds({ x: 0, y: 50, width: 800, height: 550 });
+  const headerHieght = 200;
+  view.setBounds({
+    x: 0,
+    y: headerHieght,
+    width: 800,
+    height: win.getBounds().height - headerHieght,
+  });
 
   view.setAutoResize({
     width: true,
@@ -96,7 +101,6 @@ export const createBrowserWindow = (
       setWindowOpenHandler(win);
     });
 
-
     win.webContents.setWindowOpenHandler((details: Electron.HandlerDetails) => {
       console.log('details', details);
 
@@ -109,7 +113,7 @@ export const createBrowserWindow = (
       };
     });
   };
-  
+
   setWindowOpenHandler(view);
 
   view.webContents.on('will-navigate', (event, url) => {
