@@ -23,6 +23,8 @@ import { reactive } from 'vue';
 import { MessageInput, TextContentDto } from '../../../apis/dtos';
 import { MessageTypeEnums } from '../../../apis/enums';
 import { MessageContent } from '../../../apis/dtos/message/messageContent';
+
+import { screenshots } from '../../../ipc/screenshots';
 const { t } = useI18n();
 
 const props = withDefaults(
@@ -218,7 +220,9 @@ const groupNames = {
   symbols: 'Symbols',
   flags: 'Flags',
 };
-
+const onSrceenshot = () => {
+  screenshots({})
+};
 defineExpose({
   clear,
   send,
@@ -251,11 +255,11 @@ defineExpose({
         <a-button type="text" @click="open"><FolderOpenOutlined /></a-button>
         <!-- <a-popconfirm title="Are you sure delete this task?" ok-text="Yes" cancel-text="No">
           <a-button type="text"><VideoCameraOutlined /></a-button>
-        </a-popconfirm>
+        </a-popconfirm> -->
 
-        <a-button type="text"><ScissorOutlined /></a-button>
+        <a-button type="text" @click="onSrceenshot"><ScissorOutlined /></a-button>
 
-        <a-button type="text">
+        <!-- <a-button type="text">
           <UploadOutlined />
         </a-button> -->
       </a-space>

@@ -35,6 +35,7 @@ import { initMachine } from './commons/machine';
 
 import { websocketHandle } from './handles/webscoketHandle';
 import './commons/logger';
+import './screenshots';
 import './commons/tray';
 import './commons/keyboardShortcuts';
 import { openPopWindowHandle } from './handles/openPopWindowHandle';
