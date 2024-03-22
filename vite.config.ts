@@ -129,7 +129,7 @@ export default defineConfig(({ command }) => {
           port: +url.port,
         };
       })(),
-    clearScreen: false,
+    clearScreen: true,
     build: {
       outDir: 'dist',
       emptyOutDir: false,
