@@ -13,11 +13,11 @@ export const loadUrl = (win: BrowserWindow, { path }: { path: string }) => {
   });
   electronLocalshortcut.register(win, 'Ctrl+F12', () => {
     console.log('You pressed Ctrl & F12', win.webContents.isDevToolsOpened());
-    if (!win.webContents.isDevToolsOpened()) {
+    // if (!win.webContents.isDevToolsOpened()) {
       win.webContents.openDevTools({
         mode: 'detach',
       });
-    }
+    // }
     win.webContents.devToolsWebContents?.focus();
   });
 

@@ -31,6 +31,7 @@ import VueVirtualScroller from 'vue-virtual-scroller';
 import 'vue-virtual-scroller/dist/vue-virtual-scroller.css';
 import 'overlayscrollbars/overlayscrollbars.css';
 
+import VueKonva from 'vue-konva';
 
 import { i18n } from './i18n';
 
@@ -54,10 +55,12 @@ app
   })
   // .use(ProLayout)
   // .use(PageContainer)
+  .use(VueKonva)
   .use(router)
   .use(pinia)
   .use(ContextMenu)
   .use(i18n)
+  
   .mount('#app')
   .$nextTick(() => {
     postMessage({ payload: 'removeLoading' }, '*');

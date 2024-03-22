@@ -1,4 +1,4 @@
-import { BrowserView, BrowserWindow, Menu } from 'electron';
+import { BrowserView, BrowserWindow, Menu, nativeImage } from 'electron';
 import { initWindowEvent } from '../commons/initWindowEvent';
 import { preventClose, setWindow } from './windowSettingHandle';
 import { getBackgroundColor, globalState, icon, preload } from '../global';
@@ -6,7 +6,7 @@ import { windowManager } from '../commons/windowManager';
 import { WindowParams } from '../ipc-types';
 import { IpcMainHandle } from '../IpcMainHandle';
 import { BrowserPayload } from '../ipc-types/BrowserPayload';
-
+import fs from 'fs-extra';
 export const openBrowserWindowHandle: IpcMainHandle = {
   channel: 'open-browser',
   handle: (
@@ -53,6 +53,7 @@ export const createBrowserWindow = (
       preload,
       nodeIntegration: true,
       contextIsolation: false,
+      webSecurity: false,
     },
     autoHideMenuBar: true,
     frame: false,
@@ -80,6 +81,49 @@ export const createBrowserWindow = (
   });
 
   view.webContents.loadURL(browser.url);
+
+  // 当页面加载完成后，生成快照
+  view.webContents.on('did-finish-load', async () => {
+    // try {
+    //   const { width, height } = await view.webContents.executeJavaScript(`
+    //     (() => {
+    //       return {
+    //         width: document.documentElement.scrollWidth,
+    //         height: document.documentElement.scrollHeight
+    //       };
+    //     })();
+    //   `);
+
+    //   const devicePixelRatio = win.webContents.getZoomFactor();
+    //   const fullWidth = Math.ceil(width * devicePixelRatio);
+    //   const fullHeight = Math.ceil(height * devicePixelRatio);
+
+    //   win.setContentSize(fullWidth, fullHeight);
+
+    //   const numberOfScreenshots = Math.ceil(fullHeight / 600); // Adjust 600 according to your need
+    //   const screenshots:Electron.NativeImage[] = [];
+
+    //   for (let i = 0; i < numberOfScreenshots; i++) {
+    //     await view.webContents.executeJavaScript(`window.scrollTo(0, ${i * 600})`);
+    //     await new Promise(resolve => setTimeout(resolve, 1000)); // Adjust the delay if necessary
+    //     const screenshot = await view.webContents.capturePage();
+    //     screenshots.push(screenshot);
+    //   }
+
+    //   let combinedImage = nativeImage.createEmpty();
+
+    //   screenshots.forEach(image => {
+    //     combinedImage.addRepresentation({ scaleFactor: 1.0, dataURL: image.toDataURL() });
+    //   });
+
+    //   const pngBuffer = combinedImage.toPNG();
+    //   fs.writeFileSync('snapshot.png', pngBuffer);
+    //   console.log('快照已保存至 snapshot.png');
+
+    // } catch (error) {
+    //   console.error('无法生成快照:', error);
+    // }
+  });
 
   view.webContents.on('context-menu', (event, params) => {
     const menu = Menu.buildFromTemplate([

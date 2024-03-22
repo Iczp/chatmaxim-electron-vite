@@ -207,6 +207,7 @@ export const createTrayWindow = (window: WindowParams, _?: Electron.IpcMainInvok
       // Read more on https://www.electronjs.org/docs/latest/tutorial/context-isolation
       nodeIntegration: true,
       contextIsolation: false,
+      webSecurity: false,
     },
     autoHideMenuBar: true,
     show: true,

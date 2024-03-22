@@ -74,6 +74,12 @@ export const routes = <RouteRecordRaw[]>[
         meta: {},
         component: () => import('../views/markets/Markets.vue'),
       },
+      {
+        path: '/drawing',
+        name: 'drawing',
+        meta: {},
+        component: () => import('../views/drawing/Drawing.vue'),
+      },
     ],
   },
   {

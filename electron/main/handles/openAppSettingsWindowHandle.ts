@@ -45,6 +45,7 @@ export const createAppSettingsWindow = (window: WindowParams, _?: Electron.IpcMa
       // Read more on https://www.electronjs.org/docs/latest/tutorial/context-isolation
       nodeIntegration: true,
       contextIsolation: false,
+      webSecurity: false,
     },
     autoHideMenuBar: true,
     frame: false,

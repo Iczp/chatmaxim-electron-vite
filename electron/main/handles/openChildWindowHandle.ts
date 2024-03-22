@@ -97,6 +97,7 @@ export const createChildWindow = ({
       preload,
       nodeIntegration: true,
       contextIsolation: false,
+      webSecurity: false,
     },
     autoHideMenuBar: true,
     frame: false,

@@ -31,11 +31,12 @@ export const useDownload = () => {
       var cacheItem = blobStore.get(cacheKey);
       if (cacheItem) {
         blobUrl.value = cacheItem.objectUrl;
-        // blob.value = cacheItem.blob;
+        blob.value = cacheItem.blob;
+        percent.value = 100;
         console.log(`downloadFile is loaded: ${blobUrl.value}`);
-        // resolve(cacheItem);
-        // return;
-        url = cacheItem.objectUrl;
+        resolve(cacheItem);
+        return;
+        // url = cacheItem.objectUrl;
       }
       isPending.value = true;
       console.log(`downloadFile: ${url}`);
@@ -57,14 +58,13 @@ export const useDownload = () => {
           blob.value = res;
           const blobItem = <BlobCacheItem>{
             // url,
-            // blob: res,
+            blob: res,
             objectUrl: blobUrl.value!,
             date: new Date(),
           };
           console.log('blobItem', blobItem);
           blobStore.set(cacheKey, blobItem);
-          // blobItem.blob = res;
-          resolve({ ...blobItem, blob: res });
+          resolve(blobItem);
           console.log('blobStore', blobStore);
         })
         .catch(err => {

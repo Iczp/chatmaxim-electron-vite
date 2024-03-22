@@ -78,9 +78,9 @@ const getKey = (route: RouteLocationNormalizedLoaded, component: any): string | 
             </a-badge>
           </div>
 
-          <div class="nav-item">
+          <!-- <div class="nav-item">
             <Sound src="http://10.0.5.20:8044/file?id=e8137e1c-fb26-c605-6346-3a114264fdcc"/>
-          </div>
+          </div> -->
 
           <div
             class="nav-item"
@@ -114,6 +114,13 @@ const getKey = (route: RouteLocationNormalizedLoaded, component: any): string | 
             class="nav-item"
             @click="goto('/markets')"
             :class="{ active: route.name == 'markets' }"
+          >
+            <Diversity2 class="svg-icon" />
+          </div>
+          <div
+            class="nav-item"
+            @click="goto('/drawing')"
+            :class="{ active: route.name == 'drawing' }"
           >
             <Diversity2 class="svg-icon" />
           </div>

@@ -165,7 +165,10 @@ const getUrl = (config: OpenAPIConfig, options: ApiRequestOptions): string => {
 
   const baseUrl = isTokenUrl(options.url) ? config.AUTH_HOST : config.BASE;
 
-  const url = `${baseUrl}${path}`;
+  let url = `${path}`;
+  if (!/^https?/g.test(url)) {
+    url = `${baseUrl}${path}`;
+  }
   if (options.query) {
     return `${url}${getQueryString(options.query)}`;
   }
@@ -334,7 +337,7 @@ export const getFileNameFormHeaders = (response: AxiosResponse<any>): string | u
   let fileName: string | undefined;
   if (contentDisposition) {
     const fileNameMatch = contentDisposition.match(/filename="(.+)"/);
-    if (fileNameMatch.length === 2) {
+    if (fileNameMatch?.length === 2) {
       fileName = fileNameMatch[1];
     }
   }
