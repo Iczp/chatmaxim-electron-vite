@@ -1,5 +1,4 @@
 <script setup lang="ts">
-import {} from 'vue';
 import { ChatObjectDto } from '../../../apis/dtos';
 import ChatObject from '../../../components/ChatObject.vue';
 import FileItem from '../../../components/FileItem.vue';
@@ -10,13 +9,14 @@ import { useI18n } from 'vue-i18n';
 import { isImageMime } from '../../../commons/utils';
 import { useObjectUrl } from '@vueuse/core';
 import { CSSProperties } from 'ant-design-vue/es/_util/cssinjs/hooks/useStyleRegister';
+import { isArray } from '@pureadmin/utils';
 const { t } = useI18n();
-defineProps<{
-  destination?: ChatObjectDto;
-  files?: Array<File>;
-  text?: string;
-  open?: boolean;
-}>();
+// defineProps<{
+//   // destination?: ChatObjectDto;
+//   // files?: File[];
+//   // text?: string;
+//   // open?: boolean;
+// }>();
 
 const emits = defineEmits<{
   // confirm: [{ files?: Array<any>; text?: string }];
@@ -24,7 +24,9 @@ const emits = defineEmits<{
 }>();
 
 const destination = ref<ChatObjectDto>();
-const files = ref<Array<any>>([]);
+const files = ref<File[]>([]);
+const filesComputed = computed(() => [...files.value]);
+
 const text = ref<string>();
 const isOpen = ref(false);
 const isPreviewImage = ref(false);
@@ -32,18 +34,24 @@ const okText = computed(
   () => t('Send') + (files.value.length == 0 ? '' : `( ${files.value.length} )`),
 );
 
-const confirm = ref<(files?: Array<any>, text?: string) => void>();
+const confirm = ref<(files?: File[], text?: string) => void>();
 const cancel = ref<() => void>();
+
 const open = (args: {
   destination?: ChatObjectDto;
-  files?: Array<any>;
+  files?: File[];
   text?: string;
   isPreviewImage: boolean;
-  onConfirm?: (files?: Array<any>, text?: string) => void;
+  onConfirm?: (files?: File[], text?: string) => void;
   onCancel?: () => void;
 }) => {
   destination.value = args.destination;
+  console.log('typeof args.files', typeof args.files, Array, isArray(args.files));
   files.value = args.files || [];
+  blobUrls.clear();
+  files.value.forEach(file => {
+    blobUrls.set(file, toBlobUrl(file));
+  });
   text.value = args.text;
   isOpen.value = true;
   isPreviewImage.value = args.isPreviewImage;
@@ -61,8 +69,9 @@ const handleCancel = (e: MouseEvent) => {
 
 const handleOk = (e: MouseEvent) => {
   console.log(e);
-  isOpen.value = false;
   confirm.value?.call(this, files.value, text.value);
+  files.value = [];
+  isOpen.value = false;
   // emits('confirm', { files: files.value, text: text.value });
 };
 const onDelete = (index: number): void => {
@@ -75,15 +84,20 @@ const isImage = (file: File) => {
   return isImageMime(file.type);
 };
 
+// 由于 useObjectUrl 是一个副作用函数，每次调用都会重新计算 URL，这可能导致递归更新的问题。
 const toBlobUrl = (file: File): string => useObjectUrl(file).value!;
 
 const onImageContainerClick = (file: File) => {
   console.log('onImageContainerClick', file);
 };
+
+// ChatGPT 方案
+const blobUrls: Map<File, string> = new Map();
+
 const imageContainerStyle = (file: File): any => {
   return {
     color: 'red',
-    backgroundImage: `url(${toBlobUrl(file)})`,
+    backgroundImage: `url(${blobUrls.get(file)})`,
   } as CSSProperties;
 };
 
@@ -116,9 +130,9 @@ defineExpose({
           <div v-if="text" class="text-viewer">
             {{ text }}
           </div>
-          <div v-if="files.length != 0" class="file-list">
-            <div v-for="(item, index) in files" class="hover">
-              <file-item
+          <div v-if="filesComputed.length != 0" class="file-list">
+            <div v-for="(item, index) in filesComputed" class="hover">
+              <FileItem
                 :name="item?.name"
                 :size="item.size"
                 :suffix="`.${item?.name.split('.').pop()}`"
@@ -135,7 +149,7 @@ defineExpose({
                   </div>
                 </template>
                 <div class="file-info">{{ prettyBytes(item.size || 0) }}</div>
-              </file-item>
+              </FileItem>
             </div>
           </div>
         </scroll-view>
@@ -228,7 +242,7 @@ defineExpose({
   background-position: center;
   transition: all 0.3 linear;
 }
-.image-container:hover{
+.image-container:hover {
   background-size: cover;
 }
 .preview-image {

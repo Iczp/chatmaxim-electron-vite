@@ -13,11 +13,11 @@ const content = computed(() => props.item.content as FileContentDto);
 
 <template>
   <Bubble :r="item.isSelf" class="msg-file">
-    <file-item
+    <FileItem
       :name="content?.fileName"
       :suffix="content?.suffix"
       :size="content?.size"
-    ></file-item>
+    ></FileItem>
     <div class="footer">
       <div>{{ prettyBytes(content?.size || 0) }}</div>
       <div>{{ content?.suffix }}</div>

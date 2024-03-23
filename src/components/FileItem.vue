@@ -16,7 +16,7 @@ const emits = defineEmits<{
 </script>
 
 <template>
-  <layout-item class="file-item">
+  <LayoutItem class="file-item">
     <template #header>
       <slot name="icon">
         <file-icon :suffix="suffix" />
@@ -33,7 +33,7 @@ const emits = defineEmits<{
         <CloseCircleOutlined />
       </div>
     </template>
-  </layout-item>
+  </LayoutItem>
 </template>
 
 <style scoped>

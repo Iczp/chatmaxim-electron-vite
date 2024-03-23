@@ -42,7 +42,7 @@ app.component('Page', Page);
 app.component('PageHeader', PageHeader);
 app.component('PageFooter', PageFooter);
 app.component('PageContent', PageContent);
-app.component('LayoutItem', LayoutItem);
+// app.component('LayoutItem', LayoutItem);
 app.component('Icon', Icon);
 app
   .use(VueVirtualScroller)
