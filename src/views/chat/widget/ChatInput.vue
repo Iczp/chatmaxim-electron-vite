@@ -230,17 +230,29 @@ const groupNames = {
   flags: 'Flags',
 };
 const onSrceenshot = () => {
-  screenshots({}).then(res => {
-    // console.log('screenshots', res);
+  screenshots({})
+    .then(res => {
+      // console.log('screenshots', res);
 
-    var file = new File([res.blob!], `${t('srceenshot')}-${new Date().getTime()}.png`, {
-            type: 'image/png',
-          });
+      var file = new File([res.blob!], `${t('srceenshot')}-${new Date().getTime()}.png`, {
+        type: 'image/png',
+      });
 
-    emits('open', { files: [file], from: 'screenshots' });
-  }).catch(err=>{
-    console.error(err);
-  });
+      emits('open', { files: [file], from: 'screenshots' });
+    })
+    .catch(err => {
+      console.error(err);
+    });
+};
+
+const onMore = () => {
+  console.log('onMore');
+};
+const onTopic = () => {
+  console.log('onTopic');
+};
+const onFunction = () => {
+  console.log('onFunction');
 };
 defineExpose({
   clear,
@@ -276,9 +288,9 @@ defineExpose({
           <a-button type="text"><VideoCameraOutlined /></a-button>
         </a-popconfirm> -->
 
-        <a-button type="text" @click="onSrceenshot"><FunctionOutlined /></a-button>
+        <a-button type="text" @click="onFunction"><FunctionOutlined /></a-button>
 
-        <a-button type="text" @click="onSrceenshot"><NumberOutlined /></a-button>
+        <a-button type="text" @click="onTopic"><NumberOutlined /></a-button>
 
         <a-button type="text" @click="onSrceenshot"><ScissorOutlined /></a-button>
 
@@ -287,7 +299,7 @@ defineExpose({
         </a-button> -->
       </a-space>
       <a-space>
-        <a-button type="text" @click="onSrceenshot"><MoreOutlined /></a-button>
+        <a-button type="text" @click="onMore"><MoreOutlined /></a-button>
       </a-space>
     </div>
     <div class="input-body">
