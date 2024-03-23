@@ -58,7 +58,7 @@ const emits = defineEmits<{
       event?: MouseEvent | PointerEvent | undefined;
     },
   ];
-  open: [File[]];
+  open: [File[] | Blob[], 'filesystem' | 'screenshots'];
 }>();
 
 const selectionState = useTextSelection();
@@ -153,7 +153,7 @@ onChange((files: FileList | null) => {
     items.push(file!);
   }
 
-  emits('open', items);
+  emits('open', items, 'filesystem');
 });
 
 const visible = ref<boolean>(false);
@@ -221,7 +221,13 @@ const groupNames = {
   flags: 'Flags',
 };
 const onSrceenshot = () => {
-  screenshots({})
+  screenshots({}).then(res => {
+    console.log('screenshots', res);
+    var file = new File([res.blob!], `srceenshot-${new Date().getTime()}.png`, {
+      type: 'image/png',
+    });
+    emits('open', [file], 'screenshots');
+  });
 };
 defineExpose({
   clear,

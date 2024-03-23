@@ -385,8 +385,9 @@ export const mapToVideoContentDto = (file: File): VideoContentDto => {
     lastModifiedDate: file.lastModified,
   };
 };
-export const mapToImageContentDtoAsync = (file: File): Promise<ImageContentDto> => {
+export const mapToImageContentDtoAsync = (file: File ): Promise<ImageContentDto> => {
   return new Promise<ImageContentDto>((resolve, reject) => {
+
     const blob = useObjectUrl(file);
     console.log('blob', file.name, blob);
     let img = new Image();
@@ -399,7 +400,7 @@ export const mapToImageContentDtoAsync = (file: File): Promise<ImageContentDto> 
         size: file.size,
         path: blob.value,
         suffix: `.${file.name.split('.').pop()}`,
-        lastModifiedDate: file.lastModified,
+        lastModifiedDate: file?.lastModified,
         width: img.width,
         height: img.height,
         // qrcode: '',
