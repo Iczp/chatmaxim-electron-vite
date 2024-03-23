@@ -25,7 +25,6 @@ const emits = defineEmits<{
 
 const destination = ref<ChatObjectDto>();
 const files = ref<File[]>([]);
-const filesComputed = computed(() => [...files.value]);
 
 const text = ref<string>();
 const isOpen = ref(false);
@@ -130,8 +129,8 @@ defineExpose({
           <div v-if="text" class="text-viewer">
             {{ text }}
           </div>
-          <div v-if="filesComputed.length != 0" class="file-list">
-            <div v-for="(item, index) in filesComputed" class="hover">
+          <div v-if="files.length != 0" class="file-list">
+            <div v-for="(item, index) in files" class="hover">
               <FileItem
                 :name="item?.name"
                 :size="item.size"
