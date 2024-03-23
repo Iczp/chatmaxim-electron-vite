@@ -58,7 +58,12 @@ const emits = defineEmits<{
       event?: MouseEvent | PointerEvent | undefined;
     },
   ];
-  open: [File[] | Blob[], 'filesystem' | 'screenshots'];
+  open: [
+    {
+      files: File[] ;
+      from: 'filesystem' | 'screenshots' | 'drop';
+    },
+  ];
 }>();
 
 const selectionState = useTextSelection();
@@ -142,18 +147,18 @@ const { files, open, reset, onChange } = useFileDialog({
   directory: false, // Select directories instead of files if set true
 });
 
-onChange((files: FileList | null) => {
+onChange((filelist: FileList | null) => {
   /** do something with files */
-  console.warn('files', files);
+  console.warn('files', filelist);
 
-  const items: File[] = [];
+  const files: File[] = [];
   // Print each format files
-  for (let i = 0; i < (files || []).length; i++) {
-    const file = files![i];
-    items.push(file!);
+  for (let i = 0; i < (filelist || []).length; i++) {
+    const file = filelist![i];
+    files.push(file!);
   }
 
-  emits('open', items, 'filesystem');
+  emits('open', { files, from: 'filesystem' });
 });
 
 const visible = ref<boolean>(false);
@@ -223,10 +228,7 @@ const groupNames = {
 const onSrceenshot = () => {
   screenshots({}).then(res => {
     console.log('screenshots', res);
-    var file = new File([res.blob!], `srceenshot-${new Date().getTime()}.png`, {
-      type: 'image/png',
-    });
-    emits('open', [file], 'screenshots');
+    emits('open', { files: [res.file!], from: 'screenshots' });
   });
 };
 defineExpose({

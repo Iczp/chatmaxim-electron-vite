@@ -485,8 +485,13 @@ const dropHandle = (ev: DragEvent, { files, text }: { files?: any[]; text?: stri
   if (!(Number(files?.length) > 0 || text)) {
     return;
   }
+  viewSendDetail({ files, text });
+};
+
+const viewSendDetail = ({ files, text }: { files?: any[]; text?: string }) =>
   dropViewer.value?.open({
     destination: destination.value,
+    isPreviewImage: true,
     files,
     text,
     onConfirm(files, text) {
@@ -499,13 +504,26 @@ const dropHandle = (ev: DragEvent, { files, text }: { files?: any[]; text?: stri
         });
       }
       if (files) {
-        handleFiles(files);
+        sendFiles(files);
       }
     },
   });
+
+const openHandle = ({
+  files,
+  from,
+}: {
+  files?: File[];
+  from: 'filesystem' | 'screenshots' | 'drop';
+}) => {
+  // if (from == 'filesystem' && files?.length == 1) {
+  //   sendFiles(files);
+  //   return;
+  // }
+  viewSendDetail({ files });
 };
 
-const handleFiles = (files?: any[]) => {
+const sendFiles = (files: File[]) => {
   if (files?.length == 0) {
     return;
   }
@@ -533,30 +551,6 @@ const handleFiles = (files?: any[]) => {
         content: mapToFileContentDto(file),
       });
     }
-    // const suffix = `.${file.name.split('.').pop().toLowerCase()}`;
-    // switch (suffix) {
-    //   case '.jpg':
-    //   case '.jpeg':
-    //   case '.gif':
-    //   case '.png':
-    //   case '.tiff':
-    //     const content = await mapToImageContentDtoAsync(file);
-    //     sendMessageContent({
-    //       file,
-    //       isClearInput: false,
-    //       messageType: MessageTypeEnums.Image,
-    //       content: content,
-    //     });
-    //     break;
-    //   default:
-    //     sendMessageContent({
-    //       file,
-    //       isClearInput: false,
-    //       messageType: MessageTypeEnums.File,
-    //       content: mapToFileContentDto(file),
-    //     });
-    //     break;
-    // }
   });
 };
 
@@ -681,7 +675,7 @@ const onTransfer = () => {
         :disabled="!isInputEnabled"
         v-model:value="textValue"
         @send="onSend"
-        @open="handleFiles"
+        @open="openHandle"
       >
         <QuoteMessage
           v-if="quoteMessage"

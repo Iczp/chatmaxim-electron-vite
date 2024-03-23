@@ -93,7 +93,7 @@ const src = computed(() => props.path || blobUrl.value || EmptyImg);
   user-select: none;
   /* padding: 1px; */
   min-height: 40px;
-  min-width: 80px;
+  min-width: 20px;
   /* line-height: 24px; */
   max-width: var(--message-max-width);
   overflow: hidden;

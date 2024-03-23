@@ -7,10 +7,13 @@ import { computed, ref } from 'vue';
 import { FileOutlined, CloseCircleOutlined } from '@ant-design/icons-vue';
 import prettyBytes from 'pretty-bytes';
 import { useI18n } from 'vue-i18n';
+import { isImageMime } from '../../../commons/utils';
+import { useObjectUrl } from '@vueuse/core';
+import { CSSProperties } from 'ant-design-vue/es/_util/cssinjs/hooks/useStyleRegister';
 const { t } = useI18n();
 defineProps<{
   destination?: ChatObjectDto;
-  files?: Array<any>;
+  files?: Array<File>;
   text?: string;
   open?: boolean;
 }>();
@@ -24,6 +27,7 @@ const destination = ref<ChatObjectDto>();
 const files = ref<Array<any>>([]);
 const text = ref<string>();
 const isOpen = ref(false);
+const isPreviewImage = ref(false);
 const okText = computed(
   () => t('Send') + (files.value.length == 0 ? '' : `( ${files.value.length} )`),
 );
@@ -34,6 +38,7 @@ const open = (args: {
   destination?: ChatObjectDto;
   files?: Array<any>;
   text?: string;
+  isPreviewImage: boolean;
   onConfirm?: (files?: Array<any>, text?: string) => void;
   onCancel?: () => void;
 }) => {
@@ -41,6 +46,7 @@ const open = (args: {
   files.value = args.files || [];
   text.value = args.text;
   isOpen.value = true;
+  isPreviewImage.value = args.isPreviewImage;
   confirm.value = args.onConfirm;
   cancel.value = args.onCancel;
 };
@@ -64,6 +70,21 @@ const onDelete = (index: number): void => {
   if (files.value.length == 0) {
     isOpen.value = false;
   }
+};
+const isImage = (file: File) => {
+  return isImageMime(file.type);
+};
+
+const toBlobUrl = (file: File): string => useObjectUrl(file).value!;
+
+const onImageContainerClick = (file: File) => {
+  console.log('onImageContainerClick', file);
+};
+const imageContainerStyle = (file: File): any => {
+  return {
+    color: 'red',
+    backgroundImage: `url(${toBlobUrl(file)})`,
+  } as CSSProperties;
 };
 
 // Expose
@@ -104,6 +125,15 @@ defineExpose({
                 :del="true"
                 @delete="onDelete(index)"
               >
+                <template v-if="isImage(item)" #icon>
+                  <div
+                    class="image-container"
+                    @click="onImageContainerClick(item)"
+                    :style="imageContainerStyle(item)"
+                  >
+                    <!-- <img :src="toBlobUrl(item)" class="preview-image" /> -->
+                  </div>
+                </template>
                 <div class="file-info">{{ prettyBytes(item.size || 0) }}</div>
               </file-item>
             </div>
@@ -184,5 +214,25 @@ defineExpose({
 }
 .hover:hover :deep(.delete) {
   opacity: 1;
+}
+
+.image-container {
+  width: var(--icon-size);
+  height: var(--icon-size);
+  overflow: hidden;
+  display: flex;
+  justify-items: center;
+
+  background-size: contain;
+  background-repeat: no-repeat;
+  background-position: center;
+  transition: all 0.3 linear;
+}
+.image-container:hover{
+  background-size: cover;
+}
+.preview-image {
+  width: 100%;
+  /* height: 100%; */
 }
 </style>

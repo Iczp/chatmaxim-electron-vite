@@ -18,7 +18,9 @@ const emits = defineEmits<{
 <template>
   <layout-item class="file-item">
     <template #header>
-      <file-icon :suffix="suffix" />
+      <slot name="icon">
+        <file-icon :suffix="suffix" />
+      </slot>
     </template>
     <template #title>
       <div class="file-name text-ellipsis2">{{ name }}</div>
