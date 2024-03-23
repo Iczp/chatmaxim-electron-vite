@@ -195,5 +195,6 @@
   "User Portrait": "User Protrait",
   "SaveAsSuccessful": "Save As '{0}'",
   "SaveAsFail": "Save As Fail",
-  "LoadError": "load error"
+  "LoadError": "load error",
+  "srceenshot": "Srceenshot"
 }

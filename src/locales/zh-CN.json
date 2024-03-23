@@ -196,5 +196,6 @@
   "User Portrait": "头像",
   "SaveAsSuccessful": "另存为 '{0}'",
   "SaveAsFail": "另存为失败",
-  "LoadError": "加载错误"
+  "LoadError": "加载错误",
+  "srceenshot": "屏幕快照"
 }

@@ -13,7 +13,8 @@ export type ScreenshotsResult = {
   };
   buffer?: Int8Array;
   event: object;
-  file?: File;
+  // file?: File;
+  blob?: Blob;
 };
 
 export const screenshots = (arg: any): Promise<ScreenshotsResult> => {
@@ -26,10 +27,11 @@ export const screenshots = (arg: any): Promise<ScreenshotsResult> => {
         if (res.success) {
           // 创建Blob
           const blob = new Blob([res.buffer], { type: 'image/png' });
-          var file = new File([blob], `srceenshot-${new Date().getTime()}.png`, {
-            type: 'image/png',
-          });
-          resolve({ ...res, file });
+          // var file = new File([blob], `srceenshot-${new Date().getTime()}.png`, {
+          //   type: 'image/png',
+          // });
+          // resolve({ ...res, file });
+          resolve({ ...res, blob });
         } else {
           reject(res);
         }

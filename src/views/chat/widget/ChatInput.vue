@@ -232,7 +232,12 @@ const groupNames = {
 const onSrceenshot = () => {
   screenshots({}).then(res => {
     // console.log('screenshots', res);
-    emits('open', { files: [res.file!], from: 'screenshots' });
+
+    var file = new File([res.blob!], `${t('srceenshot')}-${new Date().getTime()}.png`, {
+            type: 'image/png',
+          });
+
+    emits('open', { files: [file], from: 'screenshots' });
   }).catch(err=>{
     console.error(err);
   });
