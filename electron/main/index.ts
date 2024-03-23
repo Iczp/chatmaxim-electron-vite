@@ -51,6 +51,7 @@ import { setLanguageHandle } from './handles/setLanguageHandle';
 import { sheelHandle } from './handles/sheelHandle';
 import { saveAsHandle } from './handles/saveAsHandle';
 import { createBrowserWindow, openBrowserWindowHandle } from './handles/openBrowserWindowHandle';
+import { setupScreenshots } from './screenshots';
 
 setAppProtocol();
 
@@ -106,7 +107,10 @@ app.whenReady().then(() => {
   //     url: 'https://www.baidu.com',
   //   },
   // });
+
   createLoginWindow({ path: 'login', visiblity: true, isPreventClose: true });
+
+  setupScreenshots();
   // win = createMainWindow();
   // pop = createPopWindow({});
   // ffmpegTest();

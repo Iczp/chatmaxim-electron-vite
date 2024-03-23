@@ -4,7 +4,10 @@ import {
   UploadOutlined,
   MehOutlined,
   VideoCameraOutlined,
+  MoreOutlined,
   FolderOpenOutlined,
+  FunctionOutlined,
+  NumberOutlined,
   ScissorOutlined,
 } from '@ant-design/icons-vue';
 import { useColorMode, useFileDialog } from '@vueuse/core';
@@ -60,7 +63,7 @@ const emits = defineEmits<{
   ];
   open: [
     {
-      files: File[] ;
+      files: File[];
       from: 'filesystem' | 'screenshots' | 'drop';
     },
   ];
@@ -155,6 +158,7 @@ onChange((filelist: FileList | null) => {
   // Print each format files
   for (let i = 0; i < (filelist || []).length; i++) {
     const file = filelist![i];
+    console.warn('file', file);
     files.push(file!);
   }
 
@@ -227,8 +231,10 @@ const groupNames = {
 };
 const onSrceenshot = () => {
   screenshots({}).then(res => {
-    console.log('screenshots', res);
+    // console.log('screenshots', res);
     emits('open', { files: [res.file!], from: 'screenshots' });
+  }).catch(err=>{
+    console.error(err);
   });
 };
 defineExpose({
@@ -265,11 +271,18 @@ defineExpose({
           <a-button type="text"><VideoCameraOutlined /></a-button>
         </a-popconfirm> -->
 
+        <a-button type="text" @click="onSrceenshot"><FunctionOutlined /></a-button>
+
+        <a-button type="text" @click="onSrceenshot"><NumberOutlined /></a-button>
+
         <a-button type="text" @click="onSrceenshot"><ScissorOutlined /></a-button>
 
         <!-- <a-button type="text">
           <UploadOutlined />
         </a-button> -->
+      </a-space>
+      <a-space>
+        <a-button type="text" @click="onSrceenshot"><MoreOutlined /></a-button>
       </a-space>
     </div>
     <div class="input-body">
@@ -401,5 +414,10 @@ defineExpose({
   font-size: 12px;
   padding: 0 12px;
   height: 28px;
+}
+
+.tool-bar {
+  display: flex;
+  justify-content: space-between;
 }
 </style>

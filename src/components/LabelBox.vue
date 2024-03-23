@@ -1,6 +1,5 @@
 <script setup lang="ts">
 import { useAttrs, useSlots } from 'vue';
-import Div from '../components/LayoutItem.vue';
 const slots = useSlots();
 const attrs = useAttrs();
 

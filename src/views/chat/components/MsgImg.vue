@@ -109,6 +109,7 @@ const src = computed(() => props.path || blobUrl.value || EmptyImg);
   align-items: center;
   margin: 0 12px;
   color: var(--color);
+  box-shadow: 0 0 8px 2px rgba(62, 62, 62, 0.33);
 }
 .progress {
   background-color: rgba(0, 0, 0, 0.05);

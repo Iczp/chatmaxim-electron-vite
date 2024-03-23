@@ -39,5 +39,7 @@ export const createMainWindow = (window: WindowParams, _?: Electron.IpcMainInvok
   // setWindow(win, { ...window, isPreventClose: true }, _);
   initWindowEvent(win, { name: 'main', path: window.path });
   preventClose(win, true);
+
+  
   return win;
 };

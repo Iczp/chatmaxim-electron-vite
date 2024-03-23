@@ -8,10 +8,10 @@ import pkg from './package.json';
 import Components from 'unplugin-vue-components/vite';
 import { AntDesignVueResolver } from 'unplugin-vue-components/resolvers';
 import multiple from 'vite-plugin-multiple';
-import { resolve, join,dirname  } from 'node:path';
+import { resolve, join, dirname } from 'node:path';
 import svgLoader from 'vite-svg-loader';
-import VueI18nPlugin from '@intlify/unplugin-vue-i18n/vite'
-import { fileURLToPath } from 'url'
+import VueI18nPlugin from '@intlify/unplugin-vue-i18n/vite';
+import { fileURLToPath } from 'url';
 
 // https://vitejs.dev/config/
 export default defineConfig(({ command }) => {
@@ -79,6 +79,7 @@ export default defineConfig(({ command }) => {
                 // we can use `external` to exclude them to ensure they work correctly.
                 // Others need to put them in `dependencies` to ensure they are collected into `app.asar` after the app is built.
                 // Of course, this is not absolute, just this way is relatively simple. :)
+                // .concat(['electron-screenshots'])
                 external: Object.keys('dependencies' in pkg ? pkg.dependencies : {}),
               },
             },
@@ -144,9 +145,9 @@ export default defineConfig(({ command }) => {
     },
     resolve: {
       alias: {
-          // @ 替代为 src
+        // @ 替代为 src
         '@': resolve(__dirname, 'src'),
-         // @component 替代为 src/component
+        // @component 替代为 src/component
         '@components': resolve(__dirname, 'src/components'),
       },
     },

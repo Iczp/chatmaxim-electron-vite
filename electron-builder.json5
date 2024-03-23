@@ -16,6 +16,10 @@
       from: 'node_modules/ffmpeg-static',
       to: 'ffmpeg',
     },
+    {
+      from: 'node_modules/electron-screenshots',
+      to: 'electron-screenshots',
+    },
   ],
   mac: {
     target: ['dmg'],

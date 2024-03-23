@@ -16,6 +16,10 @@ export const initWindowEvent = (
   win: BrowserWindow,
   { name, path, payload }: InitWindowEventArg,
 ) => {
+  if (!win) {
+    console.error(`win disposed,name:${name}`);
+    return;
+  }
   windowManager.set(name, win);
   loadUrl(win, { path });
   const send = (event: string, args: any[]) => sendEvent(win, event, args);
