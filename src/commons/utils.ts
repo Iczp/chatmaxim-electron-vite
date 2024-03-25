@@ -629,7 +629,9 @@ export const getSelectedText = (): string | undefined => {
   return selectedText;
 };
 
-export const formatFile = async (
+
+
+export const fileToContent = async (
   file: File,
 ): Promise<{ messageType: MessageTypeEnums; content: any }> => {
   if (isImageMime(file.type)) {
@@ -645,7 +647,7 @@ export const formatFile = async (
       content: await mapToVideoContentDto(file),
     };
   }
-  
+
   if (isAudioSuffix(file.name)) {
     return {
       messageType: MessageTypeEnums.Sound,

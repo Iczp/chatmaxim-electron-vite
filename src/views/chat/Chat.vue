@@ -353,6 +353,7 @@ const sendMessageContent = async ({
       isSendBtnEnabled.value = false;
       list.value.push(input);
       scroll.value?.scrollTo({ duration: 1500 });
+      /* =================== update file info =================== */
       // nextTick(() => scroll.value?.scrollTo({ duration: 1500 }));
     },
     onSuccess(entity, input) {
@@ -528,6 +529,7 @@ const sendFiles = (files: File[]) => {
     return;
   }
   files!.forEach(async file => {
+    //===================
     if (isImageMime(file.type)) {
       const content = await mapToImageContentDtoAsync(file);
       sendMessageContent({

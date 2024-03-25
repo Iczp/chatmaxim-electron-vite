@@ -100,6 +100,8 @@ export const sendMessage = async ({
 }) => {
   const store = useImStore();
   const autoId = store.generateMessageId();
+  console.log('sendMessage content', content);
+
   let input: MessageDto = formatMessage({
     sessionUnitId,
     items: [
@@ -143,7 +145,7 @@ export const sendMessage = async ({
         );
         onProgress?.call(this, progressEvent);
       };
-      const postData = {
+      const postData: any = {
         sessionUnitId,
         quoteMessageId,
         remindList,
@@ -155,6 +157,8 @@ export const sendMessage = async ({
       } else if (isVideoMime(file.type)) {
         return MessageSenderService.sendUploadVideo(postData);
       } else if (isAudioSuffix(file.name)) {
+        postData.duration = content.time;
+        console.log(' postData.duration', postData.duration);
         return MessageSenderService.sendUploadSound(postData);
       }
       return MessageSenderService.sendUploadFile(postData);

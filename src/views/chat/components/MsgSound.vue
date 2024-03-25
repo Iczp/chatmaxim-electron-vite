@@ -2,7 +2,7 @@
 import { computed } from 'vue';
 import { MessageDto, SoundContentDto, TextContentDto } from '../../../apis/dtos';
 import Bubble from '../../../components/Bubble.vue';
-import TextViewer from '../../../components/TextViewer.vue';
+import SoundPlay from './SoundPlay.vue';
 const props = defineProps<{
   item: MessageDto;
 }>();
@@ -10,22 +10,29 @@ const content = computed(() => props.item.content as SoundContentDto);
 </script>
 
 <template>
-  <Bubble :r="item.isSelf" class="msg-image">
-    <!-- {{ item.id }} -->
-    <!-- {{ content?.text }}
-    <br />
-    indexOf:{{ content?.text?.indexOf('\n') }}
-    <br /> -->
-    Auido:{{ content.time }}
-  </Bubble>
+  <div class="msg-sound">
+    <Bubble :r="item.isSelf" class="sound-bubble">
+      <SoundPlay :play="false" />
+    </Bubble>
+    <div>{{ content.time }}"</div>
+  </div>
 </template>
 
 <style scoped>
-.msg-image {
-  padding: 8px;
-  min-height: 40px;
-  min-width: 24px;
+.reverse .msg-sound {
+  flex-direction: row-reverse;
+}
+.msg-sound {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+}
+.sound-bubble {
+  padding: 4px 8px;
+  min-height: 32px;
+  min-width: 64px;
   line-height: 24px;
   max-width: var(--message-max-width);
+  /* width: 150px; */
 }
 </style>

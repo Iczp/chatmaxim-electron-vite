@@ -18,7 +18,7 @@ import { ImageContentDto } from '../dtos/message/ImageContentDto';
 import { MessageTypeEnums } from '../enums';
 import { AxiosProgressEvent } from 'axios';
 
-export type sendUploadArgs = {
+export type SendUploadArgs = {
   /**
    * 主建Id
    */
@@ -41,6 +41,7 @@ export type sendUploadArgs = {
    * @type {Blob}
    */
   file: Blob;
+  formdata?: any;
   onUploadProgress?: (progressEvent: AxiosProgressEvent) => void;
 };
 
@@ -419,8 +420,8 @@ export class MessageSenderService {
    * @returns MessageOwnerDto Success
    * @throws ApiError
    */
-  public static sendUploadFile(args: sendUploadArgs): CancelablePromise<MessageOwnerDto> {
-    return MessageSenderService.sendUploadTyped({ ...args, type: '' });
+  public static sendUploadFile(args: SendUploadArgs): CancelablePromise<MessageOwnerDto> {
+    return MessageSenderService.sendUploadTyped({ ...args, type: '-file' });
   }
 
   /**
@@ -428,7 +429,7 @@ export class MessageSenderService {
    * @returns MessageOwnerDto Success
    * @throws ApiError
    */
-  public static sendUploadImage(args: sendUploadArgs): CancelablePromise<MessageOwnerDto> {
+  public static sendUploadImage(args: SendUploadArgs): CancelablePromise<MessageOwnerDto> {
     return MessageSenderService.sendUploadTyped({ ...args, type: '-image' });
   }
 
@@ -437,7 +438,7 @@ export class MessageSenderService {
    * @returns MessageOwnerDto Success
    * @throws ApiError
    */
-  public static sendUploadVideo(args: sendUploadArgs): CancelablePromise<MessageOwnerDto> {
+  public static sendUploadVideo(args: SendUploadArgs): CancelablePromise<MessageOwnerDto> {
     return MessageSenderService.sendUploadTyped({ ...args, type: '-video' });
   }
 
@@ -446,8 +447,16 @@ export class MessageSenderService {
    * @returns MessageOwnerDto Success
    * @throws ApiError
    */
-  public static sendUploadSound(args: sendUploadArgs): CancelablePromise<MessageOwnerDto> {
-    return MessageSenderService.sendUploadTyped({ ...args, type: '-sound' });
+  public static sendUploadSound(
+    args: SendUploadArgs & { duration?: number },
+  ): CancelablePromise<MessageOwnerDto> {
+    return MessageSenderService.sendUploadTyped({
+      ...args,
+      type: '-sound',
+      formdata: {
+        duration: args.duration,
+      },
+    });
   }
 
   /**
@@ -461,32 +470,10 @@ export class MessageSenderService {
     remindList,
     file,
     type,
+    formdata,
     onUploadProgress,
-  }: {
-    /**
-     * 主建Id
-     */
-    sessionUnitId?: string;
-    /**
-     * 引用消息Id
-     *
-     * @type {number}
-     */
-    quoteMessageId?: number;
-    /**
-     * 提醒（@XXX） sessionUnitId
-     *
-     * @type {Array<string>}
-     */
-    remindList?: Array<string>;
-    /**
-     * file
-     *
-     * @type {Blob}
-     */
-    file: Blob;
-    type: '' | '-file' | '-sound' | '-image' | '-video';
-    onUploadProgress?: (progressEvent: AxiosProgressEvent) => void;
+  }: SendUploadArgs & {
+    type: '-file' | '-sound' | '-image' | '-video';
   }): CancelablePromise<MessageOwnerDto> {
     return __request(OpenAPI, {
       method: 'POST',
@@ -501,6 +488,8 @@ export class MessageSenderService {
       },
       formData: {
         file,
+        ...formdata,
+        // duration: 12345,
       },
       mediaType: 'multipart/form-data',
       onUploadProgress,
