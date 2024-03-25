@@ -21,6 +21,7 @@ import { useProfileModal } from '../../views/chat/commons/useProfileModal';
 import { openBrowser } from '../../ipc/openBrowser';
 import { link } from 'original-fs';
 import { isUrl } from '@pureadmin/utils';
+import { ReadedRecorderService } from '../../apis';
 export { showContextMenuForSession } from './showContextMenuForSession';
 export { showContextMenuForMessageContent } from './showContextMenuForMessageContent';
 export { showContextMenuForMessageAvatar } from './showContextMenuForMessageAvatar';
@@ -117,8 +118,56 @@ export const onQuoteAvatarClick = (args: ArgsContext) => {
   return onAvatarClick({ ...args, entity });
 };
 
-export const onContentClick = ({ t, sessionUnit, chatObjectId, entity, event }: ArgsContext) => {
+export const onContentClick = ({
+  t,
+  sessionUnit,
+  chatObjectId,
+  entity,
+  event,
+  playMessageId,
+}: ArgsContext) => {
   console.log('onContentClick');
+
+  const setReadedMany = () => {
+    console.log('setReadedMany');
+    if (!sessionUnit?.id) {
+      console.error('setReadedMany sessionUnit?.id', sessionUnit?.id);
+    }
+    if (!entity.id || entity.isReaded) {
+      console.warn('setReadedMany isReaded', entity.id, entity.isReaded);
+      return;
+    }
+    ReadedRecorderService.setReadedMany({
+      sessunitUnitId: sessionUnit?.id!,
+      messageIdList: [entity.id!],
+    }).then(res => {
+      entity.isReaded = true;
+    });
+  };
+
+  setReadedMany();
+
+  if (entity.messageType == MessageTypeEnums.Sound) {
+    console.log('soundPlay', playMessageId.value);
+
+    const togglePlay = () => {
+      entity.isReaded = true;
+      if (
+        !playMessageId.value ||
+        !(playMessageId.value == entity.id || playMessageId.value == entity.autoId)
+      ) {
+        playMessageId.value = entity.id || entity.autoId;
+      } else {
+        playMessageId.value = undefined;
+      }
+    };
+    togglePlay();
+    console.log('playSound undefined');
+
+    // playSound()
+  }
+
+  // setReaded()
 
   let isMedia = [MessageTypeEnums.Image, MessageTypeEnums.Video].some(x => x == entity.messageType);
   if (entity.messageType == MessageTypeEnums.File) {

@@ -659,6 +659,7 @@ const onTransfer = () => {
           v-for="(item, index) in list"
           :key="item.id || item.autoId"
           :entity="item"
+          :playMessageId="playMessageId"
           :sessionUnitId="sessionUnitId"
           v-model:selectable="selectable"
           @resend="onResend(item)"

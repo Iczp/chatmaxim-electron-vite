@@ -35,7 +35,7 @@ const props = defineProps<{
   sessionUnitId: string;
   entity: MessageDto;
   selectable?: boolean;
-  isPlay?: boolean;
+  playMessageId?: number;
 }>();
 const slots = useSlots();
 // const emits = defineEmits(['contextmenu', 'update:selectable']);
@@ -50,7 +50,12 @@ const emits = defineEmits<{
 const { senderName, messageType, isRollbacked, sendTime, sendTimeTitle, state } = useMessageEntity(
   props.entity,
 );
-
+const msg = computed(() => props.entity);
+const isPlay = computed<boolean>(
+  () =>
+    !!props.playMessageId &&
+    (props.playMessageId == msg.value?.id || props.playMessageId == msg.value?.autoId),
+);
 const messageState = computed(() => props.entity.state);
 
 const { showProfile } = useProfileModal();
@@ -92,8 +97,8 @@ const onMessageClick = (event: MouseEvent, mouseButton: MouseButton) => {
 };
 
 const onQuoteSenderClick = (event: MouseEvent) => {
-  console.log('onQuoteSenderClick',props.entity);
-  
+  console.log('onQuoteSenderClick', props.entity);
+
   const sender = props.entity?.quoteMessage?.senderSessionUnit;
   if (sender) {
     showProfile(sender.id!, sender.owner?.name);
@@ -104,7 +109,6 @@ const onQuoteSenderClick = (event: MouseEvent) => {
   //   labelType: LabelType.QuoteAvatar,
   //   mouseButton: MouseButton.Click,
   // });
-
 };
 const onQuoteContentClick = (event: MouseEvent) => {
   emits('contextmenu', {

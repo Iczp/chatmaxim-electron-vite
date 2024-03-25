@@ -1,13 +1,16 @@
 <script setup lang="ts">
+import { CSSProperties } from 'vue';
+
 const props = defineProps<{
   value?: string;
   // reverse
   r?: boolean;
+  style?: CSSProperties;
 }>();
 </script>
 
 <template>
-  <div class="bubble" :class="r ? 'right' : 'left'">
+  <div class="bubble" :style="style" :class="r ? 'right' : 'left'">
     <slot></slot>
     <!-- <footer class="bubble-footer">123</footer> -->
   </div>

@@ -52,7 +52,9 @@ const props = withDefaults(
   /* transform: rotate(-135deg); */
   /* background-color: #BD2C00; */
 }
-
+.play .wifi-circle {
+border-color: #ff0000ee;
+}
 .wifi-circle {
   top: 0;
   left: 0;
