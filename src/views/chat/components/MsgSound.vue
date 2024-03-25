@@ -40,7 +40,7 @@ const bubbleStyle = ref<CSSProperties>({
     </Bubble>
 
     <div class="duration">{{ time }}</div>
-    <a-badge v-if="!item.isSelf && !item.isReaded" class="unread" :dot="true" />
+    <a-badge v-if="!item.isSelf && !item.isOpened" class="unread" :dot="true" />
   </div>
 </template>
 

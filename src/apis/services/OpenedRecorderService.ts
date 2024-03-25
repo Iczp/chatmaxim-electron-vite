@@ -90,7 +90,7 @@ sorting?: string,
      * @returns IczpNet_Chat_OpenedRecorders_Dtos_OpenedRecorderDto Success
      * @throws ApiError
      */
-    public static postApiChatOpenedRecorderSetOpened({
+    public static setOpened({
 sessionUnitId,
 messageId,
 deviceId,

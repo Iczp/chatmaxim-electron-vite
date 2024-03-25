@@ -21,7 +21,7 @@ import { useProfileModal } from '../../views/chat/commons/useProfileModal';
 import { openBrowser } from '../../ipc/openBrowser';
 import { link } from 'original-fs';
 import { isUrl } from '@pureadmin/utils';
-import { ReadedRecorderService } from '../../apis';
+import { OpenedRecorderService, ReadedRecorderService } from '../../apis';
 export { showContextMenuForSession } from './showContextMenuForSession';
 export { showContextMenuForMessageContent } from './showContextMenuForMessageContent';
 export { showContextMenuForMessageAvatar } from './showContextMenuForMessageAvatar';
@@ -128,46 +128,43 @@ export const onContentClick = ({
 }: ArgsContext) => {
   console.log('onContentClick');
 
-  const setReadedMany = () => {
-    console.log('setReadedMany');
+  const setOpened = () => {
+    console.log('setOpened');
     if (!sessionUnit?.id) {
-      console.error('setReadedMany sessionUnit?.id', sessionUnit?.id);
+      console.error('setOpened sessionUnit?.id', sessionUnit?.id);
     }
-    if (!entity.id || entity.isReaded) {
-      console.warn('setReadedMany isReaded', entity.id, entity.isReaded);
+    if (!entity.id || entity.isOpened) {
+      console.warn('setOpened isOpened', entity.id, entity.isOpened);
       return;
     }
-    ReadedRecorderService.setReadedMany({
-      sessunitUnitId: sessionUnit?.id!,
-      messageIdList: [entity.id!],
+    OpenedRecorderService.setOpened({
+      sessionUnitId: sessionUnit?.id!,
+      deviceId: '',
+      messageId: entity.id!,
     }).then(res => {
-      entity.isReaded = true;
+      entity.isOpened = true;
     });
   };
 
-  setReadedMany();
+  setOpened();
 
-  if (entity.messageType == MessageTypeEnums.Sound) {
+  const tryToPlaySound = () => {
+    if (entity.messageType != MessageTypeEnums.Sound) {
+      return;
+    }
     console.log('soundPlay', playMessageId.value);
+    entity.isOpened = true;
+    if (
+      !playMessageId.value ||
+      !(playMessageId.value == entity.id || playMessageId.value == entity.autoId)
+    ) {
+      playMessageId.value = entity.id || entity.autoId;
+    } else {
+      playMessageId.value = undefined;
+    }
+  };
 
-    const togglePlay = () => {
-      entity.isReaded = true;
-      if (
-        !playMessageId.value ||
-        !(playMessageId.value == entity.id || playMessageId.value == entity.autoId)
-      ) {
-        playMessageId.value = entity.id || entity.autoId;
-      } else {
-        playMessageId.value = undefined;
-      }
-    };
-    togglePlay();
-    console.log('playSound undefined');
-
-    // playSound()
-  }
-
-  // setReaded()
+  tryToPlaySound();
 
   let isMedia = [MessageTypeEnums.Image, MessageTypeEnums.Video].some(x => x == entity.messageType);
   if (entity.messageType == MessageTypeEnums.File) {
