@@ -239,7 +239,7 @@ defineExpose({
   background-size: contain;
   background-repeat: no-repeat;
   background-position: center;
-  transition: all 0.3 linear;
+  transition: all 0.3s linear;
 }
 .image-container:hover {
   background-size: cover;

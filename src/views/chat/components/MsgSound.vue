@@ -1,12 +1,12 @@
 <script setup lang="ts">
 import { computed } from 'vue';
-import { MessageDto, TextContentDto } from '../../../apis/dtos';
+import { MessageDto, SoundContentDto, TextContentDto } from '../../../apis/dtos';
 import Bubble from '../../../components/Bubble.vue';
 import TextViewer from '../../../components/TextViewer.vue';
 const props = defineProps<{
   item: MessageDto;
 }>();
-const content = computed(() => props.item.content as TextContentDto);
+const content = computed(() => props.item.content as SoundContentDto);
 </script>
 
 <template>
@@ -16,8 +16,7 @@ const content = computed(() => props.item.content as TextContentDto);
     <br />
     indexOf:{{ content?.text?.indexOf('\n') }}
     <br /> -->
-    image
-    <TextViewer :value="content?.text!" />
+    Auido:{{ content.time }}
   </Bubble>
 </template>
 

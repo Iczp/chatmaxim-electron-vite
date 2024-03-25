@@ -9,6 +9,7 @@ import {
   BorderOutlined,
   SearchOutlined,
   VerifiedOutlined,
+  MoreOutlined,
 } from '@ant-design/icons-vue';
 import ToolBar from './TooBar.vue';
 import { setWindow } from '../ipc/setWindow';
@@ -80,8 +81,8 @@ const toggleAlwayOnTop = () => {
       </tool-bar>
       <slot v-if="more">
         <a-button type="text" class="btn" @click="$emit('more', $event)">
-          <!-- <EllipsisOutlined /> -->
-          <icon type="more" />
+          <EllipsisOutlined />
+          <!-- <icon type="more" /> -->
         </a-button>
       </slot>
     </div>

@@ -23,7 +23,7 @@ import Loading from '../../components/Loading.vue';
 import ScrollView from '../../components/ScrollView.vue';
 import ChatInput from './widget/ChatInput.vue';
 
-import { NodeExpandOutlined } from '@ant-design/icons-vue';
+import { NodeExpandOutlined, MoreOutlined } from '@ant-design/icons-vue';
 import { message } from 'ant-design-vue';
 import { useImStore } from '../../stores/im';
 import { MessageDto } from '../../apis/dtos';
@@ -38,10 +38,13 @@ import { sendMessage } from '../../commons/sendMessage';
 import { useDrop } from '../../commons/useDrop';
 import { useShortcutStore } from '../../stores/shortcut';
 import {
+  isAudioSuffix,
   isImageMime,
   isVideoMime,
   mapToFileContentDto,
   mapToImageContentDtoAsync,
+  mapToSoundContentDto,
+  mapToVideoContentDto,
 } from '../../commons/utils';
 import { ChatObjectService } from '../../apis';
 import { useI18n } from 'vue-i18n';
@@ -346,12 +349,9 @@ const sendMessageContent = async ({
         : undefined,
     quoteMessage: quoteMessage.value,
     content,
-    onBefore(input) {
+    async onBefore(input) {
       isSendBtnEnabled.value = false;
       list.value.push(input);
-      // setTimeout(() => {
-      //   input.state = 3;
-      // }, 1000);
       scroll.value?.scrollTo({ duration: 1500 });
       // nextTick(() => scroll.value?.scrollTo({ duration: 1500 }));
     },
@@ -541,7 +541,14 @@ const sendFiles = (files: File[]) => {
         file,
         isClearInput: false,
         messageType: MessageTypeEnums.Video,
-        content: mapToFileContentDto(file),
+        content: await mapToVideoContentDto(file),
+      });
+    } else if (isAudioSuffix(file.name)) {
+      sendMessageContent({
+        file,
+        isClearInput: false,
+        messageType: MessageTypeEnums.Sound,
+        content: await mapToSoundContentDto(file),
       });
     } else {
       sendMessageContent({

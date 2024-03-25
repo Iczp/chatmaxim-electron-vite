@@ -78,9 +78,9 @@ const getKey = (route: RouteLocationNormalizedLoaded, component: any): string | 
             </a-badge>
           </div>
 
-          <!-- <div class="nav-item">
+          <!-- <div class="nav-item"> -->
             <Sound src="http://10.0.5.20:8044/file?id=e8137e1c-fb26-c605-6346-3a114264fdcc"/>
-          </div> -->
+          <!-- </div> -->
 
           <div
             class="nav-item"

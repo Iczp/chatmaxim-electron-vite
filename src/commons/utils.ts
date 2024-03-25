@@ -24,6 +24,7 @@ import { LinkContentDto } from '../apis/dtos/message/LinkContentDto';
 import { HistoryContentOutput } from '../apis/dtos/message/HistoryContentOutput';
 import { useObjectUrl } from '@vueuse/core';
 import { AttachmentsBaseDto } from '../apis/dtos/message/AttachmentsBaseDto';
+import { getSoundDuration } from './soundUtils';
 /**
  * toQueryString
  *
@@ -369,25 +370,48 @@ export const mapToFileContentDto = (file: File): FileContentDto => {
     contentType: file.type,
     size: file.size,
     path: blob.value,
-    suffix: `.${file.name.split('.').pop()}`,
+    suffix: getSuffix(file.name),
     lastModifiedDate: file.lastModified,
   };
 };
 
-export const mapToVideoContentDto = (file: File): VideoContentDto => {
+export const getSuffix = (fileName?: string) => {
+  return `.${fileName?.split('.').pop()}`;
+};
+
+export const mapToSoundContentDto = async (file: File): Promise<SoundContentDto> => {
   const blob = useObjectUrl(file);
-  return <VideoContentDto>{
+  const dto = <SoundContentDto>{
     fileName: file.name,
     contentType: file.type,
     size: file.size,
     path: blob.value,
-    suffix: `.${file.name.split('.').pop()}`,
+    suffix: getSuffix(file.name),
     lastModifiedDate: file.lastModified,
   };
+  try {
+    const duration = await getSoundDuration(file.path);
+    dto.time = duration * 1000;
+  } catch (error) {}
+  return dto;
 };
-export const mapToImageContentDtoAsync = (file: File ): Promise<ImageContentDto> => {
-  return new Promise<ImageContentDto>((resolve, reject) => {
 
+export const mapToVideoContentDto = (file: File): Promise<VideoContentDto> =>
+  new Promise<VideoContentDto>((resolve, reject) => {
+    const blob = useObjectUrl(file);
+    const dto = <VideoContentDto>{
+      fileName: file.name,
+      contentType: file.type,
+      size: file.size,
+      path: blob.value,
+      suffix: getSuffix(file.name),
+      lastModifiedDate: file.lastModified,
+    };
+    resolve(dto);
+  });
+
+export const mapToImageContentDtoAsync = (file: File): Promise<ImageContentDto> =>
+  new Promise<ImageContentDto>((resolve, reject) => {
     const blob = useObjectUrl(file);
     console.log('blob', file.name, blob);
     let img = new Image();
@@ -399,7 +423,7 @@ export const mapToImageContentDtoAsync = (file: File ): Promise<ImageContentDto>
         contentType: file.type,
         size: file.size,
         path: blob.value,
-        suffix: `.${file.name.split('.').pop()}`,
+        suffix: getSuffix(file.name),
         lastModifiedDate: file?.lastModified,
         width: img.width,
         height: img.height,
@@ -416,7 +440,6 @@ export const mapToImageContentDtoAsync = (file: File ): Promise<ImageContentDto>
       reject(err);
     };
   });
-};
 
 export const getParentName = (entity?: ChatObjectDto): string | undefined => {
   console.log('getParentName entity', entity);
@@ -447,11 +470,11 @@ export const formatUrl = (url?: string): string | undefined => {
   return url;
 };
 
+export const imageContentTypes = ['image/jpg', 'image/jpeg', 'image/png', 'image/gif'];
 export const isImageMime = (contentType?: string | null): boolean => {
   if (!contentType) {
     return false;
   }
-  const imageContentTypes = ['image/jpg', 'image/jpeg', 'image/png', 'image/gif'];
   return imageContentTypes.some(x => x == contentType.toLocaleLowerCase());
 };
 
@@ -460,6 +483,32 @@ export const isVideoMime = (contentType?: string | null): boolean => {
     return false;
   }
   return contentType.startsWith('video/');
+};
+
+export const audioSuffixs = [
+  '.mp3',
+  '.mpeg',
+  '.opus',
+  '.ogg',
+  '.oga',
+  '.wav',
+  '.aac',
+  '.caf',
+  '.m4a',
+  '.m4b',
+  // '.mp4',
+  '.weba',
+  '.webm',
+  '.dolby',
+  '.flac',
+];
+export const isAudioSuffix = (fileName?: string | null): boolean => {
+  console.log('isAudioSuffix', fileName);
+  if (!fileName) {
+    return false;
+  }
+  const suffix = getSuffix(fileName);
+  return audioSuffixs.some(x => x == suffix);
 };
 
 export const formatImageRect = (
@@ -578,4 +627,34 @@ export const getSelectedText = (): string | undefined => {
     selectedText = window.getSelection()?.toString();
   }
   return selectedText;
+};
+
+export const formatFile = async (
+  file: File,
+): Promise<{ messageType: MessageTypeEnums; content: any }> => {
+  if (isImageMime(file.type)) {
+    return {
+      messageType: MessageTypeEnums.Image,
+      content: await mapToImageContentDtoAsync(file),
+    };
+  }
+
+  if (isVideoMime(file.type)) {
+    return {
+      messageType: MessageTypeEnums.Video,
+      content: await mapToVideoContentDto(file),
+    };
+  }
+  
+  if (isAudioSuffix(file.name)) {
+    return {
+      messageType: MessageTypeEnums.Sound,
+      content: await mapToSoundContentDto(file),
+    };
+  }
+
+  return {
+    messageType: MessageTypeEnums.File,
+    content: mapToFileContentDto(file),
+  };
 };

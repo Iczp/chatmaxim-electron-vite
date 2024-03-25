@@ -4,7 +4,7 @@ import { ChatObjectDto, MessageDto, MessageOwnerDto, SessionUnitSenderDto } from
 import { MessageStateEnums, MessageTypeEnums } from '../apis/enums';
 import { useImStore } from '../stores/im';
 import { useProgressStore } from '../stores/progress';
-import { formatMessage, isImageMime, isVideoMime } from './utils';
+import { formatMessage, isAudioSuffix, isImageMime, isVideoMime } from './utils';
 export type SendMessageError = {
   message: string;
   detail: ApiError | any;
@@ -92,7 +92,7 @@ export const sendMessage = async ({
   quoteMessage?: MessageOwnerDto;
   remindList?: Array<string>;
   file?: Blob | File | any;
-  onBefore?: (input: MessageDto) => void;
+  onBefore?: (input: MessageDto) => Promise<void>;
   onProgress?: (progressEvent: AxiosProgressEvent) => void;
   onSuccess?: (entity: MessageOwnerDto, input: MessageDto) => void;
   onError?: (error: SendMessageError, input: MessageDto) => void;
@@ -100,7 +100,7 @@ export const sendMessage = async ({
 }) => {
   const store = useImStore();
   const autoId = store.generateMessageId();
-  const input: MessageDto = formatMessage({
+  let input: MessageDto = formatMessage({
     sessionUnitId,
     items: [
       {
@@ -114,14 +114,17 @@ export const sendMessage = async ({
         content,
         state: MessageStateEnums.Sending,
         creationTime: new Date().toUTCString(),
+        file,
       },
     ],
     lastItem,
   })[0];
 
-  input.file = file;
+  // input.file = file;
 
-  onBefore?.call(this, input);
+  if (onBefore) {
+    await onBefore?.call(this, input);
+  }
 
   const progressStore = useProgressStore();
 
@@ -149,8 +152,10 @@ export const sendMessage = async ({
       };
       if (isImageMime(file.type)) {
         return MessageSenderService.sendUploadImage(postData);
-      }else if(isVideoMime(file.type)){
+      } else if (isVideoMime(file.type)) {
         return MessageSenderService.sendUploadVideo(postData);
+      } else if (isAudioSuffix(file.name)) {
+        return MessageSenderService.sendUploadSound(postData);
       }
       return MessageSenderService.sendUploadFile(postData);
     }

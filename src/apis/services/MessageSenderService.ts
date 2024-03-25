@@ -18,6 +18,32 @@ import { ImageContentDto } from '../dtos/message/ImageContentDto';
 import { MessageTypeEnums } from '../enums';
 import { AxiosProgressEvent } from 'axios';
 
+export type sendUploadArgs = {
+  /**
+   * 主建Id
+   */
+  sessionUnitId?: string;
+  /**
+   * 引用消息Id
+   *
+   * @type {number}
+   */
+  quoteMessageId?: number;
+  /**
+   * 提醒（@XXX） sessionUnitId
+   *
+   * @type {Array<string>}
+   */
+  remindList?: Array<string>;
+  /**
+   * file
+   *
+   * @type {Blob}
+   */
+  file: Blob;
+  onUploadProgress?: (progressEvent: AxiosProgressEvent) => void;
+};
+
 export class MessageSenderService {
   /**
    * 转发消息
@@ -389,114 +415,12 @@ export class MessageSenderService {
   }
 
   /**
-   * 上传[**]并发送
-   * @returns MessageOwnerDto Success
-   * @throws ApiError
-   */
-  public static sendUpload({
-    param,
-    sessionUnitId,
-    quoteMessageId,
-    remindList,
-    file,
-    onUploadProgress,
-  }: {
-    param?: '' | '-image' | '-video'| '-file';
-    /**
-     * 主建Id
-     */
-    sessionUnitId?: string;
-    /**
-     * 引用消息Id
-     *
-     * @type {number}
-     */
-    quoteMessageId?: number;
-    /**
-     * 提醒（@XXX） sessionUnitId
-     *
-     * @type {Array<string>}
-     */
-    remindList?: Array<string>;
-    /**
-     * file
-     *
-     * @type {Blob}
-     */
-    file: Blob;
-    onUploadProgress?: (progressEvent: AxiosProgressEvent) => void;
-  }): CancelablePromise<MessageOwnerDto> {
-    return __request(OpenAPI, {
-      method: 'POST',
-      url: '/api/chat/message-sender/send-upload{param}/{sessionUnitId}',
-      path: {
-        param,
-        sessionUnitId,
-      },
-      query: {
-        quoteMessageId,
-        remindList,
-      },
-      formData: {
-        file,
-      },
-      mediaType: 'multipart/form-data',
-      onUploadProgress,
-    });
-  }
-
-  /**
    * 上传文件并发送
    * @returns MessageOwnerDto Success
    * @throws ApiError
    */
-  public static sendUploadFile({
-    sessionUnitId,
-    quoteMessageId,
-    remindList,
-    file,
-    onUploadProgress,
-  }: {
-    /**
-     * 主建Id
-     */
-    sessionUnitId?: string;
-    /**
-     * 引用消息Id
-     *
-     * @type {number}
-     */
-    quoteMessageId?: number;
-    /**
-     * 提醒（@XXX） sessionUnitId
-     *
-     * @type {Array<string>}
-     */
-    remindList?: Array<string>;
-    /**
-     * file
-     *
-     * @type {Blob}
-     */
-    file: Blob;
-    onUploadProgress?: (progressEvent: AxiosProgressEvent) => void;
-  }): CancelablePromise<MessageOwnerDto> {
-    return __request(OpenAPI, {
-      method: 'POST',
-      url: '/api/chat/message-sender/send-upload/{sessionUnitId}',
-      path: {
-        sessionUnitId,
-      },
-      query: {
-        quoteMessageId,
-        remindList,
-      },
-      formData: {
-        file,
-      },
-      mediaType: 'multipart/form-data',
-      onUploadProgress,
-    });
+  public static sendUploadFile(args: sendUploadArgs): CancelablePromise<MessageOwnerDto> {
+    return MessageSenderService.sendUploadTyped({ ...args, type: '' });
   }
 
   /**
@@ -504,53 +428,8 @@ export class MessageSenderService {
    * @returns MessageOwnerDto Success
    * @throws ApiError
    */
-  public static sendUploadImage({
-    sessionUnitId,
-    quoteMessageId,
-    remindList,
-    file,
-    onUploadProgress,
-  }: {
-    /**
-     * 主建Id
-     */
-    sessionUnitId?: string;
-    /**
-     * 引用消息Id
-     *
-     * @type {number}
-     */
-    quoteMessageId?: number;
-    /**
-     * 提醒（@XXX） sessionUnitId
-     *
-     * @type {Array<string>}
-     */
-    remindList?: Array<string>;
-    /**
-     * file
-     *
-     * @type {Blob}
-     */
-    file: Blob;
-    onUploadProgress?: (progressEvent: AxiosProgressEvent) => void;
-  }): CancelablePromise<MessageOwnerDto> {
-    return __request(OpenAPI, {
-      method: 'POST',
-      url: '/api/chat/message-sender/send-upload-image/{sessionUnitId}',
-      path: {
-        sessionUnitId,
-      },
-      query: {
-        quoteMessageId,
-        remindList,
-      },
-      formData: {
-        file,
-      },
-      mediaType: 'multipart/form-data',
-      onUploadProgress,
-    });
+  public static sendUploadImage(args: sendUploadArgs): CancelablePromise<MessageOwnerDto> {
+    return MessageSenderService.sendUploadTyped({ ...args, type: '-image' });
   }
 
   /**
@@ -558,11 +437,30 @@ export class MessageSenderService {
    * @returns MessageOwnerDto Success
    * @throws ApiError
    */
-  public static sendUploadVideo({
+  public static sendUploadVideo(args: sendUploadArgs): CancelablePromise<MessageOwnerDto> {
+    return MessageSenderService.sendUploadTyped({ ...args, type: '-video' });
+  }
+
+  /**
+   * 上传语音并发送
+   * @returns MessageOwnerDto Success
+   * @throws ApiError
+   */
+  public static sendUploadSound(args: sendUploadArgs): CancelablePromise<MessageOwnerDto> {
+    return MessageSenderService.sendUploadTyped({ ...args, type: '-sound' });
+  }
+
+  /**
+   * 上传[**类型**]并发送
+   * @returns MessageOwnerDto Success
+   * @throws ApiError
+   */
+  private static sendUploadTyped({
     sessionUnitId,
     quoteMessageId,
     remindList,
     file,
+    type,
     onUploadProgress,
   }: {
     /**
@@ -587,13 +485,15 @@ export class MessageSenderService {
      * @type {Blob}
      */
     file: Blob;
+    type: '' | '-file' | '-sound' | '-image' | '-video';
     onUploadProgress?: (progressEvent: AxiosProgressEvent) => void;
   }): CancelablePromise<MessageOwnerDto> {
     return __request(OpenAPI, {
       method: 'POST',
-      url: '/api/chat/message-sender/send-upload-video/{sessionUnitId}',
+      url: '/api/chat/message-sender/send-upload{type}/{sessionUnitId}',
       path: {
         sessionUnitId,
+        type,
       },
       query: {
         quoteMessageId,

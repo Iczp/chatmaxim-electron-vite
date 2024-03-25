@@ -40,8 +40,12 @@ const emits = defineEmits<{
 .file-item {
   padding: 8px 12px;
   --icon-size: 44px;
+  /* align-items: flex-start; */
 }
-
+:deep(.header) {
+  display: flex;
+  align-items: flex-start;
+}
 .file-name {
   color: var(--file-name-color);
   max-width: 220px;
