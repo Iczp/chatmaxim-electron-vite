@@ -157,7 +157,7 @@ export const sendMessage = async ({
       } else if (isVideoMime(file.type)) {
         return MessageSenderService.sendUploadVideo(postData);
       } else if (isAudioSuffix(file.name)) {
-        postData.duration = content.time;
+        postData.duration = Math.floor(content.time);
         console.log(' postData.duration', postData.duration);
         return MessageSenderService.sendUploadSound(postData);
       }

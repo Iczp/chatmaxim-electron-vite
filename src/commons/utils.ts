@@ -414,31 +414,30 @@ export const mapToImageContentDtoAsync = (file: File): Promise<ImageContentDto> 
   new Promise<ImageContentDto>((resolve, reject) => {
     const blob = useObjectUrl(file);
     console.log('blob', file.name, blob);
-    let img = new Image();
-    img.src = blob.value!;
-    img.onload = () => {
-      console.log({ height: img.height, width: img.width });
-      const imageContentDto = <ImageContentDto>{
-        text: file.name,
-        contentType: file.type,
-        size: file.size,
-        path: blob.value,
-        suffix: getSuffix(file.name),
-        lastModifiedDate: file?.lastModified,
-        width: img.width,
-        height: img.height,
-        // qrcode: '',
-        // orientation: '',
-        // thumbnailActionUrl: '',
-        // thumbnailUrl: '',
-      };
-      console.log('imageContentDto', imageContentDto);
-      resolve(imageContentDto);
-    };
-    img.onerror = err => {
-      console.error('load image error:', file.path, err);
-      reject(err);
-    };
+    getImageRect(blob.value!)
+      .then(img => {
+        console.log({ height: img.height, width: img.width });
+        const imageContentDto = <ImageContentDto>{
+          text: file.name,
+          contentType: file.type,
+          size: file.size,
+          path: blob.value,
+          suffix: getSuffix(file.name),
+          lastModifiedDate: file?.lastModified,
+          width: img.width,
+          height: img.height,
+          // qrcode: '',
+          // orientation: '',
+          // thumbnailActionUrl: '',
+          // thumbnailUrl: '',
+        };
+        console.log('imageContentDto', imageContentDto);
+        resolve(imageContentDto);
+      })
+      .catch(err => {
+        console.error('load image error:', file.path, err);
+        reject(err);
+      });
   });
 
 export const getParentName = (entity?: ChatObjectDto): string | undefined => {
@@ -530,15 +529,23 @@ export const formatImageRect = (
 
 export const getImageRect = (imgUrl: string): Promise<{ width: number; height: number }> => {
   return new Promise<{ width: number; height: number }>((resolve, reject) => {
-    let img = new Image();
-    img.src = imgUrl;
+    loadImage(imgUrl)
+      .then(img => {
+        console.log(`width:${img.width},height:${img.height}`);
+        resolve({ width: img.width, height: img.height });
+      })
+      .catch(reject);
+  });
+};
+
+export const loadImage = (src: string): Promise<HTMLImageElement> => {
+  return new Promise<HTMLImageElement>((resolve, reject) => {
+    const img = new Image();
     img.onload = () => {
-      console.log(`width:${img.width},height:${img.height}`);
-      resolve({ width: img.width, height: img.height });
+      resolve(img);
     };
-    img.onerror = err => {
-      reject(err);
-    };
+    img.onerror = reject;
+    img.src = src;
   });
 };
 
@@ -628,8 +635,6 @@ export const getSelectedText = (): string | undefined => {
   }
   return selectedText;
 };
-
-
 
 export const fileToContent = async (
   file: File,

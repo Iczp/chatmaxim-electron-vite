@@ -72,6 +72,12 @@ export const getTheme = () => {
   return windowStore.colorScheme == 'dark' ? 'dark' : 'default';
 };
 
+export const getDeviceId = () => {
+  const windowStore = useWindowStore();
+  return windowStore.machineId;
+};
+
+
 export const openMediaViewer = (item: MessageDto) => {};
 
 export const onAvatarClick = ({ event, chatObjectId, entity }: ArgsContext) => {
@@ -127,7 +133,6 @@ export const onContentClick = ({
   playMessageId,
 }: ArgsContext) => {
   console.log('onContentClick');
-
   const setOpened = () => {
     console.log('setOpened');
     if (!sessionUnit?.id) {
@@ -139,7 +144,7 @@ export const onContentClick = ({
     }
     OpenedRecorderService.setOpened({
       sessionUnitId: sessionUnit?.id!,
-      deviceId: '',
+      deviceId: getDeviceId(),
       messageId: entity.id!,
     }).then(res => {
       entity.isOpened = true;

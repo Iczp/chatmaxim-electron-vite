@@ -1,4 +1,12 @@
 <script setup lang="ts">
+import { computed, ref, watch } from 'vue';
+import { formatImageRect, formatUrl, getImageRect } from '../../../commons/utils';
+import { useDownload } from '../../../commons/useDownload';
+import { useI18n } from 'vue-i18n';
+import prettyBytes from 'pretty-bytes';
+import EmptyImg from '../../../assets/empty.png';
+import { useElementVisibility } from '@vueuse/core';
+
 const { t } = useI18n();
 const props = defineProps<{
   path?: string;
@@ -8,12 +16,17 @@ const props = defineProps<{
   size?: number;
   suffix?: string;
 }>();
-import { computed, ref } from 'vue';
-import { formatImageRect, formatUrl, getImageRect } from '../../../commons/utils';
-import { useDownload } from '../../../commons/useDownload';
-import { useI18n } from 'vue-i18n';
-import prettyBytes from 'pretty-bytes';
-import EmptyImg from '../../../assets/empty.png';
+const target = ref<HTMLDivElement>();
+
+const targetIsVisible = useElementVisibility(target);
+
+watch(
+  () => targetIsVisible.value,
+  v => {
+    console.log('watch targetIsVisible', v, src.value);
+  },
+);
+
 const visible = ref(false);
 const maxWidth = 240;
 const maxHeight = 180;
@@ -54,7 +67,7 @@ const src = computed(() => props.path || blobUrl.value || EmptyImg);
 </script>
 
 <template>
-  <div class="msg-img">
+  <div class="msg-img" ref="target">
     <div v-if="isPending" class="abs pointer-events-none">
       <a-progress
         type="circle"

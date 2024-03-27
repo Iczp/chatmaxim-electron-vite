@@ -47,12 +47,8 @@ const newSongPath = ref('');
 
 const onLoad = () => {
   // 获取音频时长
-  const duration = sound.duration();
+  const duration = sound?.duration();
   console.log('Howl 音频时长:', duration);
-
-  // 获取音轨信息
-  const tracks = sound._duration;
-  console.log('Howl 音轨信息:', tracks);
 
   // 获取音频数据（音波）
   const analyser = Howler.ctx.createAnalyser();
@@ -89,7 +85,7 @@ onMounted(() => {
     onload: onLoad,
   });
   nextTick(() => {
-    sound.play();
+    sound?.play();
   });
 });
 </script>

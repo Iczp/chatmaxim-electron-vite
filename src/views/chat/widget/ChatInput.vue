@@ -9,6 +9,8 @@ import {
   FunctionOutlined,
   NumberOutlined,
   ScissorOutlined,
+  CloudServerOutlined,
+  ContactsOutlined,
 } from '@ant-design/icons-vue';
 import { useColorMode, useFileDialog } from '@vueuse/core';
 import { useI18n } from 'vue-i18n';
@@ -251,6 +253,17 @@ const onMore = () => {
 const onTopic = () => {
   console.log('onTopic');
 };
+
+const onCloudServer = () => {
+  console.log('onCloudServer');
+};
+
+const onContacts = () => {
+  console.log('onContacts');
+};
+
+
+
 const onFunction = () => {
   console.log('onFunction');
 };
@@ -288,9 +301,13 @@ defineExpose({
           <a-button type="text"><VideoCameraOutlined /></a-button>
         </a-popconfirm> -->
 
-        <a-button type="text" @click="onFunction"><FunctionOutlined /></a-button>
+        <!-- <a-button type="text" @click="onFunction"><FunctionOutlined /></a-button> -->
 
-        <a-button type="text" @click="onTopic"><NumberOutlined /></a-button>
+        <!-- <a-button type="text" @click="onTopic"><NumberOutlined /></a-button> -->
+
+        <a-button type="text" @click="onContacts"><ContactsOutlined /></a-button>
+        
+        <a-button type="text" @click="onCloudServer"><CloudServerOutlined /></a-button>
 
         <a-button type="text" @click="onSrceenshot"><ScissorOutlined /></a-button>
 
