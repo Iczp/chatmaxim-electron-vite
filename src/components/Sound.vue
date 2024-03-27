@@ -1,9 +1,12 @@
 <script setup lang="ts">
 import { computed, onMounted, onUnmounted, reactive, ref } from 'vue';
 // @ts-ignore
-import { Howl, Howler } from 'howler';
+import { Howl, HowlOptions, Howler } from 'howler';
 import { nextTick } from 'vue';
-
+import { formatDurations } from '../commons/utils';
+const props = defineProps<{
+  src?: string;
+}>();
 export type WaveOptions = {
   width: number;
   height: number;
@@ -41,6 +44,7 @@ interface Song {
 
 let sound: Howl | null = null;
 
+const seek = ref(0);
 const addSong = () => {
   playlist.value.push({ name: 'New Song', path: newSongPath.value });
   newSongPath.value = '';
@@ -81,8 +85,9 @@ const onLoad = () => {
   Howler.masterGain.connect(analyser);
   analyser.connect(Howler.ctx.destination);
   console.log('Howl analyser:', analyser);
-  var bufferLength = analyser.frequencyBinCount;
-  var dataArray = new Uint8Array(bufferLength);
+  const bufferLength = analyser.frequencyBinCount;
+
+  let dataArray = new Uint8Array(generateRandomNumbers(bufferLength, 10));
 
   // color2.addColorStop(0, 'RGBA(255, 0, 0, 0.8)');
   const draw = () => {
@@ -92,6 +97,18 @@ const onLoad = () => {
   };
 
   draw();
+  if (timer) {
+    clearInterval(timer);
+  }
+  timer = setInterval(() => {
+    var currentPosition = sound?.seek();
+    seek.value = sound?.seek() || 0;
+
+    if (!isChanging.value) {
+      seekValue.value = seek.value * 1000;
+    }
+    console.log('当前播放时间:', seek.value);
+  }, 200); // 每秒获取一次当前播放时间
 };
 
 const drawLine = (context: CanvasRenderingContext2D, dataArray: number[]) => {
@@ -129,9 +146,10 @@ const drawLine = (context: CanvasRenderingContext2D, dataArray: number[]) => {
   }
 };
 // 在组件卸载时，停止音频播放
-onMounted(() => {
+
+const play = (path: string, name?: string, options?: HowlOptions) => {
   sound = new Howl({
-    src: [playlist.value[currentSongIndex.value].path],
+    src: [path],
     autoplay: true,
     loop: true,
     volume: 1,
@@ -145,9 +163,47 @@ onMounted(() => {
       console.log('Howl onplaying:', e);
     },
     onload: onLoad,
+    ...options,
   });
+};
+let timer: NodeJS.Timeout | null;
+onMounted(() => {
+  sound = new Howl({
+    src: [playlist.value[currentSongIndex.value].path],
+    autoplay: false,
+    loop: false,
+    volume: 1,
+    // sprite: {
+    //   blast: [0, 3000],
+    //   laser: [4000, 1000],
+    //   // winner: [6000, 5000],
+    // },
+    // onend: playNextSong,
+    onplay: (e: any) => {
+      console.log('Howl onplay:', e);
+      // 每隔一段时间获取当前播放时间
+    },
+    // onstop: (e: any) => {
+    //   console.log('Howl onstop:', e);
+    // },
+    // onpause: (e: any) => {
+    //   console.log('Howl onpause:', e);
+    // },
+    onload: onLoad,
+  });
+
+  const onPause = (e: any) => {
+    console.log('Howl onpause:', e);
+    setTimeout(() => {
+      sound?.once('pause', onPause);
+    }, 0);
+  };
+  sound.once('pause', onPause);
+
+  console.log('Howl sound', sound);
+
   nextTick(() => {
-    sound?.play();
+    // sound?.play();
     var context = canvas.value?.getContext('2d')!;
     drawLine(context, generateRandomNumbers(1024, 10));
   });
@@ -164,11 +220,20 @@ const generateRandomNumbers = (length: number = 1024, max: number = 129): number
 let i = 0;
 const change = () => {
   i++;
+
+  if (i % 2 == 0) {
+    sound?.pause();
+  } else {
+    // sound?.seek(100);
+    // sound?.play();
+  }
+
   switch (i % 4) {
     case 0:
       options.step = 1;
       options.gap = 1;
       options.weight = 1;
+
       break;
     case 1:
       options.step = 2;
@@ -187,6 +252,40 @@ const change = () => {
       break;
   }
 };
+
+// 播放音频并在指定的时间点开始播放
+const playFromTime = (timeInSeconds: number) => {
+  sound?.seek(timeInSeconds); // 将音频跳转到指定的时间点
+  sound?.play(); // 开始播放
+};
+const isChanging = ref(false);
+const onChange = (e: any) => {
+  console.log('onChange', e);
+  isChanging.value = true;
+};
+const seekValue = ref(0);
+const afterChange = (value: number) => {
+  const timeInSeconds = value / 1000;
+  console.log('timeInSeconds', timeInSeconds);
+  sound?.pause();
+  sound?.seek(timeInSeconds);
+  sound?.play();
+  isChanging.value = false;
+};
+const formatter = (value: number) => {
+  return formatDurations(value);
+};
+const marks = ref<Record<number, any>>({
+  10000: {
+    style: {
+      color: '#f50',
+    },
+    label: '100°C',
+  },
+});
+defineExpose({
+  sound,
+});
 </script>
 
 <template>
@@ -197,6 +296,24 @@ const change = () => {
     :height="options.height"
     @click="change"
   ></canvas>
+
+  <a-slider
+    v-model:value="seekValue"
+    :max="307000"
+    :tip-formatter="formatter"
+    :step="1"
+    tooltipPlacement="top"
+    :marks="marks"
+    @change="onChange"
+    @afterChange="afterChange"
+  >
+    <template #mark="{ label, point }">
+      <template v-if="point === 100">
+        <strong>{{ label }}</strong>
+      </template>
+      <template v-else>{{ label }}</template>
+    </template>
+  </a-slider>
   <!-- <div class="audio-container">
     <audio ref="player" class="audio-player">++</audio>
   </div> -->
