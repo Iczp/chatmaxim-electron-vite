@@ -1,15 +1,7 @@
 <script setup lang="ts">
 import { ref, onMounted, reactive } from 'vue';
-const loadImage = (src: string): Promise<HTMLImageElement> => {
-  return new Promise<HTMLImageElement>((resolve, reject) => {
-    const img = new Image();
-    img.onload = () => {
-      resolve(img);
-    };
-    img.onerror = reject;
-    img.src = src;
-  });
-};
+import Sound from '../../components/Sound.vue';
+import { loadImage } from '../../commons/utils';
 
 onMounted(() => {
   loadImage('file://C:/Users/ZP/Videos/output/snapshot-11.678122.png').then(img => {
@@ -86,21 +78,23 @@ const cropImage = () => {
 };
 </script>
 <template>
+  <page-title></page-title>
   <div class="stage-container">
-    <input type="file" @change="handleFileChange" />
-    <button @click="cropImage">Crop Image</button>
-    <v-stage ref="stageRef" :config="stageSize" @click="handleStageClick">
+    <!-- <input type="file" @change="handleFileChange" />
+    <button @click="cropImage">Crop Image</button> -->
+    <Sound src="http://10.0.5.20:8044/file?id=e8137e1c-fb26-c605-6346-3a114264fdcc" />
+    <!-- <v-stage ref="stageRef" :config="stageSize" @click="handleStageClick">
       <v-layer>
         <v-image v-if="croppedImage" :image="croppedImage" :config="imageConfig" />
         <v-rect v-if="croppingRect" :config="croppingRect" />
       </v-layer>
-    </v-stage>
+    </v-stage> -->
   </div>
 </template>
 
 <style scoped>
 /* 添加样式 */
 .stage-container {
-  background-color: aliceblue;
+  /* background-color: aliceblue; */
 }
 </style>

@@ -16,23 +16,6 @@ defineExpose({});
 const { downloadFile, isPending, error, percent, blobUrl } = useDownload();
 
 const imgRef = ref<HTMLImageElement>();
-
-watch(
-  () => props.src,
-  src => {
-    downloadFile(src!).then(res => {
-      loadImage(res.objectUrl).then(img => {
-        width.value = img.width;
-        height.value = img.height;
-      });
-    });
-  },
-  { immediate: true },
-);
-
-// let style = `top:${this.rect.top}px;left:${this.rect.left}px;height:${this.rect.height}px;width:${this.rect.width}px;`
-// 			style += `transform: rotate(${this.sty.angle}deg) scale(${this.scale}) translate(${this.sty.translate.x}px, ${this.sty.translate.y}px);`
-// 			style += `transform-origin: ${this.sty.origin.x}px ${this.sty.origin.y}px;`
 const scale = ref(1);
 const rotate = ref(0);
 const width = ref();
@@ -43,12 +26,39 @@ const translate = ref({
 });
 const origin = ref({ x: '50%', y: '50%' });
 
+const reset = () => {
+  scale.value = 1;
+  // translate.value = {
+  //   x: '50%',
+  //   y: '50%',
+  // };
+};
+
+watch(
+  () => props.src,
+  src => {
+    scale.value = 0.8;
+    downloadFile(src!).then(res => {
+      loadImage(res.objectUrl).then(img => {
+        width.value = img.width;
+        height.value = img.height;
+        reset();
+      });
+    });
+  },
+  { immediate: true },
+);
+
+// let style = `top:${this.rect.top}px;left:${this.rect.left}px;height:${this.rect.height}px;width:${this.rect.width}px;`
+// 			style += `transform: rotate(${this.sty.angle}deg) scale(${this.scale}) translate(${this.sty.translate.x}px, ${this.sty.translate.y}px);`
+// 			style += `transform-origin: ${this.sty.origin.x}px ${this.sty.origin.y}px;`
+
 const imageStyle = computed(
   () =>
     <CSSProperties>{
       scale: scale.value,
-      width: `${width.value}px`,
-      height: `${height.value}px`,
+      // width: `${width.value}px`,
+      // height: `${height.value}px`,
       transform: `rotate(${rotate.value}deg) translate(${translate.value.x},${translate.value.y})`,
       'transform-origin': `${origin.value.x} ${origin.value.y}`,
       // 'transform-origin': `50% 50%`,
@@ -89,22 +99,15 @@ const onWheel = (e: WheelEvent) => {
   }
 };
 
-const reset = () => {
-  scale.value = 1;
-  translate.value = {
-    x: '0',
-    y: '0',
-  };
-};
 const onImgDbClick = (e: MouseEvent) => {
   // translate.value = {
   //   x: `${(e.pageX - e.offsetX) / scale.value}px`,
   //   y: `${(e.pageX - e.offsetY) / scale.value}px`,
   // };
-  origin.value = {
-    x: '50%',
-    y: '50%',
-  };
+  // origin.value = {
+  //   x: '50%',
+  //   y: '50%',
+  // };
 
   // origin.value = {
   //   x: `${(e.pageX - e.offsetX) / scale.value}px`,
