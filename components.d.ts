@@ -74,7 +74,6 @@ declare module 'vue' {
     ScrollView: typeof import('./src/components/ScrollView.vue')['default']
     SearchInput: typeof import('./src/components/SearchInput.vue')['default']
     SessionItem: typeof import('./src/components/SessionItem.vue')['default']
-    Sound: typeof import('./src/components/Sound.vue')['default']
     Text: typeof import('./src/components/Text.vue')['default']
     TextViewer: typeof import('./src/components/TextViewer.vue')['default']
     TooBar: typeof import('./src/components/TooBar.vue')['default']
