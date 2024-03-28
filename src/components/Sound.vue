@@ -1,9 +1,23 @@
 <script setup lang="ts">
-import { computed, onMounted, onUnmounted, reactive, ref } from 'vue';
+import { computed, h, onMounted, onUnmounted, reactive, ref } from 'vue';
 // @ts-ignore
 import { Howl, HowlOptions, Howler } from 'howler';
 import { nextTick } from 'vue';
 import { formatDurations } from '../commons/utils';
+import PlayIcon from './PlayIcon.vue';
+
+import { PlayArrow, VideoPause } from '../icons';
+
+import Icon, {
+  PlayCircleOutlined,
+  FastBackwardFilled,
+  FastForwardFilled,
+  PauseCircleOutlined,
+  PauseOutlined,
+  CaretRightOutlined,
+  RollbackOutlined,
+  SoundOutlined,
+} from '@ant-design/icons-vue';
 const props = defineProps<{
   src?: string;
 }>();
@@ -147,25 +161,15 @@ const drawLine = (context: CanvasRenderingContext2D, dataArray: number[]) => {
 };
 // 在组件卸载时，停止音频播放
 
-const play = (path: string, name?: string, options?: HowlOptions) => {
-  sound = new Howl({
-    src: [path],
-    autoplay: true,
-    loop: true,
-    volume: 1,
-    // sprite: {
-    //   blast: [0, 3000],
-    //   laser: [4000, 1000],
-    //   // winner: [6000, 5000],
-    // },
-    // onend: playNextSong,
-    onplay: (e: any) => {
-      console.log('Howl onplaying:', e);
-    },
-    onload: onLoad,
-    ...options,
-  });
+const play = () => {
+  isPlaying.value = true;
+  sound?.play();
 };
+const pause = () => {
+  isPlaying.value = false;
+  sound?.pause();
+};
+
 let timer: NodeJS.Timeout | null;
 onMounted(() => {
   sound = new Howl({
@@ -192,13 +196,8 @@ onMounted(() => {
     onload: onLoad,
   });
 
-  const onPause = (e: any) => {
-    console.log('Howl onpause:', e);
-    setTimeout(() => {
-      sound?.once('pause', onPause);
-    }, 0);
-  };
-  sound.once('pause', onPause);
+  sound.on('pause', () => (isPlaying.value = false));
+  sound.on('play', () => (isPlaying.value = true));
 
   console.log('Howl sound', sound);
 
@@ -220,14 +219,6 @@ const generateRandomNumbers = (length: number = 1024, max: number = 129): number
 let i = 0;
 const change = () => {
   i++;
-
-  if (i % 2 == 0) {
-    sound?.pause();
-  } else {
-    // sound?.seek(100);
-    // sound?.play();
-  }
-
   switch (i % 4) {
     case 0:
       options.step = 1;
@@ -276,12 +267,7 @@ const formatter = (value: number) => {
   return formatDurations(value);
 };
 const marks = ref<Record<number, any>>({
-  10000: {
-    style: {
-      color: '#f50',
-    },
-    label: '100°C',
-  },
+  10000: '',
 });
 defineExpose({
   sound,
@@ -296,24 +282,57 @@ defineExpose({
     :height="options.height"
     @click="change"
   ></canvas>
-
-  <a-slider
-    v-model:value="seekValue"
-    :max="307000"
-    :tip-formatter="formatter"
-    :step="1"
-    tooltipPlacement="top"
-    :marks="marks"
-    @change="onChange"
-    @afterChange="afterChange"
-  >
-    <template #mark="{ label, point }">
-      <template v-if="point === 100">
-        <strong>{{ label }}</strong>
+  <div class="controller">
+    <PlayIcon :percent="80" :size="24" />
+    <PlayArrow />
+    <div> 你好16px</div>
+    <PlayArrow :style="{ color: 'red', fontSize: '12px' }" />
+    <icon :style="{ color: 'red', fontSize: '24px' }">
+      <template #component>
+        <!-- <PlayArrow /> -->
       </template>
-      <template v-else>{{ label }}</template>
-    </template>
-  </a-slider>
+    </icon>
+
+    <div class="play">
+      <a-button
+        v-if="!isPlaying"
+        type="text"
+        shape="circle"
+        @click="play"
+        :icon="h(PlayCircleOutlined)"
+      />
+      <a-button
+        v-else
+        type="text"
+        shape="circle"
+        @click="pause"
+        :icon="h(PauseCircleOutlined, { style: { fontSize: '20px' } })"
+      />
+    </div>
+    <a-slider
+      class="progess"
+      v-model:value="seekValue"
+      :max="307000"
+      :tip-formatter="formatter"
+      :step="1"
+      tooltipPlacement="top"
+      :marks="marks"
+      @change="onChange"
+      @afterChange="afterChange"
+    >
+      <!-- <template #mark="{ label, point }">
+        <template v-if="point === 100">
+          <strong>{{ label }}</strong>
+        </template>
+        <template v-else>{{ label }}</template>
+      </template> -->
+    </a-slider>
+
+    <a-button type="text" shape="circle" :icon="h(RollbackOutlined)" />
+
+    <a-button type="text" shape="circle" :icon="h(SoundOutlined)" />
+  </div>
+
   <!-- <div class="audio-container">
     <audio ref="player" class="audio-player">++</audio>
   </div> -->
@@ -325,5 +344,30 @@ defineExpose({
 }
 .audio-player {
   display: inline-flex;
+}
+.controller {
+  display: flex;
+  flex-direction: row;
+  gap: 8px;
+  font-size: 16px;
+  background-color: rgba(144, 144, 144, 0.507);
+  align-items: center;
+}
+.progess {
+  display: flex;
+  flex: 1;
+}
+:deep(.ant-slider .ant-slider-rail) {
+  background-color: rgba(133, 133, 133, 0.194);
+}
+:deep(.ant-slider .ant-slider-track) {
+  background-color: rgba(2, 54, 146, 0.568);
+}
+:deep(.ant-slider .ant-slider-handle::after) {
+  background-color: #77bdfffe;
+  box-shadow: 0 0 0 1px #7c7c7c;
+}
+:deep(.ant-slider-horizontal.ant-slider-with-marks) {
+  margin: 0;
 }
 </style>
