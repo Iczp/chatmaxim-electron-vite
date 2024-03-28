@@ -55,9 +55,12 @@ import Remind from '../svgs/alternate_email_black_24dp.svg';
 import Link from '../svgs/link_black_24dp.svg';
 
 import VideoPlay from '../svgs/play_circle_black_24dp.svg';
+import Repeat from '../svgs/repeat_black_24dp.svg';
 import PlayArrow from '../svgs/play_arrow_black_24dp.svg';
-import VideoPause from '../svgs/pause_circle_black_24dp.svg';
-import VideoStop from '../svgs/stop_circle_black_24dp.svg';
+import VideoPauseCircle from '../svgs/pause_circle_black_24dp.svg';
+import VideoPause from '../svgs/pause_black_24dp.svg';
+import VideoStopCircle from '../svgs/stop_circle_black_24dp.svg';
+import VideoStop from '../svgs/stop_black_24dp.svg';
 
 import FileDownload from '../svgs/file_download_black_24dp.svg';
 import FileUpload from '../svgs/file_upload_black_24dp.svg';
@@ -143,9 +146,13 @@ export {
   Link,
   Remind,
   VideoPlay,
+  Repeat,
   PlayArrow,
   VideoPause,
+  VideoPauseCircle,
   VideoStop,
+  VideoStopCircle,
+
   FileDownload,
   FileUpload,
   WavingHand,

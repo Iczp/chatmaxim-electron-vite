@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { ref, onMounted, reactive } from 'vue';
-import Sound from '../../components/Sound.vue';
+import AudioPlayer from '../../components/AudioPlayer.vue';
 import { loadImage } from '../../commons/utils';
 
 onMounted(() => {
@@ -82,7 +82,7 @@ const cropImage = () => {
   <div class="stage-container">
     <!-- <input type="file" @change="handleFileChange" />
     <button @click="cropImage">Crop Image</button> -->
-    <Sound src="http://10.0.5.20:8044/file?id=e8137e1c-fb26-c605-6346-3a114264fdcc" />
+    <AudioPlayer src="http://10.0.5.20:8044/file?id=e8137e1c-fb26-c605-6346-3a114264fdcc" />
     <!-- <v-stage ref="stageRef" :config="stageSize" @click="handleStageClick">
       <v-layer>
         <v-image v-if="croppedImage" :image="croppedImage" :config="imageConfig" />

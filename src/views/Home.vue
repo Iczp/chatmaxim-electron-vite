@@ -23,7 +23,7 @@ import { useWebsocket } from '../commons/useWebsocket';
 import { setWindow } from '../ipc/setWindow';
 import { openAppSettings } from '../ipc/openAppSettings';
 import { useI18n } from 'vue-i18n';
-import Sound from '../components/Sound.vue';
+import AudioPlayer from '../components/AudioPlayer.vue';
 const { t } = useI18n();
 const route = useRoute();
 const { connectionText, connectionState, retryCount } = useWebsocket();

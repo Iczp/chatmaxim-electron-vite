@@ -45,6 +45,7 @@ declare module 'vue' {
     ATag: typeof import('ant-design-vue/es')['Tag']
     ATextarea: typeof import('ant-design-vue/es')['Textarea']
     ATree: typeof import('ant-design-vue/es')['Tree']
+    AudioPlayer: typeof import('./src/components/AudioPlayer.vue')['default']
     Avatar: typeof import('./src/components/Avatar.vue')['default']
     Badge: typeof import('./src/components/Badge.vue')['default']
     Bubble: typeof import('./src/components/Bubble.vue')['default']

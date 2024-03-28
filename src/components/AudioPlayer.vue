@@ -4,23 +4,8 @@ import { computed, h, onMounted, onUnmounted, reactive, ref } from 'vue';
 import { Howl, HowlOptions, Howler } from 'howler';
 import { nextTick } from 'vue';
 import { formatDurations } from '../commons/utils';
-import PlayIcon from './PlayIcon.vue';
+import { PlayArrow, VideoPause, Repeat, VolumeOff, VolumeOn } from '../icons';
 
-import { PlayArrow, VideoPause } from '../icons';
-
-import Icon, {
-  PlayCircleOutlined,
-  FastBackwardFilled,
-  FastForwardFilled,
-  PauseCircleOutlined,
-  PauseOutlined,
-  CaretRightOutlined,
-  RollbackOutlined,
-  SoundOutlined,
-} from '@ant-design/icons-vue';
-const props = defineProps<{
-  src?: string;
-}>();
 export type WaveOptions = {
   width: number;
   height: number;
@@ -31,22 +16,36 @@ export type WaveOptions = {
   ratio: number;
   fftSize: number;
 };
+
+const props = withDefaults(
+  defineProps<{
+    src?: string;
+    wave?: boolean;
+    duration?: number;
+    options?: WaveOptions;
+  }>(),
+  {
+    wave: true,
+    src: `file:///C:/Users/ZP/Music/张杰-我们都一样(Live).mp3`,
+  },
+);
+
 const options = reactive<WaveOptions>({
-  width: 200,
-  height: 60,
+  width: 64,
+  height: 24,
   color: 'RGBA(48, 218, 213, 0.8)',
   step: 1,
   gap: 1,
-  weight: 1,
-  ratio: 0.16,
+  weight: 0.8,
+  ratio: 0.08,
   fftSize: 128 * 4,
 });
 
 // console.log('Howl', Howl, JSON.stringify(Howl));
 
-const isPlaying = ref(true);
+const isPlaying = ref(false);
 let currentSongIndex = ref<number>(0);
-
+const volume = ref(1);
 const playlist = ref([
   { name: 'Song 1', path: `file:///C:/Users/ZP/Music/张杰-我们都一样(Live).mp3` },
 ]);
@@ -59,39 +58,41 @@ interface Song {
 let sound: Howl | null = null;
 
 const seek = ref(0);
-const addSong = () => {
-  playlist.value.push({ name: 'New Song', path: newSongPath.value });
-  newSongPath.value = '';
-};
 
-const playSong = (index: number) => {
-  if (sound) {
-    sound.off('end');
-    sound.stop();
+const isZeros = (arr: number[], n: number): boolean => {
+  if (arr.length < n) {
+    return false; // 数组长度不足 N 个元素，直接返回 false
   }
-  currentSongIndex.value = index;
-};
 
-const playNextSong = () => {
-  if (currentSongIndex.value !== null && currentSongIndex.value < playlist.value.length - 1) {
-    const nextIndex = currentSongIndex.value + 1;
-    playSong(nextIndex);
-  } else {
-    // 如果已经是最后一首歌曲，你可以在这里进行一些其他的处理
-    console.log('Howl 已播放完所有歌曲');
+  for (let i = 0; i < n; i++) {
+    if (arr[i] !== 0) {
+      return false; // 如果前 N 个元素中有一个不为 0，则返回 false
+    }
   }
+
+  return true; // 前 N 个元素全部为 0
 };
 
 const canvas = ref<HTMLCanvasElement>();
 
-const newSongPath = ref('');
+const duration = ref(0);
+const getDurationText = (val: number, isZero: boolean) => {
+  if (val) {
+    return formatDurations(val);
+  }
+  return isZero ? '00:00' : '--:--';
+};
+
+const durationText = computed(() => getDurationText(duration.value, false));
+const currentText = computed(() => getDurationText(seek.value, true));
 
 const onLoad = () => {
   // 获取音频时长
-  const duration = sound?.duration();
+  duration.value = (sound?.duration() || 0) * 1000;
+
   console.log('Howl 音频时长:', duration);
   // let canvas = document.getElementById('canvas')
-  var context = canvas.value!.getContext('2d')!;
+
   // 获取音频数据（音波）
   const analyser = Howler.ctx.createAnalyser();
 
@@ -104,10 +105,15 @@ const onLoad = () => {
   let dataArray = new Uint8Array(generateRandomNumbers(bufferLength, 10));
 
   // color2.addColorStop(0, 'RGBA(255, 0, 0, 0.8)');
+  // \(o_o)/
   const draw = () => {
-    let drawVisual = requestAnimationFrame(draw);
+    requestAnimationFrame(draw);
     analyser.getByteFrequencyData(dataArray);
-    drawLine(context, [].slice.call(dataArray));
+    // console.log('dataArray', dataArray);
+    const arr = [].slice.call(dataArray);
+    if (!isZeros(arr, 10)) {
+      drawLine([].slice.call(dataArray));
+    }
   };
 
   draw();
@@ -115,19 +121,20 @@ const onLoad = () => {
     clearInterval(timer);
   }
   timer = setInterval(() => {
-    var currentPosition = sound?.seek();
-    seek.value = sound?.seek() || 0;
-
+    seek.value = (sound?.seek() || 0) * 1000;
     if (!isChanging.value) {
-      seekValue.value = seek.value * 1000;
+      seekValue.value = seek.value;
     }
-    console.log('当前播放时间:', seek.value);
-  }, 200); // 每秒获取一次当前播放时间
+    // console.log('当前播放时间:', seek.value);
+  }, 333); // 每秒获取一次当前播放时间
 };
 
-const drawLine = (context: CanvasRenderingContext2D, dataArray: number[]) => {
+const drawLine = (dataArray: number[]) => {
   // console.log(dataArray.length);
-
+  var context = canvas.value?.getContext('2d')!;
+  if (!context) {
+    return;
+  }
   let barHeight;
   // var context = canvas.value!.getContext('2d')!;
 
@@ -184,7 +191,7 @@ onMounted(() => {
     // },
     // onend: playNextSong,
     onplay: (e: any) => {
-      console.log('Howl onplay:', e);
+      // console.log('Howl onplay:', e);
       // 每隔一段时间获取当前播放时间
     },
     // onstop: (e: any) => {
@@ -196,18 +203,25 @@ onMounted(() => {
     onload: onLoad,
   });
 
-  sound.on('pause', () => (isPlaying.value = false));
   sound.on('play', () => (isPlaying.value = true));
-
+  sound.on('pause', stopHandle);
+  sound.on('end', stopHandle);
+  sound.on('stop', stopHandle);
   console.log('Howl sound', sound);
 
   nextTick(() => {
-    // sound?.play();
-    var context = canvas.value?.getContext('2d')!;
-    drawLine(context, generateRandomNumbers(1024, 10));
+    drawLine(generateRandomNumbers(1024, 10));
   });
 });
-
+onUnmounted(() => {
+  sound?.unload();
+});
+const stopHandle = () => {
+  isPlaying.value = false;
+  setTimeout(() => {
+    drawLine(generateRandomNumbers(1024, 10));
+  }, 666);
+};
 const generateRandomNumbers = (length: number = 1024, max: number = 129): number[] => {
   const array: number[] = [];
   for (let i = 0; i < length; i++) {
@@ -218,6 +232,10 @@ const generateRandomNumbers = (length: number = 1024, max: number = 129): number
 
 let i = 0;
 const change = () => {
+  if (!isPlaying.value) {
+    drawLine(generateRandomNumbers(1024, 10));
+    return;
+  }
   i++;
   switch (i % 4) {
     case 0:
@@ -244,11 +262,6 @@ const change = () => {
   }
 };
 
-// 播放音频并在指定的时间点开始播放
-const playFromTime = (timeInSeconds: number) => {
-  sound?.seek(timeInSeconds); // 将音频跳转到指定的时间点
-  sound?.play(); // 开始播放
-};
 const isChanging = ref(false);
 const onChange = (e: any) => {
   console.log('onChange', e);
@@ -271,48 +284,34 @@ const marks = ref<Record<number, any>>({
 });
 defineExpose({
   sound,
+  play,
+  pause,
+  duration,
+  seek,
 });
 </script>
 
 <template>
-  <canvas
-    ref="canvas"
-    id="canvas"
-    :width="options.width"
-    :height="options.height"
-    @click="change"
-  ></canvas>
-  <div class="controller">
-    <PlayIcon :percent="80" :size="24" />
-    <PlayArrow />
-    <div> 你好16px</div>
-    <PlayArrow :style="{ color: 'red', fontSize: '12px' }" />
-    <icon :style="{ color: 'red', fontSize: '24px' }">
-      <template #component>
-        <!-- <PlayArrow /> -->
-      </template>
-    </icon>
-
-    <div class="play">
-      <a-button
-        v-if="!isPlaying"
-        type="text"
-        shape="circle"
-        @click="play"
-        :icon="h(PlayCircleOutlined)"
-      />
-      <a-button
-        v-else
-        type="text"
-        shape="circle"
-        @click="pause"
-        :icon="h(PauseCircleOutlined, { style: { fontSize: '20px' } })"
-      />
+  <div class="audio-controller" :class="{ playing: isPlaying }">
+    <div class="play-panel">
+      <VideoPause v-if="isPlaying" @click="pause" />
+      <PlayArrow v-else @click="play" />
     </div>
+
+    <canvas
+      v-if="wave"
+      ref="canvas"
+      id="canvas"
+      :width="options.width"
+      :height="options.height"
+      @click="change"
+    ></canvas>
+    <!-- <div>00:00/05:00</div> -->
+
     <a-slider
       class="progess"
       v-model:value="seekValue"
-      :max="307000"
+      :max="duration"
       :tip-formatter="formatter"
       :step="1"
       tooltipPlacement="top"
@@ -327,10 +326,13 @@ defineExpose({
         <template v-else>{{ label }}</template>
       </template> -->
     </a-slider>
+    <div class="duration-text">{{ currentText }} / {{ durationText }}</div>
+    <div class="volume-panel">
+      <VolumeOff v-if="volume == 0" />
+      <VolumeOn v-else />
+    </div>
 
-    <a-button type="text" shape="circle" :icon="h(RollbackOutlined)" />
-
-    <a-button type="text" shape="circle" :icon="h(SoundOutlined)" />
+    <Repeat />
   </div>
 
   <!-- <div class="audio-container">
@@ -339,20 +341,24 @@ defineExpose({
 </template>
 
 <style scoped>
-.audio-container {
-  display: flex;
-}
-.audio-player {
-  display: inline-flex;
-}
-.controller {
+.audio-controller {
   display: flex;
   flex-direction: row;
   gap: 8px;
   font-size: 16px;
   background-color: rgba(144, 144, 144, 0.507);
   align-items: center;
+  border-radius: 24px;
+  padding: 8px 16px;
 }
+.audio-player {
+  display: inline-flex;
+}
+.play-panel,
+.volume-panel {
+  display: flex;
+}
+
 .progess {
   display: flex;
   flex: 1;
