@@ -24,6 +24,7 @@ import { setWindow } from '../ipc/setWindow';
 import { openAppSettings } from '../ipc/openAppSettings';
 import { useI18n } from 'vue-i18n';
 import AudioPlayer from '../components/AudioPlayer.vue';
+import { MusicLib, MusicQueue, MusicNote, MusicLyrics } from '../icons';
 const { t } = useI18n();
 const route = useRoute();
 const { connectionText, connectionState, retryCount } = useWebsocket();
@@ -79,7 +80,7 @@ const getKey = (route: RouteLocationNormalizedLoaded, component: any): string | 
           </div>
 
           <!-- <div class="nav-item"> -->
-            <!-- <Sound src="http://10.0.5.20:8044/file?id=e8137e1c-fb26-c605-6346-3a114264fdcc"/> -->
+          <!-- <Sound src="http://10.0.5.20:8044/file?id=e8137e1c-fb26-c605-6346-3a114264fdcc"/> -->
           <!-- </div> -->
 
           <div
@@ -122,7 +123,11 @@ const getKey = (route: RouteLocationNormalizedLoaded, component: any): string | 
             @click="goto('/drawing')"
             :class="{ active: route.name == 'drawing' }"
           >
-            <Diversity2 class="svg-icon" />
+            <MusicLib class="svg-icon s28" />
+            <!-- <MusicQueue class="svg-icon s28" /> -->
+            <!-- <MusicNote class="svg-icon s28" /> -->
+
+            <!-- <MusicLyrics class="svg-icon s28" /> -->
           </div>
 
           <div class="nav-item" @click="goto('/apps')" :class="{ active: route.name == 'apps' }">

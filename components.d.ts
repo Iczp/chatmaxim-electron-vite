@@ -81,5 +81,6 @@ declare module 'vue' {
     UploadPortrait: typeof import('./src/components/UploadPortrait.vue')['default']
     Url: typeof import('./src/components/Url.vue')['default']
     VideoPlayer: typeof import('./src/components/VideoPlayer.vue')['default']
+    Wave: typeof import('./src/components/Wave.vue')['default']
   }
 }

@@ -54,8 +54,14 @@ import Remind from '../svgs/alternate_email_black_24dp.svg';
 
 import Link from '../svgs/link_black_24dp.svg';
 
+// import MusicNote from '../svgs/music_note_black_24dp.svg';
+import MusicQueue from '../svgs/queue_music_black_24dp.svg';
+import MusicLib from '../svgs/library_music_black_24dp.svg';
+import MusicLyrics from '../svgs/lyrics_black_24dp.svg';
+
 import VideoPlay from '../svgs/play_circle_black_24dp.svg';
 import Repeat from '../svgs/repeat_black_24dp.svg';
+import RepeatOn from '../svgs/repeat_on_black_24dp.svg';
 import PlayArrow from '../svgs/play_arrow_black_24dp.svg';
 import VideoPauseCircle from '../svgs/pause_circle_black_24dp.svg';
 import VideoPause from '../svgs/pause_black_24dp.svg';
@@ -147,12 +153,15 @@ export {
   Remind,
   VideoPlay,
   Repeat,
+  MusicLib,
+  MusicLyrics,
+  RepeatOn,
+  MusicQueue,
   PlayArrow,
   VideoPause,
   VideoPauseCircle,
   VideoStop,
   VideoStopCircle,
-
   FileDownload,
   FileUpload,
   WavingHand,

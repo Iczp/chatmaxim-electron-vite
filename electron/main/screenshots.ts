@@ -3,6 +3,7 @@ import { app, globalShortcut, ipcMain, dialog } from 'electron';
 // import Screenshots from 'electron-screenshots';
 import { IpcMainHandle } from './IpcMainHandle';
 import { windowManager } from './commons/windowManager';
+import { env } from './env';
 
 export const setupScreenshots = () => {
   console.log('screenshots');
@@ -45,8 +46,8 @@ export const setupScreenshots = () => {
 
     ipcMain.handle(screenshotsWindowHandle.channel, screenshotsWindowHandle.handle);
 
-    globalShortcut.register('CTRL+ALT+E', () => {
-      console.log('CTRL+ALT+E');
+    globalShortcut.register(env.defaultScreenshotsShortcuts, () => {
+      console.log('defaultScreenshotsShortcuts', env.defaultScreenshotsShortcuts);
 
       screenshots.startCapture();
       screenshots.$view.webContents.openDevTools();
@@ -59,7 +60,7 @@ export const setupScreenshots = () => {
     screenshots.on('cancel', e => {
       // 执行了preventDefault
       // 点击取消不会关闭截图窗口
-      // e.preventDefault();
+      e.preventDefault();
       console.log('capture', 'cancel2');
     });
     // 点击保存按钮回调事件

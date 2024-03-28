@@ -2,7 +2,10 @@
 import { ref, onMounted, reactive } from 'vue';
 import AudioPlayer from '../../components/AudioPlayer.vue';
 import { loadImage } from '../../commons/utils';
-
+import Page from '../../components/Page.vue';
+import PageContent from '../../components/PageContent.vue';
+import PageTitle from '../../components/PageTitle.vue';
+import Wave from '../../components/Wave.vue';
 onMounted(() => {
   loadImage('file://C:/Users/ZP/Videos/output/snapshot-11.678122.png').then(img => {
     // image.value = img;
@@ -76,25 +79,35 @@ const cropImage = () => {
     height,
   };
 };
+const isPlaying = ref(false);
 </script>
 <template>
-  <page-title></page-title>
-  <div class="stage-container">
-    <!-- <input type="file" @change="handleFileChange" />
+  <Page>
+    <PageTitle></PageTitle>
+    <PageContent>
+      <div class="stage-container">
+        <!-- <input type="file" @change="handleFileChange" />
     <button @click="cropImage">Crop Image</button> -->
-    <AudioPlayer src="http://10.0.5.20:8044/file?id=e8137e1c-fb26-c605-6346-3a114264fdcc" />
-    <!-- <v-stage ref="stageRef" :config="stageSize" @click="handleStageClick">
+        <AudioPlayer v-model:play="isPlaying" src="http://10.0.5.20:8044/file?id=e8137e1c-fb26-c605-6346-3a114264fdcc" />
+        <!-- <v-stage ref="stageRef" :config="stageSize" @click="handleStageClick">
       <v-layer>
         <v-image v-if="croppedImage" :image="croppedImage" :config="imageConfig" />
         <v-rect v-if="croppingRect" :config="croppingRect" />
       </v-layer>
     </v-stage> -->
-  </div>
+        <Wave :paused="!isPlaying" />
+      </div>
+    </PageContent>
+  </Page>
 </template>
 
 <style scoped>
 /* 添加样式 */
 .stage-container {
   /* background-color: aliceblue; */
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex: 1;
 }
 </style>

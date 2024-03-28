@@ -98,6 +98,11 @@ export type EnvType = {
    * @type {(string | 'zh-CN' | 'en-US')}
    */
   defaultfetchMessageShortcuts: string | 'CommandOrControl+D' | 'Alt+D';
+  /**
+   * default Screenshots shortcuts:
+   * @type {(string | 'zh-CN' | 'en-US')}
+   */
+  defaultScreenshotsShortcuts:  string | 'CommandOrControl+#' | 'CTRL+Alt+E';
 };
 
 export const env: EnvType = {
@@ -130,4 +135,7 @@ export const env: EnvType = {
   defaultLanguage: import.meta.env.VITE_APP_DEFAULT_LANGUAGE,
 
   defaultfetchMessageShortcuts: import.meta.env.VITE_APP_DEFAULT_FETCH_MESSAGE_SHORTCUTS,
+
+  defaultScreenshotsShortcuts: import.meta.env.VITE_APP_DEFAULT_FETCH_MESSAGE_SHORTCUTS,
+
 };

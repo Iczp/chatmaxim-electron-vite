@@ -1,21 +1,14 @@
 <script setup lang="ts">
-import { computed, h, onMounted, onUnmounted, reactive, ref } from 'vue';
-// @ts-ignore
-import { Howl, HowlOptions, Howler } from 'howler';
-import { nextTick } from 'vue';
+import { computed, h, watch, onUnmounted, reactive, ref, onMounted, defineModel } from 'vue';
+import {
+  WaveOptions,
+  generateRandomNumbers,
+  getDurationText,
+  isZeros,
+  useAudioPlayer,
+} from '../commons/useAudioPlayer';
+import { PlayArrow, VideoPause, Repeat, RepeatOn, VolumeOff, VolumeOn } from '../icons';
 import { formatDurations } from '../commons/utils';
-import { PlayArrow, VideoPause, Repeat, VolumeOff, VolumeOn } from '../icons';
-
-export type WaveOptions = {
-  width: number;
-  height: number;
-  color: string;
-  step: number;
-  gap: number;
-  weight: number;
-  ratio: number;
-  fftSize: number;
-};
 
 const props = withDefaults(
   defineProps<{
@@ -23,6 +16,7 @@ const props = withDefaults(
     wave?: boolean;
     duration?: number;
     options?: WaveOptions;
+    play?: boolean;
   }>(),
   {
     wave: true,
@@ -30,109 +24,90 @@ const props = withDefaults(
   },
 );
 
-const options = reactive<WaveOptions>({
-  width: 64,
-  height: 24,
-  color: 'RGBA(48, 218, 213, 0.8)',
-  step: 1,
-  gap: 1,
-  weight: 0.8,
-  ratio: 0.08,
-  fftSize: 128 * 4,
-});
+const $emits = defineEmits(['update:play']);
 
-// console.log('Howl', Howl, JSON.stringify(Howl));
-
-const isPlaying = ref(false);
-let currentSongIndex = ref<number>(0);
-const volume = ref(1);
-const playlist = ref([
-  { name: 'Song 1', path: `file:///C:/Users/ZP/Music/张杰-我们都一样(Live).mp3` },
-]);
-
-interface Song {
-  name: string;
-  path: string;
-}
-
-let sound: Howl | null = null;
-
-const seek = ref(0);
-
-const isZeros = (arr: number[], n: number): boolean => {
-  if (arr.length < n) {
-    return false; // 数组长度不足 N 个元素，直接返回 false
-  }
-
-  for (let i = 0; i < n; i++) {
-    if (arr[i] !== 0) {
-      return false; // 如果前 N 个元素中有一个不为 0，则返回 false
-    }
-  }
-
-  return true; // 前 N 个元素全部为 0
-};
+const {
+  loop,
+  sound,
+  play,
+  pause,
+  duration,
+  seek,
+  setSeek,
+  setVolume,
+  isPlaying,
+  options,
+  volume,
+  stream,
+  fftSize,
+  isLoaded,
+  setLoop,
+} = useAudioPlayer({});
 
 const canvas = ref<HTMLCanvasElement>();
 
-const duration = ref(0);
-const getDurationText = (val: number, isZero: boolean) => {
-  if (val) {
-    return formatDurations(val);
-  }
-  return isZero ? '00:00' : '--:--';
+const durationText = computed(() => getDurationText(duration.value, isLoaded.value));
+const currentText = computed(() => getDurationText(seek.value, isLoaded.value));
+const isSeekChanging = ref(false);
+const isVolumeChanging = ref(false);
+const seekValue = ref(0);
+const volumeValue = ref(100);
+const onSeekChange = (e: any) => {
+  isSeekChanging.value = true;
 };
 
-const durationText = computed(() => getDurationText(duration.value, false));
-const currentText = computed(() => getDurationText(seek.value, true));
-
-const onLoad = () => {
-  // 获取音频时长
-  duration.value = (sound?.duration() || 0) * 1000;
-
-  console.log('Howl 音频时长:', duration);
-  // let canvas = document.getElementById('canvas')
-
-  // 获取音频数据（音波）
-  const analyser = Howler.ctx.createAnalyser();
-
-  analyser.fftSize = options.fftSize;
-  Howler.masterGain.connect(analyser);
-  analyser.connect(Howler.ctx.destination);
-  console.log('Howl analyser:', analyser);
-  const bufferLength = analyser.frequencyBinCount;
-
-  let dataArray = new Uint8Array(generateRandomNumbers(bufferLength, 10));
-
-  // color2.addColorStop(0, 'RGBA(255, 0, 0, 0.8)');
-  // \(o_o)/
-  const draw = () => {
-    requestAnimationFrame(draw);
-    analyser.getByteFrequencyData(dataArray);
-    // console.log('dataArray', dataArray);
-    const arr = [].slice.call(dataArray);
-    if (!isZeros(arr, 10)) {
-      drawLine([].slice.call(dataArray));
-    }
-  };
-
-  draw();
-  if (timer) {
-    clearInterval(timer);
-  }
-  timer = setInterval(() => {
-    seek.value = (sound?.seek() || 0) * 1000;
-    if (!isChanging.value) {
-      seekValue.value = seek.value;
-    }
-    // console.log('当前播放时间:', seek.value);
-  }, 333); // 每秒获取一次当前播放时间
+const onSeekAfterChange = (value: number) => {
+  setSeek(value);
+  isSeekChanging.value = false;
 };
+
+const onVolumeChange = (e: any) => {
+  isVolumeChanging.value = true;
+};
+
+const onVolumeAfterChange = (value: number) => {
+  setVolume(value);
+  isVolumeChanging.value = true;
+};
+
+onVolumeChange;
+
+watch(
+  () => seek.value,
+  v => {
+    if (!isSeekChanging.value) {
+      seekValue.value = v;
+    }
+  },
+);
+
+watch(
+  () => stream.value,
+  v => {
+    // console.log('stream', v);
+    if (v && !isZeros(v, 10)) {
+      drawLine(v);
+    }
+  },
+);
+watch(
+  () => isPlaying.value,
+  v => {
+    $emits('update:play', v);
+    if (!v) {
+      setTimeout(() => {
+        drawLine(generateRandomNumbers(1024, 10));
+      }, 666);
+    }
+  },
+);
 
 const drawLine = (dataArray: number[]) => {
   // console.log(dataArray.length);
   var context = canvas.value?.getContext('2d')!;
   if (!context) {
+    console.warn('drawLine context is null');
+
     return;
   }
   let barHeight;
@@ -166,78 +141,25 @@ const drawLine = (dataArray: number[]) => {
     // canvasCtx.fillRect(oW / 2 - i * gap, oH / 2, 2, barHeight);
   }
 };
-// 在组件卸载时，停止音频播放
 
-const play = () => {
-  isPlaying.value = true;
-  sound?.play();
+const formatter = (value: number) => {
+  return formatDurations(value);
 };
-const pause = () => {
-  isPlaying.value = false;
-  sound?.pause();
-};
-
-let timer: NodeJS.Timeout | null;
-onMounted(() => {
-  sound = new Howl({
-    src: [playlist.value[currentSongIndex.value].path],
-    autoplay: false,
-    loop: false,
-    volume: 1,
-    // sprite: {
-    //   blast: [0, 3000],
-    //   laser: [4000, 1000],
-    //   // winner: [6000, 5000],
-    // },
-    // onend: playNextSong,
-    onplay: (e: any) => {
-      // console.log('Howl onplay:', e);
-      // 每隔一段时间获取当前播放时间
-    },
-    // onstop: (e: any) => {
-    //   console.log('Howl onstop:', e);
-    // },
-    // onpause: (e: any) => {
-    //   console.log('Howl onpause:', e);
-    // },
-    onload: onLoad,
-  });
-
-  sound.on('play', () => (isPlaying.value = true));
-  sound.on('pause', stopHandle);
-  sound.on('end', stopHandle);
-  sound.on('stop', stopHandle);
-  console.log('Howl sound', sound);
-
-  nextTick(() => {
-    drawLine(generateRandomNumbers(1024, 10));
-  });
+const marks = ref<Record<number, any>>({
+  10000: '',
 });
-onUnmounted(() => {
-  sound?.unload();
-});
-const stopHandle = () => {
-  isPlaying.value = false;
-  setTimeout(() => {
-    drawLine(generateRandomNumbers(1024, 10));
-  }, 666);
-};
-const generateRandomNumbers = (length: number = 1024, max: number = 129): number[] => {
-  const array: number[] = [];
-  for (let i = 0; i < length; i++) {
-    array.push(Math.floor(Math.random() * max)); // 生成0到128之间的随机整数
-  }
-  return array;
-};
 
 let i = 0;
-const change = () => {
+const onWaveChange = () => {
   if (!isPlaying.value) {
-    drawLine(generateRandomNumbers(1024, 10));
+    // drawLine(generateRandomNumbers(1024, 10));
     return;
   }
   i++;
-  switch (i % 4) {
+  const mode = i % 4;
+  console.log('mode', mode);
+
+  switch (mode) {
     case 0:
       options.step = 1;
       options.gap = 1;
@@ -262,32 +184,23 @@ const change = () => {
   }
 };
 
-const isChanging = ref(false);
-const onChange = (e: any) => {
-  console.log('onChange', e);
-  isChanging.value = true;
-};
-const seekValue = ref(0);
-const afterChange = (value: number) => {
-  const timeInSeconds = value / 1000;
-  console.log('timeInSeconds', timeInSeconds);
-  sound?.pause();
-  sound?.seek(timeInSeconds);
-  sound?.play();
-  isChanging.value = false;
-};
-const formatter = (value: number) => {
-  return formatDurations(value);
-};
-const marks = ref<Record<number, any>>({
-  10000: '',
+onMounted(() => {
+  drawLine(generateRandomNumbers(1024, 10));
 });
+
 defineExpose({
   sound,
   play,
   pause,
   duration,
   seek,
+  setSeek,
+  setVolume,
+  isPlaying,
+  options,
+  volume,
+  stream,
+  fftSize,
 });
 </script>
 
@@ -300,11 +213,12 @@ defineExpose({
 
     <canvas
       v-if="wave"
+      class="wave"
       ref="canvas"
       id="canvas"
       :width="options.width"
       :height="options.height"
-      @click="change"
+      @click="onWaveChange"
     ></canvas>
     <!-- <div>00:00/05:00</div> -->
 
@@ -316,8 +230,8 @@ defineExpose({
       :step="1"
       tooltipPlacement="top"
       :marks="marks"
-      @change="onChange"
-      @afterChange="afterChange"
+      @change="onSeekChange"
+      @afterChange="onSeekAfterChange"
     >
       <!-- <template #mark="{ label, point }">
         <template v-if="point === 100">
@@ -327,12 +241,22 @@ defineExpose({
       </template> -->
     </a-slider>
     <div class="duration-text">{{ currentText }} / {{ durationText }}</div>
-    <div class="volume-panel">
+    <div class="volume-panel" :title="`${volume * 100}`">
+      <div class="volume-container">
+        <a-slider
+          v-model:value="volumeValue"
+          vertical
+          @change="onVolumeChange"
+          @afterChange="onVolumeAfterChange"
+        />
+      </div>
       <VolumeOff v-if="volume == 0" />
       <VolumeOn v-else />
     </div>
-
-    <Repeat />
+    <div class="repeat-panel">
+      <RepeatOn v-if="loop" @click="setLoop(false)" />
+      <Repeat v-else @click="setLoop(true)" />
+    </div>
   </div>
 
   <!-- <div class="audio-container">
@@ -354,14 +278,40 @@ defineExpose({
 .audio-player {
   display: inline-flex;
 }
+.wave {
+  display: flex;
+  cursor: pointer;
+}
+.duration-text {
+  display: flex;
+  font-size: 14px;
+  cursor: default;
+  width: 80px;
+  justify-content: center;
+}
+.repeat-panel,
 .play-panel,
 .volume-panel {
   display: flex;
+  cursor: pointer;
+  position: relative;
+}
+.volume-panel:hover .volume-container {
+  display: none;
+  opacity: 1;
+}
+.volume-container {
+  opacity: 0;
+  position: absolute;
+  bottom: 0;
+  height: 48px;
+  transition: all 0.3s linear;
 }
 
 .progess {
   display: flex;
   flex: 1;
+  min-width: 64px;
 }
 :deep(.ant-slider .ant-slider-rail) {
   background-color: rgba(133, 133, 133, 0.194);
