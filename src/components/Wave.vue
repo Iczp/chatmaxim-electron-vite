@@ -24,13 +24,14 @@ const props = withDefaults(
 }
 
 .ocean {
-  height: 5%;
+  height: 3%;
   width: 100%;
   position: absolute;
-  bottom: 0;
+  bottom: -50px;
   left: 0;
-  background: #015871;
+  /* background: #015871; */
   pointer-events: none;
+  z-index: -999;
 }
 
 .wave {
@@ -54,6 +55,7 @@ const props = withDefaults(
 
 .wave:nth-of-type(3) {
   top: -153px;
+  left: -400px;
   animation: wave 7.33s cubic-bezier(0.36, 0.45, 0.63, 0.53) -0.125s infinite,
     swell 7s ease -1.25s infinite;
   opacity: 1;

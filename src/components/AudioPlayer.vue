@@ -266,6 +266,7 @@ defineExpose({
 
 <style scoped>
 .audio-controller {
+  user-select: none;
   display: flex;
   flex-direction: row;
   gap: 8px;

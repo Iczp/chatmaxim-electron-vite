@@ -32,6 +32,8 @@
   "devDependencies": {
     "@ant-design-vue/pro-layout": "^3.2.4",
     "@intlify/unplugin-vue-i18n": "^2.0.0",
+    "@tsparticles/slim": "^3.3.0",
+    "@tsparticles/vue3": "^3.0.1",
     "@types/howler": "^2.2.11",
     "@types/markdown-it": "^13.0.7",
     "@types/vue-virtual-scroller": "npm:@earltp/vue-virtual-scroller@^1.0.1",
