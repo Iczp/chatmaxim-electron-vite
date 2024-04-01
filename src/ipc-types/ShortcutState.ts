@@ -2,6 +2,7 @@ export type ShortcutState = {
   [key: string]: number;
   'CommandOrControl+Enter': number;
   'Alt+S': number;
+  'CommandOrControl+V': number;
   // Shift: number;
   // Ctrl: number;
   // CommandOrControl: number;
@@ -25,6 +26,7 @@ export const shortcutDevaultValue = (): ShortcutState => {
   const defaultValue: ShortcutState = {
     'CommandOrControl+Enter': 0,
     'Alt+S': 0,
+    'CommandOrControl+V': 0,
     // Shift: 0,
     // Ctrl: 0,
     // CommandOrControl: 0,

@@ -145,11 +145,14 @@ const drawLine = (dataArray: number[]) => {
 const formatter = (value: number) => {
   return formatDurations(value);
 };
+
 const marks = ref<Record<number, any>>({
   10000: '',
 });
 
 let i = 0;
+const ind = ref(0);
+
 const onWaveChange = () => {
   if (!isPlaying.value) {
     // drawLine(generateRandomNumbers(1024, 10));
@@ -275,6 +278,7 @@ defineExpose({
   align-items: center;
   border-radius: 24px;
   padding: 8px 16px;
+  backdrop-filter: blur(10px);
 }
 .audio-player {
   display: inline-flex;

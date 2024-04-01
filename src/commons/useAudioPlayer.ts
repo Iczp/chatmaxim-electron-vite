@@ -13,6 +13,15 @@ export type WaveOptions = {
   fftSize: number;
 };
 
+export function average(array: number[]) {
+  const sum = array.reduce(
+    (accumulator: number, currentValue: number) => accumulator + currentValue,
+    0,
+  );
+  const aveValue = sum / array.length;
+  return aveValue;
+}
+
 export const isZeros = (arr: number[], n: number): boolean => {
   if (arr.length < n) {
     return false; // 数组长度不足 N 个元素，直接返回 false
@@ -93,23 +102,15 @@ export const useAudioPlayer = ({ ms = 333 }: { ms?: number }) => {
     isLoaded.value = true;
     // 获取音频时长
     duration.value = (sound?.duration() || 0) * 1000;
-
     console.log('Howl 音频时长:', duration);
-    // let canvas = document.getElementById('canvas')
-
     // 获取音频数据（音波）
     const analyser = Howler.ctx.createAnalyser();
-
     analyser.fftSize = fftSize.value;
     Howler.masterGain.connect(analyser);
     analyser.connect(Howler.ctx.destination);
-    console.log('Howl analyser:', analyser);
+    console.log('Howl analyser:', Howler.ctx.destination, analyser);
     const bufferLength = analyser.frequencyBinCount;
-
-    // let dataArray = new Uint8Array(generateRandomNumbers(bufferLength, 10));
     let dataArray = new Uint8Array(bufferLength);
-    // color2.addColorStop(0, 'RGBA(255, 0, 0, 0.8)');
-    // \(o_o)/
     const draw = () => {
       requestAnimationFrame(draw);
       analyser.getByteFrequencyData(dataArray);
@@ -119,7 +120,6 @@ export const useAudioPlayer = ({ ms = 333 }: { ms?: number }) => {
       }
     };
     draw();
-
     if (timer) {
       clearInterval(timer);
     }
@@ -128,6 +128,8 @@ export const useAudioPlayer = ({ ms = 333 }: { ms?: number }) => {
       // console.log('当前播放时间:', seek.value);
     }, ms); // 每秒获取一次当前播放时间
   };
+
+
   const stopHandle = () => {
     isPlaying.value = false;
     setTimeout(() => {
@@ -135,8 +137,6 @@ export const useAudioPlayer = ({ ms = 333 }: { ms?: number }) => {
     }, 666);
   };
   let sound: Howl | null = null;
-
-  // 在组件卸载时，停止音频播放
 
   const play = () => {
     isPlaying.value = true;
@@ -170,6 +170,8 @@ export const useAudioPlayer = ({ ms = 333 }: { ms?: number }) => {
   onMounted(() => {
     init();
   });
+
+  // 在组件卸载时，停止音频播放
   onUnmounted(() => {
     sound?.unload();
   });

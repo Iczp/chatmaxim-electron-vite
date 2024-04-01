@@ -13,6 +13,7 @@ export const useShortcutStore = defineStore({
     pressed(key: string, ticks:  number) {
       this.$state[key] = ticks;
       console.log('pressed', key, ticks);
+      console.log('pressed', this.$state);
     },
   },
 });

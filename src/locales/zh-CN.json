@@ -197,5 +197,6 @@
   "SaveAsSuccessful": "另存为 '{0}'",
   "SaveAsFail": "另存为失败",
   "LoadError": "加载错误",
-  "srceenshot": "屏幕快照"
+  "srceenshot": "屏幕快照",
+  "clipboard:image": "剪切板图片"
 }

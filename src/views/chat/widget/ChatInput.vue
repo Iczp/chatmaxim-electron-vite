@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { nextTick, onMounted, ref } from 'vue';
+import { WatchStopHandle, nextTick, onMounted, ref } from 'vue';
 import {
   UploadOutlined,
   MehOutlined,
@@ -30,6 +30,11 @@ import { MessageTypeEnums } from '../../../apis/enums';
 import { MessageContent } from '../../../apis/dtos/message/messageContent';
 
 import { screenshots } from '../../../ipc/screenshots';
+import { clipboard } from 'electron';
+import { useShortcutStore } from '../../../stores/shortcut';
+import { watch } from 'vue';
+import { onActivated } from 'vue';
+import { onDeactivated } from 'vue';
 const { t } = useI18n();
 
 const props = withDefaults(
@@ -231,21 +236,6 @@ const groupNames = {
   symbols: 'Symbols',
   flags: 'Flags',
 };
-const onSrceenshot = () => {
-  screenshots({})
-    .then(res => {
-      // console.log('screenshots', res);
-
-      var file = new File([res.blob!], `${t('srceenshot')}-${new Date().getTime()}.png`, {
-        type: 'image/png',
-      });
-
-      emits('open', { files: [file], from: 'screenshots' });
-    })
-    .catch(err => {
-      console.error(err);
-    });
-};
 
 const onMore = () => {
   console.log('onMore');
@@ -262,7 +252,51 @@ const onContacts = () => {
   console.log('onContacts');
 };
 
+const onSrceenshot = () => {
+  screenshots({})
+    .then(res => {
+      // console.log('screenshots', res);
+      var file = new File([res.blob!], `${t('srceenshot')}-${new Date().getTime()}.png`, {
+        type: 'image/png',
+      });
+      emits('open', { files: [file], from: 'screenshots' });
+    })
+    .catch(err => {
+      console.error(err);
+    });
+};
 
+const shortcutStore = useShortcutStore();
+
+let stopShortcutWatch: WatchStopHandle | undefined;
+let startShortcutWatch = () => {
+  stopShortcutWatch = watch(
+    () => shortcutStore['CommandOrControl+V'],
+    ticks => {
+      console.log('shortcut', ticks);
+      var image = clipboard.readImage('clipboard');
+      console.log('shortcut clipboard:image', image);
+      if (!image.isEmpty()) {
+        const blob = new Blob([image?.toPNG()], { type: 'image/png' });
+        var file = new File([blob], `${t('clipboard:image')}-${new Date().getTime()}.png`, {
+          type: 'image/png',
+        });
+        emits('open', { files: [file], from: 'screenshots' });
+        return;
+      }
+
+      // const rtf = clipboard.readRTF('clipboard');
+      // console.log('shortcut clipboard:rtf', rtf.);
+    },
+  );
+};
+
+onActivated(() => {
+  startShortcutWatch();
+});
+onDeactivated(() => {
+  stopShortcutWatch?.call(this);
+});
 
 const onFunction = () => {
   console.log('onFunction');
@@ -306,7 +340,7 @@ defineExpose({
         <!-- <a-button type="text" @click="onTopic"><NumberOutlined /></a-button> -->
 
         <a-button type="text" @click="onContacts"><ContactsOutlined /></a-button>
-        
+
         <a-button type="text" @click="onCloudServer"><CloudServerOutlined /></a-button>
 
         <a-button type="text" @click="onSrceenshot"><ScissorOutlined /></a-button>
