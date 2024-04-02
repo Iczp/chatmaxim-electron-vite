@@ -286,6 +286,10 @@ let startShortcutWatch = () => {
         return;
       }
       getClipboradFiles().then(files => {
+        if (files.length == 0) {
+          console.warn('getClipboradFiles', 'files.length==0');
+          return;
+        }
         emits('open', { files: files, from: 'clipboard' });
       });
       // // 调用函数以获取剪贴板上的文件路径
