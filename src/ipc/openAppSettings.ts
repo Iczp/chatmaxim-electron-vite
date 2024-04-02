@@ -8,5 +8,5 @@ export const openAppSettings = (args?: WindowParams) => {
     visiblity: true,
     ...args,
   };
-  ipcRenderer.invoke('open-app-settings', params);
+  return ipcRenderer.invoke('open-app-settings', params);
 };

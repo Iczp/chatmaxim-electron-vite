@@ -52,6 +52,7 @@ import { sheelHandle } from './handles/sheelHandle';
 import { saveAsHandle } from './handles/saveAsHandle';
 import { createBrowserWindow, openBrowserWindowHandle } from './handles/openBrowserWindowHandle';
 import { setupScreenshots } from './screenshots';
+import { clipboradFilePathsHandle } from './handles/clipboradFilePathsHandle';
 
 setAppProtocol();
 
@@ -149,6 +150,20 @@ const handleUrl = (url: string) => {
   dialog.showErrorBox('handleUrl', url);
 };
 
+
+//
+// macOS
+app.on('open-url', (event, url) => {
+  dialog.showErrorBox('Welcome Back', `You arrived from: ${url}`);
+});
+
+// Handle window controls via IPC
+ipcMain.on('shell:open', () => {
+  const pageDirectory = __dirname.replace('app.asar', 'app.asar.unpacked');
+  const pagePath = join('file://', pageDirectory, 'index.html');
+  shell.openExternal(pagePath);
+});
+
 ipcMain.handle(openChildWindowHandle.channel, openChildWindowHandle.handle);
 ipcMain.handle(openPopWindowHandle.channel, openPopWindowHandle.handle);
 ipcMain.handle(openAppSettingsWindowHandle.channel, openAppSettingsWindowHandle.handle);
@@ -162,15 +177,4 @@ ipcMain.handle(setLanguageHandle.channel, setLanguageHandle.handle);
 ipcMain.handle(sheelHandle.channel, sheelHandle.handle);
 ipcMain.handle(saveAsHandle.channel, saveAsHandle.handle);
 ipcMain.handle(openBrowserWindowHandle.channel, openBrowserWindowHandle.handle);
-//
-// macOS
-app.on('open-url', (event, url) => {
-  dialog.showErrorBox('Welcome Back', `You arrived from: ${url}`);
-});
-
-// Handle window controls via IPC
-ipcMain.on('shell:open', () => {
-  const pageDirectory = __dirname.replace('app.asar', 'app.asar.unpacked');
-  const pagePath = join('file://', pageDirectory, 'index.html');
-  shell.openExternal(pagePath);
-});
+ipcMain.handle(clipboradFilePathsHandle.channel, clipboradFilePathsHandle.handle);

@@ -30,7 +30,13 @@ import { MessageTypeEnums } from '../../../apis/enums';
 import { MessageContent } from '../../../apis/dtos/message/messageContent';
 
 import { screenshots } from '../../../ipc/screenshots';
+
 import { clipboard } from 'electron';
+import {
+  getClipboardFilePaths,
+  getClipboradFiles,
+  getClipboradImage,
+} from '../../../ipc/clipboardHelper';
 import { useShortcutStore } from '../../../stores/shortcut';
 import { watch } from 'vue';
 import { onActivated } from 'vue';
@@ -71,7 +77,7 @@ const emits = defineEmits<{
   open: [
     {
       files: File[];
-      from: 'filesystem' | 'screenshots' | 'drop';
+      from: 'filesystem' | 'screenshots' | 'drop' | 'clipboard';
     },
   ];
 }>();
@@ -84,7 +90,7 @@ onMounted(() => {
   console.log('inputRef', inputRef);
   nextTick(() => {
     // inputRef.value?.focus();
-    console.log('inputRef', inputRef);
+    // console.log('inputRef', inputRef);
   });
 });
 // const isSendDisabled = ref(false);
@@ -274,19 +280,16 @@ let startShortcutWatch = () => {
     () => shortcutStore['CommandOrControl+V'],
     ticks => {
       console.log('shortcut', ticks);
-      var image = clipboard.readImage('clipboard');
-      console.log('shortcut clipboard:image', image);
-      if (!image.isEmpty()) {
-        const blob = new Blob([image?.toPNG()], { type: 'image/png' });
-        var file = new File([blob], `${t('clipboard:image')}-${new Date().getTime()}.png`, {
-          type: 'image/png',
-        });
-        emits('open', { files: [file], from: 'screenshots' });
+      const imgFile = getClipboradImage(`${t('clipboard:image')}-${new Date().getTime()}.png`);
+      if (imgFile) {
+        emits('open', { files: [imgFile], from: 'screenshots' });
         return;
       }
-
-      // const rtf = clipboard.readRTF('clipboard');
-      // console.log('shortcut clipboard:rtf', rtf.);
+      getClipboradFiles().then(files => {
+        emits('open', { files: files, from: 'clipboard' });
+      });
+      // // 调用函数以获取剪贴板上的文件路径
+      // getClipboardFilePaths();
     },
   );
 };
@@ -489,3 +492,4 @@ defineExpose({
   justify-content: space-between;
 }
 </style>
+../../../ipc/clipboardHelper
