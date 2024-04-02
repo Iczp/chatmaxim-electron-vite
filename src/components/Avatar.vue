@@ -12,7 +12,7 @@ const props = defineProps<{
   thumb?: boolean;
 }>();
 const objectType = computed(() => props.entity?.objectType);
-const svgClass = computed(() => 'svg-icon svg-icon-' + (Number(props.size) || 48) / 2);
+const svgClass = computed(() => '' || 'svg-icon svg-icon-' + (Number(props.size) || 48) / 2);
 
 // File/831C11D5-A3DF-6943-E20D-3A10F706CCA7
 
@@ -44,6 +44,9 @@ const src = computed(() =>
 </template>
 
 <style scoped>
+:deep(.ant-avatar) {
+  font-size: 16px !important;
+}
 .avatar {
   display: flex;
   flex-shrink: 0;
@@ -55,6 +58,7 @@ const src = computed(() =>
   color: var(--avatar-color);
   justify-content: center;
   align-items: center;
+  /* font-size: unset !important; */
   /* font-size: 12px; */
 }
 </style>

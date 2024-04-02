@@ -16,6 +16,18 @@ onMounted(() => {
   });
 });
 
+let func: any = () => Promise.resolve('123');
+func = 132;
+Promise.resolve(func).then(async value => {
+  if (typeof value === 'function') {
+    return await value();
+  } else {
+    return value;
+  }
+
+  console.log('Promise.resolve(any)', typeof value);
+});
+
 const stageSize = { width: 800, height: 600 };
 const imageConfig = ref({
   x: 0,
