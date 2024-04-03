@@ -515,7 +515,7 @@ const openHandle = ({
   from,
 }: {
   files?: File[];
-  from: 'filesystem' | 'screenshots' | 'drop';
+  from: 'filesystem' | 'screenshots' | 'drop' | 'clipboard';
 }) => {
   // if (from == 'filesystem' && files?.length == 1) {
   //   sendFiles(files);
