@@ -59,7 +59,7 @@ export const useWindowStore = defineStore('window', {
       this.windowId = id;
     },
     setPayload(path: string, payload: any) {
-      // console.log('setPayload', path, payload);
+      console.log('setPayload', path, payload);
       this.path = path;
       this.payload = payload;
     },

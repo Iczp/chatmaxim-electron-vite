@@ -3,6 +3,7 @@ import { WindowParams } from '../ipc-types';
 import { appSettingsRoutes } from './appSettingsRoutes';
 import { chatSettingsRoutes } from './chatSettingsRoutes';
 import { objectSettingsRoutes } from './objectSettingsRoutes';
+import { messageViewerRoutes } from './messageViewerRoutes';
 
 export const routes = <RouteRecordRaw[]>[
   {
@@ -128,6 +129,7 @@ export const routes = <RouteRecordRaw[]>[
     name: 'message-viewer',
     component: () => import('../views/message-viewer/MediaViewer.vue'),
     props: true,
+    children: messageViewerRoutes,
   },
   {
     path: '/object-picker/:chatObjectId(\\d+)',

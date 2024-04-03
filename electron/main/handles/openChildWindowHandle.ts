@@ -97,7 +97,8 @@ export const createChildWindow = ({
       preload,
       nodeIntegration: true,
       contextIsolation: false,
-      webSecurity: false,
+      webSecurity: false, // 是否启用网络安全性
+      allowRunningInsecureContent: true, // 禁止运行不安全内容
     },
     autoHideMenuBar: true,
     frame: false,

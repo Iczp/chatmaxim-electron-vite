@@ -77,7 +77,6 @@ export const getDeviceId = () => {
   return windowStore.machineId;
 };
 
-
 export const openMediaViewer = (item: MessageDto) => {};
 
 export const onAvatarClick = ({ event, chatObjectId, entity }: ArgsContext) => {
@@ -132,7 +131,7 @@ export const onContentClick = ({
   event,
   playMessageId,
 }: ArgsContext) => {
-  console.log('onContentClick');
+  console.log('onContentClick', entity);
   const setOpened = () => {
     console.log('setOpened');
     if (!sessionUnit?.id) {
@@ -189,7 +188,7 @@ export const onContentClick = ({
       t,
       window: {
         name: `message-viewer`,
-        path: `/message-viewer/${entity.id}`,
+        path: `/message-viewer/${entity.id}/pdf`,
         payload: <ViewerPayload>{
           currentIndex: 0,
           chatObjectId,
