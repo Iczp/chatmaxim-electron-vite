@@ -37,12 +37,19 @@ ipcRenderer.on(WinEvents.resized, (_event, ...args) => {
   console.log(WinEvents.resized, ...args);
 });
 
-ipcRenderer.on('navigate', (_event, { path, payload }) => {
-  console.log('[navigate]:', path, payload);
-  const windowStore = useWindowStore();
-  windowStore.setPayload(path, payload);
-  router.replace(path);
-});
+ipcRenderer.on(
+  'navigate',
+  (_event, { path, payload, type }: { path: string; payload: any; type?: 'push' | 'replace' }) => {
+    console.log('[navigate]:', type, path, payload);
+    const windowStore = useWindowStore();
+    windowStore.setPayload(path, payload);
+    if (type == 'push') {
+      router.push(path);
+    } else {
+      router.replace(path);
+    }
+  },
+);
 
 ipcRenderer.on('window-event', (_, args) => {
   console.log('[window-event]:', _, args);

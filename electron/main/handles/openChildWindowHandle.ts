@@ -4,7 +4,7 @@ import { join } from 'node:path';
 import { addParamsToUrl } from '../commons/addParamsToUrl';
 import { windowManager } from '../commons/windowManager';
 import { initWindowEvent } from '../commons/initWindowEvent';
-import { setWindow } from './windowSettingHandle';
+import { preventClose, setWindow } from './windowSettingHandle';
 import { loadUrl } from '../commons/loadUrl';
 import { getBackgroundColor, globalState, icon, preload } from '../global';
 import { IpcMainHandle } from '../IpcMainHandle';

@@ -577,6 +577,17 @@ export const isVideoOfMessage = (entity?: MessageOwnerDto): boolean => {
   return false;
 };
 
+export const isPdfOfMessage = (entity?: MessageOwnerDto): boolean => {
+  if (!entity) {
+    return false;
+  }
+  if (entity.messageType == MessageTypeEnums.File) {
+    const content = entity.content as FileContentDto;
+    return content.suffix?.toLocaleLowerCase()=='.pdf';
+  }
+  return false;
+};
+
 export const getVideoOfMessage = (entity?: MessageOwnerDto): string | undefined => {
   if (!entity) {
     return;

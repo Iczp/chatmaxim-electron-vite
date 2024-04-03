@@ -5,6 +5,7 @@ import { globalState } from '../global';
 import { windowManager } from '../commons/windowManager';
 import { addParamsToUrl } from '../commons/addParamsToUrl';
 import { IpcMainHandle } from '../IpcMainHandle';
+import { resolveUrl } from '../commons/loadUrl';
 // import { preventClose } from './openChildWindowHandle';
 
 export const windowSettingHandle: IpcMainHandle = {
@@ -50,13 +51,14 @@ export const preventClose = (win: BrowserWindow, isListening: boolean) => {
   }): void => {
     if (!globalState.isAppQuitting) {
       e.preventDefault();
-      // win.off('close', preventCloseHandle);
+      win.off('close', preventCloseHandle);
       console.log(`window(id:${win.id}) will close stoped:hide`);
       win.hide();
     }
   };
   // win.off('close', preventCloseHandle);
   if (isListening) {
+    win.off('close', preventCloseHandle);
     win.on('close', preventCloseHandle);
   } else {
     win.off('close', preventCloseHandle);
@@ -81,11 +83,12 @@ export const setWindowProperties = (
   ifBoolean(params?.resizable, x => (win.resizable = x));
   ifBoolean(params?.focusable, x => (win.focusable = x));
   ifTrue<string>(params?.path, v => {
-    const path = addParamsToUrl(v, { callerId: _?.sender.id });
+    const { type, url } = resolveUrl(v);
+    const path = addParamsToUrl(url, { callerId: _?.sender.id });
     if (!win) {
       console.warn('win is undefined');
     }
-    win?.webContents.send('navigate', { path, payload: params.payload });
+    win?.webContents.send('navigate', { path, payload: params.payload, type });
   });
 };
 

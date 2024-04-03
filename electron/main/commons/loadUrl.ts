@@ -14,15 +14,16 @@ export const loadUrl = (win: BrowserWindow, { path }: { path: string }) => {
   electronLocalshortcut.register(win, 'Ctrl+F12', () => {
     console.log('You pressed Ctrl & F12', win.webContents.isDevToolsOpened());
     // if (!win.webContents.isDevToolsOpened()) {
-      win.webContents.openDevTools({
-        mode: 'detach',
-      });
+    win.webContents.openDevTools({
+      mode: 'detach',
+    });
     // }
     win.webContents.devToolsWebContents?.focus();
   });
+  const { url } = resolveUrl(path);
 
   if (process.env.VITE_DEV_SERVER_URL) {
-    win.loadURL(`${process.env.VITE_DEV_SERVER_URL}#${path}`);
+    win.loadURL(`${process.env.VITE_DEV_SERVER_URL}#${url}`);
     // Open devTool if the app is not packaged
 
     const electronLocalshortcut = require('electron-localshortcut');
@@ -38,6 +39,27 @@ export const loadUrl = (win: BrowserWindow, { path }: { path: string }) => {
   } else {
     const indexHtml = join(process.env.DIST, 'index.html');
     // clipboard.writeText(`indexHtml:${indexHtml}`);
-    win.loadFile(indexHtml, { hash: path });
+    win.loadFile(indexHtml, { hash: url });
   }
+};
+
+export const resolveUrl = (path: string): { type: string; url: string } => {
+  let type: string | undefined;
+  let url = path;
+  let types = ['push', 'replace'];
+
+  for (const t of types) {
+    const pro = `${t}:`;
+    // console.log('pro', pro);
+    if (path?.startsWith(pro)) {
+      type = t;
+
+      url = path.substring(pro.length);
+      break;
+    }
+  }
+  return {
+    type,
+    url,
+  };
 };

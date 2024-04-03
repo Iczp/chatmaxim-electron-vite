@@ -125,7 +125,8 @@ export const routes = <RouteRecordRaw[]>[
     children: objectSettingsRoutes,
   },
   {
-    path: '/message-viewer/:messageId(\\d+)',
+    // path: '/message-viewer/:messageId(\\d+)',
+    path: '/message-viewer',
     name: 'message-viewer',
     component: () => import('../views/message-viewer/MediaViewer.vue'),
     props: true,

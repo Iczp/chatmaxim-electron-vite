@@ -10,18 +10,23 @@ import { showContextMenuForMessageContent } from './showContextMenuForMessageCon
 import { showContextMenuForMessageSelect } from './showContextMenuForMessageSelect';
 import { setProfile } from '../../ipc/setProfile';
 import { useWindowStore } from '../../stores/window';
-import { ComposerTranslation, VueMessageType } from 'vue-i18n';
 import { openChildWindow } from '../../ipc/openChildWindow';
 import { env } from '../../env';
 import { MessageTypeEnums } from '../../apis/enums';
 import { ViewerPayload } from '../../views/message-viewer/commons/ViewerPayload';
-import { isMessageUrl, isImageMime, isVideoMime } from '../utils';
+import {
+  isMessageUrl,
+  isImageMime,
+  isVideoMime,
+  isPdfOfMessage,
+  isVideoOfMessage,
+  isImageOfMessage,
+} from '../utils';
 import { message } from 'ant-design-vue';
 import { useProfileModal } from '../../views/chat/commons/useProfileModal';
 import { openBrowser } from '../../ipc/openBrowser';
-import { link } from 'original-fs';
-import { isUrl } from '@pureadmin/utils';
 import { OpenedRecorderService, ReadedRecorderService } from '../../apis';
+import { addParamsToUrl } from '../addParamsToUrl';
 export { showContextMenuForSession } from './showContextMenuForSession';
 export { showContextMenuForMessageContent } from './showContextMenuForMessageContent';
 export { showContextMenuForMessageAvatar } from './showContextMenuForMessageAvatar';
@@ -170,25 +175,15 @@ export const onContentClick = ({
 
   tryToPlaySound();
 
-  let isMedia = [MessageTypeEnums.Image, MessageTypeEnums.Video].some(x => x == entity.messageType);
-  if (entity.messageType == MessageTypeEnums.File) {
-    const content = entity.content as FileContentDto;
-    isMedia = isImageMime(content.contentType) || isVideoMime(content.contentType);
-  }
-  const el = event?.target as HTMLElement;
-  const classNames = el.className.split(' ');
-  // console.log('isUrl', isUrl);
-  console.log('classNames', el, el.title, classNames);
-
-  if (isMedia) {
-    if (!isMessageUrl(entity)) {
-      return;
-    }
-    openChildWindow({
+  const openViewer = (routeUrl: string, queryString?: object) => {
+    const url = entity.content?.url;
+    const path = addParamsToUrl(routeUrl, queryString || { url });
+    // const path = routeUrl+'?url=' + url;
+    return openChildWindow({
       t,
       window: {
         name: `message-viewer`,
-        path: `/message-viewer/${entity.id}/pdf`,
+        path: path,
         payload: <ViewerPayload>{
           currentIndex: 0,
           chatObjectId,
@@ -200,12 +195,29 @@ export const onContentClick = ({
         isPreventClose: true,
         visiblity: true,
       },
-    }).finally(() => {
-      // fetchList();
     });
-  } else if (classNames.some(x => x == 'link')) {
+  };
+
+  if (isPdfOfMessage(entity)) {
+    openViewer(`push:/message-viewer/${entity.id}/pdf`);
+    return;
+  } else if (isVideoOfMessage(entity)) {
+    openViewer(`push:/message-viewer/${entity.id}/video`);
+    return;
+  } else if (isImageOfMessage(entity)) {
+    openViewer(`push:/message-viewer/${entity.id}/image?id=5`);
+    return;
+  }
+
+  const el = event?.target as HTMLElement;
+  const classNames = el.className.split(' ');
+  // console.log('isUrl', isUrl);
+  console.log('classNames', el, el.title, classNames);
+
+  if (classNames.some(x => x == 'link')) {
     if (classNames.some(x => x == 'url')) {
       openBrowser({ url: el.title });
+      return;
     }
   }
 };
