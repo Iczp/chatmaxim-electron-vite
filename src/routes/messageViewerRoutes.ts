@@ -29,4 +29,13 @@ export const messageViewerRoutes: RouteRecordRaw[] = [
     component: () => import('../views/message-viewer/VideoViewer.vue'),
     props: true,
   },
+  {
+    path: ':messageId(\\d+)/code',
+    name: 'message-viewer-code',
+    meta: {
+      title: 'image',
+    },
+    component: () => import('../views/message-viewer/CodeViewer.vue'),
+    props: true,
+  },
 ];

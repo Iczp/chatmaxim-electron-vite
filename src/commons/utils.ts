@@ -583,7 +583,32 @@ export const isPdfOfMessage = (entity?: MessageOwnerDto): boolean => {
   }
   if (entity.messageType == MessageTypeEnums.File) {
     const content = entity.content as FileContentDto;
-    return content.suffix?.toLocaleLowerCase()=='.pdf';
+    return content.suffix?.toLocaleLowerCase() == '.pdf';
+  }
+  return false;
+};
+
+export const isCodeOfMessage = (entity?: MessageOwnerDto): boolean => {
+  if (!entity) {
+    return false;
+  }
+  if (entity.messageType == MessageTypeEnums.File) {
+    const content = entity.content as FileContentDto;
+    const suffix = content.suffix?.toLocaleLowerCase();
+    const contentType = content.contentType;
+    const codeSuffixs = [
+      '.txt',
+      '.md',
+      '.json',
+      '.json5',
+      '.html',
+      '.htm',
+      '.cs',
+      '.ts',
+      '.js',
+      '.log',
+    ];
+    return codeSuffixs.some(x => x == suffix) || contentType?.startsWith('text/') || false;
   }
   return false;
 };

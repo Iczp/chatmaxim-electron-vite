@@ -21,6 +21,7 @@ import {
   isPdfOfMessage,
   isVideoOfMessage,
   isImageOfMessage,
+  isCodeOfMessage,
 } from '../utils';
 import { message } from 'ant-design-vue';
 import { useProfileModal } from '../../views/chat/commons/useProfileModal';
@@ -205,9 +206,13 @@ export const onContentClick = ({
     openViewer(`push:/message-viewer/${entity.id}/video`);
     return;
   } else if (isImageOfMessage(entity)) {
-    openViewer(`push:/message-viewer/${entity.id}/image?id=5`);
+    openViewer(`push:/message-viewer/${entity.id}/image`);
+    return;
+  }else if (isCodeOfMessage(entity)) {
+    openViewer(`push:/message-viewer/${entity.id}/code`);
     return;
   }
+
 
   const el = event?.target as HTMLElement;
   const classNames = el.className.split(' ');
