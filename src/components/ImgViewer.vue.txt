@@ -1,0 +1,265 @@
+<template>
+  <div class="container" @touchstart="onContainerTouchStart">
+    <div
+      class="image-container"
+      :class="{ animation: isAnimation }"
+      :style="imageContainerStyle"
+      @touchstart="onTouchStart"
+      @touchend="onTouchEnd"
+      @touchmove="onTouchOver"
+    >
+      <div class="unload" v-if="isLoading">...</div>
+      <div class="unload" v-else-if="isLoadFail">图加加载失败</div>
+      <img v-else-if="imageUrl" class="image" :src="imageUrl" mode="aspectFit" />
+      <div v-else class="ready">...</div>
+    </div>
+    <slot></slot>
+  </div>
+</template>
+
+<script setup lang="ts">
+import { defineProps, ref, onMounted, onUnmounted, onBeforeUnmount } from 'vue';
+import { getDistance, getAngle, getPoint } from '../commons/utils.js';
+
+const props = defineProps({
+  src: {
+    type: String,
+    default: null,
+  },
+  isDisabled: {
+    type: Boolean,
+    default: false,
+  },
+});
+
+// const systemInfo = uni.getSystemInfoSync();
+const isTouched = ref(false);
+const containerEvent = ref({});
+const _sty = ref({});
+const sty = ref({
+  origin: { x: 0, y: 0 },
+  translate: { x: 0, y: 0 },
+  scale: 1,
+  angle: 0,
+});
+const scale = ref(1);
+const isLoadFail = ref(false);
+const isLoading = ref(false);
+const imageUrl = ref(null);
+const isAnimation = ref(false);
+const isTouchOver = ref(false);
+const isScale = ref(false);
+const rect = ref({
+  top: 0,
+  left: 0,
+  // height: systemInfo.windowHeight,
+  // width: systemInfo.windowWidth,
+});
+const event = ref<TouchEvent>();
+
+const onContainerTouchStart = (e: TouchEvent) => {
+  if (isLoadFail.value) {
+    reLoad();
+  } else if (!isTouched.value && e.timeStamp - containerEvent.value.timeStamp < 300) {
+    scale.value = 1;
+    sty.value.angle = 0;
+    sty.value.translate = { x: 0, y: 0 };
+    containerEvent.value = e;
+  }
+};
+
+const onTouchOver = (e: MouseEvent) => {
+  if (e.touches.length === 1) {
+    if (isTouchOver.value) {
+      isAnimation.value = false;
+      const p = getPoint(e.touches[0], event.value.touches[0]);
+      sty.value.translate = {
+        x: _sty.value.translate.x + p.x / scale.value,
+        y: _sty.value.translate.y + p.y / scale.value,
+      };
+    }
+  } else if (e.touches.length === 2 && event.value.touches.length === 2) {
+    const d1 = getDistance(event.value.touches[0], event.value.touches[1]);
+    const d2 = getDistance(e.touches[0], e.touches[1]);
+    scale.value = d2 / d1;
+    if (scale.value < 0.5) {
+      scale.value = 0.5;
+    }
+    if (scale.value > 10) {
+      scale.value = 10;
+    }
+    sty.value.angle = getAngle(e.touches[1], e.touches[0]) - _sty.value.angle;
+  }
+};
+
+const onTouchStart = (e: TouchEvent) => {
+  isTouched.value = true;
+  if (props.isDisabled || isLoadFail.value) {
+    return;
+  }
+  e.preventDefault();
+  e.stopPropagation();
+  if (e.touches.length === 1) {
+    if (scale.value !== 1) {
+      isTouchOver.value = true;
+    }
+    if (e.timeStamp - event.value.timeStamp < 300) {
+      const d1 = getDistance(e.touches[0], event.value.touches[0]);
+      if (d1 < 50) {
+        isScale.value = true;
+        if (scale.value === 1) {
+          isAnimation.value = false;
+          sty.value.origin = {
+            x: (e.touches[0].pageX - e.currentTarget.offsetLeft) / scale.value,
+            y: (e.touches[0].pageY - e.currentTarget.offsetTop) / scale.value,
+          };
+        }
+      }
+    }
+    _sty.value = JSON.parse(JSON.stringify(sty.value));
+  }
+  if (e.touches.length === 2) {
+    sty.value.origin = {
+      x: (e.touches[1].pageX + e.touches[0].pageX) / 2 - e.currentTarget.offsetLeft,
+      y: (e.touches[1].pageY + e.touches[0].pageY) / 2 - e.currentTarget.offsetTop,
+    };
+    _sty.value.angle = getAngle(e.touches[1], e.touches[0]);
+  }
+  event.value = e;
+};
+
+const onTouchEnd = (e: TouchEvent) => {
+  isTouched.value = false;
+  e.preventDefault();
+  const timeStamp = e.timeStamp - event.value.timeStamp;
+  if (isScale.value && timeStamp < 300) {
+    isAnimation.value = true;
+    if (scale.value === 1) {
+      scale.value = 5;
+    } else {
+      scale.value = 1;
+      sty.value.angle = 0;
+      sty.value.translate = { x: 0, y: 0 };
+    }
+    emit('onScaleChange', { scale: scale.value, type: '1' });
+    isScale.value = false;
+  } else if (timeStamp > 300) {
+    emit('longpress', { scale: scale.value });
+  }
+  emit('onScaleChange', { scale: scale.value, type: '1' });
+  isTouchOver.value = false;
+};
+
+const reLoad = () => {
+  load(props.src);
+};
+
+const load = (src: string) => {
+  return new Promise((resolve, reject) => {
+    imageUrl.value = src;
+    isLoading.value = true;
+    uni.getImageInfo({
+      src,
+      success: res => {
+        if (res) {
+          isLoadFail.value = false;
+          let p = systemInfo.windowWidth / systemInfo.windowHeight;
+          let rect = {};
+          if (res.width / res.height >= p) {
+            let height = (res.height / res.width) * systemInfo.windowWidth;
+            rect = {
+              width: systemInfo.windowWidth,
+              height,
+              left: 0,
+              top: (systemInfo.windowHeight - height) / 2,
+            };
+          } else {
+            let width = (res.width / res.height) * systemInfo.windowHeight;
+            rect = {
+              width,
+              height: systemInfo.windowHeight,
+              left: (systemInfo.windowWidth - width) / 2,
+              top: 0,
+            };
+          }
+          rect = rect;
+          resolve(rect);
+          emit('onload', {
+            isSuccess: true,
+            rect,
+          });
+        } else {
+          isLoadFail.value = true;
+          reject(res);
+          emit('onload', {
+            isSuccess: false,
+            res,
+          });
+        }
+      },
+      fail: err => {
+        isLoadFail.value = true;
+        reject(err);
+        emit('onload', {
+          isSuccess: false,
+          err,
+        });
+      },
+      complete: () => {
+        isLoading.value = false;
+      },
+    });
+  });
+};
+
+const imageContainerStyle = () => {
+  let style = `top:${rect.value.top}px;left:${rect.value.left}px;height:${rect.value.height}px;width:${rect.value.width}px;`;
+  style += `transform: rotate(${sty.value.angle}deg) scale(${scale.value}) translate(${sty.value.translate.x}px, ${sty.value.translate.y}px);`;
+  style += `transform-origin: ${sty.value.origin.x}px ${sty.value.origin.y}px;`;
+  return style;
+};
+</script>
+
+<style scoped lang="scss">
+.container {
+  position: fixed;
+  top: var(--window-top);
+  bottom: var(--window-bottom);
+  left: 0;
+  right: 0;
+}
+.image-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  position: absolute;
+  // background-color: #ffffff;
+}
+.image-container.animation {
+  transition: all 0.15s ease;
+}
+.image {
+  width: 100%;
+  height: 100%;
+}
+.unload {
+  color: rgba(255, 255, 255, 0.5);
+  background-color: rgba(100, 100, 100, 0.5);
+  padding: 30rpx 100rpx;
+  border-radius: 20rpx;
+  font-size: 24rpx;
+}
+.ready {
+  display: flex;
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  top: 0;
+  font-size: 48rpx;
+  color: rgba(255, 255, 255, 0.5);
+  justify-content: center;
+  align-items: center;
+  // background-color: #005cc5;
+}
+</style>

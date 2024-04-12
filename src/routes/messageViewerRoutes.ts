@@ -9,7 +9,7 @@ export const messageViewerRoutes: RouteRecordRaw[] = [
       title: 'pdf',
     },
     component: () => import('../views/message-viewer/PdfViewer.vue'),
-    props: true,
+    // props: true,
   },
   {
     path: ':messageId(\\d+)/image',
@@ -18,7 +18,7 @@ export const messageViewerRoutes: RouteRecordRaw[] = [
       title: 'image',
     },
     component: () => import('../views/message-viewer/ImageViewer.vue'),
-    props: true,
+    // props: true,
   },
   {
     path: ':messageId(\\d+)/video',
@@ -27,7 +27,7 @@ export const messageViewerRoutes: RouteRecordRaw[] = [
       title: 'image',
     },
     component: () => import('../views/message-viewer/VideoViewer.vue'),
-    props: true,
+    // props: true,
   },
   {
     path: ':messageId(\\d+)/code',
@@ -36,6 +36,6 @@ export const messageViewerRoutes: RouteRecordRaw[] = [
       title: 'image',
     },
     component: () => import('../views/message-viewer/CodeViewer.vue'),
-    props: true,
+    // props: true,
   },
 ];

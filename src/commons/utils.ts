@@ -701,3 +701,113 @@ export const fileToContent = async (
     content: mapToFileContentDto(file),
   };
 };
+
+/**
+ * 两点之的距离
+ * @param {*} p1
+ * @param {*} p2
+ * @returns
+ */
+export const getDistance = (p1: MouseEvent, p2: MouseEvent) => {
+  var x = p2.pageX - p1.pageX,
+    y = p2.pageY - p1.pageY;
+  return Math.sqrt(x * x + y * y);
+};
+/**
+ * 两点之的
+ * @param {*} p1
+ * @param {*} p2
+ * @returns
+ */
+export const getPoint = (p1: MouseEvent, p2: MouseEvent) => {
+  var x = p1.pageX - p2.pageX,
+    y = p1.pageY - p2.pageY;
+  return { x, y };
+};
+
+/**
+ * 两点之的角度
+ * @param {*} p1
+ * @param {*} p2
+ * @returns
+ */
+export const getAngle = (p1: MouseEvent, p2: MouseEvent) => {
+  var x = p1.pageX - p2.pageX,
+    y = p1.pageY - p2.pageY;
+  return (Math.atan2(y, x) * 180) / Math.PI;
+};
+
+/**
+ * 笛卡尔乘积
+
+ * @param args 
+ * @returns 
+ * @example 
+ * 
+// 示例用法
+const arr1: string[] = ['a', 'b'];
+const arr2: number[] = [1, 2];
+const result = cartesian(arr1, arr2);
+console.log(result);
+// [
+//   ['a', 1],
+//   ['a', 2],
+//   ['b', 1],
+//   ['b', 2],
+// ];
+
+ */
+
+export function cartesian(...args: any[][]): any[][] {
+  return args.reduce<any[][]>(
+    (a, b) => {
+      const ret: any[][] = [];
+      a.forEach(aItem => {
+        b.forEach(bItem => {
+          ret.push([...aItem, bItem]);
+        });
+      });
+      return ret;
+    },
+    [[]],
+  );
+}
+
+/**
+ * 笛卡尔乘积
+
+ * @param args 
+ * @returns 
+ * @example 
+ * 
+// 示例用法
+const arr1: string[] = ['a', 'b'];
+const arr2: number[] = [1, 2];
+const result = cartesian(arr1, arr2);
+console.log(result);
+// [
+//   ['a', 1],
+//   ['a', 2],
+//   ['b', 1],
+//   ['b', 2],
+// ];
+
+ */
+export function cartesian1(...args: any[][]): any[][] {
+  if (args.length === 0) return [];
+
+  const result: any[][] = [];
+  const helper = (arrIndex: number, current: any[]) => {
+    if (arrIndex === args.length) {
+      result.push(current);
+      return;
+    }
+
+    for (const value of args[arrIndex]) {
+      helper(arrIndex + 1, [...current, value]);
+    }
+  };
+
+  helper(0, []);
+  return result;
+}

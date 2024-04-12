@@ -33,3 +33,6 @@
   color: unset;
 }
 
+.code-viewer .ant-tabs .ant-tabs-tabpane {
+  height: 100%;
+}

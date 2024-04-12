@@ -1,15 +1,18 @@
 <script setup lang="ts">
-import { computed, onActivated, reactive, ref, shallowRef } from 'vue';
+import { computed, onActivated, onMounted, reactive, ref, shallowRef } from 'vue';
 import { ViewerPayload } from './commons/ViewerPayload';
 import { usePayload } from '../../commons/usePayload';
 import { useRoute } from 'vue-router';
 
-import { Codemirror } from 'vue-codemirror';
-import { javascript } from '@codemirror/lang-javascript';
-import { html } from '@codemirror/lang-html';
-import { json } from '@codemirror/lang-json';
-import { markdown } from '@codemirror/lang-markdown';
-import { oneDark } from '@codemirror/theme-one-dark';
+import fs from 'fs';
+// import Highlight from 'vue3-highlightjs';
+
+import 'highlight.js/styles/stackoverflow-light.css'; // 可以切换其它样式风格，例如黑色主题
+import 'highlight.js/lib/common';
+import hljsVuePlugin from '@highlightjs/vue-plugin';
+import { useDownload } from '../../commons/useDownload';
+import TabList from '../../components/TabList.vue';
+const Highlight = hljsVuePlugin.component;
 
 const payload = usePayload<ViewerPayload>();
 const currentIndex = ref(payload.value?.currentIndex || 0);
@@ -18,89 +21,77 @@ const msg = computed(() => payload.value?.messages[currentIndex.value]);
 const url = computed(() => msg.value?.content?.url);
 
 // https://github.com/surmon-china/vue-codemirror
+const lang = ref('javascript');
+const code = ref(``);
+const activeKey = ref('1');
 
-const code = ref(`console.log('Hello, world!')
-import {parser} from "./syntax.grammar"
-import {LRLanguage, LanguageSupport, indentNodeProp, foldNodeProp, foldInside, delimitedIndent} from "@codemirror/language"
-import {styleTags, tags as t} from "@lezer/highlight"
+const { downloadFile, isPending, error, percent, blobUrl } = useDownload();
 
-export const EXAMPLELanguage = LRLanguage.define({
-  parser: parser.configure({
-    props: [
-      indentNodeProp.add({
-        Application: delimitedIndent({closing: ")", align: false})
-      }),
-      foldNodeProp.add({
-        Application: foldInside
-      }),
-      styleTags({
-        Identifier: t.variableName,
-        Boolean: t.bool,
-        String: t.string,
-        LineComment: t.lineComment,
-        "( )": t.paren
-      })
-    ]
-  }),
-  languageData: {
-    commentTokens: {line: ";"}
-  }
-})
-
-export function EXAMPLE() {
-  return new LanguageSupport(EXAMPLELanguage)
-}
-`);
-
-
-const extensions = [ javascript(), oneDark];
-
-// Codemirror EditorView instance ref
-const view = shallowRef();
-const handleReady = (payload: any) => {
-  view.value = payload.view;
-};
-
-// Status is available at all times via Codemirror EditorView
-const getCodemirrorStates = () => {
-  const state = view.value.state;
-  const ranges = state.selection.ranges;
-  const selected = ranges.reduce((r: any, range: any) => r + range.to - range.from, 0);
-  const cursor = ranges[0].anchor;
-  const length = state.doc.length;
-  const lines = state.doc.lines;
-  // more state info ...
-  // return ...
-};
-const log = console.log;
-
-const editorOptions = reactive({
-  tabSize: 2,
-  mode: 'javascript', // 设置编辑器的语言模式
-  theme: 'ambiance', // 设置编辑器的主题
-  lineNumbers: true, // 是否显示行号
-  line: true, // 是否显示行数边框
-  // 其他选项可以根据需要添加
+downloadFile(url.value).then(async res => {
+  console.log('res', res);
+  // 将 Blob 转换为 Buffer
+  const buffer = Buffer.from(await res.blob.arrayBuffer());
+  // 将 Buffer 转换为字符串
+  const text = buffer.toString();
+  console.log('Text content:', text);
+  code.value = text;
 });
+
+onMounted(() => {
+  console.log('onMounted');
+});
+
 onActivated(() => {
   console.log('onActivated');
 });
+
+const tabItems = ref([])
+const tabIndex = ref(0)
 </script>
 
 <template>
-  <codemirror
-    v-model="code"
-    placeholder="Code goes here..."
-    :style="{ height: '100%' }"
-    :autofocus="true"
-    :indent-with-tab="true"
-    :tab-size="2"
-    :extensions="extensions"
-    @ready="handleReady"
-    @change="log('change', $event)"
-    @focus="log('focus', $event)"
-    @blur="log('blur', $event)"
-  />
+  <!-- <a-tabs v-model:activeKey="activeKey" class="code-viewer" type="card">
+    <a-tab-pane class="code" key="1" tab="Tab 1">
+      
+      <scroll-view>      
+      </scroll-view>
+    </a-tab-pane>
+  </a-tabs> -->
+  <!-- <a-tabs v-model:activeKey="activeKey" type="card">
+    <a-tab-pane class="code" key="1" tab="Tab 1"></a-tab-pane>
+  </a-tabs> -->
+  <!-- <scroll-view class="code-viewer"> -->
+  <!-- https://www.cnblogs.com/lpkshuai/p/17306234.html -->
+
+  <TabList :items="tabItems" :current="tabIndex">
+  
+  </TabList>
+  <Highlight autodetect :code="code" :language="lang" :ignoreIllegals="true"></Highlight>
+  <!-- </scroll-view> -->
 </template>
 
-<style scoped></style>
+<style scoped>
+.code-viewer {
+  /* background-color: red; */
+  /* height: 100%; */
+  display: flex;
+  flex: 1;
+}
+
+.code {
+  height: 100%;
+}
+
+/* .ant-tabs .ant-tabs-content */
+.code-viewer :deep(.ant-tabs .ant-tabs-tabpane),
+:deep(.ant-tabs .ant-tabs-tabpane),
+:deep(.ant-tabs .ant-tabs-content.ant-tabs-content-top) {
+  height: 500px !important;
+  width: 80%;
+}
+
+:deep(.hljs) {
+  color: #c4c4c4;
+  background: #00000000;
+}
+</style>
