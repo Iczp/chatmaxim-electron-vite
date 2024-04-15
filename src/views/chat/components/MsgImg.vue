@@ -8,14 +8,26 @@ import EmptyImg from '../../../assets/empty.png';
 import { useElementVisibility } from '@vueuse/core';
 
 const { t } = useI18n();
-const props = defineProps<{
-  path?: string;
-  url?: string;
-  width?: number;
-  height?: number;
-  size?: number;
-  suffix?: string;
-}>();
+
+const props = withDefaults(
+  defineProps<{
+    path?: string;
+    url?: string;
+    width?: number;
+    height?: number;
+    size?: number;
+    suffix?: string;
+    lazy?: boolean;
+    delay?: number;
+  }>(),
+  {
+    lazy: true,
+    delay: 1000,
+  },
+);
+
+const src = ref(EmptyImg);
+
 const target = ref<HTMLDivElement>();
 
 const targetIsVisible = useElementVisibility(target);
@@ -23,7 +35,10 @@ const targetIsVisible = useElementVisibility(target);
 watch(
   () => targetIsVisible.value,
   v => {
-    console.log('watch targetIsVisible', v, src.value);
+    // console.log('watch targetIsVisible', v, src.value);
+    if (v && props.lazy) {
+      loadImage();
+    }
   },
 );
 
@@ -39,15 +54,24 @@ const onError = (event: Event) => {
 };
 
 const { downloadFile, percent, blobUrl, isPending } = useDownload();
-if (props.url) {
+
+const loadImage = () => {
+  if (!props.url) {
+    return;
+  }
+  if (blobUrl.value) {
+    return;
+  }
   downloadFile(props.url)
     .then(res => {
-      // getImageRect(res.objectUrl).then(res => {
-      //   rect.value = formatImageRect(res.width / res.height, maxWidth, maxHeight);
-      // });
+      src.value = res.objectUrl;
+      getImageRect(res.objectUrl).then(res => {
+        rect.value = formatImageRect(res.width / res.height, maxWidth, maxHeight);
+      });
     })
     .catch(err => {
       console.error('downloadFile image:', props.url, JSON.stringify(err));
+      setTimeout(() => loadImage, props.delay);
     })
     .finally(() => {
       if (!(props.path || blobUrl)) {
@@ -55,15 +79,11 @@ if (props.url) {
         errMessage.value = 'url is null';
       }
     });
-} else if (props.path) {
-  // isError.value = true;
-  // errMessage.value = props.path;
-} else {
-  // isError.value = true;
-  // errMessage.value = 'url is null';
-}
+};
 
-const src = computed(() => props.path || blobUrl.value || EmptyImg);
+if (!props.lazy) {
+  loadImage();
+}
 </script>
 
 <template>
