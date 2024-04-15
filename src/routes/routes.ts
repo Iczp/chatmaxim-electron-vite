@@ -38,7 +38,7 @@ export const routes = <RouteRecordRaw[]>[
       },
       {
         path: 'chat/:chatObjectId(\\d+)',
-        component: () => import('../views/Session_1.vue'),
+        component: () => import('../views/Session.vue'),
         // props: r => ({ query: r.query.m }),
         name: 'im',
         props: true,
