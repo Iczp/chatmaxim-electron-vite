@@ -5,6 +5,8 @@ import { MessageGetListInput } from '../apis/dtos/MessageGetListInput';
 import { MessageStateEnums } from '../apis/enums';
 import { eventBus } from '../commons/eventBus';
 import { formatMessage } from './utils';
+import { ReceivedDto } from '../apis/websockets/ReceivedDto';
+import { Handler } from 'mitt';
 export type FetchMessageResult = {
   items: MessageDto[];
   list: Ref<MessageDto[]>;
@@ -13,9 +15,11 @@ export type FetchMessageResult = {
 export const useMessageList = ({
   sessionUnitId,
   maxResultCount = 20,
-}: {
+}: // onMessage,
+{
   sessionUnitId: string;
   maxResultCount?: number;
+  // onMessage?: (e: MessageDto) => void;
 }) => {
   const maxMessageId = ref<number | undefined>();
   const minMessageId = ref<number | undefined>();
@@ -84,10 +88,10 @@ export const useMessageList = ({
       console.warn('fetchLatest caller', caller);
       fetchItems({ minMessageId: maxMessageId.value }, true)
         .then(items => {
-          console.log(
-            'fetchLatest',
-            items.map(x => x.id),
-          );
+          // console.log(
+          //   'fetchLatest',
+          //   items.map(x => x.id),
+          // );
           resolve({ items, list, maxResultCount });
         })
         .catch(reject)
@@ -128,7 +132,9 @@ export const useMessageList = ({
         });
     });
 
+
   const onMessage = (callback: (e: MessageDto) => void): void => {
+    // eventBus.on('chat', chatHandle);
     eventBus.on('chat', ([data, receivedMessage]) => {
       console.log('onMessage', receivedMessage);
       if (data.scopes.some(x => x.sessionUnitId == sessionUnitId)) {
@@ -137,7 +143,8 @@ export const useMessageList = ({
     });
   };
 
-  const offMessage = (): void => eventBus.off('chat');
+  const offMessage = (handler?: Handler<[ReceivedDto<any>, MessageDto]>): void =>
+    eventBus.off('chat', handler);
 
   onActivated(() => {});
 

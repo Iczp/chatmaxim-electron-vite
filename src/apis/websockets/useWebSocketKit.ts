@@ -5,6 +5,7 @@ import { ReceivedDto } from './ReceivedDto';
 import { useWebSocketCore } from './useWebSocketCore';
 import { TicketService } from './TicketService';
 import { ref } from 'vue';
+import { eventBus } from '../../commons/eventBus';
 
 export let connectionState: ConnectionState = ConnectionState.None;
 export type NetDelay = {
@@ -91,11 +92,13 @@ export const useWebSocketKit = ({ onConnected }: { onConnected?: (ws: WebSocket)
     onConnected: (ws: WebSocket) => {
       console.log('useWebSocketKit onConnected', ws);
       setState(ConnectionState.Ok);
+      eventBus.emit('connected')
       onConnected?.(ws);
     },
     onDisconnected: (ws: WebSocket, event: CloseEvent) => {
       console.log('useWebSocketKit onDisconnected', ws, event);
       setState(ConnectionState.Close);
+      eventBus.emit('disconnected')
     },
     onError: (ws: WebSocket, event: Event) => {
       console.log('onError', ws, event);

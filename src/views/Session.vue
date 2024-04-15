@@ -1,5 +1,14 @@
 <script setup lang="ts">
-import { computed, onActivated, onMounted, onUnmounted, reactive, ref, watch } from 'vue';
+import {
+  computed,
+  onActivated,
+  onDeactivated,
+  onMounted,
+  onUnmounted,
+  reactive,
+  ref,
+  watch,
+} from 'vue';
 import { onBeforeRouteLeave, onBeforeRouteUpdate, useRoute } from 'vue-router';
 import { router, chatHistorys } from '../routes';
 import { SessionUnitOwnerDto, SessionUnitService } from '../apis';
@@ -14,6 +23,7 @@ import { useI18n } from 'vue-i18n';
 import { Plus } from '../icons';
 import { createRoom } from '../commons/createRoom';
 import { useSessionUnitList } from '../commons/useSessionUnitList';
+import { eventBus } from '../commons/eventBus';
 const { t } = useI18n();
 const props = defineProps<{
   chatObjectId: number | undefined;
@@ -30,6 +40,7 @@ const {
   isEof,
   maxMessageId,
   minMessageId,
+  refresh,
   fetchLatest,
   fetchHistorical,
   isPendingOfFetchLatest,
@@ -135,6 +146,11 @@ onActivated(() => {
     caller: 'onActivated',
   });
   // fetchHistorical().then(res => {});
+  eventBus.on('connected', refresh);
+});
+
+onDeactivated(() => {
+  eventBus.off('disconnected', refresh);
 });
 </script>
 

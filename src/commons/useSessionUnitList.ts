@@ -67,10 +67,10 @@ export const useSessionUnitList = ({
       console.warn('fetchLatest caller', caller);
       fetchItems({ minMessageId: maxMessageId.value }, true)
         .then(items => {
-          console.log(
-            'fetchLatest',
-            items.map(x => x.id),
-          );
+          // console.log(
+          //   'fetchLatest',
+          //   items.map(x => x.id),
+          // );
           resolve({ items, list, maxResultCount });
         })
         .catch(reject)
