@@ -19,7 +19,6 @@ import { mapToSessionItemDto, sortSessionItemDto } from '../commons/utils';
 import { TrayPayload } from '../ipc-types';
 import { toRaw } from 'vue';
 import { setTray } from '../commons/setTray';
-import { resolve } from '../apis/core/request';
 
 interface State {
   chatObjects: Map<number, BadgeDetialDto>;
@@ -130,9 +129,7 @@ export const useImStore = defineStore('im', {
       return this.ownerMap.get(sessionUnitId);
     },
     getSessionItems(chatObjectId: number, keyword?: string): SessionItemDto[] {
-      const items = Object.values(
-        this.sessionItemsMap[key(chatObjectId, keyword)] || [],
-      );
+      const items = Object.values(this.sessionItemsMap[key(chatObjectId, keyword)] || []);
       items.sort(sortSessionItemDto);
       return items;
     },
@@ -352,7 +349,10 @@ export const useImStore = defineStore('im', {
      */
     getBadgeByCurrentUser(): void {
       if (this.isPendingForGetBadgeByCurrentUser) {
-        throw new Error(`getBadgeByCurrentUser:${this.isPendingForGetBadgeByCurrentUser}`);
+        const msg = `getBadgeByCurrentUser isPending:${this.isPendingForGetBadgeByCurrentUser}`;
+        console.warn(msg);
+        return;
+        // throw new Error(msg);
       }
       this.isPendingForGetBadgeByCurrentUser = true;
       SessionUnitService.getApiChatSessionUnitBadgeByCurrentUser({ isImmersed: false })
@@ -369,9 +369,10 @@ export const useImStore = defineStore('im', {
      */
     getChatObjectByCurrentUser(): void {
       if (this.isPendingForGetChatObjectByCurrentUser) {
-        throw new Error(
-          `getChatObjectByCurrentUser:${this.isPendingForGetChatObjectByCurrentUser}`,
-        );
+        const msg = `getChatObjectByCurrentUser isPending:${this.isPendingForGetChatObjectByCurrentUser}`;
+        console.warn(msg);
+        return;
+        // throw new Error(msg);
       }
       this.isPendingForGetChatObjectByCurrentUser = true;
       ChatObjectService.getApiChatChatObjectByCurrentUser({})

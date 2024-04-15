@@ -25,11 +25,24 @@ import { openAppSettings } from '../ipc/openAppSettings';
 import { useI18n } from 'vue-i18n';
 import AudioPlayer from '../components/AudioPlayer.vue';
 import { MusicLib, MusicQueue, MusicNote, MusicLyrics } from '../icons';
+
+import { useVueWebSocket } from '../apis/websockets/useVueWebSocket';
+
+import { useWebSocketKit } from '../apis/websockets/useWebSocketKit';
+
 const { t } = useI18n();
 const route = useRoute();
-const { connectionText, connectionState, retryCount } = useWebsocket();
-const { badge, badgeItems } = useBadges();
+// const { connectionText, connectionState, retryCount } = useWebsocket();
+const { badge, badgeItems, refresh } = useBadges();
 // const router = useRouter();
+
+// const { status } = useVueWebSocket({});
+
+useWebSocketKit({
+  onConnected(ws) {
+    refresh();
+  },
+});
 
 const navToChatHitory = (item: BadgeDto) => {
   const chatObjectId = item.chatObjectId!;

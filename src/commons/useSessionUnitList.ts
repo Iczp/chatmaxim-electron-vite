@@ -108,6 +108,12 @@ export const useSessionUnitList = ({
         });
     });
 
+  const refresh = () => {
+    fetchLatest({
+      caller: 'refresh',
+    });
+  };
+
   onActivated(() => {});
 
   onDeactivated(() => {});
@@ -118,6 +124,7 @@ export const useSessionUnitList = ({
     isEof,
     maxMessageId,
     minMessageId,
+    refresh,
     fetchLatest,
     fetchHistorical,
     isPendingOfFetchLatest,

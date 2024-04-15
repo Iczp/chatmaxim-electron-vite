@@ -18,17 +18,11 @@ const { t } = useI18n();
 const props = defineProps<{
   chatObjectId: number | undefined;
 }>();
-
-// defaultDisplayCount
-const defaultDisplayCount = 20;
-// pageSize
-const pageSize = 20;
-// displayCount
-const displayCount = ref(20);
-
 const route = useRoute();
-// const router = useRouter();
+
 const store = useImStore();
+
+const scrollerRef = ref();
 
 const {
   list,
@@ -46,41 +40,21 @@ const acitveSessionUnitId = computed(() => route.params.sessionUnitId);
 
 const flashSessionUnitId = ref<string>();
 
+const displayItems = computed<SessionItemDto[]>(() =>
+  store.searchSessionItems(props.chatObjectId!, keyword.value).filter(x => !x.isSeparated),
+);
+
 const setFlash = (sessionUnitId: string) => {
   flashSessionUnitId.value = sessionUnitId;
   setTimeout(() => {
     flashSessionUnitId.value = undefined;
   }, 1000);
 };
-const useClick = ({ delay = 500, click }: { delay?: number; click: (count: number) => void }) => {
-  let clicks: number = 0;
-  let timer: NodeJS.Timeout;
-  const onClick = (callback: (count: number) => void) => {
-    clicks++;
-    console.log('clicks', clicks);
-
-    if (clicks === 1) {
-      timer = setTimeout(() => {
-        // result.push(event.type);
-        callback(clicks);
-        clicks = 0;
-      }, delay);
-    } else {
-      clearTimeout(timer);
-      //  result.push('dblclick');
-      callback(clicks);
-      clicks = 0;
-    }
-  };
-  onClick(click);
-  return { onClick };
-};
 
 const dragend = (item: SessionItemDto) => {
   onItemDbClick(item);
 };
 const onItemDbClick = (item: SessionItemDto) => {
-  console.log('onItemDbClick', item);
   item.isSeparated = true;
   router.push({ name: 'chat-empty' });
   openChildWindow({
@@ -103,17 +77,9 @@ const onItemDbClick = (item: SessionItemDto) => {
 };
 
 const onItemClick = (item: SessionItemDto) => {
-  console.log('onItemClick', item);
+  const entity = store.getSessionUnit(item.id!);
+  console.log('onItemClick', item, entity);
   navToChat(item);
-  // useClick({
-  //   click: v => {
-  //     if (v == 1) {
-  //       navToChat(item);
-  //     } else {
-  //       onItemDbClick(item);
-  //     }
-  //   },
-  // });
 };
 
 const navToChat = (item: SessionItemDto) => {
@@ -129,192 +95,26 @@ const navToChat = (item: SessionItemDto) => {
   });
 };
 
-// 与 beforeRouteLeave 相同，无法访问 `this`
-onBeforeRouteLeave((to, from) => {
-  // console.log('onBeforeRouteLeave', to, from);
-});
-
-onActivated(() => {
-  console.log('onActivated');
-});
-
-// 与 onBeforeRouteUpdate 相同，无法访问 `this`
-onBeforeRouteUpdate((to, from) => {
-  // console.log('onBeforeRouteUpdate', to, from);
-});
-// onBeforeRouteEnter((to, from) => {
-//   console.log('onBeforeRouteEnter', to, from);
-// });
-
-const record = reactive<{
-  maxMessageId?: number;
-  minMessageId?: number;
-}>({
-  // maxMessageId: 0,
-  // minMessageId: 0,
-});
-
-const queryInput = reactive<SessionUnitGetListInput>({
-  ownerId: props.chatObjectId,
-  maxResultCount: pageSize * 2,
-  maxMessageId: record.maxMessageId,
-});
-const ret = reactive<ResultValue<SessionItemDto>>({
-  isPosting: false,
-  isEof: false,
-  totalCount: undefined,
-  items: [],
-});
-
-// const displayItems = computed<SessionItemDto[]>(() =>
-//   (keyword.value.length != 0
-//     ? store.searchSessionItems(props.chatObjectId!, keyword.value)
-//     : ret.items
-//   ).slice(0, displayCount.value),
-// );
-const displayItems = computed<SessionItemDto[]>(() =>
-  ret.items.filter(x => !x.isSeparated).slice(0, displayCount.value),
-);
-// const displayItems = computed<SessionItemDto[]>(() =>
-//   store.getSessionItems(props.chatObjectId!, queryInput.keyword).slice(0, displayCount.value),
-// );
-watch(
-  () => store.getSessionItems(props.chatObjectId!, queryInput.keyword),
-  v => (ret.items = v),
-  {
-    immediate: true,
-  },
-);
-
-const onScroll = (event: CustomEvent) => {
-  // console.log(typeof event.target, event.target);
-};
-
-// onMounted(() => console.log(session.value));
-
 const keyword = ref<string>('');
+
 const onSearch = (e: any) => {
   console.log('onSearch', e);
-  ret.isEof = false;
-  displayCount.value = defaultDisplayCount;
-  ret.items = store.searchSessionItems(props.chatObjectId!, keyword.value);
-  queryInput.maxMessageId = undefined;
-  queryInput.keyword = keyword.value;
-  queryInput.skipCount = ret.items.length;
-  fetchData(queryInput);
 };
 
-const setMinMessageId = (v: number) => {
-  if (Number(record.minMessageId) > v) {
-    return;
-  }
-  record.minMessageId = v;
-  console.log('setMinMessageId', v);
-};
-
-const mapToItems = (items: SessionUnitOwnerDto[]): SessionItemDto[] => {
-  return items.map<SessionItemDto>(x => ({
-    id: x.id!,
-    ownerId: x.ownerId!,
-    sorting: x.sorting!,
-    lastMessageId: x.lastMessageId!,
-  }));
-};
-
-const fetchData = (query: SessionUnitGetListInput) => {
-  if (ret.isEof || ret.isPosting) {
-    console.warn('fetchData isFetchSession');
-    return;
-  }
-  ret.isPosting = true;
-  SessionUnitService.getApiChatSessionUnitList(query)
-    .then(res => {
-      ret.totalCount = res.totalCount!;
-      ret.isEof = res.items!.length == 0;
-
-      if (!ret.isEof) {
-        store.setMany(res.items!);
-        setMinMessageId(res.items![res.items!.length - 1].lastMessageId!);
-        const _items = res.items!; //.map(x => mapToSessionItemDto(x));
-        if (Number(query.maxMessageId) > 0) {
-          ret.items = ret.items!.concat(_items);
-        } else {
-          ret.items = _items;
-        }
-      }
-      store.setSessionItems(props.chatObjectId!, ret.items as SessionUnitOwnerDto[], query.keyword);
-
-      // console.log('res SessionUnitService.getApiChatSessionUnit1', res, res.totalCount);
-    })
-    .finally(() => (ret.isPosting = false));
-};
-if (ret.items.length == 0) {
-  fetchData(queryInput);
-}
 const onReachStart = (event: CustomEvent) => {
   console.info('onReachStart');
-  displayCount.value = defaultDisplayCount;
 };
 const onReachEnd = (event: CustomEvent) => {
-  const el = event.target as HTMLElement;
-  console.info('onReachEnd');
-  const isReachEnd = el.scrollTop != 0; //&& el.scrollTop > el.offsetHeight;
-  if (!isReachEnd) {
-    console.error(
-      'onReachEnd',
-      isReachEnd,
-      el.clientHeight,
-      el.offsetHeight,
-      el.scrollHeight,
-      el.scrollTop,
-      record,
-    );
-    displayCount.value = defaultDisplayCount;
+  // const el = event.target as HTMLElement;
+  console.info('onReachEnd', displayItems.value.length);
+
+  if (isBof.value) {
+    console.warn('onReachEnd isBof');
     return;
   }
-
-  if (displayCount.value < ret.items.length - pageSize) {
-    displayCount.value += pageSize;
-    return;
-  } else {
-    displayCount.value = ret.items.length;
-  }
-
-  // console.log('onReachEnd router.currentRoute', router.currentRoute.value);
-  if (props.chatObjectId != Number(router.currentRoute.value.params.chatObjectId)) {
-    console.warn('onReachEnd', props.chatObjectId, router.currentRoute.value);
-    return;
-  }
-
-  if (ret.isEof || ret.isPosting) {
-    console.warn('fetchData isFetchSession');
-    return;
-  }
-
-  if (keyword.value.length != 0) {
-    queryInput.maxMessageId = undefined;
-    queryInput.keyword = keyword.value;
-    queryInput.skipCount = ret.items.length;
-    fetchData(queryInput);
-  } else {
-    queryInput.keyword = '';
-    queryInput.maxMessageId = Math.min(...ret.items.map(o => o.lastMessageId!));
-    fetchData(queryInput);
-  }
+  fetchHistorical();
 };
 const footerObserver = ref<HTMLElement | null>();
-
-// var intersectionObserver = new IntersectionObserver(function (entries) {
-//   console.log('Loaded new items', entries[0]);
-//   // 如果不可见，就返回
-//   if (entries[0].intersectionRatio <= 0) return;
-// });
-// onMounted(() => {
-//   intersectionObserver.observe(footerObserver.value!);
-// });
-// onUnmounted(() => {
-//   intersectionObserver.unobserve(footerObserver.value!);
-// });
 
 const onPlus = () => {
   createRoom({
@@ -324,6 +124,18 @@ const onPlus = () => {
   });
   console.log('onPlus');
 };
+
+onActivated(() => {
+  console.log('scrollerRef', scrollerRef.value?.scrollToItem);
+  setTimeout(() => {
+    console.log('scroll to item');
+    scrollerRef.value.scrollToPosition(0);
+  }, 0);
+  fetchLatest({
+    caller: 'onActivated',
+  });
+  // fetchHistorical().then(res => {});
+});
 </script>
 
 <template>
@@ -335,47 +147,29 @@ const onPlus = () => {
             v-model:value="keyword"
             :bordered="true"
             :allowClear="true"
-            :placeholder="`${t('Search')}:${record.minMessageId}`"
+            :placeholder="`${t('Search')}:${minMessageId}`"
             style="width: 100%"
           >
             <template #addonAfter>
               <div class="plus-label"><Plus @click="onPlus" class="svg-icon cursor-pointer" /></div>
             </template>
           </a-input>
-
-          <!-- <a-input-search
-            :bordered="true"
-            :allowClear="true"
-            v-model:value="keyword"
-            :placeholder="`${t('Search')}:${record.minMessageId}`"
-            style="width: 100%"
-            @search="onSearch"
-          /> -->
         </a-space>
       </div>
-      <!-- <scroll-view v-if="keyword.length != 0">
-        <div>搜索：{{ keyword }}</div>
-      </scroll-view> -->
-      <scroll-view
-        class="session-scroll-view"
-        ref="scroll"
-        @ps-scroll-y="onScroll"
-        @ps-y-reach-end="onReachEnd"
-        @ps-y-reach-start="onReachStart"
+
+      <div class="session-list"></div>
+      <RecycleScroller
+        ref="scrollerRef"
+        class="scroller"
+        :items="displayItems"
+        :item-size="64"
+        key-field="id"
+        @scroll-start="onReachStart"
+        @scroll-end="onReachEnd"
       >
-        <div class="session-list">
-          <!-- <div
-            ref="session"
-            v-for="(item, index) in ret.items"
-            :key="item.id"
-            @click="navToChat(item)"
-            class="session-item-wraper"
-          > -->
+        <template v-slot="{ item, index }: { item: SessionItemDto, index: number }">
           <SessionItem
-            v-for="(item, index) in displayItems"
-            :key="item.id"
             :id="item.id"
-            :entity="store.getSessionUnit(item.id!)"
             :index="index"
             :active="acitveSessionUnitId == item.id"
             :flash="flashSessionUnitId == item.id"
@@ -383,14 +177,10 @@ const onPlus = () => {
             @dragend="dragend(item)"
             @contextmenu="showContextMenuForSession"
           />
-          <!-- </div> -->
-          <Loading v-if="ret.isPosting && !ret.isEof" :height="64" />
-        </div>
-        <div ref="footerObserver"></div>
-      </scroll-view>
+        </template>
+      </RecycleScroller>
     </aside>
 
-    <!-- <p>{{ router }}</p> -->
     <main class="content">
       <!-- <router-view></router-view> -->
       <router-view v-slot="{ Component, route }">
@@ -414,6 +204,40 @@ const onPlus = () => {
   border-inline-end-width: 1px;
   outline: 0;
   border: none;
+}
+
+.scroller::-webkit-scrollbar {
+  width: 1px;
+  height: 6px;
+  /* padding: 10px; */
+  transition: all 0.3s linear;
+  background: transparent;
+  /* display: none; */
+  /* position: absolute; */
+}
+
+.scroller::-webkit-scrollbar-track {
+  border-radius: 6px;
+  background: rgba(169, 169, 169, 0);
+  -webkit-box-shadow: inset 0 0 5px rgba(0, 0, 0, 0);
+  display: none;
+}
+/* 滚动条滑块 */
+.scroller::-webkit-scrollbar-thumb {
+  border-radius: 6px;
+  background: rgba(212, 212, 212, 0);
+  -webkit-box-shadow: inset 0 0 10px rgba(0, 0, 0, 0);
+  transition: all 0.3s linear;
+  /* display: none; */
+}
+.scroller:hover::-webkit-scrollbar {
+  display: unset;
+}
+.scroller:hover::-webkit-scrollbar-track {
+  display: unset;
+}
+.scroller:hover::-webkit-scrollbar-thumb {
+  background: rgba(163, 163, 163, 0.232);
 }
 
 .page-session {
@@ -467,17 +291,4 @@ const onPlus = () => {
   flex-direction: column;
   width: 100%;
 }
-/* .session-item-wraper {
-  position: relative;
-}
-.session-item-wraper::after {
-  content: '';
-  height: 1px;
-  left: 72px;
-  right: 0px;
-  position: absolute;
-  transform: scaleY(0.5);
-  overflow: hidden;
-  background-color:rgba(223, 223, 223, 0.41);
-} */
 </style>

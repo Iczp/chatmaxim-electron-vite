@@ -42,7 +42,7 @@ export const connect = (wsUrl: string): any => {
   const heartbeatStart = () => {
     if (heartbeatRunning && client.readyState === client.OPEN) {
       var number = new Date().getTime(); // Math.round(Math.random() * 0xffffff);
-      client.send(number.toString());
+      client.send(`ping ${number}`);
       setTimeout(heartbeatStart, 3000);
     }
   };
@@ -65,7 +65,7 @@ export const connect = (wsUrl: string): any => {
   client.onmessage = (e: any) => {
     // setState(ConnectionState.Ok);
     if (typeof e.data === 'string') {
-      if (/^\d+$/gi.test(e.data)) {
+      if (/^ping \d+$/gi.test(e.data)) {
         // console.log(`Received number:${e.data}`);
       } else {
         try {

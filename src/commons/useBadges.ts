@@ -3,8 +3,11 @@ import { useImStore } from '../stores/im';
 
 export const useBadges = () => {
   const store = useImStore();
-  store.getChatObjectByCurrentUser();
-  store.getBadgeByCurrentUser();
+
+  const refresh = () => {
+    store.getChatObjectByCurrentUser();
+    store.getBadgeByCurrentUser();
+  };
 
   const badge = computed(() => store.badge);
   const badgeItems = computed(() =>
@@ -21,5 +24,8 @@ export const useBadges = () => {
       };
     }),
   );
-  return { badge, badgeItems };
+
+  refresh();
+
+  return { badge, badgeItems, refresh };
 };

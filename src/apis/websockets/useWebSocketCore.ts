@@ -8,16 +8,18 @@ import { useEventListener } from '@vueuse/core';
 
 export type WebSocketStatus = 'OPEN' | 'CONNECTING' | 'CLOSED';
 
-const DEFAULT_PING_MESSAGE = 'ping';
+export type MsgType = string | ArrayBuffer | Blob;
+export type MsgFn = () => MsgType;
+const DEFAULT_PING_MESSAGE = (): MsgType => `ping ${new Date().getTime()}`;
 
-export type UrlType = string | URL | undefined;
 export interface UseWebSocketOptions {
-  url: any; //string | URL | (() => string | URL) | Promise<string | URL>;
+  // url: any; //string | URL | (() => string | URL) | Promise<string | URL>;
   onReady: (retried: number) => Promise<string | URL | undefined>;
   onConnected?: (ws: WebSocket) => void;
   onDisconnected?: (ws: WebSocket, event: CloseEvent) => void;
   onError?: (ws: WebSocket, event: Event) => void;
   onMessage?: (ws: WebSocket, event: MessageEvent) => void;
+  onPing?: (content: string) => void;
 
   /**
    * Send heartbeat for every x milliseconds passed
@@ -32,7 +34,7 @@ export interface UseWebSocketOptions {
          *
          * @default 'ping'
          */
-        message?: string | ArrayBuffer | Blob;
+        message?: MsgType | MsgFn;
 
         /**
          * Interval, in milliseconds
@@ -131,7 +133,7 @@ export interface UseWebSocketReturn<T> {
    * @param data
    * @param useBuffer when the socket is not yet open, store the data into the buffer and sent them one connected. Default to true.
    */
-  send: (data: string | ArrayBuffer | Blob, useBuffer?: boolean) => boolean;
+  send: (data: MsgType, useBuffer?: boolean) => boolean;
 
   /**
    * Reference to the WebSocket instance.
@@ -175,7 +177,7 @@ export function useWebSocketCore<Data = any>(
   let explicitlyClosed = false;
   let retried = 0;
 
-  let bufferedData: (string | ArrayBuffer | Blob)[] = [];
+  let bufferedData: MsgType[] = [];
 
   let pongTimeoutWait: ReturnType<typeof setTimeout> | undefined;
 
@@ -201,7 +203,7 @@ export function useWebSocketCore<Data = any>(
     wsRef.value = undefined;
   };
 
-  const send = (data: string | ArrayBuffer | Blob, useBuffer = true) => {
+  const send = (data: MsgType, useBuffer = true) => {
     if (!wsRef.value || status.value !== 'OPEN') {
       if (useBuffer) bufferedData.push(data);
       return false;
@@ -211,15 +213,31 @@ export function useWebSocketCore<Data = any>(
     return true;
   };
 
+  const _retry = () => {
+    if (!explicitlyClosed && options.autoReconnect) {
+      const { retries = -1, delay = 1000, onFailed } = resolveNestedOptions(options.autoReconnect);
+      retried += 1;
+
+      if (typeof retries === 'number' && (retries < 0 || retried < retries))
+        setTimeout(_init, delay);
+      else if (typeof retries === 'function' && retries()) setTimeout(_init, delay);
+      else onFailed?.();
+    }
+  };
+
   const _init = async () => {
     if (explicitlyClosed) {
       console.warn('explicitlyClosed', explicitlyClosed);
       return;
     }
 
+    try {
+    } catch (err) {}
     const url = await onReady(retried);
+
     if (typeof url === 'undefined') {
       console.warn('url undefined', url);
+      _retry();
       return;
     }
     console.warn('connect url', url);
@@ -237,20 +255,7 @@ export function useWebSocketCore<Data = any>(
     ws.onclose = ev => {
       status.value = 'CLOSED';
       onDisconnected?.(ws, ev);
-
-      if (!explicitlyClosed && options.autoReconnect) {
-        const {
-          retries = -1,
-          delay = 1000,
-          onFailed,
-        } = resolveNestedOptions(options.autoReconnect);
-        retried += 1;
-
-        if (typeof retries === 'number' && (retries < 0 || retried < retries))
-          setTimeout(_init, delay);
-        else if (typeof retries === 'function' && retries()) setTimeout(_init, delay);
-        else onFailed?.();
-      }
+      _retry();
     };
 
     ws.onerror = e => {
@@ -260,10 +265,9 @@ export function useWebSocketCore<Data = any>(
     ws.onmessage = (e: MessageEvent) => {
       if (options.heartbeat) {
         resetHeartbeat();
-        const { message = DEFAULT_PING_MESSAGE } = resolveNestedOptions(options.heartbeat);
-        if (e.data === message) return;
+        // const { message = DEFAULT_PING_MESSAGE } = resolveNestedOptions(options.heartbeat);
+        // if (e.data === message) return;
       }
-
       data.value = e.data;
       onMessage?.(ws!, e);
     };
@@ -278,7 +282,10 @@ export function useWebSocketCore<Data = any>(
 
     const { pause, resume } = useIntervalFn(
       () => {
-        send(message, false);
+        const content = typeof message === 'function' ? (message as MsgFn)() : message;
+
+        send(content, false);
+        options.onPing?.(content as string);
         if (pongTimeoutWait != null) return;
         pongTimeoutWait = setTimeout(() => {
           // auto-reconnect will be trigger with ws.onclose()

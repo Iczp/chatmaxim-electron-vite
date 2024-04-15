@@ -4,11 +4,19 @@ import { ConnectionState, ConnectionStateText } from './ConnectionState';
 import { ReceivedDto } from './ReceivedDto';
 import { useWebSocketCore } from './useWebSocketCore';
 import { TicketService } from './TicketService';
-import { Ref } from 'vue';
+import { ref } from 'vue';
 
 export let connectionState: ConnectionState = ConnectionState.None;
-
-export const useWebSocketKit = () => {
+export type NetDelay = {
+  index?: number;
+  delay?: number;
+  creationTime: number;
+  receivedTime?: number;
+};
+export const useWebSocketKit = ({ onConnected }: { onConnected?: (ws: WebSocket) => void }) => {
+  const pingMap = ref(new Map<string, NetDelay>());
+  const pingTime = ref<Date>();
+  const netDelay = ref(-1);
   const setState = (state: ConnectionState) => {
     connectionState = state;
     console.log('set connectionState', state, ConnectionStateText[state]);
@@ -16,69 +24,93 @@ export const useWebSocketKit = () => {
     store.set(state);
   };
 
-  const onMessage = (ws: WebSocket, e: MessageEvent<any>) => {
-    if (typeof e.data === 'string') {
-      if (/^\d+$/gi.test(e.data)) {
-        // console.log(`Received number:${e.data}`);
-      } else {
-        try {
-          console.log(`WebSocket Received:`, e.data);
-          const data = JSON.parse(e.data) as ReceivedDto<any>;
-          // emit self window
-          ipcRenderer.emit('websocket', {}, { payload: e.data });
-          // sent to remote window
-          ipcRenderer.invoke('websocket', e.data);
-        } catch (error) {
-          console.error(`data:${error}`);
-        }
-      }
-    }
-  };
-
-  const onConnected = (ws: WebSocket) => {};
-
-  const onDisconnected = (ws: WebSocket, event: CloseEvent) => {};
-
-  const onError = (ws: WebSocket, event: Event) => {};
-
-  const onReady = async (retried: number): Promise<string | URL | undefined> => {
-    try {
-      const res = await TicketService.generate({});
-      console.log('TicketService.generate', res);
-      setState(ConnectionState.SignOk);
-      return res.webSocketUrl;
-    } catch (err) {
-      console.log('TicketService.generate error', err);
-      setState(ConnectionState.SignFail);
-
-      setTimeout(() => {
-        
-      }, 1000);
-    }
-  };
-
-  const { status, data, close } = useWebSocketCore({
-    onReady,
-    url: async () => {
-      try {
-        const res = await TicketService.generate({});
-        console.log('TicketService.generate', res);
-        setState(ConnectionState.SignOk);
-        return res.webSocketUrl;
-      } catch (err) {
-        console.log('TicketService.generate error', err);
-        setState(ConnectionState.SignFail);
-      }
+  const { status, data, close, send, ws } = useWebSocketCore({
+    autoReconnect: {
+      // retries: 10,
+      delay: 1000,
+      onFailed() {
+        console.warn('useWebSocketKit onFailed');
+      },
     },
-    autoReconnect: true,
     heartbeat: {
-      message: 'ping',
+      message: () => `ping ${new Date().getTime()}`,
       interval: 1000,
       pongTimeout: 1000,
     },
-    onMessage,
-    onConnected,
-    onDisconnected,
-    onError,
+    onReady: async (retried: number): Promise<string | URL | undefined> => {
+      console.log('useWebSocketKit onReady', retried);
+      try {
+        setState(ConnectionState.Signing);
+        const res = await TicketService.generate({});
+        console.log('useWebSocketKit TicketService.generate', res);
+        setState(ConnectionState.SignOk);
+        return res.webSocketUrl;
+      } catch (err) {
+        console.log('useWebSocketKit TicketService.generate error', err);
+        setState(ConnectionState.SignFail);
+      }
+    },
+    onPing(content) {
+      if (pingTime.value) {
+        // console.log(`useWebSocketKit ping:${(new Date().getTime() - pingTime.value.getTime()) / 1000}s`);
+      }
+      // console.log(`useWebSocketKit onPing:${content}`);
+      pingTime.value = new Date();
+      pingMap.value.set(content, {
+        creationTime: new Date().getTime(),
+      });
+    },
+    onMessage: (ws: WebSocket, e: MessageEvent<any>) => {
+      // setState(ConnectionState.Ok);
+      if (typeof e.data !== 'string') {
+        return;
+      }
+      if (/^ping \d+$/gi.test(e.data)) {
+        const obj = pingMap.value.get(e.data);
+        if (obj) {
+          obj.receivedTime = new Date().getTime();
+          netDelay.value = obj.receivedTime - obj.creationTime;
+          obj.delay = netDelay.value;
+          // console.log('useWebSocketKit Received ping:', e.data, pingMap.value);
+        }
+        // console.log(`useWebSocketKit Received ping number:${e.data}`);
+        return;
+      }
+      // object message
+      try {
+        console.log(`useWebSocketKit WebSocket Received:`, e.data);
+        const data = JSON.parse(e.data) as ReceivedDto<any>;
+        // emit self window
+        ipcRenderer.emit('websocket', {}, { payload: e.data });
+        // sent to remote window
+        ipcRenderer.invoke('websocket', e.data);
+      } catch (error) {
+        console.error(`data:${error}`);
+      }
+    },
+    onConnected: (ws: WebSocket) => {
+      console.log('useWebSocketKit onConnected', ws);
+      setState(ConnectionState.Ok);
+      onConnected?.(ws);
+    },
+    onDisconnected: (ws: WebSocket, event: CloseEvent) => {
+      console.log('useWebSocketKit onDisconnected', ws, event);
+      setState(ConnectionState.Close);
+    },
+    onError: (ws: WebSocket, event: Event) => {
+      console.log('onError', ws, event);
+    },
   });
+
+  return {
+    connectionState,
+    pingTime,
+    netDelay,
+    data,
+    status,
+    close,
+    send,
+    open,
+    ws,
+  };
 };

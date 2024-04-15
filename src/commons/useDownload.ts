@@ -33,24 +33,24 @@ export const useDownload = () => {
         blobUrl.value = cacheItem.objectUrl;
         blob.value = cacheItem.blob;
         percent.value = 100;
-        console.log(`downloadFile is loaded: ${blobUrl.value}`);
+        // console.log(`downloadFile is loaded: ${blobUrl.value}`);
         resolve(cacheItem);
         return;
         // url = cacheItem.objectUrl;
       }
       isPending.value = true;
-      console.log(`downloadFile: ${url}`);
+      // console.log(`downloadFile: ${url}`);
 
       FileService.download({
         url,
         onDownloadProgress(progressEvent) {
-          console.log('onDownloadProgress', progressEvent);
+          // console.log('onDownloadProgress', progressEvent);
           percent.value = Math.floor((progressEvent.progress || 0) * 100);
           onDownloadProgress.value?.(progressEvent);
         },
       })
         .then(res => {
-          console.log('file', res);
+          // console.log('file', res);
           if (!cacheItem) {
             const objUrl = useObjectUrl(res);
             blobUrl.value = objUrl.value;
@@ -62,10 +62,10 @@ export const useDownload = () => {
             objectUrl: blobUrl.value!,
             date: new Date(),
           };
-          console.log('blobItem', blobItem);
+          // console.log('blobItem', blobItem);
           blobStore.set(cacheKey, blobItem);
           resolve(blobItem);
-          console.log('blobStore', blobStore);
+          // console.log('blobStore', blobStore);
         })
         .catch(err => {
           blobUrl.value = undefined;
