@@ -19,17 +19,16 @@ import { router, chatHistorys } from '../routes';
 import { message } from 'ant-design-vue';
 import { BadgeDto } from '../apis/dtos';
 import { useBadges } from '../commons/useBadges';
-import { useWebsocket } from '../commons/useWebsocket';
 import { setWindow } from '../ipc/setWindow';
 import { openAppSettings } from '../ipc/openAppSettings';
 import { useI18n } from 'vue-i18n';
 import AudioPlayer from '../components/AudioPlayer.vue';
 import { MusicLib, MusicQueue, MusicNote, MusicLyrics } from '../icons';
 
-import { useVueWebSocket } from '../apis/websockets/useVueWebSocket';
+// import { useVueWebSocket } from '../apis/websockets/useVueWebSocket';
 
 import { useWebSocketKit } from '../apis/websockets/useWebSocketKit';
-
+import { useWebsocketUi } from '../apis/websockets/useWebsocketUi';
 const { t } = useI18n();
 const route = useRoute();
 // const { connectionText, connectionState, retryCount } = useWebsocket();
@@ -136,7 +135,7 @@ const getKey = (route: RouteLocationNormalizedLoaded, component: any): string | 
             @click="goto('/drawing')"
             :class="{ active: route.name == 'drawing' }"
           >
-            <MusicLib class="svg-icon s28" />
+            <MusicLib class="svg-icon" />
             <!-- <MusicQueue class="svg-icon s28" /> -->
             <!-- <MusicNote class="svg-icon s28" /> -->
 
@@ -221,6 +220,7 @@ const getKey = (route: RouteLocationNormalizedLoaded, component: any): string | 
   justify-content: center;
   /* background-color: rgba(0, 128, 255, 0.427); */
   cursor: pointer;
+  font-size: 16px;
 }
 
 .nav-item.active {
@@ -278,3 +278,4 @@ const getKey = (route: RouteLocationNormalizedLoaded, component: any): string | 
   height: 100%;
 }
 </style>
+../commons/useWebsocketUi../apis/websockets/useWebsocketUi

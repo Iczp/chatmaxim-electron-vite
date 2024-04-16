@@ -52,7 +52,7 @@ ipcRenderer.on(
 );
 
 ipcRenderer.on('window-event', (_, args) => {
-  console.log('[window-event]:', _, args);
+  // console.log('[window-event]:', _, args);
   const winStore = useWindowStore();
   winStore.handle(args);
 });

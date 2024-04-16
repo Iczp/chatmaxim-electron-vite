@@ -12,7 +12,7 @@ const props = defineProps<{
   thumb?: boolean;
 }>();
 const objectType = computed(() => props.entity?.objectType);
-const svgClass = computed(() => '' || 'svg-icon svg-icon-' + (Number(props.size) || 48) / 2);
+const svgClass = computed(() => 'svg-icon');
 
 // File/831C11D5-A3DF-6943-E20D-3A10F706CCA7
 
@@ -33,12 +33,14 @@ const src = computed(() =>
     :object-type="objectType"
   >
     <template #icon>
-      <Group v-if="objectType == ChatObjectTypeEnums.Room" :class="svgClass" />
-      <Groups v-else-if="objectType == ChatObjectTypeEnums.Square" :class="svgClass" />
-      <SmartToy v-else-if="objectType == ChatObjectTypeEnums.Robot" :class="svgClass" />
-      <Services v-else-if="objectType == ChatObjectTypeEnums.Official" :class="svgClass" />
-      <ShoppingBag v-else-if="objectType == ChatObjectTypeEnums.ShopKeeper" :class="svgClass" />
-      <Person v-else :class="svgClass" />
+      <div class="avatar-icon">
+        <Group v-if="objectType == ChatObjectTypeEnums.Room" :class="svgClass" />
+        <Groups v-else-if="objectType == ChatObjectTypeEnums.Square" :class="svgClass" />
+        <SmartToy v-else-if="objectType == ChatObjectTypeEnums.Robot" :class="svgClass" />
+        <Services v-else-if="objectType == ChatObjectTypeEnums.Official" :class="svgClass" />
+        <ShoppingBag v-else-if="objectType == ChatObjectTypeEnums.ShopKeeper" :class="svgClass" />
+        <Person v-else :class="svgClass" />
+      </div>
     </template>
   </a-avatar>
 </template>
@@ -58,7 +60,15 @@ const src = computed(() =>
   color: var(--avatar-color);
   justify-content: center;
   align-items: center;
+
   /* font-size: unset !important; */
-  /* font-size: 12px; */
+  /* font-size: 16px !important; */
+}
+.avatar-icon {
+  display: flex;
+  align-items: center;
+  font-size: 16px;
+  justify-content: center;
+  flex: 1;
 }
 </style>

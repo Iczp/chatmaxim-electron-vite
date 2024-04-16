@@ -6,6 +6,7 @@ import { useWebSocketCore } from './useWebSocketCore';
 import { TicketService } from './TicketService';
 import { ref } from 'vue';
 import { eventBus } from '../../commons/eventBus';
+import { useWebsocketUi } from './useWebsocketUi';
 
 export let connectionState: ConnectionState = ConnectionState.None;
 export type NetDelay = {
@@ -14,16 +15,32 @@ export type NetDelay = {
   creationTime: number;
   receivedTime?: number;
 };
-export const useWebSocketKit = ({ onConnected }: { onConnected?: (ws: WebSocket) => void }) => {
+export const useWebSocketKit = ({
+  ui = true,
+  onConnected,
+}: {
+  ui?: boolean;
+  onConnected?: (ws: WebSocket) => void;
+}) => {
+  const websocketStore = useWebsocketStore();
   const pingMap = ref(new Map<string, NetDelay>());
   const pingTime = ref<Date>();
   const netDelay = ref(-1);
   const setState = (state: ConnectionState) => {
     connectionState = state;
     console.log('set connectionState', state, ConnectionStateText[state]);
-    const store = useWebsocketStore();
-    store.set(state);
+
+    websocketStore.set(state);
   };
+
+  const setNetDelay = (delay: number) => {
+    netDelay.value = delay;
+    websocketStore.setNetDelay(delay);
+  };
+
+  if (ui) {
+    useWebsocketUi();
+  }
 
   const { status, data, close, send, ws } = useWebSocketCore({
     autoReconnect: {
@@ -58,7 +75,7 @@ export const useWebSocketKit = ({ onConnected }: { onConnected?: (ws: WebSocket)
       // console.log(`useWebSocketKit onPing:${content}`);
       pingTime.value = new Date();
       pingMap.value.set(content, {
-        creationTime: new Date().getTime(),
+        creationTime: pingTime.value.getTime(),
       });
     },
     onMessage: (ws: WebSocket, e: MessageEvent<any>) => {
@@ -70,8 +87,9 @@ export const useWebSocketKit = ({ onConnected }: { onConnected?: (ws: WebSocket)
         const obj = pingMap.value.get(e.data);
         if (obj) {
           obj.receivedTime = new Date().getTime();
-          netDelay.value = obj.receivedTime - obj.creationTime;
-          obj.delay = netDelay.value;
+          const delay = obj.receivedTime - obj.creationTime;
+          obj.delay = delay;
+          setNetDelay(delay);
           // console.log('useWebSocketKit Received ping:', e.data, pingMap.value);
         }
         // console.log(`useWebSocketKit Received ping number:${e.data}`);
@@ -92,13 +110,13 @@ export const useWebSocketKit = ({ onConnected }: { onConnected?: (ws: WebSocket)
     onConnected: (ws: WebSocket) => {
       console.log('useWebSocketKit onConnected', ws);
       setState(ConnectionState.Ok);
-      eventBus.emit('connected')
+      eventBus.emit('connected');
       onConnected?.(ws);
     },
     onDisconnected: (ws: WebSocket, event: CloseEvent) => {
       console.log('useWebSocketKit onDisconnected', ws, event);
       setState(ConnectionState.Close);
-      eventBus.emit('disconnected')
+      eventBus.emit('disconnected');
     },
     onError: (ws: WebSocket, event: Event) => {
       console.log('onError', ws, event);

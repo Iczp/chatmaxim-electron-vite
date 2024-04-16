@@ -120,19 +120,19 @@ const onBlur = (e: any) => {
     end: el.selectionEnd,
   };
   // el?.focus();
-  console.log('onBlur', el.selectionStart, el.selectionEnd, e);
+  // console.log('onBlur', el.selectionStart, el.selectionEnd, e);
 };
 const onFocus = (e: any) => {
   const el = (textareaRef.value = e.target as HTMLInputElement);
-  console.log('onFocus', el.selectionStart, el.selectionEnd, e);
+  // console.log('onFocus', el.selectionStart, el.selectionEnd, e);
 };
 const onInputChange = (e: any) => {
   const el = (textareaRef.value = e.target as HTMLInputElement);
-  console.log('onInputChange', el.selectionStart, el.selectionEnd);
+  // console.log('onInputChange', el.selectionStart, el.selectionEnd);
 };
 
 const onTextChange = (...e: any) => {
-  console.log('onTextChange', ...e);
+  // console.log('onTextChange', ...e);
 };
 
 const onTextSelect = (e: any) => {
