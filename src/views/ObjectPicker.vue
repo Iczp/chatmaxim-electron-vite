@@ -1,6 +1,5 @@
 <script setup lang="ts">
 import { ref, toRaw, watch } from 'vue';
-import { generateTickect } from '../apis/websockets';
 import { ContactsDto } from '../apis/dtos';
 import { ChatObjectTypeEnumText, ChatObjectTypeEnums } from '../apis/enums';
 import { useTitle } from '@vueuse/core';
@@ -115,15 +114,6 @@ onBeforeRouteLeave((to, from) => {
 onBeforeRouteUpdate((to, from) => {
   console.log('onBeforeRouteUpdate', to, from);
 });
-
-const count = ref(0);
-const onClick = () => {
-  count.value++;
-  generateTickect();
-  // connect();
-};
-
-const keyword = ref('');
 
 const onSearch = () => {};
 

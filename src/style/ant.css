@@ -17,7 +17,7 @@
 
 /* ant-modal */
 .ant-modal-wrap {
-  -webkit-app-region: drag;
+  /* -webkit-app-region: drag; */
 }
 
 .ant-modal-content {

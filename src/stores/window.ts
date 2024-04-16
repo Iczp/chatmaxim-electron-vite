@@ -45,6 +45,17 @@ export const useWindowStore = defineStore('window', {
   }),
   getters: {
     winId: state => (): number | undefined => state.windowId,
+    /**
+     * 是否单独立聊天窗口
+     * @param state
+     * @returns
+     */
+    isSeparatedChat:
+      state =>
+      (name?: string): boolean => {
+        const windowName = name || state.name || '';
+        return /^chat-.+$/.test(windowName);
+      },
   },
   actions: {
     isMain(callback?: () => void) {

@@ -28,22 +28,28 @@ watch(percent, p => {
 });
 
 const showError = () => {
-  Modal.confirm({
+  const modal = Modal.confirm({
     title: '发送失败',
     icon: createVNode(ExclamationCircleOutlined),
     content: props.entity?.error,
+    maskClosable: true,
     okText: '重新发送',
     okType: 'danger',
     cancelText: '删除',
+    closable: true,
     onOk() {
       console.log('OK');
       emits('resend', props.entity);
+      modal.destroy();
+      return Promise.resolve();
     },
     onCancel() {
       console.log('Cancel');
       emits('remove', props.entity);
+      modal.destroy();
+      // Modal.destroyAll();
     },
-    class: 'send-error',
+    class: 'send-error no-drag',
   });
   // message.error({ content: props.entity?.error, key: 'error' });
 };
@@ -88,6 +94,9 @@ const format = (number: number) => `发送中 ${number}%`;
 }
 .error {
   color: red;
+  cursor: pointer;
+}
+.send-error {
 }
 :deep(.send-error .ant-btn) {
   font-size: 12px;

@@ -278,4 +278,3 @@ const getKey = (route: RouteLocationNormalizedLoaded, component: any): string | 
   height: 100%;
 }
 </style>
-../commons/useWebsocketUi../apis/websockets/useWebsocketUi

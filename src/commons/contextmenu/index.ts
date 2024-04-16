@@ -208,14 +208,17 @@ export const onContentClick = ({
   } else if (isImageOfMessage(entity)) {
     openViewer(`push:/message-viewer/${entity.id}/image`);
     return;
-  }else if (isCodeOfMessage(entity)) {
+  } else if (isCodeOfMessage(entity)) {
     openViewer(`push:/message-viewer/${entity.id}/code`);
     return;
   }
 
-
-  const el = event?.target as HTMLElement;
-  const classNames = el.className.split(' ');
+  const el = event?.target as HTMLElement | undefined;
+  console.log('el', el?.className);
+  if (!el || typeof el?.className != 'string') {
+    return;
+  }
+  const classNames = el?.className?.split(' ') || [];
   // console.log('isUrl', isUrl);
   console.log('classNames', el, el.title, classNames);
 

@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { WatchStopHandle, nextTick, onMounted, ref } from 'vue';
+import { nextTick, onMounted, ref } from 'vue';
 import {
   UploadOutlined,
   MehOutlined,
@@ -24,23 +24,12 @@ import { computed } from 'vue';
 const windowStore = useWindowStore();
 const colorScheme = computed(() => windowStore.colorScheme as 'dark' | 'light' | 'auto');
 import { useTextSelection } from '@vueuse/core';
-import { reactive } from 'vue';
 import { MessageInput, TextContentDto } from '../../../apis/dtos';
 import { MessageTypeEnums } from '../../../apis/enums';
 import { MessageContent } from '../../../apis/dtos/message/messageContent';
-
+import { FormType, useClipboradInput } from '../commons/useClipboradInput';
 import { screenshots } from '../../../ipc/screenshots';
 
-import { clipboard } from 'electron';
-import {
-  getClipboardFilePaths,
-  getClipboradFiles,
-  getClipboradImage,
-} from '../../../ipc/clipboardHelper';
-import { useShortcutStore } from '../../../stores/shortcut';
-import { watch } from 'vue';
-import { onActivated } from 'vue';
-import { onDeactivated } from 'vue';
 const { t } = useI18n();
 
 const props = withDefaults(
@@ -77,7 +66,7 @@ const emits = defineEmits<{
   open: [
     {
       files: File[];
-      from: 'filesystem' | 'screenshots' | 'drop' | 'clipboard';
+      from: FormType;
     },
   ];
 }>();
@@ -204,9 +193,7 @@ const appendText = (value: string, focus?: boolean) => {
     return;
   }
   const text = inputValue.value;
-
   const { start, end } = selection.value;
-
   let newValue = '';
   if (start != null) {
     newValue += text.substring(0, start!);
@@ -226,11 +213,11 @@ const appendText = (value: string, focus?: boolean) => {
   // }
 };
 // event callback
-function onSelectEmoji(emoji: any) {
+const onSelectEmoji = (emoji: any) => {
   console.log(emoji);
   appendText(emoji.i, true);
   hide();
-}
+};
 
 const groupNames = {
   smileys_people: '微笑与人',
@@ -272,42 +259,13 @@ const onSrceenshot = () => {
     });
 };
 
-const shortcutStore = useShortcutStore();
-
-let stopShortcutWatch: WatchStopHandle | undefined;
-let startShortcutWatch = () => {
-  stopShortcutWatch = watch(
-    () => shortcutStore['CommandOrControl+V'],
-    ticks => {
-      console.log('shortcut', ticks);
-      const imgFile = getClipboradImage(`${t('clipboard:image')}-${new Date().getTime()}.png`);
-      if (imgFile) {
-        emits('open', { files: [imgFile], from: 'screenshots' });
-        return;
-      }
-      getClipboradFiles().then(files => {
-        if (files.length == 0) {
-          console.warn('getClipboradFiles', 'files.length==0');
-          return;
-        }
-        emits('open', { files: files, from: 'clipboard' });
-      });
-      // // 调用函数以获取剪贴板上的文件路径
-      // getClipboardFilePaths();
-    },
-  );
-};
-
-onActivated(() => {
-  startShortcutWatch();
-});
-onDeactivated(() => {
-  stopShortcutWatch?.call(this);
+useClipboradInput({
+  clipboardImageName: () => `${t('clipboard:image')}-${new Date().getTime()}.png`,
+  change: ({ files, from }) => {
+    emits('open', { files, from });
+  },
 });
 
-const onFunction = () => {
-  console.log('onFunction');
-};
 defineExpose({
   clear,
   send,
