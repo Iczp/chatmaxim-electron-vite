@@ -2,7 +2,7 @@ import { computed, ref, watch } from 'vue';
 import { SessionUnitOwnerDto } from '../../../apis';
 import { usePayload } from '../../../commons/usePayload';
 import { formatUrl } from '../../../commons/utils';
-import { useImStore } from '../../../stores/im';
+import { useImStore } from '../../../stores/imStore';
 export type ChatSettingsPayload = {
   sessionUnit: SessionUnitOwnerDto;
   memberCount?: number;

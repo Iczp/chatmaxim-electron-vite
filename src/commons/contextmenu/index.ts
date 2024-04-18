@@ -9,7 +9,7 @@ import { showContextMenuForMessageAvatar } from './showContextMenuForMessageAvat
 import { showContextMenuForMessageContent } from './showContextMenuForMessageContent';
 import { showContextMenuForMessageSelect } from './showContextMenuForMessageSelect';
 import { setProfile } from '../../ipc/setProfile';
-import { useWindowStore } from '../../stores/window';
+import { useWindowStore } from '../../stores/windowStore';
 import { openChildWindow } from '../../ipc/openChildWindow';
 import { env } from '../../env';
 import { MessageTypeEnums } from '../../apis/enums';

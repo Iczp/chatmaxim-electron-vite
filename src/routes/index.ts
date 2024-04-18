@@ -1,6 +1,6 @@
 import { createRouter, createWebHashHistory } from 'vue-router';
 import { isLogined } from '../apis/auth/TokenController';
-import { useWindowStore } from '../stores/window';
+import { useWindowStore } from '../stores/windowStore';
 import { setWindow } from '../ipc/setWindow';
 import { routes } from './routes';
 

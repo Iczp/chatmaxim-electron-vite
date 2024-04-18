@@ -17,7 +17,7 @@ import Avatar from '../../components/Avatar.vue';
 import { onActivated, toRaw } from 'vue';
 import Loading from '../../components/Loading.vue';
 import { sessionRequest } from '../../ipc/sessionRequest';
-import { useImStore } from '../../stores/im';
+import { useImStore } from '../../stores/imStore';
 import EmptyData from '../../components/EmptyData.vue';
 const { t } = useI18n();
 
@@ -205,3 +205,4 @@ const add = (item: ChatObjectDto) => {
   min-height: 22px;
 }
 </style>
+../../stores/imStore

@@ -8,8 +8,8 @@ import {
 } from './utils';
 import { SessionItemDto, SessionUnitOwnerDto } from '../apis/dtos';
 import { MessageTypeEnums } from '../apis/enums';
-import { useImStore } from '../stores/im';
-import { useWindowStore } from '../stores/window';
+import { useImStore } from '../stores/imStore';
+import { useWindowStore } from '../stores/windowStore';
 import { useRemoteStore } from './useRemoteStore';
 import { usePayload } from './usePayload';
 

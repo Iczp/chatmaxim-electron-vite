@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { computed, watch, ref, h, onMounted, onActivated, onDeactivated } from 'vue';
-import { useWindowStore } from '../../stores/window';
+import { useWindowStore } from '../../stores/windowStore';
 import { SessionUnitDetailDto, SessionUnitSenderDto } from '../../apis/dtos';
 import ChatObject from '../../components/ChatObject.vue';
 import LabelBox from '../../components/LabelBox.vue';
@@ -143,3 +143,4 @@ onMounted(() => {
   margin: 0 4px;
 }
 </style>
+../../stores/useWindowStore../../stores/windowStore

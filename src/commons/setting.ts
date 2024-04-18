@@ -1,7 +1,7 @@
 import { message } from 'ant-design-vue';
 import { SessionUnitOwnerDto, SettingService } from '../apis';
 
-import { useImStore } from '../stores/im';
+import { useImStore } from '../stores/imStore';
 
 const store = useImStore();
 

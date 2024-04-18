@@ -1,5 +1,5 @@
 import { ipcRenderer } from 'electron';
-import { useWebsocketStore } from '../../stores/websocket';
+import { useWebsocketStore } from '../../stores/websocketStore';
 import { ConnectionState, ConnectionStateText } from './ConnectionState';
 import { ReceivedDto } from './ReceivedDto';
 import { useWebSocketCore } from './useWebSocketCore';
@@ -29,7 +29,6 @@ export const useWebSocketKit = ({
   const setState = (state: ConnectionState) => {
     connectionState = state;
     console.log('set connectionState', state, ConnectionStateText[state]);
-
     websocketStore.set(state);
   };
 
@@ -45,7 +44,7 @@ export const useWebSocketKit = ({
   const { status, data, close, send, ws } = useWebSocketCore({
     autoReconnect: {
       // retries: 10,
-      delay: 1000,
+      delay: 1000 * 30,//30s
       onFailed() {
         console.warn('useWebSocketKit onFailed');
       },

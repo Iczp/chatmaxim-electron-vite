@@ -3,7 +3,7 @@ import { cwd } from 'node:process';
 import { ipcRenderer } from 'electron';
 import Store from 'electron-store';
 import { router } from '../routes';
-import { useWindowStore } from '../stores/window';
+import { useWindowStore } from '../stores/windowStore';
 import { websocketHandle } from '../apis/websockets/websocketHandle';
 
 export enum WinEvents {

@@ -2,7 +2,7 @@ import { Ref, onActivated, onDeactivated, ref } from 'vue';
 import { SessionUnitService } from '../apis';
 import { SessionUnitOwnerDto } from '../apis/dtos';
 import { SessionUnitGetListInput } from '../apis/dtos/SessionUnitGetListInput';
-import { useImStore } from '../stores/im';
+import { useImStore } from '../stores/imStore';
 export type FetchSessionUnitResult = {
   items: SessionUnitOwnerDto[];
   list: Ref<SessionUnitOwnerDto[]>;

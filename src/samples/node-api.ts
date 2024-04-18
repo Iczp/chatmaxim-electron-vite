@@ -5,7 +5,7 @@ import Store from 'electron-store';
 import { router } from '../routes';
 import { WinEvents } from '../ipc';
 
-import { useWindowStore } from '../stores/window';
+import { useWindowStore } from '../stores/windowStore';
 
 const store = new Store();
 

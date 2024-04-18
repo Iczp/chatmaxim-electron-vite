@@ -5,7 +5,7 @@ import { MessageDto, MessageSimpleDto } from '../../../apis/dtos';
 import { MessageStateEnums } from '../../../apis/enums';
 import { InfoCircleOutlined } from '@ant-design/icons-vue';
 import { ExclamationCircleOutlined } from '@ant-design/icons-vue';
-import { useProgressStore } from '../../../stores/progress';
+import { useProgressStore } from '../../../stores/progressStore';
 
 const props = defineProps<{
   entity?: MessageDto;
@@ -105,3 +105,4 @@ const format = (number: number) => `发送中 ${number}%`;
   user-select: none;
 }
 </style>
+../../../stores/progressStore

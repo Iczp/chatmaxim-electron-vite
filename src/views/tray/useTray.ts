@@ -2,7 +2,7 @@ import { computed, ref, toRaw, watch } from 'vue';
 
 import { SessionUnitOwnerDto } from '../../apis/dtos';
 import { setTray } from '../../commons/setTray';
-import { useWindowStore } from '../../stores/window';
+import { useWindowStore } from '../../stores/windowStore';
 import { TrayPayload } from '../../ipc-types';
 import { sendCententOver } from '../../ipc/sendCententOver';
 import { setWindow } from '../../ipc/setWindow';

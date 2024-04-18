@@ -1,7 +1,7 @@
 import { WatchStopHandle, onActivated, onDeactivated, onMounted, onUnmounted, watch } from 'vue';
-import { useShortcutStore } from '../../../stores/shortcut';
+import { useShortcutStore } from '../../../stores/shortcutStore';
 import { getClipboradFiles, getClipboradImage } from '../../../ipc/clipboardHelper';
-import { useWindowStore } from '../../../stores/window';
+import { useWindowStore } from '../../../stores/windowStore';
 
 export type FormType = 'filesystem' | 'screenshots' | 'drop' | 'clipboard';
 

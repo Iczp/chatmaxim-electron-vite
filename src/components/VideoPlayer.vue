@@ -3,7 +3,7 @@ import { onBeforeMount, onBeforeUnmount, reactive, ref, watch } from 'vue';
 import videojs from 'video.js';
 import { onMounted } from 'vue';
 import 'video.js/dist/video-js.css';
-import { useWindowStore } from '../stores/window';
+import { useWindowStore } from '../stores/windowStore';
 import PlayIcon from './PlayIcon.vue';
 import { useDownload } from '../commons/useDownload';
 // https://cloud.tencent.com/developer/article/2318627
@@ -179,3 +179,4 @@ defineExpose({
   align-items: center;
 }
 </style>
+../stores/useWindowStore../stores/windowStore

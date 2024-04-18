@@ -18,7 +18,7 @@ import { useI18n } from 'vue-i18n';
 import EmojiPicker from 'vue3-emoji-picker';
 import ColorTheme from 'vue3-emoji-picker';
 import 'vue3-emoji-picker/css';
-import { useWindowStore } from '../../../stores/window';
+import { useWindowStore } from '../../../stores/windowStore';
 import { computed } from 'vue';
 
 const windowStore = useWindowStore();
@@ -455,3 +455,4 @@ defineExpose({
 }
 </style>
 ../../../ipc/clipboardHelper
+../../../stores/useWindowStore../../../stores/windowStore

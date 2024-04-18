@@ -2,7 +2,7 @@
 import { BasicColorMode, UseColorModeOptions, useCssVar, useDark } from '@vueuse/core';
 import { useColorMode } from '@vueuse/core';
 import { ref, watch } from 'vue';
-import { useWindowStore } from './stores/window';
+import { useWindowStore } from './stores/windowStore';
 import { useI18n } from 'vue-i18n';
 
 const { locale } = useI18n();
@@ -69,3 +69,4 @@ const color2 = useCssVar('--color', someEl, { initialValue: '#eee' });
   user-select: none;
 }
 </style>
+./stores/useWindowStore./stores/windowStore

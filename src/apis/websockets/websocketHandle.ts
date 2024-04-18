@@ -1,6 +1,6 @@
 import { eventBus } from '../../commons/eventBus';
-import { useImStore } from '../../stores/im';
-import { useWindowStore } from '../../stores/window';
+import { useImStore } from '../../stores/imStore';
+import { useWindowStore } from '../../stores/windowStore';
 import { MessageDto } from '../dtos';
 import { ReceivedDto } from './ReceivedDto';
 import * as CommandConsts from './commandConsts';

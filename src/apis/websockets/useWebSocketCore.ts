@@ -213,15 +213,23 @@ export function useWebSocketCore<Data = any>(
     return true;
   };
 
+  let retryTimer: NodeJS.Timeout | undefined;
+
+  const clearRetryTimer = () => {
+    if (retryTimer) {
+      clearTimeout(retryTimer);
+    }
+  };
   const _retry = () => {
+    clearRetryTimer();
     if (!explicitlyClosed && options.autoReconnect) {
       const { retries = -1, delay = 1000, onFailed } = resolveNestedOptions(options.autoReconnect);
       retried += 1;
-
-      if (typeof retries === 'number' && (retries < 0 || retried < retries))
-        setTimeout(_init, delay);
-      else if (typeof retries === 'function' && retries()) setTimeout(_init, delay);
-      else onFailed?.();
+      if (typeof retries === 'number' && (retries < 0 || retried < retries)) {
+        retryTimer = setTimeout(_init, delay);
+      } else if (typeof retries === 'function' && retries()) {
+        retryTimer = setTimeout(_init, delay);
+      } else onFailed?.();
     }
   };
 
@@ -231,8 +239,6 @@ export function useWebSocketCore<Data = any>(
       return;
     }
 
-    try {
-    } catch (err) {}
     const url = await onReady(retried);
 
     if (typeof url === 'undefined') {
@@ -307,6 +313,7 @@ export function useWebSocketCore<Data = any>(
   }
 
   const open = () => {
+    clearRetryTimer();
     if (!isClient && !isWorker) return;
     close();
     explicitlyClosed = false;

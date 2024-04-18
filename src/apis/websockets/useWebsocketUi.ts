@@ -1,5 +1,5 @@
 import { computed, onMounted, ref, watch } from 'vue';
-import { useWebsocketStore } from '../../stores/websocket';
+import { useWebsocketStore } from '../../stores/websocketStore';
 import { message } from 'ant-design-vue';
 import { ConnectionState } from './ConnectionState';
 

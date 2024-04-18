@@ -11,7 +11,7 @@ import {
   VerifiedOutlined,
 } from '@ant-design/icons-vue';
 import { setWindow } from '../ipc/setWindow';
-import { useWindowStore } from '../stores/window';
+import { useWindowStore } from '../stores/windowStore';
 import { ref } from 'vue';
 const props = defineProps<{
   title?: string;
@@ -82,3 +82,4 @@ const setClose = () => setWindow({ close: true });
 }
 </style>
 ../ipc/setWindow
+../stores/useWindowStore../stores/windowStore

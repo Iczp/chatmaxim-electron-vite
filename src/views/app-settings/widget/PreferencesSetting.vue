@@ -4,7 +4,7 @@ import { useAppInfo } from '../../../commons/useAppInfo';
 import { reactive, toRaw } from 'vue';
 import type { UnwrapRef } from 'vue';
 import { setColorScheme } from '../../../ipc/setColorScheme';
-import { useWindowStore } from '../../../stores/window';
+import { useWindowStore } from '../../../stores/windowStore';
 import { useColorMode } from '@vueuse/core';
 import { getLoginItemSettings, setLoginItemSettings } from '../../../ipc/setLoginItemSettings';
 import { setLanguage } from '../../../ipc/setLanguage';
@@ -136,4 +136,4 @@ const onIsOpenAtLoginChange = (e: any) => {
   color: var(--color);
 }
 </style>
-../../../ipc/setColorScheme../../../ipc/setLoginItemSettings
+../../../ipc/setColorScheme../../../ipc/setLoginItemSettings../../../stores/useWindowStore../../../stores/windowStore

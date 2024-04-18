@@ -1,5 +1,5 @@
 import { computed } from 'vue';
-import { useWindowStore } from '../stores/window';
+import { useWindowStore } from '../stores/windowStore';
 
 export const usePayload = <T>(key?: string) => {
   const windowStore = useWindowStore();

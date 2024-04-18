@@ -8,7 +8,7 @@ import { ChatObjectTypeEnums } from '../apis/enums';
 import ChatObject from '../components/ChatObject.vue';
 import MessageProview from '../components/MessageProview.vue';
 import {  useSessionUnitId,useComputedSessionUnit } from '../commons/useSessionUnit';
-import { useImStore } from '../stores/im';
+import { useImStore } from '../stores/imStore';
 import { env } from '../env';
 import { useI18n } from 'vue-i18n';
 import { toRaw } from 'vue';
@@ -307,3 +307,4 @@ const onItemClick = (event: MouseEvent | PointerEvent) => {
   }
 }
 </style>
+../stores/imStore

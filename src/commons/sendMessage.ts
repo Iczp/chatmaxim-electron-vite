@@ -2,8 +2,8 @@ import { AxiosProgressEvent } from 'axios';
 import { ApiError, CancelablePromise, ChatObjectService, MessageSenderService } from '../apis';
 import { ChatObjectDto, MessageDto, MessageOwnerDto, SessionUnitSenderDto } from '../apis/dtos';
 import { MessageStateEnums, MessageTypeEnums } from '../apis/enums';
-import { useImStore } from '../stores/im';
-import { useProgressStore } from '../stores/progress';
+import { useImStore } from '../stores/imStore';
+import { useProgressStore } from '../stores/progressStore';
 import { formatMessage, isAudioSuffix, isImageMime, isVideoMime } from './utils';
 export type SendMessageError = {
   message: string;

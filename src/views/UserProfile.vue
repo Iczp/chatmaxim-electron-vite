@@ -7,7 +7,7 @@ import ChatObject from '../components/ChatObject.vue';
 import Avatar from '../components/Avatar.vue';
 import { useI18n } from 'vue-i18n';
 import { openChildWindow } from '../ipc/openChildWindow';
-import { useWindowStore } from '../stores/window';
+import { useWindowStore } from '../stores/windowStore';
 import { env } from '../env';
 import { ChatObjectTypeEnums } from '../apis/enums';
 import { getDisplayName } from '../commons/utils';
@@ -118,3 +118,4 @@ const getDescription = (item: ChatObjectDto): string =>
   background-repeat: no-repeat;
 }
 </style>
+../stores/useWindowStore../stores/windowStore

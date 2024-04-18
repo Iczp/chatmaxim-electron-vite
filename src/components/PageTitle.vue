@@ -13,7 +13,7 @@ import {
 } from '@ant-design/icons-vue';
 import ToolBar from './TooBar.vue';
 import { setWindow } from '../ipc/setWindow';
-import { useWindowStore } from '../stores/window';
+import { useWindowStore } from '../stores/windowStore';
 import { computed } from 'vue';
 
 const windowStore = useWindowStore();
@@ -170,3 +170,4 @@ const toggleAlwayOnTop = () => {
   transform: rotate(-45deg);
 }
 </style>
+../stores/useWindowStore../stores/windowStore

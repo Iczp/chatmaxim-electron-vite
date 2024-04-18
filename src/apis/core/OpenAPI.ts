@@ -5,7 +5,7 @@
 import { getLocalToken, getToken, isTokenUrl } from '../auth/TokenController';
 import type { ApiRequestOptions } from './ApiRequestOptions';
 import { version as packageVersion } from '../../../package.json';
-import { useWindowStore } from '../../stores/window';
+import { useWindowStore } from '../../stores/windowStore';
 type Resolver<T> = (options: ApiRequestOptions) => Promise<T>;
 type Headers = Record<string, string>;
 import { version } from '../../../package.json';

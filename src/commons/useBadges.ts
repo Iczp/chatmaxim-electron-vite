@@ -1,5 +1,5 @@
 import { computed } from 'vue';
-import { useImStore } from '../stores/im';
+import { useImStore } from '../stores/imStore';
 
 export const useBadges = () => {
   const store = useImStore();

@@ -25,8 +25,8 @@ import ChatInput from './widget/ChatInput.vue';
 
 import { NodeExpandOutlined, MoreOutlined } from '@ant-design/icons-vue';
 import { message } from 'ant-design-vue';
-import { useImStore } from '../../stores/im';
-import { MessageDto } from '../../apis/dtos';
+import { useImStore } from '../../stores/imStore';
+import { MessageDto, } from '../../apis/dtos';
 import { ContextmenuInput, showContextMenuForMessage } from '../../commons/contextmenu';
 import QuoteMessage from './components/QuoteMessage.vue';
 import { computedSessionUnitEntity, useSessionUnitId } from '../../commons/useSessionUnit';
@@ -36,7 +36,7 @@ import { useSessionUnitDetail } from '../../commons/useSessionUnitDetail';
 import { setReadedMessageId } from '../../commons/setting';
 import { sendMessage } from '../../commons/sendMessage';
 import { useDrop } from '../../commons/useDrop';
-import { useShortcutStore } from '../../stores/shortcut';
+import { useShortcutStore } from '../../stores/shortcutStore';
 import {
   isAudioSuffix,
   isImageMime,
@@ -46,9 +46,9 @@ import {
   mapToSoundContentDto,
   mapToVideoContentDto,
 } from '../../commons/utils';
-import { ChatObjectService } from '../../apis';
+
 import { useI18n } from 'vue-i18n';
-import { useWindowStore } from '../../stores/window';
+import { useWindowStore } from '../../stores/windowStore';
 import { openChildWindow } from '../../ipc/openChildWindow';
 import ProfileModal from './widget/ProfileModal.vue';
 import { provide } from 'vue';
@@ -796,3 +796,4 @@ const onTransfer = () => {
   flex-direction: column;
 }
 </style>
+../../stores/useWindowStore../../stores/windowStore../../stores/imStore../../stores/shortcutStore

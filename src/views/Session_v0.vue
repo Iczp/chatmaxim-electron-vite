@@ -6,7 +6,7 @@ import { SessionUnitOwnerDto, SessionUnitService } from '../apis';
 import SessionItem from '../components/SessionItem.vue';
 import Loading from '../components/Loading.vue';
 import { ResultValue, SessionUnitGetListInput, SessionItemDto } from '../apis/dtos';
-import { useImStore } from '../stores/im';
+import { useImStore } from '../stores/imStore';
 import { mapToSessionItemDto, navToChat as navToChatX } from '../commons/utils';
 import { showContextMenuForSession } from '../commons/contextmenu';
 import { openChildWindow } from '../ipc/openChildWindow';
@@ -481,3 +481,4 @@ const onPlus = () => {
   background-color:rgba(223, 223, 223, 0.41);
 } */
 </style>
+../stores/imStore

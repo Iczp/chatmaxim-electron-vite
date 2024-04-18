@@ -6,7 +6,7 @@ import LabelBox from '../../../components/LabelBox.vue';
 import { ChatOn, PersonAdd } from '../../../icons';
 import { SearchOutlined, CloseCircleOutlined, RightOutlined } from '@ant-design/icons-vue';
 import { useI18n } from 'vue-i18n';
-import { useImStore } from '../../../stores/im';
+import { useImStore } from '../../../stores/imStore';
 
 export type ProfileModalArgsType = {
   chatObjectId?: number;
@@ -188,3 +188,4 @@ const loading = ref(false);
   color: gray;
 }
 </style>
+../../../stores/imStore
