@@ -1,8 +1,8 @@
 import { BrowserWindow, ipcMain, webContents } from 'electron';
 import { windowManager } from '../commons/windowManager';
-import { IpcHandle } from './IpcHandle';
+import { IpcMainHandleBase } from './IpcMainHandleBase';
 
-export class GlobalEventHandle extends IpcHandle {
+export class GlobalEventHandle extends IpcMainHandleBase {
   /**
    *
    */

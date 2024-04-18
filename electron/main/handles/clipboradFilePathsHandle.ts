@@ -1,9 +1,9 @@
 import { IpcMainHandle } from '../IpcMainHandle';
 import { getClipboardFilePaths } from '../commons/getClipboardFilePaths';
 
-import { IpcHandle } from './IpcHandle';
+import { IpcMainHandleBase } from './IpcMainHandleBase';
 
-export class ClipboradFilePathsHandle extends IpcHandle {
+export class ClipboradFilePathsHandle extends IpcMainHandleBase {
   /**
    *
    */

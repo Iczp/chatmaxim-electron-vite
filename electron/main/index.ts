@@ -18,42 +18,23 @@ import {
   app,
   BrowserWindow,
   ipcMain,
-  webContents,
-  screen,
   dialog,
-  protocol,
   shell,
-  powerMonitor,
 } from 'electron';
 import { release } from 'node:os';
 import { join } from 'node:path';
 import Store from 'electron-store';
-import { openChildWindowHandle } from './handles/openChildWindowHandle';
 import { createMainWindow } from './commons/createMainWindow';
-import { windowSettingHandle } from './handles/windowSettingHandle';
 import { initMachine } from './commons/machine';
 
-import { websocketHandle } from './handles/webscoketHandle';
 import './commons/logger';
 import './screenshots';
 import './commons/tray';
 import './commons/keyboardShortcuts';
-import { openPopWindowHandle } from './handles/openPopWindowHandle';
-import { setTrayHandle } from './handles/setTrayHandle';
 import setAppProtocol from './commons/setAppProtocol';
-import { setAuthorizehandle } from './handles/setAuthorizehandle';
 import { createLoginWindow } from './commons/createLoginWindow';
-import { openAppSettingsWindowHandle } from './handles/openAppSettingsWindowHandle';
 import { env } from './env';
-import { setColorSchemeHandle } from './handles/setColorSchemeHandle';
-import { loginItemSettingsHandle } from './handles/loginItemSettingsHandle';
-import { setLanguageHandle } from './handles/setLanguageHandle';
-import { sheelHandle } from './handles/sheelHandle';
-import { saveAsHandle } from './handles/saveAsHandle';
-import { createBrowserWindow, openBrowserWindowHandle } from './handles/openBrowserWindowHandle';
 import { setupScreenshots } from './screenshots';
-import { clipboradFilePathsHandle } from './handles/clipboradFilePathsHandle';
-import { globalEventHandle } from './handles/globalEventHandle';
 import { installAllIpcHandle } from './handles';
 
 setAppProtocol();
@@ -165,22 +146,5 @@ ipcMain.on('shell:open', () => {
   shell.openExternal(pagePath);
 });
 
-ipcMain.handle(openChildWindowHandle.channel, openChildWindowHandle.handle);
-ipcMain.handle(openPopWindowHandle.channel, openPopWindowHandle.handle);
-ipcMain.handle(openAppSettingsWindowHandle.channel, openAppSettingsWindowHandle.handle);
-ipcMain.handle(windowSettingHandle.channel, windowSettingHandle.handle);
-ipcMain.handle(websocketHandle.channel, websocketHandle.handle);
-ipcMain.handle(setTrayHandle.channel, setTrayHandle.handle);
-ipcMain.handle(setAuthorizehandle.channel, setAuthorizehandle.handle);
-ipcMain.handle(setColorSchemeHandle.channel, setColorSchemeHandle.handle);
-ipcMain.handle(loginItemSettingsHandle.channel, loginItemSettingsHandle.handle);
-ipcMain.handle(setLanguageHandle.channel, setLanguageHandle.handle);
-ipcMain.handle(sheelHandle.channel, sheelHandle.handle);
-ipcMain.handle(saveAsHandle.channel, saveAsHandle.handle);
-ipcMain.handle(openBrowserWindowHandle.channel, openBrowserWindowHandle.handle);
-// ipcMain.handle(clipboradFilePathsHandle.channel, clipboradFilePathsHandle.handle);
-// ipcMain.handle(globalEventHandle.channel, globalEventHandle.handle);
 
-globalEventHandle.install();
-clipboradFilePathsHandle.install();
-// installAllIpcHandle()
+installAllIpcHandle()

@@ -3,7 +3,7 @@ import { ipcMain } from 'electron';
 /**
  * abstract
  */
-export abstract class IpcHandle {
+export abstract class IpcMainHandleBase {
   public readonly channel: string;
   constructor() {
     // this.channel = change;
