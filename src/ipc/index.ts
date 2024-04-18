@@ -5,7 +5,7 @@ import Store from 'electron-store';
 import { router } from '../routes';
 import { useWindowStore } from '../stores/windowStore';
 import { websocketHandle } from '../apis/websockets/websocketHandle';
-
+import { globalEvent } from '../global-events';
 export enum WinEvents {
   'resize' = 'resize',
   'resized' = 'resized',
@@ -23,6 +23,8 @@ store.set('unicorn', '🦄');
 console.log(store.get('unicorn'));
 
 ipcRenderer.on('websocket', websocketHandle);
+
+globalEvent.install();
 
 lstat(cwd())
   .then(stats => {

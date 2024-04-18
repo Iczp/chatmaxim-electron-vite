@@ -1,4 +1,5 @@
 export type IpcMainHandle = {
+  install?:()=>void;
   channel: string;
   handle: (event: Electron.IpcMainInvokeEvent | undefined, ...args: any[]) => any;
 };

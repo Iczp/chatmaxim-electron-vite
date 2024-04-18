@@ -53,6 +53,8 @@ import { saveAsHandle } from './handles/saveAsHandle';
 import { createBrowserWindow, openBrowserWindowHandle } from './handles/openBrowserWindowHandle';
 import { setupScreenshots } from './screenshots';
 import { clipboradFilePathsHandle } from './handles/clipboradFilePathsHandle';
+import { globalEventHandle } from './handles/globalEventHandle';
+import { installAllIpcHandle } from './handles';
 
 setAppProtocol();
 
@@ -150,7 +152,6 @@ const handleUrl = (url: string) => {
   dialog.showErrorBox('handleUrl', url);
 };
 
-
 //
 // macOS
 app.on('open-url', (event, url) => {
@@ -177,4 +178,9 @@ ipcMain.handle(setLanguageHandle.channel, setLanguageHandle.handle);
 ipcMain.handle(sheelHandle.channel, sheelHandle.handle);
 ipcMain.handle(saveAsHandle.channel, saveAsHandle.handle);
 ipcMain.handle(openBrowserWindowHandle.channel, openBrowserWindowHandle.handle);
-ipcMain.handle(clipboradFilePathsHandle.channel, clipboradFilePathsHandle.handle);
+// ipcMain.handle(clipboradFilePathsHandle.channel, clipboradFilePathsHandle.handle);
+// ipcMain.handle(globalEventHandle.channel, globalEventHandle.handle);
+
+globalEventHandle.install();
+clipboradFilePathsHandle.install();
+// installAllIpcHandle()
