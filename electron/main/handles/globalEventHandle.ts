@@ -17,7 +17,7 @@ export class GlobalEventHandle extends IpcMainHandleBase {
     var senderWindow: BrowserWindow = BrowserWindow.fromWebContents(
       webContents.fromId(_.sender.id),
     );
-    console.log(`[${this}] senderId:${_.sender.id},name:${windowManager.getNameById(_.sender.id)}`);
+    console.log(`[${this.channel}] senderId:${_.sender.id},name:${windowManager.getNameById(_.sender.id)}`);
     windowManager
       .getAllWindows()
       //ignore sender window
