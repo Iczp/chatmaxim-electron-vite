@@ -7,6 +7,7 @@ import { TicketService } from './TicketService';
 import { ref } from 'vue';
 import { eventBus } from '../../commons/eventBus';
 import { useWebsocketUi } from './useWebsocketUi';
+import { globalEvent } from '../../global-events';
 
 export let connectionState: ConnectionState = ConnectionState.None;
 export type NetDelay = {
@@ -44,7 +45,7 @@ export const useWebSocketKit = ({
   const { status, data, close, send, ws } = useWebSocketCore({
     autoReconnect: {
       // retries: 10,
-      delay: 1000 * 30,//30s
+      delay: 1000 * 30, //30s
       onFailed() {
         console.warn('useWebSocketKit onFailed');
       },
@@ -79,6 +80,7 @@ export const useWebSocketKit = ({
     },
     onMessage: (ws: WebSocket, e: MessageEvent<any>) => {
       // setState(ConnectionState.Ok);
+      
       if (typeof e.data !== 'string') {
         return;
       }
@@ -102,22 +104,26 @@ export const useWebSocketKit = ({
         ipcRenderer.emit('websocket', {}, { payload: e.data });
         // sent to remote window
         ipcRenderer.invoke('websocket', e.data);
+        globalEvent.invoke('websocket@message', e.data);
       } catch (error) {
         console.error(`data:${error}`);
       }
     },
     onConnected: (ws: WebSocket) => {
+      globalEvent.invoke('websocket@connected');
       console.log('useWebSocketKit onConnected', ws);
       setState(ConnectionState.Ok);
       eventBus.emit('connected');
       onConnected?.(ws);
     },
     onDisconnected: (ws: WebSocket, event: CloseEvent) => {
+      globalEvent.invoke('websocket@disconnected');
       console.log('useWebSocketKit onDisconnected', ws, event);
       setState(ConnectionState.Close);
       eventBus.emit('disconnected');
     },
     onError: (ws: WebSocket, event: Event) => {
+      globalEvent.invoke('websocket@error');
       console.log('onError', ws, event);
     },
   });

@@ -1,19 +1,8 @@
-import { IpcMainHandle } from '../IpcMainHandle';
 import { getClipboardFilePaths } from '../commons/getClipboardFilePaths';
-
 import { IpcMainHandleBase } from './IpcMainHandleBase';
 
 export class ClipboradFilePathsHandle extends IpcMainHandleBase {
-  /**
-   *
-   */
-  public override channel: string = 'clipboard-filepaths';
-  /**
-   *
-   * @param _
-   * @param payload
-   * @returns
-   */
+  public override channel = 'clipboard-filepaths';
   public override handle = (
     _: Electron.IpcMainInvokeEvent,
     {}: {

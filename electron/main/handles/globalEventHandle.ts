@@ -13,7 +13,7 @@ export class GlobalEventHandle extends IpcMainHandleBase {
    * @param payload
    * @returns
    */
-  public override handle = (_: Electron.IpcMainInvokeEvent, payload: any) => {
+  public override handle = (_: Electron.IpcMainInvokeEvent, ...args) => {
     var senderWindow: BrowserWindow = BrowserWindow.fromWebContents(
       webContents.fromId(_.sender.id),
     );
@@ -26,11 +26,10 @@ export class GlobalEventHandle extends IpcMainHandleBase {
         const data = {
           callerId: senderWindow?.id,
           callerName: windowManager.getNameById(senderWindow?.id),
-          payload,
+          args,
           ticks: new Date().getTime(),
         };
-        console.log('win.webContents.send:global-event', data);
-
+        // console.log('win.webContents.send:global-event', data);
         win.webContents.send('global-event', data);
       });
     return { message: 'ok' };
