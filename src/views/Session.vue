@@ -1,29 +1,20 @@
 <script setup lang="ts">
-import {
-  computed,
-  onActivated,
-  onDeactivated,
-  onMounted,
-  onUnmounted,
-  reactive,
-  ref,
-  watch,
-} from 'vue';
-import { onBeforeRouteLeave, onBeforeRouteUpdate, useRoute } from 'vue-router';
+import { computed, onActivated, onDeactivated, ref } from 'vue';
+import { useRoute } from 'vue-router';
 import { router, chatHistorys } from '../routes';
-import { SessionUnitOwnerDto, SessionUnitService } from '../apis';
 import SessionItem from '../components/SessionItem.vue';
 import Loading from '../components/Loading.vue';
-import { ResultValue, SessionUnitGetListInput, SessionItemDto } from '../apis/dtos';
+import { SessionItemDto } from '../apis/dtos';
 import { useImStore } from '../stores/imStore';
-import { mapToSessionItemDto, navToChat as navToChatX } from '../commons/utils';
+import { navToChat as navToChatX } from '../commons/utils';
 import { showContextMenuForSession } from '../commons/contextmenu';
+import { createRoom } from '../commons/createRoom';
+import { eventBus } from '../commons/eventBus';
+import { useSessionUnitList } from '../commons/useSessionUnitList';
 import { openChildWindow } from '../ipc/openChildWindow';
 import { useI18n } from 'vue-i18n';
 import { Plus } from '../icons';
-import { createRoom } from '../commons/createRoom';
-import { useSessionUnitList } from '../commons/useSessionUnitList';
-import { eventBus } from '../commons/eventBus';
+
 const { t } = useI18n();
 const props = defineProps<{
   chatObjectId: number | undefined;
