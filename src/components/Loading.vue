@@ -1,4 +1,5 @@
 <script setup lang="ts">
+// https://icones.js.org/collection/svg-spinners
 import { SyncOutlined, LoadingOutlined } from '@ant-design/icons-vue';
 import { reactive } from 'vue';
 const props = defineProps<{
@@ -13,7 +14,8 @@ const style = reactive({
 <template>
   <div class="loading" :style="style">
     <slot>
-      <sync-outlined spin />
+      <SyncOutlined spin />
+      <!-- <LoadingOutlined spin /> -->
       <span v-if="text" class="loading-text">{{ text }}</span>
     </slot>
   </div>

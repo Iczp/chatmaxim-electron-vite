@@ -14,7 +14,8 @@ export const uninstall = () => ipcRenderer.off(channel, globalEventHandle);
 export const globalEventHandle = (_: Electron.IpcRendererEvent, payload: GlobalEventPayload) => {
   const { args, callerId, callerName, ticks } = payload;
   console.log(`[${channel}] globalEventHandle`, callerName, args[0], args.slice(1));
-  eventBus.emit(args[0], args.slice(1));
+  const [event, ...params] = args;
+  eventBus.emit(event, params);
 };
 
 export const invoke = (...args: any[]) => {

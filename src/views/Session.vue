@@ -119,11 +119,11 @@ const onReachEnd = (event: CustomEvent) => {
   // const el = event.target as HTMLElement;
   console.info('onReachEnd', displayItems.value.length);
 
-  if (isBof.value) {
-    console.warn('onReachEnd isBof');
+  if (isBof.value || isPendingOfFetchHistorical.value) {
+    console.warn('onReachEnd isBof or isPending');
     return;
   }
-  fetchHistorical();
+  fetchHistorical('onReachEnd');
 };
 const footerObserver = ref<HTMLElement | null>();
 
@@ -136,15 +136,24 @@ const onPlus = () => {
   console.log('onPlus');
 };
 
+let fetchLatestTimer: NodeJS.Timeout | undefined;
+const init = () => {
+  if (fetchLatestTimer) {
+    clearTimeout(fetchLatestTimer);
+  }
+  fetchLatest({
+    caller: 'onActivated',
+  }).catch(err => {
+    // fetchLatestTimer = setTimeout(init, 1000 * 10);
+  });
+};
 onActivated(() => {
   console.log('scrollerRef', scrollerRef.value?.scrollToItem);
   setTimeout(() => {
     console.log('scroll to item');
     scrollerRef.value.scrollToPosition(0);
   }, 0);
-  fetchLatest({
-    caller: 'onActivated',
-  });
+  init();
   // fetchHistorical().then(res => {});
   eventBus.on('connected', refresh);
 });
@@ -173,7 +182,7 @@ onDeactivated(() => {
         </a-space>
       </div>
 
-      <div class="session-list"></div>
+      <!-- <div class="session-list"></div> -->
       <RecycleScroller
         ref="scrollerRef"
         class="scroller"
@@ -183,6 +192,14 @@ onDeactivated(() => {
         @scroll-start="onReachStart"
         @scroll-end="onReachEnd"
       >
+        <template #before>
+          <Loading v-if="isPendingOfFetchLatest && displayItems.length == 0" :height="24">
+            正在收到消息
+          </Loading>
+        </template>
+        <template #after>
+          <Loading v-if="isPendingOfFetchHistorical">正在加载</Loading>
+        </template>
         <template v-slot="{ item, index }: { item: SessionItemDto, index: number }">
           <SessionItem
             :id="item.id"

@@ -23,6 +23,7 @@ import { router } from './routes';
 import { createPinia } from 'pinia';
 
 // import VueVirtualScroller from 'vue-virtual-scroller'
+// https://github.com/Akryum/vue-virtual-scroller
 import VueVirtualScroller from 'vue-virtual-scroller';
 // const VueVirtualScroller = require('vue-virtual-scroller').default;
 import 'vue-virtual-scroller/dist/vue-virtual-scroller.css';

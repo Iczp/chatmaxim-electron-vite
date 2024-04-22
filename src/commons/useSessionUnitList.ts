@@ -79,13 +79,14 @@ export const useSessionUnitList = ({
         });
     });
 
-  const fetchHistorical = (): Promise<FetchSessionUnitResult> =>
+  const fetchHistorical = (caller?: string): Promise<FetchSessionUnitResult> =>
     new Promise(async (resolve, reject) => {
       if (isBof.value) {
         reject({ message: '没有了' });
         return;
       }
       isPendingOfFetchHistorical.value = true;
+      console.warn('fetchHistorical caller', caller);
       fetchItems({ maxMessageId: minMessageId.value }, false)
         .then(items => {
           isBof.value = items.length < maxResultCount;
