@@ -344,6 +344,10 @@ export const formatMessage = ({
     if (typeof item.state == 'undefined') {
       item.state = MessageStateEnums.Ok;
     }
+    // autoId
+    if (!item.autoId) {
+      item.autoId = item.id;
+    }
 
     //时间分组
     if (tmpTime == null) {

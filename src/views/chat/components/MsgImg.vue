@@ -55,6 +55,7 @@ const onError = (event: Event) => {
 
 const { downloadFile, percent, blobUrl, isPending } = useDownload();
 
+const isLoaded = ref(false);
 const loadImage = () => {
   if (!props.url) {
     return;
@@ -62,8 +63,12 @@ const loadImage = () => {
   if (blobUrl.value) {
     return;
   }
+  if (isLoaded.value) {
+    return;
+  }
   downloadFile(props.url)
     .then(res => {
+      isLoaded.value = true;
       src.value = res.objectUrl;
       getImageRect(res.objectUrl).then(res => {
         rect.value = formatImageRect(res.width / res.height, maxWidth, maxHeight);

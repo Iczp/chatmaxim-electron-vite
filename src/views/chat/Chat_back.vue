@@ -26,7 +26,7 @@ import ChatInput from './widget/ChatInput.vue';
 import { NodeExpandOutlined, MoreOutlined } from '@ant-design/icons-vue';
 import { message } from 'ant-design-vue';
 import { useImStore } from '../../stores/imStore';
-import { MessageDto } from '../../apis/dtos';
+import { MessageDto, } from '../../apis/dtos';
 import { ContextmenuInput, showContextMenuForMessage } from '../../commons/contextmenu';
 import QuoteMessage from './components/QuoteMessage.vue';
 import { computedSessionUnitEntity, useSessionUnitId } from '../../commons/useSessionUnit';
@@ -54,17 +54,16 @@ import ProfileModal from './widget/ProfileModal.vue';
 import { provide } from 'vue';
 import { MessageContent } from '../../apis/dtos/message/messageContent';
 
+const { t } = useI18n();
+const router = useRouter();
+const store = useImStore();
+const windowStore = useWindowStore();
 const props = defineProps<{
   sessionUnitId: string;
   title?: string;
   /* 是否独立窗口（由Router传入参数 isSeparated, /src/routes/index.ts） */
   isSeparated?: boolean;
 }>();
-
-const { t } = useI18n();
-const router = useRouter();
-const store = useImStore();
-const windowStore = useWindowStore();
 const route = useRoute();
 
 const isSeparated = route.path.split('/').some(x => x == 'separate-chat');
@@ -124,8 +123,6 @@ const {
 const chatInput = ref<InstanceType<typeof ChatInput> | null>(null);
 
 const scroll = ref<InstanceType<typeof ScrollView> | null>(null);
-
-const scrollerRef = ref();
 
 const dropViewer = ref<InstanceType<typeof DropViewer> | null>(null);
 
@@ -206,29 +203,6 @@ const openChatSettings = () => {
 const scrollTo = (duration: number = 1500) => {
   scroll.value?.scrollTo({ duration });
 };
-const scrollToTop = () => {
-  console.log('scrollerRef scrollToTop ', scrollerRef.value);
-  nextTick(() => {
-    // scrollerRef.value?.scrollToBottom();
-  });
-};
-const scrollToBottom = () => {
-  console.log('scrollerRef scrollToBottom');
-  scrollerRef.value?.scrollToBottom();
-};
-
-const onResize = () => {
-  console.log('resize');
-};
-
-const onUpdate = (
-  viewStartIndex: number,
-  viewEndIndex: number,
-  visibleStartIndex: number,
-  visibleEndIndex: number,
-) => {
-  console.log('onUpdate', viewStartIndex, viewEndIndex, visibleStartIndex, visibleEndIndex);
-};
 
 const shortcutStore = useShortcutStore();
 
@@ -256,7 +230,6 @@ const isSendPending = ref(false);
 const _onActivated = () => {
   startShortcutWatch();
   scrollTo(0);
-  scrollToTop();
   //fetchDetail
   if (!detail.value) {
     fetchDetail();
@@ -290,7 +263,6 @@ const _onActivated = () => {
           console.warn('[chat] fetchLatest');
           list.value = items.length == maxResultCount ? items : list.value.concat(items);
           nextTick(() => scroll.value?.scrollTo({ duration: 1500 }));
-          scrollToBottom();
         })
         .catch(err => {
           console.error(err);
@@ -378,16 +350,13 @@ const sendMessageContent = async ({
     quoteMessage: quoteMessage.value,
     content,
     async onBefore(input) {
-      console.log('input', input);
       isSendBtnEnabled.value = false;
       list.value.push(input);
       scroll.value?.scrollTo({ duration: 1500 });
-      scrollToBottom();
       /* =================== update file info =================== */
       // nextTick(() => scroll.value?.scrollTo({ duration: 1500 }));
     },
     onSuccess(entity, input) {
-      // return;
       clearChatInput(isClearInput);
 
       fetchLatest({ caller: 'sendMessageContent' })
@@ -459,10 +428,9 @@ const showContextMenu = ({ labelType, mouseButton, event, entity }: ContextmenuI
   });
 
 const onReachStart = (event: CustomEvent) => {
+  const el = event.target as HTMLElement;
   console.info('onReachStart');
-  // return;
-  const el = event?.target as HTMLElement;
-
+  const isReachStart = el.scrollTop == 0;
   if (isBof.value) {
     console.error('onReachStart isBof', isBof.value);
     // message.info({ content: '没有了', key: 'list-bof' });
@@ -471,11 +439,10 @@ const onReachStart = (event: CustomEvent) => {
   if (isPendingOfFetchHistorical.value) {
     return;
   }
-  // const isReachStart = el?.scrollTop == 0;
-  // if (!isReachStart) {
-  //   console.error('onReachStart', isReachStart);
-  //   return;
-  // }
+  if (!isReachStart) {
+    console.error('onReachStart', isReachStart);
+    return;
+  }
 
   const originalScrollHeight = scrollElement.value?.scrollHeight || 0;
   console.log('originalScrollHeight', originalScrollHeight);
@@ -497,9 +464,8 @@ const onReachStart = (event: CustomEvent) => {
     });
 };
 const onReachEnd = (event: CustomEvent) => {
-  console.info('onReachEnd');
-  return;
   const el = event.target as HTMLElement;
+  console.info('onReachEnd');
   const isReachEnd = el.scrollTop != 0; //&& el.scrollTop > el.offsetHeight;
   if (!isReachEnd) {
     console.error(
@@ -680,52 +646,14 @@ const onTransfer = () => {
         :sessionUnitId="sessionUnitId"
       />
 
-      <DynamicScroller
-        ref="scrollerRef"
-        :items="list"
-        :min-item-size="86"
-        class="scroller"
-        @scroll-start="onReachStart"
-        @scroll-end="onReachEnd"
-        @resize="onResize"
-        @update="onUpdate"
-        key-field="autoId"
-      >
-        <template
-          v-slot="{ item, index, active }: { item: MessageDto, index: number, active: any }"
-        >
-          <DynamicScrollerItem
-            :item="item"
-            :active="active"
-            :size-dependencies="[item.isRollbacked]"
-            :data-index="index"
-          >
-            <MessageItem
-              :key="item.autoId"
-              :entity="item"
-              :playMessageId="playMessageId"
-              :sessionUnitId="sessionUnitId"
-              v-model:selectable="selectable"
-              @resend="onResend(item)"
-              @remove="onRemove(item)"
-              @contextmenu="showContextMenu"
-            >
-              <template v-if="index != list.length - 1 && localReadedMessageId == item.id" #footer>
-                <a-divider class="message-divider">{{ t('message.dividerNewNews') }}</a-divider>
-              </template>
-            </MessageItem>
-          </DynamicScrollerItem>
-        </template>
-      </DynamicScroller>
-
-      <!-- <scroll-view
+      <scroll-view
         class="message-container"
         ref="scroll"
         @ps-y-reach-start="onReachStart"
         @ps-y-reach-end="onReachEnd"
       >
         <Loading v-if="isPendingOfFetchHistorical" :height="loadingHeight" />
-        <EmptyData v-if="isBof" text="没有了" :height="20" />
+        <!-- <EmptyData v-if="isBof" text="没有了" :height="20" /> -->
         <a-divider v-if="isBof" class="message-divider">{{ t('message.listStart') }}</a-divider>
         <MessageItem
           v-for="(item, index) in list"
@@ -748,7 +676,7 @@ const onTransfer = () => {
           :height="loadingHeight"
           :text="t('message.receiving')"
         />
-      </scroll-view> -->
+      </scroll-view>
       <!-- <div class="latest-counter">有 {{ latestMessageCount }} 条最新消息</div> -->
     </page-content>
     <page-footer class="footer">
@@ -867,38 +795,5 @@ const onTransfer = () => {
   height: auto;
   flex-direction: column;
 }
-
-.scroller::-webkit-scrollbar {
-  width: 8px;
-  height: 6px;
-  /* padding: 10px; */
-  transition: all 0.3s linear;
-  background: transparent;
-  /* display: none; */
-  /* position: absolute; */
-}
-
-.scroller::-webkit-scrollbar-track {
-  border-radius: 6px;
-  background: rgba(169, 169, 169, 0);
-  -webkit-box-shadow: inset 0 0 5px rgba(0, 0, 0, 0);
-  display: none;
-}
-/* 滚动条滑块 */
-.scroller::-webkit-scrollbar-thumb {
-  border-radius: 6px;
-  background: rgba(212, 212, 212, 0);
-  -webkit-box-shadow: inset 0 0 10px rgba(0, 0, 0, 0);
-  transition: all 0.3s linear;
-  /* display: none; */
-}
-.scroller:hover::-webkit-scrollbar {
-  display: unset;
-}
-.scroller:hover::-webkit-scrollbar-track {
-  display: unset;
-}
-.scroller:hover::-webkit-scrollbar-thumb {
-  background: rgba(163, 163, 163, 0.232);
-}
 </style>
+../../stores/useWindowStore../../stores/windowStore../../stores/imStore../../stores/shortcutStore

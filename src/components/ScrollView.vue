@@ -43,7 +43,7 @@ defineExpose({
 </script>
 
 <template>
-  <PerfectScrollbar ref="scrollbarRef" class="chat-object" v-bind="attrs">
+  <PerfectScrollbar ref="scrollbarRef" v-bind="attrs">
     <template v-for="(slot, index) of Object.keys(slots)" :key="index" v-slot:[slot]>
       <slot :name="slot"></slot>
     </template>
