@@ -2,10 +2,7 @@
 /* istanbul ignore file */
 /* tslint:disable */
 /* eslint-disable */
-import { getLocalToken, getToken, isTokenUrl } from '../auth/TokenController';
 import type { ApiRequestOptions } from './ApiRequestOptions';
-import { version as packageVersion } from '../../../package.json';
-import { useWindowStore } from '../../stores/windowStore';
 type Resolver<T> = (options: ApiRequestOptions) => Promise<T>;
 type Headers = Record<string, string>;
 import { version } from '../../../package.json';
@@ -27,7 +24,7 @@ export type OpenAPIConfig = {
 export const OpenAPI: OpenAPIConfig = {
   BASE: env.base_url,
   AUTH_HOST: env.auth_host,
-  VERSION: packageVersion,
+  VERSION: version,
   WITH_CREDENTIALS: false,
   CREDENTIALS: 'include',
   TOKEN: undefined,

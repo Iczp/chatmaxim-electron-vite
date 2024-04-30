@@ -1,6 +1,5 @@
 // import { CancelablePromise } from '../core/CancelablePromise';
 
-import { AxiosError } from 'axios';
 import { TokenService } from './TokenService';
 import { TokenDto, LoginResult, LoginInput } from './dto';
 import { GrantTypeEnum } from './dto/GrantTypeEnum';

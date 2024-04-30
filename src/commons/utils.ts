@@ -1,7 +1,6 @@
 import moment from 'moment';
-import { useRouter } from 'vue-router';
 import { env } from '../env';
-import { router, chatHistorys } from '../routes';
+import { router } from '../routes';
 import {
   ChatObjectDto,
   CmdContentDto,
@@ -23,7 +22,6 @@ import { SoundContentDto } from '../apis/dtos/message/SoundContentDto';
 import { LinkContentDto } from '../apis/dtos/message/LinkContentDto';
 import { HistoryContentOutput } from '../apis/dtos/message/HistoryContentOutput';
 import { useObjectUrl } from '@vueuse/core';
-import { AttachmentsBaseDto } from '../apis/dtos/message/AttachmentsBaseDto';
 import { getSoundDuration } from './soundUtils';
 /**
  * toQueryString

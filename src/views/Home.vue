@@ -21,6 +21,7 @@ import { BadgeDto } from '../apis/dtos';
 import { useBadges } from '../commons/useBadges';
 import { setWindow } from '../ipc/setWindow';
 import { openAppSettings } from '../ipc/openAppSettings';
+import ChatObject from '../components/ChatObject.vue';
 import { useI18n } from 'vue-i18n';
 import AudioPlayer from '../components/AudioPlayer.vue';
 import { MusicLib, MusicQueue, MusicNote, MusicLyrics } from '../icons';
@@ -105,6 +106,7 @@ const getKey = (route: RouteLocationNormalizedLoaded, component: any): string | 
           >
             <a-badge :count="item.badge">
               <MessageOutlined />
+              <!-- <ChatObject :entity="item.owner"></ChatObject> -->
             </a-badge>
           </div>
           <!-- <div class="nav-item" @click="goto('/about')">
