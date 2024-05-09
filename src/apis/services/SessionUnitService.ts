@@ -21,7 +21,7 @@ import { OpenAPI } from '../core/OpenAPI';
 import { request as __request } from '../core/request';
 import { PagedResultDto } from '../dtos/PagedResultDto';
 import { SessionUnitGetListInput } from '../dtos/SessionUnitGetListInput';
-import { BadgeDto, GetListInput, SessionUnitDestinationDto, SessionUnitDetailDto } from '../dtos';
+import { BadgeDto, GetListInput, SessionUnitDestinationDto, SessionUnitDetailDto, SessionUnitDisplayNameDto } from '../dtos';
 import { DestinationGetListInput } from '../dtos/DestinationGetListInput';
 
 export class SessionUnitService {
@@ -495,7 +495,7 @@ export class SessionUnitService {
      * 排序
      */
     sorting?: string;
-  }): CancelablePromise<Volo_Abp_Application_Dtos_PagedResultDto_1> {
+  }): CancelablePromise<PagedResultDto<SessionUnitDisplayNameDto>> {
     return __request(OpenAPI, {
       method: 'GET',
       url: '/api/chat/session-unit/{id}/destination-names',

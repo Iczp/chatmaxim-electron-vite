@@ -2,7 +2,7 @@ import { GetListInput } from './GetListInput';
 
 export type DestinationGetListInput = GetListInput & {
   /**
-   * 会话单元Id
+   * 会话单元Id (sessionUnitId)
    */
   id: string;
   /**

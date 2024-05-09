@@ -15,4 +15,5 @@ export const useMembersList = ({
     service: SessionUnitService.getApiChatSessionUnitDestinationList,
     input,
     picker,
+    key: input => `${input.id}/${input.keyword}`,
   });

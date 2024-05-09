@@ -65,7 +65,7 @@ const ondragstart = (event: DragEvent) => {
 
   event.dataTransfer?.setData(
     'text',
-    `${env.url_scheme}://./to/${entity.value?.ownerId}/${entity.value?.id}`,
+    `${env.url_scheme}://to/${entity.value?.id}/${entity.value?.ownerId}`,
   );
   console.log('ondragstart', event);
 };

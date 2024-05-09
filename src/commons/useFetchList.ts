@@ -31,6 +31,7 @@ export const useFetchList = <TInput extends GetListInput, TDto extends IdDto>({
   picker,
   service,
   selectable,
+  immediate,
   key = (input: TInput) => input?.keyword || '',
 }: {
   input: TInput;
@@ -38,6 +39,7 @@ export const useFetchList = <TInput extends GetListInput, TDto extends IdDto>({
   picker?: PickerInput;
   selectable?: boolean;
   key?: (input: TInput) => string;
+  immediate?: boolean,
 }) => {
   const caches = reactive(new Map<string | undefined, ResultDto>());
 

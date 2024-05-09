@@ -5,15 +5,21 @@ import { Person, Group, Groups, SmartToy, Services, ShoppingBag } from '../icons
 import { computed, ref } from 'vue';
 import { ChatObjectTypeEnums } from '../apis/enums';
 import { formatUrl } from '../commons/utils';
-const props = defineProps<{
-  name?: string | null;
-  entity?: ChatObjectDto;
-  size?: number | string;
-  thumb?: boolean;
-}>();
+const props = withDefaults(
+  defineProps<{
+    name?: string | null;
+    entity?: ChatObjectDto;
+    size?: number | string;
+    thumb?: boolean;
+    shape?: 'circle' | 'square';
+  }>(),
+  {
+    shape: 'circle',
+  },
+);
 const objectType = computed(() => props.entity?.objectType);
 const svgClass = computed(() => 'svg-icon');
-
+// const shape = ref('circle');
 // File/831C11D5-A3DF-6943-E20D-3A10F706CCA7
 
 const src = computed(() =>
@@ -26,7 +32,7 @@ const src = computed(() =>
 <template>
   <a-avatar
     :src="src"
-    shape="circle"
+    :shape="shape"
     :size="size || 40"
     class="avatar"
     :alt="name"

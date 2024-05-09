@@ -16,7 +16,6 @@ import { useColorMode, useFileDialog } from '@vueuse/core';
 import { useI18n } from 'vue-i18n';
 
 import EmojiPicker from 'vue3-emoji-picker';
-import ColorTheme from 'vue3-emoji-picker';
 import 'vue3-emoji-picker/css';
 import { useWindowStore } from '../../../stores/windowStore';
 import { computed } from 'vue';
@@ -29,6 +28,8 @@ import { MessageTypeEnums } from '../../../apis/enums';
 import { MessageContent } from '../../../apis/dtos/message/messageContent';
 import { FormType, useClipboradInput } from '../commons/useClipboradInput';
 import { screenshots } from '../../../ipc/screenshots';
+import { OptionProps } from 'ant-design-vue/es/vc-mentions/src/Option';
+import { MentionsProps } from 'ant-design-vue/es/vc-mentions/src/Mentions';
 
 const { t } = useI18n();
 
@@ -265,7 +266,33 @@ useClipboradInput({
     emits('open', { files, from });
   },
 });
-
+const filterOption = (input: string, option: OptionProps): boolean => {
+  // console.log('filterOption', input, option);
+  return option.label.indexOf(input) == -1;
+};
+const validateSearch = (input: string, props: MentionsProps) => {
+  console.log('validateSearch', input, props);
+  mentionsOptions.value = [
+    {
+      value: 'ddd',
+      label: 'ddd',
+    },
+  ];
+};
+const mentionsOptions = ref([
+  {
+    value: 'afc163',
+    label: 'afc163',
+  },
+  // {
+  //   value: 'zombieJ',
+  //   label: 'zombieJ',
+  // },
+  // {
+  //   value: 'yesmeck',
+  //   label: 'yesmeck',
+  // },
+]);
 defineExpose({
   clear,
   send,
@@ -276,96 +303,103 @@ defineExpose({
 
 <template>
   <section class="chat-input" disabled="disabled">
-    <div class="tool-bar">
-      <a-space>
-        <a-popover trigger="click" v-model:open="visible" overlayClassName="emoji-popover">
-          <template #content>
-            <EmojiPicker
-              class="emoji-picker"
-              :theme="colorScheme"
-              :group-names="groupNames"
-              :native="true"
-              @select="onSelectEmoji"
-              :hide-search="true"
-              :hide-group-names="false"
-              :disable-sticky-group-names="true"
-              :disable-skin-tones="true"
-            />
-          </template>
-          <a-button type="text"><MehOutlined /></a-button>
-        </a-popover>
+    <a-form layout="horizontal" :disabled="disabled" >
+      <div class="tool-bar">
+        <a-space>
+          <a-popover trigger="click" v-model:open="visible" overlayClassName="emoji-popover">
+            <template #content>
+              <EmojiPicker
+                class="emoji-picker"
+                :theme="colorScheme"
+                :group-names="groupNames"
+                :native="true"
+                @select="onSelectEmoji"
+                :hide-search="true"
+                :hide-group-names="false"
+                :disable-sticky-group-names="true"
+                :disable-skin-tones="true"
+              />
+            </template>
+            <a-button type="text"><MehOutlined /></a-button>
+          </a-popover>
 
-        <a-button type="text" @click="open"><FolderOpenOutlined /></a-button>
-        <!-- <a-popconfirm title="Are you sure delete this task?" ok-text="Yes" cancel-text="No">
+          <a-button type="text" @click="open"><FolderOpenOutlined /></a-button>
+          <!-- <a-popconfirm title="Are you sure delete this task?" ok-text="Yes" cancel-text="No">
           <a-button type="text"><VideoCameraOutlined /></a-button>
         </a-popconfirm> -->
 
-        <!-- <a-button type="text" @click="onFunction"><FunctionOutlined /></a-button> -->
+          <!-- <a-button type="text" @click="onFunction"><FunctionOutlined /></a-button> -->
 
-        <!-- <a-button type="text" @click="onTopic"><NumberOutlined /></a-button> -->
+          <!-- <a-button type="text" @click="onTopic"><NumberOutlined /></a-button> -->
 
-        <a-button type="text" @click="onContacts"><ContactsOutlined /></a-button>
+          <a-button type="text" @click="onContacts"><ContactsOutlined /></a-button>
 
-        <a-button type="text" @click="onCloudServer"><CloudServerOutlined /></a-button>
+          <a-button type="text" @click="onCloudServer"><CloudServerOutlined /></a-button>
 
-        <a-button type="text" @click="onSrceenshot"><ScissorOutlined /></a-button>
+          <a-button type="text" @click="onSrceenshot"><ScissorOutlined /></a-button>
 
-        <!-- <a-button type="text">
+          <!-- <a-button type="text">
           <UploadOutlined />
         </a-button> -->
-      </a-space>
-      <a-space>
-        <a-button type="text" @click="onMore"><MoreOutlined /></a-button>
-      </a-space>
-    </div>
-    <div class="input-body">
-      <div class="input-area">
-        <!-- <textarea
+        </a-space>
+        <a-space>
+          <a-button type="text" @click="onMore"><MoreOutlined /></a-button>
+        </a-space>
+      </div>
+      <div class="input-body">
+        <div class="input-area">
+          <!-- <textarea
           rows="2"
           @input="onInput"
           @change="onInputChange"
           @click="onInputClick"
           @blur="onBlur"
         ></textarea> -->
-        <scroll-view>
-          <a-mentions
-            ref="inputRef"
-            class="textarea"
-            v-model:value="inputValue"
-            rows="5"
-            :placeholder="t('SendContentPlaceholder')"
-            :options="mentions"
-            :autofocus="isInputFocus"
-            :disabled="disabled"
-            @keydown.ctrl.enter="send"
-            @change="onTextChange"
-            @select="onTextSelect"
-            @blur="onBlur"
-            @focus="onFocus"
-          ></a-mentions>
-          <!-- <br /> <br /> <br /> <br /> <br /> -->
-        </scroll-view>
-      </div>
-      <div class="input-footer">
-        <div class="footer-left">
-          <div class="counter">{{ (inputValue?.toString() || '').length }}/{{ maxLength }}</div>
-          <slot></slot>
+          <scroll-view>
+            <a-mentions
+              ref="inputRef"
+              class="textarea"
+              v-model:value="inputValue"
+              rows="5"
+              :validateSearch="validateSearch"
+              :placeholder="t('SendContentPlaceholder')"
+              :options="mentionsOptions"
+              :autofocus="isInputFocus"
+              :disabled="disabled"
+              @keydown.ctrl.enter="send"
+              @change="onTextChange"
+              @select="onTextSelect"
+              @blur="onBlur"
+              @focus="onFocus"
+            >
+              <!-- <template v-slot:option="option">
+            {{option}}
+          </template> -->
+            </a-mentions>
+            <!-- <br /> <br /> <br /> <br /> <br /> -->
+          </scroll-view>
         </div>
-        <div class="footer-right">
-          <a-button
-            type="primary"
-            @click="send"
-            :disabled="isSendBtnDisabled"
-            class="btn-send"
-            :title="t('SendShortcuts')"
-          >
-            {{ t('Send') }}(
-            <u>S</u>
-            )
-          </a-button>
+        <div class="input-footer">
+          <div class="footer-left">
+            <div class="counter">{{ (inputValue?.toString() || '').length }}/{{ maxLength }}</div>
+            <slot></slot>
+          </div>
+          <div class="footer-right">
+            <a-button
+              type="primary"
+              @click="send"
+              :disabled="isSendBtnDisabled"
+              class="btn-send"
+              :title="t('SendShortcuts')"
+            >
+              {{ t('Send') }}(
+              <u>S</u>
+              )
+            </a-button>
+          </div>
         </div>
       </div>
-    </div>
+    </a-form>
   </section>
 </template>
 <style>
@@ -454,5 +488,3 @@ defineExpose({
   justify-content: space-between;
 }
 </style>
-../../../ipc/clipboardHelper
-../../../stores/useWindowStore../../../stores/windowStore

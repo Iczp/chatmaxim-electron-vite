@@ -26,6 +26,7 @@ import ChatInput from './widget/ChatInput.vue';
 import { NodeExpandOutlined, MoreOutlined } from '@ant-design/icons-vue';
 import { message } from 'ant-design-vue';
 import { useImStore } from '../../stores/imStore';
+import { useMentionsStore } from '../../stores/mentions';
 import { MessageDto } from '../../apis/dtos';
 import { ContextmenuInput, showContextMenuForMessage } from '../../commons/contextmenu';
 import QuoteMessage from './components/QuoteMessage.vue';
@@ -643,6 +644,10 @@ const onTransfer = () => {
     },
   });
 };
+
+// const mentionsStore = useMentionsStore();
+
+// mentionsStore.fetchData(sessionUnitId);
 </script>
 
 <template>
@@ -680,7 +685,7 @@ const onTransfer = () => {
         :sessionUnitId="sessionUnitId"
       />
 
-      <DynamicScroller
+      <!--<DynamicScroller
         ref="scrollerRef"
         :items="list"
         :min-item-size="86"
@@ -694,7 +699,7 @@ const onTransfer = () => {
         <template
           v-slot="{ item, index, active }: { item: MessageDto, index: number, active: any }"
         >
-          <DynamicScrollerItem
+           <DynamicScrollerItem
             :item="item"
             :active="active"
             :size-dependencies="[item.isRollbacked]"
@@ -716,16 +721,16 @@ const onTransfer = () => {
             </MessageItem>
           </DynamicScrollerItem>
         </template>
-      </DynamicScroller>
+      </DynamicScroller> -->
 
-      <!-- <scroll-view
+      <scroll-view
         class="message-container"
         ref="scroll"
         @ps-y-reach-start="onReachStart"
         @ps-y-reach-end="onReachEnd"
       >
         <Loading v-if="isPendingOfFetchHistorical" :height="loadingHeight" />
-        <EmptyData v-if="isBof" text="没有了" :height="20" />
+        <!-- <EmptyData v-if="isBof" text="没有了" :height="20" /> -->
         <a-divider v-if="isBof" class="message-divider">{{ t('message.listStart') }}</a-divider>
         <MessageItem
           v-for="(item, index) in list"
@@ -748,7 +753,7 @@ const onTransfer = () => {
           :height="loadingHeight"
           :text="t('message.receiving')"
         />
-      </scroll-view> -->
+      </scroll-view>
       <!-- <div class="latest-counter">有 {{ latestMessageCount }} 条最新消息</div> -->
     </page-content>
     <page-footer class="footer">
@@ -756,6 +761,7 @@ const onTransfer = () => {
         ref="chatInput"
         :disabled="!isInputEnabled"
         v-model:value="textValue"
+        :mentions="[]"
         @send="onSend"
         @open="openHandle"
       >

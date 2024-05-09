@@ -53,3 +53,5 @@ export type { SessionRequestGetListInput } from './SessionRequestGetListInput';
 export type { SessionRequestDetailDto } from './SessionRequestDetailDto';
 
 export type { AppDto } from './AppDto';
+
+export type { SessionUnitDisplayNameDto } from './SessionUnitDisplayNameDto';

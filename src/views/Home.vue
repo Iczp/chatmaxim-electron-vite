@@ -22,6 +22,7 @@ import { useBadges } from '../commons/useBadges';
 import { setWindow } from '../ipc/setWindow';
 import { openAppSettings } from '../ipc/openAppSettings';
 import ChatObject from '../components/ChatObject.vue';
+import Avatar from '../components/Avatar.vue';
 import { useI18n } from 'vue-i18n';
 import AudioPlayer from '../components/AudioPlayer.vue';
 import { MusicLib, MusicQueue, MusicNote, MusicLyrics } from '../icons';
@@ -105,8 +106,9 @@ const getKey = (route: RouteLocationNormalizedLoaded, component: any): string | 
             @click="navToChatHitory(item)"
           >
             <a-badge :count="item.badge">
-              <MessageOutlined />
+              <MessageOutlined v-if="isChatActive(item.chatObjectId!)" />
               <!-- <ChatObject :entity="item.owner"></ChatObject> -->
+              <Avatar v-else :entity="item.owner" :size="28" :shape="'square'"></Avatar>
             </a-badge>
           </div>
           <!-- <div class="nav-item" @click="goto('/about')">
