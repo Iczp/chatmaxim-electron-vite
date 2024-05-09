@@ -205,4 +205,3 @@ const add = (item: ChatObjectDto) => {
   min-height: 22px;
 }
 </style>
-../../stores/imStore

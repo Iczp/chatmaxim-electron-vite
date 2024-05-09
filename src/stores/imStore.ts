@@ -21,7 +21,13 @@ import { toRaw } from 'vue';
 import { setTray } from '../commons/setTray';
 
 interface State {
+  /**
+   *
+   */
   chatObjects: Map<number, BadgeDetialDto>;
+  /**
+   *
+   */
   initBadge: number;
   /**
    * 会话单元
@@ -38,6 +44,9 @@ interface State {
    */
   destinationMap: Map<string, SessionUnitDestinationDto>;
   // sessionMap: Map<number, Array<SessionUnitOwnerDto>>;
+  /**
+   * 
+   */
   messageMap: Record<string, MessageDto[]>;
   /**
    * 会话列表
@@ -342,6 +351,17 @@ export const useImStore = defineStore('im', {
         });
       });
       console.log('setChatObjects', this.chatObjects);
+    },
+    /**
+     *
+     * @param chatObjectId
+     * @returns
+     */
+    getChatObject(chatObjectId: number | string | undefined): BadgeDetialDto | undefined {
+      console.log('getChatObject', chatObjectId, this.chatObjects);
+      if (chatObjectId) {
+        return this.chatObjects.get(Number(chatObjectId));
+      }
     },
     /**
      * 获取用户消息数量（角标）

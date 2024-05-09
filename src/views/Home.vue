@@ -149,7 +149,7 @@ const getKey = (route: RouteLocationNormalizedLoaded, component: any): string | 
           <div class="nav-item" @click="goto('/apps')" :class="{ active: route.name == 'apps' }">
             <AppstoreOutlined />
           </div>
-          <div class="nav-item"><MoreOutlined /></div>
+          <!-- <div class="nav-item"><MoreOutlined /></div> -->
         </div>
 
         <div class="side-bottom">

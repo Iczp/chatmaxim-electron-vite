@@ -48,9 +48,9 @@ const displayName = computed(
 /* :deep(.layout-item) {
   --spacing-size: 8px;
 } */
-:deep(.title-left.object-name) {
-  /* max-width: 240px; */
-}
+/* :deep(.title-left.object-name) {
+  max-width: 240px;
+} */
 .chat-object {
   padding: 6px 0px;
   --spacing-size: 8px;

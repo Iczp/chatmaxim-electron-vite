@@ -2,7 +2,9 @@
 import { computed, onActivated, onDeactivated, ref } from 'vue';
 import { useRoute } from 'vue-router';
 import { router, chatHistorys } from '../routes';
+import { EditOutlined, SettingOutlined } from '@ant-design/icons-vue';
 import SessionItem from '../components/SessionItem.vue';
+import ChatObject from '../components/ChatObject.vue';
 import Loading from '../components/Loading.vue';
 import { SessionItemDto } from '../apis/dtos';
 import { useImStore } from '../stores/imStore';
@@ -37,6 +39,8 @@ const {
   isPendingOfFetchLatest,
   isPendingOfFetchHistorical,
 } = useSessionUnitList({ ownerId: Number(props.chatObjectId!) });
+
+const currentChatObject = computed(() => store.getChatObject(props.chatObjectId)?.owner);
 
 const acitveSessionUnitId = computed(() => route.params.sessionUnitId);
 
@@ -157,8 +161,19 @@ onDeactivated(() => {
 <template>
   <main class="page-session">
     <aside class="nav-side">
-      <div class="search-bar">
-        <a-space direction="vertical">
+      <header class="nav-side-header">
+        <div class="current-chat-object">
+          <ChatObject :entity="currentChatObject">
+            <template #sub>在线</template>
+          </ChatObject>
+          <a-space direction="horizontal" :size="12" split="|">
+            <EditOutlined key="edit" />
+            <!-- <SettingOutlined key="edit" /> -->
+            <Plus @click="onPlus" class="svg-icon cursor-pointer" />
+          </a-space>
+        </div>
+        <div class="search-bar">
+          <!-- <a-space direction="vertical"> -->
           <a-input
             v-model:value="keyword"
             :bordered="true"
@@ -166,12 +181,15 @@ onDeactivated(() => {
             :placeholder="`${t('Search')}:${minMessageId}`"
             style="width: 100%"
           >
-            <template #addonAfter>
-              <div class="plus-label"><Plus @click="onPlus" class="svg-icon cursor-pointer" /></div>
-            </template>
+            <!-- <template #addonAfter>
+              <div class="plus-label">
+                <Plus @click="onPlus" class="svg-icon cursor-pointer" />
+              </div>
+            </template> -->
           </a-input>
-        </a-space>
-      </div>
+          <!-- </a-space> -->
+        </div>
+      </header>
 
       <!-- <div class="session-list"></div> -->
       <RecycleScroller
@@ -282,10 +300,24 @@ onDeactivated(() => {
   flex-shrink: 0;
   background-color: var(--sider-background-color);
 }
+.nav-side-header {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  border-bottom: 1px solid var(--divider-color);
+  padding: 12px;
+}
+.current-chat-object {
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  align-items: center;
+}
+
 .search-bar {
   display: flex;
-  border-bottom: 1px solid var(--divider-color);
-  height: 64px;
+
+  /* height: 64px; */
   flex-shrink: 0;
   justify-content: center;
   align-items: center;
@@ -316,4 +348,3 @@ onDeactivated(() => {
   width: 100%;
 }
 </style>
-../stores/imStore
