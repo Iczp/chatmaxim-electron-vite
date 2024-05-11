@@ -5,6 +5,7 @@ import { ServiceStatusEnums } from '../apis/enums';
 const props = withDefaults(
   defineProps<{
     text?: string;
+    isText?: boolean;
     status?: ServiceStatusEnums | null;
     size?: string | number;
   }>(),
@@ -24,6 +25,7 @@ const dotStyle = ref<CSSProperties>({
   <div class="service-status" :class="`status-${status}`">
     <span class="status-dot" :style="dotStyle"></span>
     <span v-if="text">{{ text }}</span>
+    <slot></slot>
   </div>
 </template>
 

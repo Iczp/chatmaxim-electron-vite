@@ -166,7 +166,10 @@ onDeactivated(() => {
         <div class="current-chat-object">
           <ChatObject :entity="currentChatObject">
             <template #sub>
-              <ServiceStatus :status="currentChatObject?.serviceStatus"/>
+              <ServiceStatus :status="currentChatObject?.serviceStatus" :is-text="true">
+                <span>在线</span>
+              </ServiceStatus>
+             
             </template>
           </ChatObject>
           <a-space direction="horizontal" :size="12" split="|">
