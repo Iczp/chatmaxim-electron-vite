@@ -146,6 +146,7 @@ const onQuoteContentClick = (event: MouseEvent) => {
             :name="senderName"
             @click.stop.native="onAvatarClick($event, MouseButton.Click)"
             @click.right.stop.native="onAvatarClick($event, MouseButton.Right)"
+            :is-status="Number(entity.senderSessionUnit?.owner?.serviceStatus) > 0"
             thumb
           />
         </aside>

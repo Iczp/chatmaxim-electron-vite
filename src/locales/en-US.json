@@ -197,5 +197,6 @@
   "SaveAsFail": "Save As Fail",
   "LoadError": "load error",
   "srceenshot": "Srceenshot",
-  "clipboard:image": "clipboard-image"
+  "clipboard:image": "clipboard-image",
+  "loading": "Loading..."
 }

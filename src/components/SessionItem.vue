@@ -7,7 +7,7 @@ import { HeartTwoTone, HeartFilled } from '@ant-design/icons-vue';
 import { ChatObjectTypeEnums } from '../apis/enums';
 import ChatObject from '../components/ChatObject.vue';
 import MessageProview from '../components/MessageProview.vue';
-import {  useSessionUnitId,useComputedSessionUnit } from '../commons/useSessionUnit';
+import { useSessionUnitId, useComputedSessionUnit } from '../commons/useSessionUnit';
 import { useImStore } from '../stores/imStore';
 import { env } from '../env';
 import { useI18n } from 'vue-i18n';
@@ -77,7 +77,6 @@ const onItemClick = (event: MouseEvent | PointerEvent) => {
 };
 </script>
 
-
 <template>
   <chat-object
     :entity="destination"
@@ -94,13 +93,14 @@ const onItemClick = (event: MouseEvent | PointerEvent) => {
     sub-right
     title-right
     thumb
+    :is-status="true"
   >
     <template #title>
       <div class="object-name" :title="destinationName!">
         <span v-if="env.isDev">{{ entity?.ownerId }}-</span>
         <span class="text-ellipsis">{{ destinationName }}</span>
         <a-tag v-if="objectType == ChatObjectTypeEnums.Robot" color="blue" class="object-type-tag">
-          机器人
+          {{ t('ObjectType:Robot') }}
         </a-tag>
       </div>
     </template>
@@ -129,15 +129,16 @@ const onItemClick = (event: MouseEvent | PointerEvent) => {
     </template>
     <template #sub-right>
       <a-space class="sub-right">
-        <!-- <a-badge
+        <icon v-if="isImmersed" type="mute" size="14" class="mute" />
+        <heart-two-tone v-if="isTopping" two-tone-color="#eb2f96" />
+        <a-badge
           v-if="badge != 0"
           :count="badge"
           :overflow-count="99"
           :dot="isImmersed"
+          :title="badge"
           class="badge"
-        /> -->
-        <icon v-if="isImmersed" type="mute" size="14" class="mute" />
-        <heart-two-tone v-if="isTopping" two-tone-color="#eb2f96" />
+        />
       </a-space>
     </template>
   </chat-object>
@@ -149,7 +150,7 @@ const onItemClick = (event: MouseEvent | PointerEvent) => {
   height: 24px;
 }
 :deep(.sub-container) {
-  height: 20px;
+  height: 22px;
 }
 :deep(.sub-left) {
   color: #ccc;
@@ -279,7 +280,7 @@ const onItemClick = (event: MouseEvent | PointerEvent) => {
   display: flex;
 }
 .badge :deep(.ant-badge-count) {
-  --badge-size: 18px;
+  --badge-size: 16px;
   /* font-size: 12px;
   height: var(--badge-size);
   line-height: var(--badge-size);

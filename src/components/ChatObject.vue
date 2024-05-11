@@ -4,6 +4,8 @@ import LayoutItem from '../components/LayoutItem.vue';
 import Avatar from '../components/Avatar.vue';
 import { ChatObjectDto } from '../apis/dtos';
 import { computed } from 'vue';
+import { ServiceStatusEnums } from '../apis/enums';
+
 const slots = useSlots();
 const attrs = useAttrs();
 // console.log('slots', slots);
@@ -15,6 +17,7 @@ const props = defineProps<{
   badge?: string | number;
   dot?: boolean | null;
   thumb?: boolean;
+  isStatus?: boolean;
 }>();
 
 // custom slot
@@ -29,9 +32,14 @@ const displayName = computed(
 <template>
   <layout-item class="chat-object" v-bind="attrs" header>
     <template #header>
-      <a-badge :count="badge" :overflow-count="99" size="default" :dot="dot">
-        <avatar :entity="entity" :size="size" :thumb="thumb" />
-      </a-badge>
+      <!-- <a-badge :count="badge" :overflow-count="99"  :dot="dot"> -->
+      <avatar
+        :entity="entity"
+        :size="size"
+        :thumb="thumb"
+        :is-status="isStatus && Number(entity?.serviceStatus) > 0"
+      />
+      <!-- </a-badge> -->
     </template>
     <template #title>
       <slot name="title">

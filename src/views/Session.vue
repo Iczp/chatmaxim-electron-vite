@@ -5,6 +5,7 @@ import { router, chatHistorys } from '../routes';
 import { EditOutlined, SettingOutlined } from '@ant-design/icons-vue';
 import SessionItem from '../components/SessionItem.vue';
 import ChatObject from '../components/ChatObject.vue';
+import ServiceStatus from '../components/ServiceStatus.vue';
 import Loading from '../components/Loading.vue';
 import { SessionItemDto } from '../apis/dtos';
 import { useImStore } from '../stores/imStore';
@@ -164,7 +165,9 @@ onDeactivated(() => {
       <header class="nav-side-header">
         <div class="current-chat-object">
           <ChatObject :entity="currentChatObject">
-            <template #sub>在线</template>
+            <template #sub>
+              <ServiceStatus :status="currentChatObject?.serviceStatus"/>
+            </template>
           </ChatObject>
           <a-space direction="horizontal" :size="12" split="|">
             <EditOutlined key="edit" />
@@ -202,12 +205,14 @@ onDeactivated(() => {
         @scroll-end="onReachEnd"
       >
         <template #before>
-          <Loading v-if="isPendingOfFetchLatest && displayItems.length == 0" :height="24">
-            正在收到消息
-          </Loading>
+          <Loading
+            v-if="isPendingOfFetchLatest && displayItems.length == 0"
+            :height="24"
+            :text="t('message.receiving')"
+          ></Loading>
         </template>
         <template #after>
-          <Loading v-if="isPendingOfFetchHistorical">正在加载</Loading>
+          <Loading v-if="isPendingOfFetchHistorical" :text="t('loading')"</Loading>
         </template>
         <template v-slot="{ item, index }: { item: SessionItemDto, index: number }">
           <SessionItem

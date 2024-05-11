@@ -13,8 +13,8 @@ const style = reactive({
 
 <template>
   <div class="loading" :style="style">
+    <SyncOutlined spin />
     <slot>
-      <SyncOutlined spin />
       <!-- <LoadingOutlined spin /> -->
       <span v-if="text" class="loading-text">{{ text }}</span>
     </slot>
@@ -30,9 +30,9 @@ const style = reactive({
   box-sizing: border-box;
   color: var(--loading-color);
   padding: 20px;
+  font-size: 12px;
 }
 .loading-text {
-  font-size: 12px;
   margin-left: 8px;
 }
 </style>

@@ -73,6 +73,7 @@ declare module 'vue' {
     RouterView: typeof import('vue-router')['RouterView']
     ScrollView: typeof import('./src/components/ScrollView.vue')['default']
     SearchInput: typeof import('./src/components/SearchInput.vue')['default']
+    ServiceStatus: typeof import('./src/components/ServiceStatus.vue')['default']
     SessionItem: typeof import('./src/components/SessionItem.vue')['default']
     TabList: typeof import('./src/components/TabList.vue')['default']
     Text: typeof import('./src/components/Text.vue')['default']
