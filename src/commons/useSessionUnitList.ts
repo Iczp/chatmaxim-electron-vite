@@ -22,6 +22,8 @@ export const useSessionUnitList = ({
   const isPendingOfFetchHistorical = ref(false);
   const isPendingOfFetchLatest = ref(false);
 
+  const keywork = ref<string>('');
+
   const isBof = ref(false);
   const isEof = ref(false);
 
@@ -130,5 +132,6 @@ export const useSessionUnitList = ({
     fetchHistorical,
     isPendingOfFetchLatest,
     isPendingOfFetchHistorical,
+    keywork,
   };
 };

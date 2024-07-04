@@ -1,5 +1,5 @@
 import { ipcRenderer } from 'electron';
-import { GlobalEventPayload } from '../ipc-types/GlobalEventPayload';
+import { GlobalEventName, GlobalEventPayload } from '../ipc-types/GlobalEventPayload';
 import { eventBus } from '../commons/eventBus';
 
 export const channel = 'global-event';
@@ -18,12 +18,12 @@ export const globalEventHandle = (_: Electron.IpcRendererEvent, payload: GlobalE
   eventBus.emit(event, params);
 };
 
-export const invoke = (...args: any[]) => {
+export const invoke = (eventName: GlobalEventName, ...args: any[]) => {
   console.log(`[${channel}]`, 'invoke', args);
-  return ipcRenderer.invoke(channel, ...args);
+  return ipcRenderer.invoke(channel, [eventName, ...args]);
 };
 
-export const emit = (...args: any[]) => {
-  console.log(`[${channel}]`, 'invoke', args);
-  return ipcRenderer.invoke(channel, ...args);
+export const emit = (eventName: GlobalEventName, ...args: any[]) => {
+  console.log(`[${channel}]`, 'invoke', eventName, args);
+  return ipcRenderer.invoke(channel, [eventName, ...args]);
 };
