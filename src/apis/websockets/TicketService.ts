@@ -7,7 +7,7 @@ export class TicketService {
   public static generate({ requestBody }: { requestBody?: any }): CancelablePromise<ConnectionDto> {
     return __request(OpenAPI, {
       method: 'POST',
-      url: '/api/app/ticket/generate',
+      url: '/api/pusher/ticket/generate',
       body: requestBody,
       mediaType: 'application/json',
     });
