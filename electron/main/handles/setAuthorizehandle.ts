@@ -11,8 +11,8 @@ export const setAuthorizehandle: IpcMainHandle = {
       store.set(TOKEN_KEY, payload);
       globalState.token = payload;
       globalState.isAuthorized = true;
-      const login = windowManager.get('login');
-      login.close();
+      const loginWin = windowManager.get('login');
+      loginWin?.close();
 
       const main = createMainWindow({
         path: '/',

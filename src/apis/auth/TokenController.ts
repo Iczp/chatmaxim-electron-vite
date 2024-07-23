@@ -4,6 +4,8 @@ import { TokenService } from './TokenService';
 import { TokenDto, LoginResult, LoginInput } from './dto';
 import { GrantTypeEnum } from './dto/GrantTypeEnum';
 import { env } from '../../env';
+import { setAuthorize } from '../../ipc/setAuthorize';
+import { promises } from 'original-fs';
 
 export const TOKEN_KEY: string = env.token_key;
 
@@ -46,8 +48,8 @@ export const login = ({ username, password }: LoginInput): Promise<LoginResult> 
       password,
       scope: 'IM offline_access roles profile phone email address',
     })
-      .then(token => {
-        token = handleToken(token);
+      .then(async token => {
+        token = await handleToken(token, 'fetchToken');
         resolve({
           message: '登录成功',
           success: true,
@@ -72,11 +74,14 @@ export const login = ({ username, password }: LoginInput): Promise<LoginResult> 
  * @param {TokenDto} token
  * @return {*}  {TokenDto}
  */
-export const handleToken = (token: TokenDto): TokenDto => {
+export const handleToken = async (token: TokenDto, caller?: string): Promise<TokenDto> => {
   token.creation_time = new Date();
   cacheToken = token;
-  // console.log('handleToken', token);
+  console.log(`handleToken[${caller}]`, token);
   setStorageToken(JSON.stringify(token));
+
+  await setAuthorize(token);
+
   return token;
 };
 
@@ -87,13 +92,14 @@ export const handleToken = (token: TokenDto): TokenDto => {
  * @return {*}
  */
 export const refreshToken = async (token: TokenDto): Promise<TokenDto> => {
+  console.log('refreshToken', token);
   var newToken = await TokenService.RefreshToken({
     client_id: env.client_id,
     client_secret: env.client_secret,
     refresh_token: token.refresh_token,
     grant_type: GrantTypeEnum.Refresh_token,
   });
-  newToken = handleToken(newToken);
+  newToken = await handleToken(newToken, 'refreshToken');
   return newToken;
 };
 
@@ -106,6 +112,8 @@ export const refreshToken = async (token: TokenDto): Promise<TokenDto> => {
 
 export const getToken = (tryCount: number = 10): Promise<TokenDto | null> => {
   return new Promise(async (resolve, reject) => {
+
+    // console.log('getToken', tryCount);
     if (isPostToken) {
       // console.log('isPostToken', isPostToken, tryCount);
       if (tryCount < 0) {
@@ -116,7 +124,7 @@ export const getToken = (tryCount: number = 10): Promise<TokenDto | null> => {
         // console.log('setTimeout isPostToken', isPostToken);
         tryCount--;
         resolve(await getToken(tryCount));
-      }, 100);
+      }, 1000);
       return;
     }
     isPostToken = true;
@@ -208,9 +216,7 @@ export const getLocalToken = (): TokenDto | null => {
     }
   }
 
-  if (isTokenExpired(token)) {
-    return null;
-  }
+  
 
   return token;
 };

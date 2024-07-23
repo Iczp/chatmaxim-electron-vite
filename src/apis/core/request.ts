@@ -18,9 +18,10 @@ import type { ApiResult } from './ApiResult';
 import { CancelablePromise } from './CancelablePromise';
 import type { OnCancel } from './CancelablePromise';
 import type { OpenAPIConfig } from './OpenAPI';
-import { getToken, isTokenUrl } from '../auth/TokenController';
+import { getToken, isTokenUrl, refreshToken } from '../auth/TokenController';
 import { useWindowStore } from '../../stores/windowStore';
 import { version } from '../../../package.json';
+import log from 'video.js/dist/types/utils/log';
 
 let tokenCount: number = 0;
 const getTokenValue = () => {
@@ -38,12 +39,17 @@ axios.interceptors.request.use(
     // console.log('axios.interceptors.request', config);
     // const v = await getTokenValue();
     // console.error('tokenValue', v, config);
-    if (!isTokenUrl(config.url)) {
-      //   config.headers['Authorization'] = `Bearer ${token}`;
-      const token = await getToken();
-      if (token) {
-        config.headers['Authorization'] = `${token.token_type} ${token.access_token}`;
+
+    try {
+      if (!isTokenUrl(config.url)) {
+        //   config.headers['Authorization'] = `Bearer ${token}`;
+        const token = await getToken();
+        if (token) {
+          config.headers['Authorization'] = `${token.token_type} ${token.access_token}`;
+        }
       }
+    } catch (error) {
+      throw error;
     }
 
     return config;

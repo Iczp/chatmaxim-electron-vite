@@ -39,7 +39,7 @@ const onFinish = (values: any) => {
       console.log(`${t('Login succeeded')}!`, res);
       message.success({ content: `${t('Welcome back')}!`, key, duration: 2 });
       // setWindow({ size: { width: 1080, height: 760 } });
-      setAuthorize(res.detail as TokenDto);
+      // setAuthorize(res.detail as TokenDto);
       router.push('/');
     })
     .catch(err => {
@@ -158,4 +158,3 @@ const { appId, appName, author, websize, version, copyright } = useAppInfo();
   max-width: 500px;
 }
 </style>
-../ipc/setAuthorize
