@@ -24,6 +24,7 @@ import {
 } from '../handles/openAppSettingsWindowHandle';
 import { WindowParams } from '../ipc-types';
 import { env } from '../env';
+import { createLoginWindow } from './createLoginWindow';
 
 process.env.DIST_ELECTRON = join(__dirname, '..');
 process.env.DIST = join(process.env.DIST_ELECTRON, '../dist');
@@ -33,7 +34,7 @@ process.env.VITE_PUBLIC = process.env.VITE_DEV_SERVER_URL
 
 const trayIconUrl = `${process.env.DIST}/tray.png`;
 const trayIconEmptyUrl = `${process.env.DIST}/tray-empty.png`;
-let tray: Tray;
+let tray: Tray | undefined;
 let trayWindow: BrowserWindow;
 let trayTimer: NodeJS.Timeout;
 let trayTimes: number = 0;
@@ -43,7 +44,7 @@ export const startFlash = (flashIconUrl?: string) => {
     trayTimes++;
     let iconUrl = trayTimes % 2 == 1 ? flashIconUrl || trayIconUrl : trayIconEmptyUrl;
     const trayIcon = nativeImage.createFromPath(iconUrl);
-    tray.setImage(trayIcon);
+    tray?.setImage(trayIcon);
   }, 500);
 };
 
@@ -53,7 +54,7 @@ export const stopFlash = () => {
     clearInterval(trayTimer);
   }
   const trayIcon = nativeImage.createFromPath(trayIconUrl);
-  tray.setImage(trayIcon);
+  tray?.setImage(trayIcon);
 };
 app.whenReady().then(() => {
   // const icon = nativeImage.createFromPath('path/to/asset.png')
@@ -154,14 +155,16 @@ export const createTray = () => {
       type: 'normal',
       click(menuItem, browserWindow, event) {
         // stopFlash();
-        // console.log('logout');
-        // windowManager.closeAll();
-        tray.destroy();
-        trayWindow.destroy();
-        app.quit();
+        console.log('logout');
+        windowManager.closeAll();
+        tray?.destroy();
+        trayWindow?.destroy();
         BrowserWindow.getAllWindows().forEach(x => {
-          console.log('win id:', x.id);
+          const winName = windowManager.getNameById(x.id);
+          console.log('win id:', x.id, winName);
         });
+        app.quit();
+        // createLoginWindow({ path: 'login', visiblity: true, isPreventClose: true });
       },
     },
   ]);

@@ -136,7 +136,7 @@ const onItemClick = (event: MouseEvent | PointerEvent) => {
           :count="badge"
           :overflow-count="99"
           :dot="isImmersed"
-          :title="badge"
+          :title="badge?.toString()"
           class="badge"
         />
       </a-space>

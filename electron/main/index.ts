@@ -14,13 +14,7 @@ process.env.VITE_PUBLIC = process.env.VITE_DEV_SERVER_URL
   ? join(process.env.DIST_ELECTRON, '../public')
   : process.env.DIST;
 
-import {
-  app,
-  BrowserWindow,
-  ipcMain,
-  dialog,
-  shell,
-} from 'electron';
+import { app, BrowserWindow, ipcMain, dialog, shell } from 'electron';
 import { release } from 'node:os';
 import { join } from 'node:path';
 import Store from 'electron-store';
@@ -109,7 +103,10 @@ app.on('activate', () => {
 });
 app.on('window-all-closed', () => {
   win = null;
-  if (process.platform !== 'darwin') app.quit();
+  if (process.platform !== 'darwin') {
+    console.warn('window-all-closed');
+    app.quit();
+  }
 });
 
 app.on('second-instance', (event, argv) => {
@@ -146,5 +143,4 @@ ipcMain.on('shell:open', () => {
   shell.openExternal(pagePath);
 });
 
-
-installAllIpcHandle()
+installAllIpcHandle();
