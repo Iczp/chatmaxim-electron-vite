@@ -1,8 +1,8 @@
 <script setup lang="ts">
 import { ref } from 'vue';
-import { MessageSimpleDto } from '../../../apis/dtos';
-import { useMessageEntity } from '../../../composables/useMessageEntity';
-import MessageProview from '../../../components/MessageProview.vue';
+import { MessageSimpleDto } from '../apis/dtos';
+import { useMessageEntity } from '../composables/useMessageEntity';
+import MessageProview from './MessageProview.vue';
 import { CloseCircleOutlined } from '@ant-design/icons-vue';
 const props = defineProps<{
   entity?: MessageSimpleDto;

@@ -1,11 +1,11 @@
 <script setup lang="ts">
 import { computed, ref, useSlots, watch } from 'vue';
 
-import { MessageDto } from '../../../apis/dtos';
-import { MessageTypeEnums } from '../../../apis/enums';
+import { MessageDto } from '../apis/dtos';
+import { MessageTypeEnums } from '../apis/enums';
 import { HeartTwoTone } from '@ant-design/icons-vue';
-import Avatar from '../../../components/Avatar.vue';
-import { FavoriteFilled, FavoriteOutline } from '../../../icons';
+import Avatar from './Avatar.vue';
+import { FavoriteFilled, FavoriteOutline } from '../icons';
 
 import MsgText from './MsgText.vue';
 import MsgCmd from './MsgCmd.vue';
@@ -22,14 +22,14 @@ import MsgState from './MsgState.vue';
 import QuoteMessage from './QuoteMessage.vue';
 import MsgRollback from './MsgRollback.vue';
 
-import { SelfImprovement, PersonPin } from '../../../icons';
+import { SelfImprovement, PersonPin } from '../icons';
 import {
   ContextmenuInput,
   LabelType as LabelType,
   MouseButton,
-} from '../../../commons/contextmenu';
-import { useMessageEntity } from '../../../composables/useMessageEntity';
-import { useProfileModal } from '../../../composables/useProfileModal';
+} from '../commons/contextmenu';
+import { useMessageEntity } from '../composables/useMessageEntity';
+import { useProfileModal } from '../composables/useProfileModal';
 
 const props = defineProps<{
   sessionUnitId: string;

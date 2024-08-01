@@ -16,7 +16,7 @@ import { useRoute, useRouter } from 'vue-router';
 import ChatSetting from '../../components/ChatSetting.vue';
 import DropViewer from '../../components/DropViewer.vue';
 import TransferModal from '../../components/TransferModal.vue';
-import MessageItem from './components/MessageItem.vue';
+import MessageItem from '../../components/MessageItem.vue';
 
 import Loading from '../../components/Loading.vue';
 
@@ -29,7 +29,7 @@ import { useImStore } from '../../stores/imStore';
 import { useMentionsStore } from '../../stores/mentions';
 import { MessageDto } from '../../apis/dtos';
 import { ContextmenuInput, showContextMenuForMessage } from '../../commons/contextmenu';
-import QuoteMessage from './components/QuoteMessage.vue';
+import QuoteMessage from '../../components/QuoteMessage.vue';
 import { computedSessionUnitEntity, useSessionUnitId } from '../../composables/useSessionUnit';
 import { useMessageList } from '../../composables/useMessageList';
 import { MessageStateEnums, MessageTypeEnums } from '../../apis/enums';

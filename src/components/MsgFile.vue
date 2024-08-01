@@ -1,10 +1,10 @@
 <script setup lang="ts">
 import { computed } from 'vue';
-import { MessageDto, FileContentDto } from '../../../apis/dtos';
-import Bubble from '../../../components/Bubble.vue';
-import TextViewer from '../../../components/TextViewer.vue';
+import { MessageDto, FileContentDto } from '../apis/dtos';
+import Bubble from './Bubble.vue';
+import TextViewer from './TextViewer.vue';
 import prettyBytes from 'pretty-bytes';
-import FileItem from '../../../components/FileItem.vue';
+import FileItem from './FileItem.vue';
 const props = defineProps<{
   item: MessageDto;
 }>();

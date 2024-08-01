@@ -1,10 +1,10 @@
 <script setup lang="ts">
 import { computed, ref, watch } from 'vue';
-import { formatImageRect, formatUrl, getImageRect } from '../../../commons/utils';
-import { useDownload } from '../../../composables/useDownload';
+import { formatImageRect, formatUrl, getImageRect } from '../commons/utils';
+import { useDownload } from '../composables/useDownload';
 import { useI18n } from 'vue-i18n';
 import prettyBytes from 'pretty-bytes';
-import EmptyImg from '../../../assets/empty.png';
+import EmptyImg from '../assets/empty.png';
 import { useElementVisibility } from '@vueuse/core';
 
 const { t } = useI18n();

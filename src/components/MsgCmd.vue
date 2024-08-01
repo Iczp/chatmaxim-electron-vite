@@ -1,9 +1,9 @@
 <script setup lang="ts">
 import { computed } from 'vue';
-import { MessageDto, CmdContentDto } from '../../../apis/dtos';
-import TextViewer from '../../../components/TextViewer.vue';
-import { WordDto } from '../../../commons/formatWords';
-import { useProfileModal } from '../../../composables/useProfileModal';
+import { MessageDto, CmdContentDto } from '../apis/dtos';
+import TextViewer from './TextViewer.vue';
+import { WordDto } from '../commons/formatWords';
+import { useProfileModal } from '../composables/useProfileModal';
 const props = defineProps<{
   item: MessageDto;
 }>();

@@ -1,9 +1,9 @@
 <script setup lang="ts">
 import { computed } from 'vue';
-import { MessageDto, VideoContentDto } from '../../../apis/dtos';
+import type { MessageDto, VideoContentDto } from '../apis/dtos';
 import MsgImg from './MsgImg.vue';
-import PlayIcon from '../../../components/PlayIcon.vue';
-import { formatDurations } from '../../../commons/utils';
+import PlayIcon from './PlayIcon.vue';
+import { formatDurations } from '../commons/utils';
 const props = defineProps<{
   item: MessageDto;
 }>();

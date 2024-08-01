@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { computed } from 'vue';
-import { MessageDto } from '../../../apis/dtos';
-import { ImageContentDto } from '../../../apis/dtos/message/ImageContentDto';
+import { MessageDto } from '../apis/dtos';
+import { ImageContentDto } from '../apis/dtos/message/ImageContentDto';
 import MsgImg from './MsgImg.vue';
 
 const props = defineProps<{
