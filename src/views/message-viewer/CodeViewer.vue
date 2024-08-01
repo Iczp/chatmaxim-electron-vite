@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { computed, onActivated, onMounted, reactive, ref, shallowRef } from 'vue';
 import { ViewerPayload } from './commons/ViewerPayload';
-import { usePayload } from '../../commons/usePayload';
+import { usePayload } from '../../composables/usePayload';
 import { useRoute } from 'vue-router';
 
 import fs from 'fs';
@@ -10,7 +10,7 @@ import fs from 'fs';
 import 'highlight.js/styles/stackoverflow-light.css'; // 可以切换其它样式风格，例如黑色主题
 import 'highlight.js/lib/common';
 import hljsVuePlugin from '@highlightjs/vue-plugin';
-import { useDownload } from '../../commons/useDownload';
+import { useDownload } from '../../composables/useDownload';
 import TabList from '../../components/TabList.vue';
 const Highlight = hljsVuePlugin.component;
 
@@ -95,3 +95,4 @@ const tabIndex = ref(0)
   background: #00000000;
 }
 </style>
+../../composables/usePayload../../composables/useDownload

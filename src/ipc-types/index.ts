@@ -3,3 +3,4 @@ export type { WindowParams } from './WindowParams';
 export type { WindowState } from './WindowState';
 export type { TrayPayload } from './TrayPayload';
 export type { BrowserPayload } from './BrowserPayload';
+export type { AppInfo } from './AppInfo';

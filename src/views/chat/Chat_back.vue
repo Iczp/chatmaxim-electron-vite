@@ -13,15 +13,15 @@ import {
 } from 'vue';
 import { useRoute, useRouter } from 'vue-router';
 
-import ChatSetting from './widget/ChatSetting.vue';
-import DropViewer from './widget/DropViewer.vue';
-import TransferModal from './widget/TransferModal.vue';
+import ChatSetting from '../../components/ChatSetting.vue';
+import DropViewer from '../../components/DropViewer.vue';
+import TransferModal from '../../components/TransferModal.vue';
 import MessageItem from './components/MessageItem.vue';
 
 import Loading from '../../components/Loading.vue';
 
 import ScrollView from '../../components/ScrollView.vue';
-import ChatInput from './widget/ChatInput.vue';
+import ChatInput from '../../components/ChatInput.vue';
 
 import { NodeExpandOutlined, MoreOutlined } from '@ant-design/icons-vue';
 import { message } from 'ant-design-vue';
@@ -29,13 +29,13 @@ import { useImStore } from '../../stores/imStore';
 import { MessageDto, } from '../../apis/dtos';
 import { ContextmenuInput, showContextMenuForMessage } from '../../commons/contextmenu';
 import QuoteMessage from './components/QuoteMessage.vue';
-import { computedSessionUnitEntity, useSessionUnitId } from '../../commons/useSessionUnit';
-import { useMessageList } from '../../commons/useMessageList';
+import { computedSessionUnitEntity, useSessionUnitId } from '../../composables/useSessionUnit';
+import { useMessageList } from '../../composables/useMessageList';
 import { MessageStateEnums, MessageTypeEnums } from '../../apis/enums';
-import { useSessionUnitDetail } from '../../commons/useSessionUnitDetail';
+import { useSessionUnitDetail } from '../../composables/useSessionUnitDetail';
 import { setReadedMessageId } from '../../commons/setting';
 import { sendMessage } from '../../commons/sendMessage';
-import { useDrop } from '../../commons/useDrop';
+import { useDrop } from '../../composables/useDrop';
 import { useShortcutStore } from '../../stores/shortcutStore';
 import {
   isAudioSuffix,
@@ -796,4 +796,4 @@ const onTransfer = () => {
   flex-direction: column;
 }
 </style>
-../../stores/useWindowStore../../stores/windowStore../../stores/imStore../../stores/shortcutStore
+../../stores/useWindowStore../../stores/windowStore../../stores/imStore../../stores/shortcutStore../../composables/useSessionUnit../../composables/useMessageList../../composables/useSessionUnitDetail../../composables/useDrop

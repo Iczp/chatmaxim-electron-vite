@@ -3,7 +3,7 @@ import { computed, onActivated, ref } from 'vue';
 import { ViewerPayload } from './commons/ViewerPayload';
 import { useRouter, useRoute } from 'vue-router';
 import { useI18n } from 'vue-i18n';
-import { usePayload } from '../../commons/usePayload';
+import { usePayload } from '../../composables/usePayload';
 import {
   isImageOfMessage,
   isVideoOfMessage,
@@ -67,3 +67,4 @@ onActivated(() => {
   /* background-color: rgba(121, 121, 121, 0.1); */
 }
 </style>
+../../composables/usePayload

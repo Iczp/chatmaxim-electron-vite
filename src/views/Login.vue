@@ -7,7 +7,7 @@ import { message } from 'ant-design-vue';
 import { UserOutlined, LockOutlined, SettingOutlined } from '@ant-design/icons-vue';
 import { TokenDto } from '../apis/auth/dto';
 import { setAuthorize } from '../ipc/setAuthorize';
-import { useAppInfo } from '../commons/useAppInfo';
+import { useAppInfo } from '../composables/useAppInfo';
 import { useI18n } from 'vue-i18n';
 import { openAppSettings } from '../ipc/openAppSettings';
 
@@ -158,3 +158,4 @@ const { appId, appName, author, websize, version, copyright } = useAppInfo();
   max-width: 500px;
 }
 </style>
+../composables/useAppInfo

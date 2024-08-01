@@ -1,15 +1,15 @@
 <script setup lang="ts">
 import { toRaw, ref, watch, computed } from 'vue';
-import { ChatObjectDto } from '../../../apis/dtos';
+import { ChatObjectDto } from '../apis/dtos';
 import { useI18n } from 'vue-i18n';
 
 import { message } from 'ant-design-vue';
-import { SessionPermissionService, SessionRoleBySessionUnitService } from '../../../apis';
-import { SessionRoleDetailDto } from '../../../apis/models/SessionRoleDetailDto';
-import { PermissionGrantValue } from '../../../apis/models/PermissionGrantValue';
+import { SessionPermissionService, SessionRoleBySessionUnitService } from '../apis';
+import { SessionRoleDetailDto } from '../apis/models/SessionRoleDetailDto';
+import { PermissionGrantValue } from '../apis/models/PermissionGrantValue';
 
 import type { TreeProps } from 'ant-design-vue';
-import { SessionPermissionDefinitionTreeDto } from '../../../apis/models/SessionPermissionDefinitionTreeDto';
+import { SessionPermissionDefinitionTreeDto } from '../apis/models/SessionPermissionDefinitionTreeDto';
 import { DataNode } from 'ant-design-vue/es/tree';
 type Args = { entity?: SessionRoleDetailDto; id?: string; sessionUnitId: string };
 type TreeType = TreeProps['treeData'];

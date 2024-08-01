@@ -5,11 +5,11 @@ import { ChatObjectTypeEnumText, ChatObjectTypeEnums } from '../apis/enums';
 import { useTitle } from '@vueuse/core';
 import { ObjectPickerPayLoad, sendResult } from '../ipc/objectPicker';
 import { onBeforeRouteLeave, onBeforeRouteUpdate, useRoute } from 'vue-router';
-import { useContacts } from '../commons/useContacts';
+import { useContacts } from '../composables/useContacts';
 import ChatObject from '../components/ChatObject.vue';
 import Loading from '../components/Loading.vue';
 import { useI18n } from 'vue-i18n';
-import { usePayload } from '../commons/usePayload';
+import { usePayload } from '../composables/usePayload';
 import { env } from '../env';
 import EmptyData from '../components/EmptyData.vue';
 import { message } from 'ant-design-vue';
@@ -265,3 +265,4 @@ const onConfirm = (): void => {
 }
 </style>
 ../ipc/objectPicker
+../composables/useContacts../composables/usePayload

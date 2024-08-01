@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { UnwrapRef, reactive, ref, toRaw } from 'vue';
 import { useI18n } from 'vue-i18n';
-import { useDestination } from './commons/useDestination';
+import { useDestination } from '../../composables/useDestination';
 import CopyBox from '../../components/CopyBox.vue';
 
 const { t } = useI18n();
@@ -98,3 +98,4 @@ const wrapperCol = { span: 14 };
   margin-left: 20px;
 }
 </style>
+../../composables/useDestination

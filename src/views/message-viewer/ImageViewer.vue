@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { computed, onActivated, ref } from 'vue';
 import { ViewerPayload } from './commons/ViewerPayload';
-import { usePayload } from '../../commons/usePayload';
+import { usePayload } from '../../composables/usePayload';
 import ImageViewer from '../../components/ImageViewer.vue';
 import { useRoute } from 'vue-router';
 const payload = usePayload<ViewerPayload>();
@@ -26,3 +26,4 @@ onActivated(() => {
 </template>
 
 <style scoped></style>
+../../composables/usePayload

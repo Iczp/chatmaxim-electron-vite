@@ -1,12 +1,12 @@
 <script setup lang="ts">
-import { ChatObjectDto } from '../../../apis/dtos';
-import ChatObject from '../../../components/ChatObject.vue';
-import FileItem from '../../../components/FileItem.vue';
+import { ChatObjectDto } from '../apis/dtos';
+import ChatObject from './ChatObject.vue';
+import FileItem from './FileItem.vue';
 import { computed, ref } from 'vue';
 import { FileOutlined, CloseCircleOutlined } from '@ant-design/icons-vue';
 import prettyBytes from 'pretty-bytes';
 import { useI18n } from 'vue-i18n';
-import { isImageMime } from '../../../commons/utils';
+import { isImageMime } from '../commons/utils';
 import { useObjectUrl } from '@vueuse/core';
 import { CSSProperties } from 'ant-design-vue/es/_util/cssinjs/hooks/useStyleRegister';
 import { isArray } from '@pureadmin/utils';

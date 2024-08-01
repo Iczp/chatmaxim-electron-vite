@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { ref } from 'vue';
 import { useWindowStore } from '../../../stores/windowStore';
-import { useAppInfo } from '../../../commons/useAppInfo';
+import { useAppInfo } from '../../../composables/useAppInfo';
 import { useI18n } from 'vue-i18n';
 import { setShell } from '../../../ipc/setShell';
 import { Link} from '../../../icons'
@@ -108,4 +108,4 @@ const openUrl = (url: string) => {
   color: #666;
 } */
 </style>
-../../../stores/useWindowStore../../../stores/windowStore
+../../../stores/useWindowStore../../../stores/windowStore../../../composables/useAppInfo

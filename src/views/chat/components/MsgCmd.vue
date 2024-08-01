@@ -3,7 +3,7 @@ import { computed } from 'vue';
 import { MessageDto, CmdContentDto } from '../../../apis/dtos';
 import TextViewer from '../../../components/TextViewer.vue';
 import { WordDto } from '../../../commons/formatWords';
-import { useProfileModal } from '../commons/useProfileModal';
+import { useProfileModal } from '../../../composables/useProfileModal';
 const props = defineProps<{
   item: MessageDto;
 }>();
@@ -60,3 +60,4 @@ const onWordClick = (item: WordDto, event?: Event) => {
   color: var(--msg-cmd-object-hover-color);
 }
 </style>
+../../../composables/useProfileModal

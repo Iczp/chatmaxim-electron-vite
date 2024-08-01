@@ -18,7 +18,7 @@ import { navToChat } from '../commons/utils';
 import { router, chatHistorys } from '../routes';
 import { message } from 'ant-design-vue';
 import { BadgeDto } from '../apis/dtos';
-import { useBadges } from '../commons/useBadges';
+import { useBadges } from '../composables/useBadges';
 import { setWindow } from '../ipc/setWindow';
 import { openAppSettings } from '../ipc/openAppSettings';
 import ChatObject from '../components/ChatObject.vue';
@@ -282,3 +282,4 @@ const getKey = (route: RouteLocationNormalizedLoaded, component: any): string | 
   height: 100%;
 }
 </style>
+../composables/useBadges

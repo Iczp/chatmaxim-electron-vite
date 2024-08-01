@@ -4,7 +4,7 @@ import { chatSettingsRoutes } from '../../routes/chatSettingsRoutes';
 import { useRouter, useRoute } from 'vue-router';
 import { useI18n } from 'vue-i18n';
 import ChatObject from '../../components/ChatObject.vue';
-import { useDestination } from './commons/useDestination';
+import { useDestination } from '../../composables/useDestination';
 import { computed } from 'vue';
 import { ChatObjectTypeEnums } from '../../apis/enums';
 const { t } = useI18n();
@@ -154,3 +154,4 @@ const description = computed(() => {
 }
 </style>
 ../../../routes/chatSettingsRoutes ../../routes/chatSettingsRoutes
+../../composables/useDestination

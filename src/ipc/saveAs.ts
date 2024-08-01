@@ -1,7 +1,7 @@
 import { MessageOwnerDto } from '../apis/dtos';
 import { AttachmentsBaseDto } from '../apis/dtos/message/AttachmentsBaseDto';
 import { MessageTypeEnums } from '../apis/enums';
-import { useDownload } from '../commons/useDownload';
+import { useDownload } from '../composables/useDownload';
 import { toRaw } from 'vue';
 import { ipcRenderer } from 'electron';
 import { getFileNameOfMessage } from '../commons/utils';

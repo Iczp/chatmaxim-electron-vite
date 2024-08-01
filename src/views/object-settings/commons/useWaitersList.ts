@@ -1,7 +1,7 @@
 import { ShopWaiterService } from '../../../apis';
 import { ChatObjectDto } from '../../../apis/dtos';
 import { ShopWaterGetListInput } from '../../../apis/dtos/ShopWaterGetListInput';
-import { useFetchList } from '../../../commons/useFetchList';
+import { useFetchList } from '../../../composables/useFetchList';
 import { PickerInput } from '../../../ipc/openChildWindow';
 
 export const useWaitersList = ({

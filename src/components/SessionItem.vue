@@ -7,7 +7,7 @@ import { HeartTwoTone, HeartFilled } from '@ant-design/icons-vue';
 import { ChatObjectTypeEnums } from '../apis/enums';
 import ChatObject from '../components/ChatObject.vue';
 import MessageProview from '../components/MessageProview.vue';
-import { useSessionUnitId, useComputedSessionUnit } from '../commons/useSessionUnit';
+import { useSessionUnitId, useComputedSessionUnit } from '../composables/useSessionUnit';
 import { useImStore } from '../stores/imStore';
 import { env } from '../env';
 import { useI18n } from 'vue-i18n';
@@ -309,3 +309,4 @@ const onItemClick = (event: MouseEvent | PointerEvent) => {
 }
 </style>
 ../stores/imStore
+../composables/useSessionUnit

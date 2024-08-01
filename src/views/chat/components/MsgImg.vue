@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { computed, ref, watch } from 'vue';
 import { formatImageRect, formatUrl, getImageRect } from '../../../commons/utils';
-import { useDownload } from '../../../commons/useDownload';
+import { useDownload } from '../../../composables/useDownload';
 import { useI18n } from 'vue-i18n';
 import prettyBytes from 'pretty-bytes';
 import EmptyImg from '../../../assets/empty.png';
@@ -195,3 +195,4 @@ if (!props.lazy) {
   color: rgba(255, 255, 255, 0.88);
 }
 </style>
+../../../composables/useDownload

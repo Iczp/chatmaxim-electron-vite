@@ -1,17 +1,17 @@
 <script setup lang="ts">
 import {} from 'vue';
 
-import { ChatObjectDto } from '../../../apis/dtos';
-import ChatObject from '../../../components/ChatObject.vue';
-import EmptyData from '../../../components/EmptyData.vue';
-import Loading from '../../../components/Loading.vue';
+import { ChatObjectDto } from '../apis/dtos';
+import ChatObject from './ChatObject.vue';
+import EmptyData from './EmptyData.vue';
+import Loading from './Loading.vue';
 import { computed, ref } from 'vue';
 import { SearchOutlined, CloseCircleOutlined } from '@ant-design/icons-vue';
 import prettyBytes from 'pretty-bytes';
 import { useI18n } from 'vue-i18n';
-import { useWaitersList } from '../../object-settings/commons/useWaitersList';
+import { useWaitersList } from '../views/object-settings/commons/useWaitersList';
 import { reactive } from 'vue';
-import { CallCenterService } from '../../../apis';
+import { CallCenterService } from '../apis';
 import { message } from 'ant-design-vue';
 const { t } = useI18n();
 

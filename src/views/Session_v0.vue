@@ -13,7 +13,7 @@ import { openChildWindow } from '../ipc/openChildWindow';
 import { useI18n } from 'vue-i18n';
 import { Plus } from '../icons';
 import { createRoom } from '../commons/createRoom';
-import { useSessionUnitList } from '../commons/useSessionUnitList';
+import { useSessionUnitList } from '../composables/useSessionUnitList';
 const { t } = useI18n();
 const props = defineProps<{
   chatObjectId: number | undefined;
@@ -481,4 +481,4 @@ const onPlus = () => {
   background-color:rgba(223, 223, 223, 0.41);
 } */
 </style>
-../stores/imStore
+../stores/imStore../composables/useSessionUnitList

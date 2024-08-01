@@ -1,7 +1,7 @@
 import { acceptHMRUpdate, defineStore } from 'pinia';
 import { SessionUnitDisplayNameDto } from '../apis/dtos';
 import { SessionUnitService } from '../apis';
-import { useSessionUnitId } from '../commons/useSessionUnit';
+import { useSessionUnitId } from '../composables/useSessionUnit';
 type NamesType = SessionUnitDisplayNameDto[];
 
 type MentionsType = Array<{

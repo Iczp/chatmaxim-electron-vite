@@ -9,7 +9,7 @@ import { ChatObjectService, RoomService } from '../../apis';
 import { message } from 'ant-design-vue';
 import { useFileDialog, useObjectUrl } from '@vueuse/core';
 import { formatUrl } from '../../commons/utils';
-import { usePayload } from '../../commons/usePayload';
+import { usePayload } from '../../composables/usePayload';
 import { ChatObjectDto } from '../../apis/dtos';
 import { computed } from 'vue';
 const { t } = useI18n();
@@ -220,3 +220,4 @@ const realTime = (data: any) => {
   border-radius: 50%;
 }
 </style>
+../../composables/usePayload

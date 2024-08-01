@@ -4,7 +4,7 @@ import { MessageDto, MessageOwnerDto } from '../apis/dtos';
 import { MessageGetListInput } from '../apis/dtos/MessageGetListInput';
 import { MessageStateEnums } from '../apis/enums';
 import { eventBus } from '../commons/eventBus';
-import { formatMessage } from './utils';
+import { formatMessage } from '../commons/utils';
 import { ReceivedDto } from '../apis/websockets/ReceivedDto';
 import { Handler } from 'mitt';
 export type FetchMessageResult = {

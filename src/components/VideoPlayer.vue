@@ -5,7 +5,7 @@ import { onMounted } from 'vue';
 import 'video.js/dist/video-js.css';
 import { useWindowStore } from '../stores/windowStore';
 import PlayIcon from './PlayIcon.vue';
-import { useDownload } from '../commons/useDownload';
+import { useDownload } from '../composables/useDownload';
 // https://cloud.tencent.com/developer/article/2318627
 const props = defineProps<{
   options?: Object;
@@ -179,4 +179,4 @@ defineExpose({
   align-items: center;
 }
 </style>
-../stores/useWindowStore../stores/windowStore
+../stores/useWindowStore../stores/windowStore../composables/useDownload

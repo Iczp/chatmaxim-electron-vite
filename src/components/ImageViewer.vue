@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { computed, onMounted, reactive, ref, watch } from 'vue';
-import { useDownload } from '../commons/useDownload';
+import { useDownload } from '../composables/useDownload';
 import { CSSProperties } from 'vue';
 import { loadImage } from '../commons/utils';
 
@@ -182,3 +182,4 @@ const onImgDbClick = (e: MouseEvent) => {
   cursor: pointer;
 }
 </style>
+../composables/useDownload

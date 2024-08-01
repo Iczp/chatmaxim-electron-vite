@@ -17,17 +17,17 @@ import { useI18n } from 'vue-i18n';
 
 import EmojiPicker from 'vue3-emoji-picker';
 import 'vue3-emoji-picker/css';
-import { useWindowStore } from '../../../stores/windowStore';
+import { useWindowStore } from '../stores/windowStore';
 import { computed } from 'vue';
 
 const windowStore = useWindowStore();
 const colorScheme = computed(() => windowStore.colorScheme as 'dark' | 'light' | 'auto');
 import { useTextSelection } from '@vueuse/core';
-import { MessageInput, TextContentDto } from '../../../apis/dtos';
-import { MessageTypeEnums } from '../../../apis/enums';
-import { MessageContent } from '../../../apis/dtos/message/messageContent';
-import { FormType, useClipboradInput } from '../commons/useClipboradInput';
-import { screenshots } from '../../../ipc/screenshots';
+import { MessageInput, TextContentDto } from '../apis/dtos';
+import { MessageTypeEnums } from '../apis/enums';
+import { MessageContent } from '../apis/dtos/message/messageContent';
+import { FormType, useClipboradInput } from '../composables/useClipboradInput';
+import { screenshots } from '../ipc/screenshots';
 import { OptionProps } from 'ant-design-vue/es/vc-mentions/src/Option';
 import { MentionsProps } from 'ant-design-vue/es/vc-mentions/src/Mentions';
 
@@ -488,3 +488,4 @@ defineExpose({
   justify-content: space-between;
 }
 </style>
+../../../composables/useClipboradInput

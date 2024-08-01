@@ -1,13 +1,13 @@
 <script setup lang="ts">
-import { ChatObjectDto, SessionRequestDetailDto } from '../../../apis/dtos';
-import ChatObject from '../../../components/ChatObject.vue';
+import { ChatObjectDto, SessionRequestDetailDto } from '../apis/dtos';
+import ChatObject from './ChatObject.vue';
 import { computed, ref } from 'vue';
 import { useI18n } from 'vue-i18n';
 
 import { reactive } from 'vue';
 import type { UnwrapRef } from 'vue';
 import { message } from 'ant-design-vue';
-import { SessionRequestService } from '../../../apis';
+import { SessionRequestService } from '../apis';
 const { t } = useI18n();
 defineProps<{
   destination?: ChatObjectDto;

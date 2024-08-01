@@ -3,11 +3,11 @@ import { h } from 'vue';
 import { SearchOutlined, PlusOutlined, MinusOutlined, RightOutlined } from '@ant-design/icons-vue';
 import { message } from 'ant-design-vue';
 import { CSSProperties, computed, reactive, ref, watch } from 'vue';
-import { SessionUnitOwnerDto, SessionUnitSettingDto } from '../../../apis/dtos';
-import { ChatObjectTypeEnumText, ChatObjectTypeEnums } from '../../../apis/enums';
-import { SettingService } from '../../../apis';
-import { useImStore } from '../../../stores/imStore';
-import ChatObject from '../../../components/ChatObject.vue';
+import { SessionUnitOwnerDto, SessionUnitSettingDto } from '../apis/dtos';
+import { ChatObjectTypeEnumText, ChatObjectTypeEnums } from '../apis/enums';
+import { SettingService } from '../apis';
+import { useImStore } from '../stores/imStore';
+import ChatObject from './ChatObject.vue';
 
 const store = useImStore();
 type PropArgs = {

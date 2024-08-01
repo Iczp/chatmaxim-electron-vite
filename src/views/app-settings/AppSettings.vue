@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { ref } from 'vue';
-import { useAppInfo } from '../../commons/useAppInfo';
+import { useAppInfo } from '../../composables/useAppInfo';
 import { appSettingsRoutes } from '../../routes/appSettingsRoutes';
 import { useRouter, useRoute } from 'vue-router';
 import { useI18n } from 'vue-i18n';
@@ -120,3 +120,4 @@ const onTabClick = (item: any, index: number) => {
 }
 </style>
 ../../routes/appSettingsRoutes ../../routes/appSettingsRoutes
+../../composables/useAppInfo

@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { useI18n } from 'vue-i18n';
 import { formatUrl } from '../../commons/utils';
-import { usePayload } from '../../commons/usePayload';
+import { usePayload } from '../../composables/usePayload';
 import { ChatObjectDto } from '../../apis/dtos';
 import { computed } from 'vue';
 const { t } = useI18n();
@@ -30,3 +30,4 @@ const tryChangePortrait = (portrait: string): boolean => {
 </template>
 
 <style scoped></style>
+../../composables/usePayload

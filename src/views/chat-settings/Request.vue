@@ -1,11 +1,11 @@
 <script setup lang="ts">
 import { useI18n } from 'vue-i18n';
-import { useDestination } from './commons/useDestination';
+import { useDestination } from '../../composables/useDestination';
 import { computed, ref } from 'vue';
-import { useRequestList } from './commons/useRequestList';
+import { useRequestList } from '../../composables/useRequestList';
 import { onMounted } from 'vue';
 import { SessionRequestDetailDto } from '../../apis/dtos/SessionRequestDetailDto';
-import RequestDetailModal from './widget/RequestDetailModal.vue';
+import RequestDetailModal from './widget/Request../../components/RequestDetailModal.vue';
 import ChatObject from '../../components/ChatObject.vue';
 import { formatDatetime } from '../../commons/utils';
 const { t } = useI18n();
@@ -142,3 +142,4 @@ const agreeHandle = (item: SessionRequestDetailDto, isAgreed?: boolean) => {
   color: var(--sub-title-color);
 }
 </style>
+../../composables/useDestination../../composables/useRequestList

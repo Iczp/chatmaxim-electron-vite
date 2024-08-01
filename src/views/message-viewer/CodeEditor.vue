@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { computed, onActivated, onMounted, reactive, ref, shallowRef } from 'vue';
 import { ViewerPayload } from './commons/ViewerPayload';
-import { usePayload } from '../../commons/usePayload';
+import { usePayload } from '../../composables/usePayload';
 import { useRoute } from 'vue-router';
 
 import { Codemirror } from 'vue-codemirror';
@@ -135,3 +135,4 @@ px
 ;
 }
 </style>
+../../composables/usePayload

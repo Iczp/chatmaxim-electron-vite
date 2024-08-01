@@ -1,5 +1,5 @@
 import { useI18n } from 'vue-i18n';
-import { enumToKeyValues } from './utils';
+import { enumToKeyValues } from '../commons/utils';
 import { computed } from 'vue';
 import { ChatObjectTypeEnums, GenderEnums, VerificationMethodEnums } from '../apis/enums';
 

@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { useAppInfo } from '../../../commons/useAppInfo';
+import { useAppInfo } from '../../../composables/useAppInfo';
 import { reactive, ref, toRaw } from 'vue';
 import type { UnwrapRef } from 'vue';
 import { SettingOutlined } from '@ant-design/icons-vue';
@@ -88,3 +88,4 @@ const title = ref('');
   color: #999;
 }
 </style>
+../../../composables/useAppInfo

@@ -1,6 +1,6 @@
 import { Ref, inject } from 'vue';
 import { RouteLocationNormalizedLoaded, useRoute } from 'vue-router';
-import { ProfileModalArgsType } from '../widget/ProfileModal.vue';
+import { type ProfileModalArgsType } from '@/components/ProfileModal.vue';
 import ProfileModal from './widget/ProfileModal.vue';
 export const useProfileModal = (route?: RouteLocationNormalizedLoaded) => {
   // const route = useRoute();

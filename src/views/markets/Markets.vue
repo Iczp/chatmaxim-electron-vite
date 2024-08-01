@@ -10,8 +10,8 @@ import { getDisplayName } from '../../commons/utils';
 import { AppDto, ChatObjectDto } from '../../apis/dtos';
 import { useI18n } from 'vue-i18n';
 
-import { useEnums } from '../../commons/useEnums';
-import { useChatObjectList } from '../../commons/useChatObjectList';
+import { useEnums } from '../../composables/useEnums';
+import { useChatObjectList } from '../../composables/useChatObjectList';
 import ChatObject from '../../components/ChatObject.vue';
 import Avatar from '../../components/Avatar.vue';
 import { onActivated, toRaw } from 'vue';
@@ -204,4 +204,4 @@ const add = (item: ChatObjectDto) => {
 .description {
   min-height: 22px;
 }
-</style>
+</style>../../composables/useEnums../../composables/useChatObjectList

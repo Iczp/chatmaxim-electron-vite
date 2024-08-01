@@ -5,7 +5,7 @@ import { useI18n } from 'vue-i18n';
 import 'vue-cropper/dist/index.css';
 import { VueCropper } from 'vue-cropper';
 import { RoomService } from '../../apis';
-import { useDestination } from './commons/useDestination';
+import { useDestination } from '../../composables/useDestination';
 import { message } from 'ant-design-vue';
 import { useFileDialog, useObjectUrl } from '@vueuse/core';
 import { formatUrl } from '../../commons/utils';
@@ -207,3 +207,4 @@ const realTime = (data: any) => {
   border-radius: 50%;
 }
 </style>
+../../composables/useDestination

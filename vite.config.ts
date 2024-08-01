@@ -149,6 +149,7 @@ export default defineConfig(({ command }) => {
         '@': resolve(__dirname, 'src'),
         // @component 替代为 src/component
         '@components': resolve(__dirname, 'src/components'),
+        '@types': resolve(__dirname, 'src/types'),
       },
     },
   };

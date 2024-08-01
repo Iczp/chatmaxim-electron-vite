@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { useAppInfo } from '../../../commons/useAppInfo';
+import { useAppInfo } from '../../../composables/useAppInfo';
 import { reactive, ref, toRaw } from 'vue';
 import type { UnwrapRef } from 'vue';
 import { env } from '../../../env';
@@ -71,3 +71,4 @@ const title = ref('');
   color: #999;
 }
 </style>
+../../../composables/useAppInfo

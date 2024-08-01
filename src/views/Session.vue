@@ -13,7 +13,7 @@ import { navToChat as navToChatX } from '../commons/utils';
 import { showContextMenuForSession } from '../commons/contextmenu';
 import { createRoom } from '../commons/createRoom';
 import { eventBus } from '../commons/eventBus';
-import { useSessionUnitList } from '../commons/useSessionUnitList';
+import { useSessionUnitList } from '../composables/useSessionUnitList';
 import { openChildWindow } from '../ipc/openChildWindow';
 import { useI18n } from 'vue-i18n';
 import { Plus } from '../icons';
@@ -356,3 +356,4 @@ onDeactivated(() => {
   width: 100%;
 }
 </style>
+../composables/useSessionUnitList

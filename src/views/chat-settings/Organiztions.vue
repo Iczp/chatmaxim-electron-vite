@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { onMounted, ref } from 'vue';
-import { useMembersList } from './commons/useMembersList';
+import { useMembersList } from '../../composables/useMembersList';
 import { useI18n } from 'vue-i18n';
 import ChatObject from '../../components/ChatObject.vue';
 import Loading from '../../components/Loading.vue';
@@ -8,7 +8,7 @@ import Loading from '../../components/Loading.vue';
 import { OverlayScrollbarsComponent, useOverlayScrollbars } from 'overlayscrollbars-vue';
 import type { OverlayScrollbarsComponentRef } from 'overlayscrollbars-vue';
 
-import { useEventObserver } from './commons/useEventObserver';
+import { useEventObserver } from '../../composables/useEventObserver';
 
 const contentHidden = ref(false);
 const elementHidden = ref(false);
@@ -218,3 +218,4 @@ const onSearch = () => {
   flex: 1;
 }
 </style>
+../../composables/useEventObserver../../composables/useMembersList

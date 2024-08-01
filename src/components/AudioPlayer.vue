@@ -6,7 +6,7 @@ import {
   getDurationText,
   isZeros,
   useAudioPlayer,
-} from '../commons/useAudioPlayer';
+} from '../composables/useAudioPlayer';
 import { PlayArrow, VideoPause, Repeat, RepeatOn, VolumeOff, VolumeOn } from '../icons';
 import { formatDurations } from '../commons/utils';
 
@@ -332,3 +332,4 @@ defineExpose({
   margin: 0;
 }
 </style>
+../composables/useAudioPlayer

@@ -7,9 +7,9 @@ import { onBeforeRouteLeave, onBeforeRouteUpdate, useRoute } from 'vue-router';
 import { sendPickerResult } from '../ipc/openChildWindow';
 import { message } from 'ant-design-vue';
 import ChatObject from '../components/ChatObject.vue';
-import { useRemoteStore } from '../commons/useRemoteStore';
+import { useRemoteStore } from '../composables/useRemoteStore';
 import { useI18n } from 'vue-i18n';
-import { usePayload } from '../commons/usePayload';
+import { usePayload } from '../composables/usePayload';
 import { SessionRequestPayload } from '../ipc/sessionRequest';
 
 const { t } = useI18n();
@@ -181,3 +181,4 @@ const wrapperCol = { span: 12 };
   background-color: rgba(51, 52, 70, 0.358);
 }
 </style>
+../composables/useRemoteStore../composables/usePayload

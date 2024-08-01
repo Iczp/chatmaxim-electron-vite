@@ -28,8 +28,8 @@ import {
   LabelType as LabelType,
   MouseButton,
 } from '../../../commons/contextmenu';
-import { useMessageEntity } from '../../../commons/useMessageEntity';
-import { useProfileModal } from '../commons/useProfileModal';
+import { useMessageEntity } from '../../../composables/useMessageEntity';
+import { useProfileModal } from '../../../composables/useProfileModal';
 
 const props = defineProps<{
   sessionUnitId: string;
@@ -339,3 +339,4 @@ const onQuoteContentClick = (event: MouseEvent) => {
   padding: 4px;
 }
 </style>
+../../../composables/useProfileModal../../../composables/useMessageEntity

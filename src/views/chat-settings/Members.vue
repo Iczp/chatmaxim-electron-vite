@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { onMounted, ref } from 'vue';
-import { useMembersList } from './commons/useMembersList';
+import { useMembersList } from '../../composables/useMembersList';
 import { useI18n } from 'vue-i18n';
 import ChatObject from '../../components/ChatObject.vue';
 import Loading from '../../components/Loading.vue';
@@ -199,3 +199,4 @@ const onSearch = () => {
   flex: 1;
 }
 </style>
+../../composables/useMembersList

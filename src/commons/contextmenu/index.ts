@@ -24,7 +24,7 @@ import {
   isCodeOfMessage,
 } from '../utils';
 import { message } from 'ant-design-vue';
-import { useProfileModal } from '../../views/chat/commons/useProfileModal';
+import { useProfileModal } from '../../composables/useProfileModal';
 import { openBrowser } from '../../ipc/openBrowser';
 import { OpenedRecorderService, ReadedRecorderService } from '../../apis';
 import { addParamsToUrl } from '../addParamsToUrl';

@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { useI18n } from 'vue-i18n';
 import UploadPortrait from '../../components/UploadPortrait.vue';
-import { useDestination } from './commons/useDestination';
+import { useDestination } from '../../composables/useDestination';
 const { t } = useI18n();
 const props = defineProps<{ sessionUnitId: string }>();
 const { portrait, tryChangePortrait } = useDestination(props.sessionUnitId!);
@@ -20,3 +20,4 @@ const { portrait, tryChangePortrait } = useDestination(props.sessionUnitId!);
 
 <style scoped>
 </style>
+../../composables/useDestination

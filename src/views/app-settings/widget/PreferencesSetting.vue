@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { ref } from 'vue';
-import { useAppInfo } from '../../../commons/useAppInfo';
+import { useAppInfo } from '../../../composables/useAppInfo';
 import { reactive, toRaw } from 'vue';
 import type { UnwrapRef } from 'vue';
 import { setColorScheme } from '../../../ipc/setColorScheme';
@@ -136,4 +136,4 @@ const onIsOpenAtLoginChange = (e: any) => {
   color: var(--color);
 }
 </style>
-../../../ipc/setColorScheme../../../ipc/setLoginItemSettings../../../stores/useWindowStore../../../stores/windowStore
+../../../ipc/setColorScheme../../../ipc/setLoginItemSettings../../../stores/useWindowStore../../../stores/windowStore../../../composables/useAppInfo

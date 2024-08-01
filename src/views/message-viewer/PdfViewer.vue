@@ -3,7 +3,7 @@ import { computed, onActivated, ref } from 'vue';
 import { ViewerPayload } from './commons/ViewerPayload';
 import { useRouter, useRoute } from 'vue-router';
 import { useI18n } from 'vue-i18n';
-import { usePayload } from '../../commons/usePayload';
+import { usePayload } from '../../composables/usePayload';
 import { isImageOfMessage, isVideoOfMessage, getVideoOfMessage, formatUrl } from '../../commons/utils';
 
 import VuePdfApp from 'vue3-pdf-app';
@@ -62,3 +62,4 @@ const pdfUrl = ref(formatUrl(`/file?id=42c8d500-9aef-4fea-9873-3a11af154d4b`));
   /* background-color: rgba(121, 121, 121, 0.1); */
 }
 </style>
+../../composables/usePayload

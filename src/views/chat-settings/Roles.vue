@@ -1,8 +1,8 @@
 <script setup lang="ts">
 import { onMounted, ref } from 'vue';
 import { useI18n } from 'vue-i18n';
-import { useRoleList } from './commons/useRoleList';
-import RoleFromModal from './widget/RoleFormModal.vue';
+import { useRoleList } from '../../composables/useRoleList';
+import RoleFromModal from '../../components/RoleFormModal.vue';
 import { onActivated } from 'vue';
 import { SessionRoleDetailDto } from '../../apis/models/SessionRoleDetailDto';
 import Loading from '../../components/Loading.vue';
@@ -195,3 +195,4 @@ onActivated(() => {
   /* flex: 1;  */
 }
 </style>
+../../composables/useRoleList

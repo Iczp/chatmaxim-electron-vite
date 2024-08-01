@@ -1,7 +1,7 @@
 import { EntryNameService } from '../../../apis';
 import { EntryNameDto } from '../../../apis/dtos';
 import { EntryNameGetListInput } from '../../../apis/dtos/EntryNameGetListInput';
-import { useFetchList } from '../../../commons/useFetchList';
+import { useFetchList } from '../../../composables/useFetchList';
 import { PickerInput } from '../../../ipc/openChildWindow';
 
 export const useEntries = ({

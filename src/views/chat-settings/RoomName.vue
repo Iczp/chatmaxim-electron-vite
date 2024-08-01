@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { UnwrapRef, computed, reactive, ref, toRaw } from 'vue';
 import { useI18n } from 'vue-i18n';
-import { useDestination } from './commons/useDestination';
+import { useDestination } from '../../composables/useDestination';
 import ChatObject from '../../components/ChatObject.vue';
 import Avatar from '../../components/Avatar.vue';
 import { ChatObjectTypeEnums } from '../../apis/enums';
@@ -116,3 +116,4 @@ const wrapperCol = { span: 14 };
   border-bottom: 1px solid #41414132;
 }
 </style>
+../../composables/useDestination

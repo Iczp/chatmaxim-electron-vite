@@ -8,10 +8,10 @@ import { message } from 'ant-design-vue';
 import { useOwner } from './commons/useOwner';
 import { EntryNameDto } from '../../apis/dtos/EntryNameDto';
 import { ChatObjectDto } from '../../apis/dtos/ChatObjectDto';
-import { usePayload } from '../../commons/usePayload';
+import { usePayload } from '../../composables/usePayload';
 import { sendPickerResult } from '../../ipc/openChildWindow';
 import { useRoute } from 'vue-router';
-import { useEnums } from '../../commons/useEnums';
+import { useEnums } from '../../composables/useEnums';
 const route = useRoute();
 const { t } = useI18n();
 const props = defineProps<{ chatObjectId: string }>();
@@ -239,3 +239,4 @@ const wrapperCol = { span: 14 };
   justify-content: flex-end;
 }
 </style>
+../../composables/usePayload../../composables/useEnums

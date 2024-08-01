@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { computed, onActivated, ref } from 'vue';
 import { ViewerPayload } from './commons/ViewerPayload';
-import { usePayload } from '../../commons/usePayload';
+import { usePayload } from '../../composables/usePayload';
 import VideoPlayer from '../../components/VideoPlayer.vue';
 import { getVideoOfMessage } from '../../commons/utils';
 import { useRoute, useRouter } from 'vue-router';
@@ -25,3 +25,4 @@ onActivated(() => {
 </template>
 
 <style scoped></style>
+../../composables/usePayload

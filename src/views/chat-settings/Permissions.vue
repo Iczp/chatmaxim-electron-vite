@@ -1,8 +1,8 @@
 <script setup lang="ts">
 import { useI18n } from 'vue-i18n';
 import { onMounted, ref } from 'vue';
-import { usePermisstionGrantedList } from './commons/usePermisstionGrantedList';
-import { usePermisstionDefinitionList } from './commons/usePermisstionDefinitionList';
+import { usePermisstionGrantedList } from '../../composables/usePermisstionGrantedList';
+import { usePermisstionDefinitionList } from '../../composables/usePermisstionDefinitionList';
 const { t } = useI18n();
 const props = defineProps<{ sessionUnitId: string }>();
 const selectable = ref(false);
@@ -87,3 +87,4 @@ onMounted(() => {
 </template>
 
 <style scoped></style>
+../../composables/usePermisstionGrantedList../../composables/usePermisstionDefinitionList

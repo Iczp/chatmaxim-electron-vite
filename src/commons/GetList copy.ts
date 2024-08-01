@@ -1,7 +1,7 @@
 import { Ref, UnwrapNestedRefs, reactive, ref, toRaw, watch } from 'vue';
 import { GetListInput, PagedResultDto } from '../apis/dtos';
 import { CancelablePromise } from '../apis';
-import { usePagedResult } from './usePagedResult';
+import { usePagedResult } from '../composables/usePagedResult';
 
 export abstract class GetList<TInput extends GetListInput, TDto> {
   // public pagedResult;

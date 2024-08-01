@@ -1,12 +1,12 @@
 <script setup lang="ts">
 import { computed, ref, h } from 'vue';
-import { ChatObjectDto, SessionUnitDestinationDto } from '../../../apis/dtos';
-import ChatObject from '../../../components/ChatObject.vue';
-import LabelBox from '../../../components/LabelBox.vue';
-import { ChatOn, PersonAdd } from '../../../icons';
+import { ChatObjectDto, SessionUnitDestinationDto } from '../apis/dtos';
+import ChatObject from './ChatObject.vue';
+import LabelBox from './LabelBox.vue';
+import { ChatOn, PersonAdd } from '../icons';
 import { SearchOutlined, CloseCircleOutlined, RightOutlined } from '@ant-design/icons-vue';
 import { useI18n } from 'vue-i18n';
-import { useImStore } from '../../../stores/imStore';
+import { useImStore } from '../stores/imStore';
 
 export type ProfileModalArgsType = {
   chatObjectId?: number;

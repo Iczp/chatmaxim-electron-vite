@@ -5,13 +5,13 @@ import {
   formatMessageTime,
   getDestinationNameForSessionUnit,
   getSenderNameForMessage,
-} from './utils';
+} from '../commons/utils';
 import { SessionItemDto, SessionUnitOwnerDto } from '../apis/dtos';
 import { MessageTypeEnums } from '../apis/enums';
 import { useImStore } from '../stores/imStore';
 import { useWindowStore } from '../stores/windowStore';
-import { useRemoteStore } from '../composables/useRemoteStore';
-import { usePayload } from '../composables/usePayload';
+import { useRemoteStore } from './useRemoteStore';
+import { usePayload } from './usePayload';
 
 export const computedSessionUnitEntity = (sessionUnitId: string) => {
   const windowStore = useWindowStore();

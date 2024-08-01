@@ -1,6 +1,6 @@
 import { onMounted, onUnmounted, reactive, ref } from 'vue';
 import { Howl, HowlOptions, Howler } from 'howler';
-import { formatDurations } from './utils';
+import { formatDurations } from '../commons/utils';
 
 export type WaveOptions = {
   width: number;

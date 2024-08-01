@@ -16,7 +16,7 @@ import {
 } from '@ant-design/icons-vue';
 import { SessionUnitOwnerDto } from '../../apis';
 import { ChatObjectDto, SessionUnitDestinationDto } from '../../apis/dtos';
-import { usePayload } from '../../commons/usePayload';
+import { usePayload } from '../../composables/usePayload';
 import { getDisplayName, getParentName } from '../../commons/utils';
 // import {RecycleScroller} from 'vue-virtual-scroller/RecycleScroller'
 const { t } = useI18n();
@@ -229,3 +229,4 @@ const onEdit = (item: ChatObjectDto) => {
   flex: 1;
 }
 </style>
+../../composables/usePayload
