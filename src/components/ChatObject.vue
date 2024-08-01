@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { useAttrs, useSlots } from 'vue';
-import LayoutItem from '../components/LayoutItem.vue';
-import Avatar from '../components/Avatar.vue';
+import LayoutItem from './LayoutItem.vue';
+import Avatar from './Avatar.vue';
 import { ChatObjectDto } from '../apis/dtos';
 import { computed } from 'vue';
 import { ServiceStatusEnums } from '../apis/enums';
