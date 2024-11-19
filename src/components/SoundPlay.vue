@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { computed } from 'vue';
-import { MessageDto, SoundContentDto, TextContentDto } from '../../../apis/dtos';
+import { MessageDto, SoundContentDto, TextContentDto } from '../apis/dtos';
 import Bubble from '../../../components/Bubble.vue';
 
 const props = withDefaults(
@@ -53,7 +53,7 @@ const props = withDefaults(
   /* background-color: #BD2C00; */
 }
 .play .wifi-circle {
-border-color: #ff0000ee;
+  border-color: #ff0000ee;
 }
 .wifi-circle {
   top: 0;

@@ -5,7 +5,7 @@ import { computed, ref } from 'vue';
 import { useRequestList } from '../../composables/useRequestList';
 import { onMounted } from 'vue';
 import { SessionRequestDetailDto } from '../../apis/dtos/SessionRequestDetailDto';
-import RequestDetailModal from './widget/Request../../components/RequestDetailModal.vue';
+import RequestDetailModal from '../../components/RequestDetailModal.vue';
 import ChatObject from '../../components/ChatObject.vue';
 import { formatDatetime } from '../../commons/utils';
 const { t } = useI18n();

@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { computed } from 'vue';
-import { MessageDto, TextContentDto } from '../../../apis/dtos';
+import { MessageDto, TextContentDto } from '../apis/dtos';
 import Bubble from './Bubble.vue';
 import TextViewer from './TextViewer.vue';
 import { type WordDto } from '../commons/formatWords';
