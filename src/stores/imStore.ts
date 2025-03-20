@@ -161,7 +161,11 @@ export const useImStore = defineStore('im', {
      * @param {MessageOwnerDto} entity
      */
     setLastMessageForSender(entity: MessageOwnerDto) {
-      const senderSessionUnit = entity.senderSessionUnit!;
+      const senderSessionUnit = entity.senderSessionUnit;
+      if (!senderSessionUnit) {
+        console.warn('setLastMessageForSender: senderSessionUnit undefined', entity);
+        return;
+      }
       this.setLastMessage(senderSessionUnit.ownerId!, senderSessionUnit.id!, entity);
     },
     /**

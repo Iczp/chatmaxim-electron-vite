@@ -24,7 +24,7 @@ export class SettingService {
   }): CancelablePromise<SessionUnitOwnerDto> {
     return __request(OpenAPI, {
       method: 'POST',
-      url: '/api/chat/setting/clear-message/{sessionUnitId}',
+      url: '/api/chat/session-unit-setting/clear-message/{sessionUnitId}',
       path: {
         sessionUnitId: sessionUnitId,
       },
@@ -52,7 +52,7 @@ export class SettingService {
   }): CancelablePromise<any> {
     return __request(OpenAPI, {
       method: 'POST',
-      url: '/api/chat/setting/delete-message',
+      url: '/api/chat/session-unit-setting/delete-message',
       query: {
         sessionUnitId: sessionUnitId,
         messageId: messageId,
@@ -76,7 +76,7 @@ export class SettingService {
   }): CancelablePromise<SessionUnitOwnerDto> {
     return __request(OpenAPI, {
       method: 'POST',
-      url: '/api/chat/setting/exit/{sessionUnitId}',
+      url: '/api/chat/session-unit-setting/exit/{sessionUnitId}',
       path: {
         sessionUnitId: sessionUnitId,
       },
@@ -99,7 +99,7 @@ export class SettingService {
   }): CancelablePromise<SessionUnitOwnerDto> {
     return __request(OpenAPI, {
       method: 'POST',
-      url: '/api/chat/setting/kill/{sessionUnitId}',
+      url: '/api/chat/session-unit-setting/kill/{sessionUnitId}',
       path: {
         sessionUnitId: sessionUnitId,
       },
@@ -122,7 +122,7 @@ export class SettingService {
   }): CancelablePromise<SessionUnitOwnerDto> {
     return __request(OpenAPI, {
       method: 'POST',
-      url: '/api/chat/setting/remove/{sessionUnitId}',
+      url: '/api/chat/session-unit-setting/remove/{sessionUnitId}',
       path: {
         sessionUnitId: sessionUnitId,
       },
@@ -150,7 +150,7 @@ export class SettingService {
   }): CancelablePromise<any> {
     return __request(OpenAPI, {
       method: 'POST',
-      url: '/api/chat/setting/set-contact-tags/{sessionUnitId}',
+      url: '/api/chat/session-unit-setting/set-contact-tags/{sessionUnitId}',
       path: {
         sessionUnitId: sessionUnitId,
       },
@@ -177,7 +177,7 @@ export class SettingService {
   }): CancelablePromise<SessionUnitOwnerDto> {
     return __request(OpenAPI, {
       method: 'POST',
-      url: '/api/chat/setting/set-immersed/{sessionUnitId}',
+      url: '/api/chat/session-unit-setting/set-immersed/{sessionUnitId}',
       path: {
         sessionUnitId: sessionUnitId,
       },
@@ -205,7 +205,7 @@ export class SettingService {
   }): CancelablePromise<SessionUnitOwnerDto> {
     return __request(OpenAPI, {
       method: 'POST',
-      url: '/api/chat/setting/set-is-contacts/{sessionUnitId}',
+      url: '/api/chat/session-unit-setting/set-is-contacts/{sessionUnitId}',
       path: {
         sessionUnitId: sessionUnitId,
       },
@@ -232,7 +232,7 @@ export class SettingService {
   }): CancelablePromise<SessionUnitOwnerDto> {
     return __request(OpenAPI, {
       method: 'POST',
-      url: '/api/chat/setting/set-is-show-member-name/{sessionUnitId}',
+      url: '/api/chat/session-unit-setting/set-is-show-member-name/{sessionUnitId}',
       path: {
         sessionUnitId: sessionUnitId,
       },
@@ -262,7 +262,7 @@ export class SettingService {
   }): CancelablePromise<SessionUnitOwnerDto> {
     return __request(OpenAPI, {
       method: 'POST',
-      url: '/api/chat/setting/set-member-name/{sessionUnitId}',
+      url: '/api/chat/session-unit-setting/set-member-name/{sessionUnitId}',
       path: {
         sessionUnitId: sessionUnitId,
       },
@@ -298,7 +298,7 @@ export class SettingService {
   }): CancelablePromise<string> {
     return __request(OpenAPI, {
       method: 'POST',
-      url: '/api/chat/setting/set-mute-expire-time',
+      url: '/api/chat/session-unit-setting/set-mute-expire-time',
       query: {
         muterSessionUnitId: muterSessionUnitId,
         setterSessionUnitId: setterSessionUnitId,
@@ -333,7 +333,7 @@ export class SettingService {
   }): CancelablePromise<SessionUnitOwnerDto> {
     return __request(OpenAPI, {
       method: 'POST',
-      url: '/api/chat/setting/set-readed-message-id',
+      url: '/api/chat/session-unit-setting/set-readed-message-id',
       query: {
         sessionUnitId: sessionUnitId,
         isForce: isForce,
@@ -363,7 +363,7 @@ export class SettingService {
   }): CancelablePromise<SessionUnitOwnerDto> {
     return __request(OpenAPI, {
       method: 'POST',
-      url: '/api/chat/setting/set-rename/{sessionUnitId}',
+      url: '/api/chat/session-unit-setting/set-rename/{sessionUnitId}',
       path: {
         sessionUnitId: sessionUnitId,
       },
@@ -394,7 +394,7 @@ export class SettingService {
   }): CancelablePromise<SessionUnitOwnerDto> {
     return __request(OpenAPI, {
       method: 'POST',
-      url: '/api/chat/setting/set-topping/{sessionUnitId}',
+      url: '/api/chat/session-unit-setting/set-topping/{sessionUnitId}',
       path: {
         sessionUnitId: sessionUnitId,
       },
