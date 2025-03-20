@@ -60,7 +60,7 @@ const { appId, appName, author, websize, version, copyright } = useAppInfo();
     <page-content>
       <div class="page drag">
         <div class="login-page no-drag">
-          <div>isLogined:{{ isLogined() }}</div>
+          <!-- <div>isLogined:{{ isLogined() }}</div> -->
           <!-- <p>userDataPath:{{ userDataPath }}</p> -->
           <a-form
             :model="formState"
