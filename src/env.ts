@@ -53,6 +53,14 @@ export type EnvType = {
    */
   base_url: string;
 
+
+    /**
+   * SignalR Chat Hub Url
+   *
+   * @type {string}
+   */
+    chat_hub_url: string;
+    
   /**
    *
    *
@@ -121,6 +129,8 @@ export const env: EnvType = {
   client_secret: import.meta.env.VITE_APP_CLIENT_SECRET,
 
   base_url: import.meta.env.VITE_APP_BASEURL,
+
+  chat_hub_url: import.meta.env.VITE_APP_SIGNALR_CHAT_HU_URL,
 
   auth_host: import.meta.env.VITE_APP_AUTH_HOST,
 

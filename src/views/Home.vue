@@ -31,6 +31,7 @@ import { MusicLib, MusicQueue, MusicNote, MusicLyrics } from '../icons';
 
 import { useWebSocketKit } from '../apis/websockets/useWebSocketKit';
 import { useWebsocketUi } from '../apis/websockets/useWebsocketUi';
+import { useSignalR } from '../composables/useSignalR';
 const { t } = useI18n();
 const route = useRoute();
 // const { connectionText, connectionState, retryCount } = useWebsocket();
@@ -39,6 +40,7 @@ const { badge, badgeItems, refresh } = useBadges();
 
 // const { status } = useVueWebSocket({});
 
+useSignalR({})
 useWebSocketKit({
   onConnected(ws) {
     refresh();

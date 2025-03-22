@@ -54,6 +54,13 @@ export type EnvType = {
   base_url: string;
 
   /**
+   * SignalR Chat Hub Url
+   *
+   * @type {string}
+   */
+  chat_hub_url: string;
+
+  /**
    *
    *
    * @type {string}
@@ -102,12 +109,12 @@ export type EnvType = {
    * default Screenshots shortcuts:
    * @type {(string | 'zh-CN' | 'en-US')}
    */
-  defaultScreenshotsShortcuts:  string | 'CommandOrControl+#' | 'CTRL+Alt+E';
+  defaultScreenshotsShortcuts: string | 'CommandOrControl+#' | 'CTRL+Alt+E';
 };
 
 export const env: EnvType = {
   isDev: !import.meta.env.PROD,
-  
+
   app_id: import.meta.env.VITE_APP_ID,
 
   app_name: import.meta.env.VITE_APP_NAME,
@@ -121,6 +128,8 @@ export const env: EnvType = {
   client_secret: import.meta.env.VITE_APP_CLIENT_SECRET,
 
   base_url: import.meta.env.VITE_APP_BASEURL,
+
+  chat_hub_url: import.meta.env.VITE_APP_SIGNALR_CHAT_HU_URL,
 
   auth_host: import.meta.env.VITE_APP_AUTH_HOST,
 
@@ -137,5 +146,4 @@ export const env: EnvType = {
   defaultfetchMessageShortcuts: import.meta.env.VITE_APP_DEFAULT_FETCH_MESSAGE_SHORTCUTS,
 
   defaultScreenshotsShortcuts: import.meta.env.VITE_APP_DEFAULT_SCREENSHOTS_SHORTCUTS,
-
 };

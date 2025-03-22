@@ -8,7 +8,6 @@ import type {
   AxiosRequestConfig,
   AxiosResponse,
   AxiosInstance,
-  AxiosProgressEvent,
 } from 'axios';
 import FormData from 'form-data';
 
@@ -18,10 +17,8 @@ import type { ApiResult } from './ApiResult';
 import { CancelablePromise } from './CancelablePromise';
 import type { OnCancel } from './CancelablePromise';
 import type { OpenAPIConfig } from './OpenAPI';
-import { getToken, isTokenUrl, refreshToken } from '../auth/TokenController';
+import { getToken, isTokenUrl } from '../auth/TokenController';
 import { useWindowStore } from '../../stores/windowStore';
-import { version } from '../../../package.json';
-import log from 'video.js/dist/types/utils/log';
 
 let tokenCount: number = 0;
 const getTokenValue = () => {

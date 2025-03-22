@@ -5,7 +5,6 @@ import { TokenDto, LoginResult, LoginInput } from './dto';
 import { GrantTypeEnum } from './dto/GrantTypeEnum';
 import { env } from '../../env';
 import { setAuthorize } from '../../ipc/setAuthorize';
-import { promises } from 'original-fs';
 
 export const TOKEN_KEY: string = env.token_key;
 

@@ -69,4 +69,3 @@ const color2 = useCssVar('--color', someEl, { initialValue: '#eee' });
   user-select: none;
 }
 </style>
-./stores/useWindowStore./stores/windowStore
