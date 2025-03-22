@@ -15,7 +15,7 @@ const detailModal = ref<InstanceType<typeof RequestDetailModal> | null>();
 
 const { sessionUnit, memberCount } = useDestination(props.sessionUnitId);
 
-const destinationId = computed(() => 13 || sessionUnit.value?.destination?.id);
+const destinationId = computed(() => sessionUnit.value?.destination?.id);
 const {
   totalCount,
   query,

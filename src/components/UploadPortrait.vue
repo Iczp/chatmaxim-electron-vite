@@ -42,10 +42,10 @@ const { open, onChange } = useFileDialog({
   directory: false, // Select directories instead of files if set true
 });
 
-onChange((files: FileList) => {
+onChange((files: FileList | null) => {
   /** do something with files */
   console.log('onChange', files);
-  const url = useObjectUrl(files[0]);
+  const url = useObjectUrl(files![0]);
   currentImg.value = url.value!;
 });
 

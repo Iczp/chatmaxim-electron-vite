@@ -266,10 +266,10 @@ useClipboradInput({
     emits('open', { files, from });
   },
 });
-const filterOption = (input: string, option: OptionProps): boolean => {
-  // console.log('filterOption', input, option);
-  return option.label.indexOf(input) == -1;
-};
+// const filterOption = (input: string, option: OptionProps): boolean => {
+//   // console.log('filterOption', input, option);
+//   return option.label?.indexOf(input) == -1;
+// };
 const validateSearch = (input: string, props: MentionsProps) => {
   console.log('validateSearch', input, props);
   mentionsOptions.value = [
