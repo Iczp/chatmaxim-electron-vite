@@ -385,7 +385,8 @@ const sendMessageContent = async ({
       scroll.value?.scrollTo({ duration: 1500 });
       scrollToBottom();
       /* =================== update file info =================== */
-      // nextTick(() => scroll.value?.scrollTo({ duration: 1500 }));
+      // nextTick(() => scrollToBottom());
+      nextTick(() => scroll.value?.scrollTo({ duration: 1500 }));
     },
     onSuccess(entity, input) {
       // return;

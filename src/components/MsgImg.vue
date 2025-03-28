@@ -66,11 +66,13 @@ const loadImage = () => {
   if (isLoaded.value) {
     return;
   }
+  console.log('loadImage', props.url);
   downloadFile(props.url)
     .then(res => {
       isLoaded.value = true;
       src.value = res.objectUrl;
       getImageRect(res.objectUrl).then(res => {
+        console.log('getImageRect', res);
         rect.value = formatImageRect(res.width / res.height, maxWidth, maxHeight);
       });
     })

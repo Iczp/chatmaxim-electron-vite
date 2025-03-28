@@ -48,7 +48,8 @@ export const useSignalR = ({
     } catch (error) {
       console.error('onclose', error);
     }
-    await start();
+    // Restart the connection if it closes.
+    setTimeout(start, 5000);
   });
 
   async function start() {

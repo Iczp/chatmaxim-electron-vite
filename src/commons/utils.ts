@@ -533,7 +533,7 @@ export const getImageRect = (imgUrl: string): Promise<{ width: number; height: n
   return new Promise<{ width: number; height: number }>((resolve, reject) => {
     loadImage(imgUrl)
       .then(img => {
-        console.log(`width:${img.width},height:${img.height}`);
+        console.log(`imgUrl=${imgUrl},width=${img.width},height=${img.height}`);
         resolve({ width: img.width, height: img.height });
       })
       .catch(reject);

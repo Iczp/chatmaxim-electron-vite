@@ -22,7 +22,7 @@ export const useDownload = () => {
 
   const downloadFile = (url: string) =>
     new Promise<BlobCacheItem>((resolve, reject) => {
-      // console.log('url', url);
+      console.log('downloadFile url', url);
       blobUrl.value = undefined;
       blob.value = undefined;
       error.value = undefined;
