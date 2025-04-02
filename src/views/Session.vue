@@ -35,10 +35,12 @@ const {
   maxMessageId,
   minMessageId,
   refresh,
+  keyword,
   fetchLatest,
   fetchHistorical,
   isPendingOfFetchLatest,
   isPendingOfFetchHistorical,
+  searchResult,
 } = useSessionUnitList({ ownerId: Number(props.chatObjectId!) });
 
 const currentChatObject = computed(() => store.getChatObject(props.chatObjectId)?.owner);
@@ -47,9 +49,15 @@ const acitveSessionUnitId = computed(() => route.params.sessionUnitId);
 
 const flashSessionUnitId = ref<string>();
 
-const displayItems = computed<SessionItemDto[]>(() =>
-  store.searchSessionItems(props.chatObjectId!, keyword.value).filter(x => !x.isSeparated),
-);
+const displayItems = computed<SessionItemDto[]>(() => {
+  const list =[];
+  console.log('displayItems', keyword.value, searchResult.value[keyword.value]);
+  var searchItems = searchResult.value[keyword.value]?.items
+  if(searchItems){
+    return searchItems;
+  }
+  return store.searchSessionItems(props.chatObjectId!, keyword.value).filter(x => !x.isSeparated);
+});
 
 const setFlash = (sessionUnitId: string) => {
   flashSessionUnitId.value = sessionUnitId;
@@ -102,7 +110,7 @@ const navToChat = (item: SessionItemDto) => {
   });
 };
 
-const keyword = ref<string>('');
+
 
 const onSearch = (e: any) => {
   console.log('onSearch', e);

@@ -1,6 +1,6 @@
-import { Ref, onActivated, onDeactivated, ref } from 'vue';
+import { Ref, onActivated, onDeactivated, ref, watch } from 'vue';
 import { SessionUnitService } from '../apis';
-import { SessionUnitOwnerDto } from '../apis/dtos';
+import { SessionItemDto, SessionUnitOwnerDto } from '../apis/dtos';
 import { SessionUnitGetListInput } from '../apis/dtos/SessionUnitGetListInput';
 import { useImStore } from '../stores/imStore';
 export type FetchSessionUnitResult = {
@@ -22,7 +22,7 @@ export const useSessionUnitList = ({
   const isPendingOfFetchHistorical = ref(false);
   const isPendingOfFetchLatest = ref(false);
 
-  const keywork = ref<string>('');
+  const keyword = ref<string>('');
 
   const isBof = ref(false);
   const isEof = ref(false);
@@ -89,7 +89,7 @@ export const useSessionUnitList = ({
       }
       isPendingOfFetchHistorical.value = true;
       console.warn('fetchHistorical caller', caller);
-      fetchItems({ maxMessageId: minMessageId.value }, false)
+      fetchItems({ maxMessageId: minMessageId.value, keyword: keyword.value }, false)
         .then(items => {
           isBof.value = items.length < maxResultCount;
           if (items.length == 0) {
@@ -121,6 +121,41 @@ export const useSessionUnitList = ({
 
   onDeactivated(() => {});
 
+  watch(
+    () => keyword.value,
+    async (newValue, oldValue) => {
+      if (newValue != oldValue && newValue.length > 0) {
+        console.warn('keyword changed', newValue, oldValue);
+        await searchSessionUnitList(newValue);
+      }
+    },
+  );
+
+  const searchResult = ref<{
+    [key: string]: {
+      isEnd: boolean;
+      isPosting: boolean;
+      items: SessionItemDto[];
+    };
+  }>({});
+
+  const searchSessionUnitList = async (keyword: string) => {
+    console.log('searchSessionUnitList', keyword);
+    if (!searchResult.value[keyword]) {
+      searchResult.value[keyword] = { isEnd: false, isPosting: false, items: [] };
+    }
+    const ret = searchResult.value[keyword];
+    const req = { maxResultCount, ownerId, keyword, skipCount: ret.items.length };
+    console.log('fetchItems query', req);
+    ret.isPosting = false;
+    const res = await service(req);
+    ret.isPosting = true;
+    ret.isEnd = res.items!.length < maxResultCount;
+    ret.items = ret.items.concat(res.items!);
+    searchResult.value[keyword] = ret;
+    console.log('searchResult', searchResult.value);
+  };
+
   return {
     list,
     isBof,
@@ -132,6 +167,7 @@ export const useSessionUnitList = ({
     fetchHistorical,
     isPendingOfFetchLatest,
     isPendingOfFetchHistorical,
-    keywork,
+    keyword,
+    searchResult,
   };
 };
