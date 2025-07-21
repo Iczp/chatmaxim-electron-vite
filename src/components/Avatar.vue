@@ -45,7 +45,7 @@ const src = computed(() =>
 </script>
 
 <template>
-  <div ref="avatarRef" class="avatar-wraper" :style="wrapperStyle">
+  <div ref="avatarRef" class="avatar-wrapper" :style="wrapperStyle">
     <a-avatar
       :src="src"
       :shape="shape"
@@ -75,7 +75,7 @@ const src = computed(() =>
 :deep(.ant-avatar) {
   font-size: 16px !important;
 }
-.avatar-wraper {
+.avatar-wrapper {
   display: flex;
   flex-shrink: 0;
   position: relative;
