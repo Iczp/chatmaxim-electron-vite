@@ -7,6 +7,7 @@ export {}
 
 declare module 'vue' {
   export interface GlobalComponents {
+    AAvatar: typeof import('ant-design-vue/es')['Avatar']
     ABadge: typeof import('ant-design-vue/es')['Badge']
     AButton: typeof import('ant-design-vue/es')['Button']
     ACard: typeof import('ant-design-vue/es')['Card']
@@ -15,6 +16,7 @@ declare module 'vue' {
     ADescriptions: typeof import('ant-design-vue/es')['Descriptions']
     ADescriptionsItem: typeof import('ant-design-vue/es')['DescriptionsItem']
     ADivider: typeof import('ant-design-vue/es')['Divider']
+    ADrawer: typeof import('ant-design-vue/es')['Drawer']
     AForm: typeof import('ant-design-vue/es')['Form']
     AFormItem: typeof import('ant-design-vue/es')['FormItem']
     AInput: typeof import('ant-design-vue/es')['Input']
@@ -24,11 +26,14 @@ declare module 'vue' {
     ALayoutContent: typeof import('ant-design-vue/es')['LayoutContent']
     ALayoutFooter: typeof import('ant-design-vue/es')['LayoutFooter']
     ALayoutHeader: typeof import('ant-design-vue/es')['LayoutHeader']
+    AMentions: typeof import('ant-design-vue/es')['Mentions']
+    AModal: typeof import('ant-design-vue/es')['Modal']
     APopover: typeof import('ant-design-vue/es')['Popover']
     ARadioButton: typeof import('ant-design-vue/es')['RadioButton']
     ARadioGroup: typeof import('ant-design-vue/es')['RadioGroup']
     ASelect: typeof import('ant-design-vue/es')['Select']
     ASelectOption: typeof import('ant-design-vue/es')['SelectOption']
+    ASlider: typeof import('ant-design-vue/es')['Slider']
     ASpace: typeof import('ant-design-vue/es')['Space']
     ASpin: typeof import('ant-design-vue/es')['Spin']
     ASwitch: typeof import('ant-design-vue/es')['Switch']
