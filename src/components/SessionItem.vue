@@ -6,7 +6,7 @@ import { HeartTwoTone, HeartFilled } from '@ant-design/icons-vue';
 
 import { ChatObjectTypeEnums } from '../apis/enums';
 import ChatObject from '../components/ChatObject.vue';
-import MessageProview from '../components/MessageProview.vue';
+import MessagePreview from '../components/MessagePreview.vue';
 import { useSessionUnitId, useComputedSessionUnit } from '../composables/useSessionUnit';
 import { useImStore } from '../stores/imStore';
 import { env } from '../env';
@@ -124,7 +124,7 @@ const onItemClick = (event: MouseEvent | PointerEvent) => {
         <!-- 我关注的 flowing -->
         <!-- 发送人信息 -->
         <span v-if="isShowSender" class="sender">{{ displaySenderName }}</span>
-        <message-proview :entity="lastMessage" />
+        <message-preview :entity="lastMessage" />
       </div>
     </template>
     <template #sub-right>
