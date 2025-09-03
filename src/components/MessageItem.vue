@@ -339,4 +339,3 @@ const onQuoteContentClick = (event: MouseEvent) => {
   padding: 4px;
 }
 </style>
-../../../composables/useProfileModal../../../composables/useMessageEntity
