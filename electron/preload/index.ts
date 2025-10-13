@@ -1,6 +1,7 @@
 // // All of the Node.js APIs are available in the preload process.
 // // It has the same sandbox as a Chrome extension.
 import { contextBridge, ipcRenderer } from 'electron'
+// import { electronAPI } from '@electron-toolkit/preload'
 
 // // Set up context bridge between the renderer process and the main process
 contextBridge.exposeInMainWorld(
