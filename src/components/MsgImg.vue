@@ -197,4 +197,3 @@ if (!props.lazy) {
   color: rgba(255, 255, 255, 0.88);
 }
 </style>
-../../../composables/useDownload
