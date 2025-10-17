@@ -233,8 +233,8 @@ export const getHeaders = async (
   const deviceType = 'pc'
 
   const headers = Object.entries({
-    'app-device-id': windowStore.machineId,
-    'app-device-type': deviceType,
+    'App-Device-Id': windowStore.machineId,
+    'App-Device-Type': deviceType,
     // 'app-electron': process.electron,
     // Accept: 'application/json',
     ...additionalHeaders,

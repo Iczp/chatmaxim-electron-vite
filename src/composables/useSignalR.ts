@@ -40,7 +40,7 @@ export const useSignalR = ({
   const windowStore = useWindowStore();
   const deviceId = windowStore.machineId;
   const connection = new signalR.HubConnectionBuilder()
-    .withUrl(`${hubUrl}?deviceId=${deviceId}`, {
+    .withUrl(`${hubUrl}?deviceId=${deviceId}&deviceType=pc`, {
       accessTokenFactory: async () => {
         const token = await getToken();
         console.log('accessTokenFactory', token);
