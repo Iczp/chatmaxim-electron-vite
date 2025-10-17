@@ -52,7 +52,7 @@ export const getClipboradImage = (fileName: string): File | undefined => {
   if (image.isEmpty()) {
     return;
   }
-  const blob = new Blob([image?.toPNG()], { type: 'image/png' });
+  const blob = new Blob([image?.toPNG() as any], { type: 'image/png' });
   var file = new File([blob], fileName, {
     type: 'image/png',
   });

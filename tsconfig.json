@@ -14,9 +14,9 @@
     "noEmit": true,
     "types": [
       // 一定要声明
-      "vite-svg-loader"
+      // "vite-svg-loader"
     ],
-    "typeRoots": ["./node_modules/@types", "./src/types"],
+    "typeRoots": ["./node_modules/@types", "./src/types"]
   },
   "include": ["src"],
   "references": [{ "path": "./tsconfig.node.json" }]
