@@ -7,7 +7,7 @@
   asar: true,
   productName: 'ChatMaxim',
   directories: {
-    output: 'release/v2.0.16',
+    output: 'release/v2.0.17',
   },
   icon: './public/logo.png',
   files: ['dist', 'dist-electron'],
