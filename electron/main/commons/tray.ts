@@ -75,7 +75,7 @@ app.whenReady().then(() => {
   //   tray.setContextMenu(contextMenu);
 
   createTray();
-  createTrayWindow({});
+  createTrayWindow({path: '/tray'});
 });
 
 const NOTIFICATION_TITLE = '日春茶业-桌面端';
