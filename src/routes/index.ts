@@ -16,8 +16,8 @@ export const router = createRouter({
   routes,
 });
 
-/** chatHistorys @type {*} */
-export const chatHistorys: {
+/** chatHistories @type {*} */
+export const chatHistories: {
   [key: string]: { chatObjectId: string; sessionUnitId: string; title: string };
 } = {};
 
@@ -87,7 +87,7 @@ router.afterEach((to, from) => {
     const chatObjectId = to.params.chatObjectId as string;
     const sessionUnitId = to.params.sessionUnitId as string;
     const title = to.query.title as string;
-    chatHistorys[chatObjectId] = {
+    chatHistories[chatObjectId] = {
       chatObjectId,
       sessionUnitId,
       title,

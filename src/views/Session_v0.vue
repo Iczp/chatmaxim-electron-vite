@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { computed, onActivated, onMounted, onUnmounted, reactive, ref, watch } from 'vue';
 import { onBeforeRouteLeave, onBeforeRouteUpdate, useRoute } from 'vue-router';
-import { router, chatHistorys } from '../routes';
+import { router, chatHistories } from '../routes';
 import { SessionUnitOwnerDto, SessionUnitService } from '../apis';
 import SessionItem from '../components/SessionItem.vue';
 import Loading from '../components/Loading.vue';
@@ -119,7 +119,7 @@ const onItemClick = (item: SessionItemDto) => {
 const navToChat = (item: SessionItemDto) => {
   // console.log(item);
   if (item.id == acitveSessionUnitId.value) {
-    delete chatHistorys[props.chatObjectId!];
+    delete chatHistories[props.chatObjectId!];
     router.push(`/chat/${props.chatObjectId}`);
     return;
   }

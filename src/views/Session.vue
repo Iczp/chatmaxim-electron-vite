@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { computed, onActivated, onDeactivated, ref } from 'vue';
 import { useRoute } from 'vue-router';
-import { router, chatHistorys } from '../routes';
+import { router, chatHistories } from '../routes';
 import { EditOutlined, SettingOutlined } from '@ant-design/icons-vue';
 import SessionItem from '../components/SessionItem.vue';
 import ChatObject from '../components/ChatObject.vue';
@@ -100,7 +100,7 @@ const onItemClick = (item: SessionItemDto) => {
 const navToChat = (item: SessionItemDto) => {
   // console.log(item);
   if (item.id == acitveSessionUnitId.value) {
-    delete chatHistorys[props.chatObjectId!];
+    delete chatHistories[props.chatObjectId!];
     router.push(`/chat/${props.chatObjectId}`);
     return;
   }

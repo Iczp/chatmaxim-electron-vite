@@ -15,7 +15,7 @@ import {
 } from '@ant-design/icons-vue';
 import { Diversity2 } from '../icons';
 import { navToChat } from '../commons/utils';
-import { router, chatHistorys } from '../routes';
+import { router, chatHistories } from '../routes';
 import { message } from 'ant-design-vue';
 import { BadgeDto } from '../apis/dtos';
 import { useBadges } from '../composables/useBadges';
@@ -47,9 +47,9 @@ useWebSocketKit({
   },
 });
 
-const navToChatHitory = (item: BadgeDto) => {
+const navToChatHistory = (item: BadgeDto) => {
   const chatObjectId = item.chatObjectId!;
-  const arg = chatHistorys[chatObjectId];
+  const arg = chatHistories[chatObjectId];
   if (arg) {
     navToChat({
       chatObjectId,
@@ -105,7 +105,7 @@ const getKey = (route: RouteLocationNormalizedLoaded, component: any): string | 
             :key="index"
             :title="item.owner?.fullPathName?.replace('/', ':')"
             :class="{active: isChatActive(item.chatObjectId!)}"
-            @click="navToChatHitory(item)"
+            @click="navToChatHistory(item)"
           >
             <a-badge :count="item.badge">
               <MessageOutlined v-if="isChatActive(item.chatObjectId!)" />
