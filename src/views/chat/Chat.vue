@@ -136,8 +136,32 @@ const transferModal = ref<InstanceType<typeof TransferModal> | null>(null);
 
 const profileModal = ref<InstanceType<typeof ProfileModal> | null>(null);
 
-const scrollElement = computed(() => scroll.value?.getElement());
+const scrollElement = computed(() => getScrollerEl());
 
+const getScrollerEl = (): HTMLElement | undefined => {
+  const scroller: any = scrollerRef.value;
+  return (scroller?.$el as HTMLElement) || undefined;
+};
+
+const scrollTo = (_duration: number = 0) => {
+  nextTick(() => {
+    const el = getScrollerEl();
+    if (el) {
+      el.scrollTop = el.scrollHeight;
+    }
+  });
+};
+const scrollToTop = () => {
+  nextTick(() => {
+    const el = getScrollerEl();
+    if (el) {
+      el.scrollTop = 0;
+    }
+  });
+};
+const scrollToBottom = () => {
+  scrollTo(0);
+};
 // const scroll = ref();
 
 const quoteMessage = ref<MessageDto>();
@@ -204,20 +228,6 @@ const openChatSettings = () => {
     },
   });
 };
-const scrollTo = (duration: number = 1500) => {
-  scroll.value?.scrollTo({ duration });
-};
-const scrollToTop = () => {
-  console.log('scrollerRef scrollToTop ', scrollerRef.value);
-  nextTick(() => {
-    // scrollerRef.value?.scrollToBottom();
-  });
-};
-const scrollToBottom = () => {
-  console.log('scrollerRef scrollToBottom');
-  scrollerRef.value?.scrollToBottom();
-};
-
 const onResize = () => {
   console.log('resize');
 };
@@ -265,16 +275,16 @@ const _onActivated = () => {
   fetchLatest({
     caller: 'onActivated',
   })
-    .then(({ items, list, maxResultCount }) => {
-      list.value = items.length == maxResultCount ? items : list.value.concat(items);
-      nextTick(() => scrollTo(0));
+    .then(() => {
+      nextTick(() => scrollToBottom());
     })
     .catch(err => {
       console.error(err);
     });
 
   onMessage(receivedMessage => {
-    const isLatestMessage = Number(receivedMessage?.id) > Number(maxMessageId.value);
+    const isLatestMessage =
+      !receivedMessage?.id || Number(receivedMessage.id) > Number(maxMessageId.value);
     console.warn(
       'onMessage isLatestMessage',
       isLatestMessage,
@@ -287,11 +297,9 @@ const _onActivated = () => {
       fetchLatest({
         caller: 'onMessage',
       })
-        .then(({ items, list, maxResultCount }) => {
+        .then(() => {
           console.warn('[chat] fetchLatest');
-          list.value = items.length == maxResultCount ? items : list.value.concat(items);
-          nextTick(() => scroll.value?.scrollTo({ duration: 1500 }));
-          scrollToBottom();
+          nextTick(() => scrollToBottom());
         })
         .catch(err => {
           console.error(err);
@@ -382,11 +390,11 @@ const sendMessageContent = async ({
       console.log('input', input);
       isSendBtnEnabled.value = false;
       list.value.push(input);
-      scroll.value?.scrollTo({ duration: 1500 });
+      scrollToBottom();
       scrollToBottom();
       /* =================== update file info =================== */
       // nextTick(() => scrollToBottom());
-      nextTick(() => scroll.value?.scrollTo({ duration: 1500 }));
+      nextTick(() => scrollToBottom());
     },
     onSuccess(entity, input) {
       // return;
@@ -400,7 +408,7 @@ const sendMessageContent = async ({
           // }, 1000);
 
           // scroll.value?.scrollTo({ duration: 0 });
-          nextTick(() => scroll.value?.scrollTo({ duration: 1500 }));
+          nextTick(() => scrollToBottom());
         })
         .catch(err => {
           spliceItem(input.autoId, []);
@@ -417,7 +425,7 @@ const sendMessageContent = async ({
         state: MessageStateEnums.Error,
         error: err.message,
       });
-      // scroll.value?.scrollTo({ duration: 1500 });
+      // scrollToBottom();
       console.error('sendRet', err);
       message.error({
         key: 'vm-chat',
@@ -462,36 +470,30 @@ const showContextMenu = ({ labelType, mouseButton, event, entity }: ContextmenuI
 
 const onReachStart = (event: CustomEvent) => {
   console.info('onReachStart');
-  // return;
-  const el = event?.target as HTMLElement;
-
   if (isBof.value) {
-    console.error('onReachStart isBof', isBof.value);
-    // message.info({ content: '没有了', key: 'list-bof' });
     return;
   }
-  if (isPendingOfFetchHistorical.value) {
+  if (isPendingOfFetchHistorical.value || list.value.length === 0) {
     return;
   }
-  // const isReachStart = el?.scrollTop == 0;
-  // if (!isReachStart) {
-  //   console.error('onReachStart', isReachStart);
-  //   return;
-  // }
-
-  const originalScrollHeight = scrollElement.value?.scrollHeight || 0;
-  console.log('originalScrollHeight', originalScrollHeight);
+  const el = getScrollerEl();
+  if (!el) {
+    return;
+  }
+  // 记录加载前的滚动锚点，prepend 历史消息后补偿高度差，避免视口跳动
+  const originalScrollHeight = el.scrollHeight;
+  const originalScrollTop = el.scrollTop;
 
   fetchHistorical()
-    .then(x => {
-      const newScrollHeight = scrollElement.value?.scrollHeight || 0;
-      console.log('newScrollHeight', newScrollHeight);
-      const scrollTop = newScrollHeight - originalScrollHeight - loadingHeight.value * 2;
-
-      scroll.value?.scrollTo({ to: scrollTop, duration: 0 });
-
+    .then(() => {
+      // 虚拟列表在下一帧才完成新项目测量
       nextTick(() => {
-        // console.log('scrollHeight nextTick', scrollElement.value?.scrollHeight);
+        requestAnimationFrame(() => {
+          const nextEl = getScrollerEl();
+          if (!nextEl) return;
+          const delta = nextEl.scrollHeight - originalScrollHeight;
+          nextEl.scrollTop = originalScrollTop + Math.max(0, delta);
+        });
       });
     })
     .catch(err => {
@@ -686,28 +688,24 @@ const onTransfer = () => {
         :sessionUnitId="sessionUnitId"
       />
 
-      <!--<DynamicScroller
+      <!-- 虚拟列表：只渲染可视区域，长会话（1000+ 条）保持流畅 -->
+      <DynamicScroller
         ref="scrollerRef"
         :items="list"
-        :min-item-size="86"
-        class="scroller"
+        :min-item-size="56"
+        key-field="scrollerKey"
+        class="message-container scroller"
         @scroll-start="onReachStart"
-        @scroll-end="onReachEnd"
         @resize="onResize"
-        @update="onUpdate"
-        key-field="autoId"
       >
-        <template
-          v-slot="{ item, index, active }: { item: MessageDto, index: number, active: any }"
-        >
-           <DynamicScrollerItem
+        <template v-slot="{ item, index, active }">
+          <DynamicScrollerItem
             :item="item"
             :active="active"
-            :size-dependencies="[item.isRollbacked]"
             :data-index="index"
+            :size-dependencies="[item.isRollbacked, item.state, item.error, item.file]"
           >
             <MessageItem
-              :key="item.autoId"
               :entity="item"
               :playMessageId="playMessageId"
               :sessionUnitId="sessionUnitId"
@@ -722,39 +720,14 @@ const onTransfer = () => {
             </MessageItem>
           </DynamicScrollerItem>
         </template>
-      </DynamicScroller> -->
+      </DynamicScroller>
 
-      <scroll-view
-        class="message-container"
-        ref="scroll"
-        @ps-y-reach-start="onReachStart"
-        @ps-y-reach-end="onReachEnd"
-      >
-        <Loading v-if="isPendingOfFetchHistorical" :height="loadingHeight" />
-        <!-- <EmptyData v-if="isBof" text="没有了" :height="20" /> -->
-        <a-divider v-if="isBof" class="message-divider">{{ t('message.listStart') }}</a-divider>
-        <MessageItem
-          v-for="(item, index) in list"
-          :key="item.id || item.autoId"
-          :entity="item"
-          :playMessageId="playMessageId"
-          :sessionUnitId="sessionUnitId"
-          v-model:selectable="selectable"
-          @resend="onResend(item)"
-          @remove="onRemove(item)"
-          @contextmenu="showContextMenu"
-        >
-          <template v-if="index != list.length - 1 && localReadedMessageId == item.id" #footer>
-            <a-divider class="message-divider">{{ t('message.dividerNewNews') }}</a-divider>
-          </template>
-        </MessageItem>
-
-        <Loading
-          v-if="list.length == 0 && isPendingOfFetchLatest"
-          :height="loadingHeight"
-          :text="t('message.receiving')"
-        />
-      </scroll-view>
+      <div v-if="list.length == 0 && isPendingOfFetchLatest" class="message-empty-loading">
+        <Loading :height="loadingHeight" :text="t('message.receiving')" />
+      </div>
+      <a-divider v-if="isBof && list.length > 0" class="message-divider message-list-start">
+        {{ t('message.listStart') }}
+      </a-divider>
       <!-- <div class="latest-counter">有 {{ latestMessageCount }} 条最新消息</div> -->
     </page-content>
     <page-footer class="footer">
@@ -847,14 +820,30 @@ const onTransfer = () => {
 }
 
 .message-container {
-  display: flex;
-  flex-direction: column;
-  /* background-color: rgba(241, 241, 241, 0.485); */
+  display: block;
   flex: 1;
-  /* padding: 20px; */
-  /* flex-wrap: wrap; */
+  height: 100%;
+  min-height: 0;
   width: 100%;
   box-sizing: border-box;
+  overflow-y: auto;
+  padding: 10px 0 16px;
+}
+.message-empty-loading {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 100%;
+}
+.message-list-start {
+  position: absolute;
+  top: 6px;
+  left: 0;
+  right: 0;
+  margin: 0;
+  font-size: 11px;
+  opacity: 0.55;
+  pointer-events: none;
 }
 .message-item {
   display: flex;

@@ -14,7 +14,9 @@
 
 - 参考 Flutter `lib/features/auth/data/openid_connect_auth_repository.dart`、`lib/core/network/`、`lib/core/device/`、`lib/features/scan_login/`；核对环境配置和当前后端契约，不在文档固化凭据。
 - 旧端 `src/apis/auth/TokenController.ts` 已加入密码、扫码票据、client credentials、过期预刷新与进程内 `refreshPromise`；`src/scanlogin/ScanLoginHub.ts` 和 `src/views/Login.vue` 已有二维码流程。逐项核实 client ID、scope、设备 ID、头、注册、用户信息和退出端点及响应；扫码测试生成、扫描、授权、拒绝、取消、过期和重新生成，保证重复授权不会登录两次。
-- 每个 Electron 渲染进程各自有模块状态，现有 `refreshPromise` 不能保证跨窗口单飞；检查 `electron/main/handles/authTokenHandle.ts` 的持久化和广播一致性，设计唯一刷新协调者，覆盖轮换、并发 401、旧 token 响应晚到、登出与刷新竞态。认证接口不能进入无限刷新；业务请求失败后的重试必须有上限。检查现有请求链路是否确实处理 401，而不只提前刷新。
+- **进展**：
+  - 已在主进程 `electron/main/handles/authTokenHandle.ts` 中实现唯一刷新协调者，通过 `messageHub.broadcastAll` 跨所有窗口同步；渲染进程 `TokenController.ts` 优先委托主进程单飞；在 `src/apis/core/request.ts` 中补齐了 401 受控重试 1 次防死循环机制。通过 `tests/auth-coordination.test.mjs` 验证并发单飞、旧 token 晚到防重、refresh_token 轮换、400/401 失效广播与网络断连不误清会话。
+  - **设备注册**：核实对齐 Flutter `.env.development`：设备管理独立地址为 `http://10.0.5.20:51631`，合法 AppId 为 `__UNI__39F095D`，接口为 `/api/app-device/public/device-public/register`。修复 `profile` 契约（剔除外层保留字段 `appId`/`deviceId`）、`request.ts` 中针对显式 `Authorization` 头不被覆盖、以及修复 URL 正则 `/g` 状态机导致的双重 BaseUrl 问题。真实设备已成功向服务端注册（200 OK）。登录前与挂载时自动确保设备注册，彻底解决 `Device session is unavailable` 拦截。
 - 验收：多窗口同时过期和同时 401 只产生一次刷新，所有请求得到正确结果；失败清理与重新登录一致。检查 token 安全存储、日志脱敏和设备注册失败处理。
 
 ### P0：API 与数据契约

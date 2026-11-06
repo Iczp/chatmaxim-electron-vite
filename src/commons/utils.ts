@@ -277,15 +277,14 @@ export const groupByToMap = <T, Q>(
  * @return {*}  {number}
  */
 export const sortSessionItemDto = (a: SessionItemDto, b: SessionItemDto): number => {
-  if (a.sorting! > b.sorting!) {
-    return -1;
-  } else if (a.sorting! < b.sorting!) {
-    return 1;
+  if (a.score != null && b.score != null && a.score !== b.score) {
+    return b.score - a.score;
   }
-  if (a.lastMessageId! > b.lastMessageId!) {
-    return -1;
-  } else if (a.lastMessageId! < b.lastMessageId!) {
-    return 1;
+  if (a.sorting !== b.sorting) {
+    return (b.sorting || 0) - (a.sorting || 0);
+  }
+  if (a.lastMessageId !== b.lastMessageId) {
+    return Number(b.lastMessageId || 0) - Number(a.lastMessageId || 0);
   }
   return 0;
 };
@@ -297,7 +296,9 @@ export const sortSessionItemDto = (a: SessionItemDto, b: SessionItemDto): number
  */
 export const mapToSessionItemDto = (x: SessionUnitOwnerDto): SessionItemDto => {
   const { id, ownerId, sorting, lastMessageId } = x;
-  return { id, ownerId, sorting, lastMessageId };
+  const rawScore = (x as any).score ?? (x as any).Score;
+  const ticks = (x as any).ticks ?? (x as any).Ticks;
+  return { id, ownerId, sorting, lastMessageId, score: rawScore, ticks };
 };
 
 /**
@@ -345,6 +346,15 @@ export const formatMessage = ({
     // autoId
     if (!item.autoId) {
       item.autoId = item.id;
+    }
+    // scrollerKey (DynamicScroller 必须的唯一稳定 key)
+    if (!item.scrollerKey) {
+      item.scrollerKey =
+        item.id != null
+          ? `m-${item.id}`
+          : item.clientMessageId
+            ? `c-${item.clientMessageId}`
+            : `a-${item.autoId || Math.random()}`;
     }
 
     //时间分组

@@ -1,11 +1,13 @@
+import { getMachineId } from '../commons/machine';
 import { ipcMain } from 'electron';
 import { IpcMainHandleBase } from './IpcMainHandleBase';
 import { openChildWindowHandle } from './openChildWindowHandle';
 import { openPopWindowHandle } from './openPopWindowHandle';
 import { openAppSettingsWindowHandle } from './openAppSettingsWindowHandle';
 import { windowSettingHandle } from './windowSettingHandle';
-import { websocketHandle } from './webscoketHandle';
 import { setAuthorizehandle } from './setAuthorizehandle';
+import { appEventHandle } from './appEventHandle';
+import { authTokenHandle } from './authTokenHandle';
 import { setTrayHandle } from './setTrayHandle';
 import { setColorSchemeHandle } from './setColorSchemeHandle';
 import { loginItemSettingsHandle } from './loginItemSettingsHandle';
@@ -35,11 +37,14 @@ function getSubClasses(baseClass: typeof IpcMainHandleBase): (typeof IpcMainHand
 }
 
 export const installAllIpcHandle = () => {
+  ipcMain.handle('machine-id', () => getMachineId());
   ipcMain.handle(openChildWindowHandle.channel, openChildWindowHandle.handle);
   ipcMain.handle(openPopWindowHandle.channel, openPopWindowHandle.handle);
   ipcMain.handle(openAppSettingsWindowHandle.channel, openAppSettingsWindowHandle.handle);
   ipcMain.handle(windowSettingHandle.channel, windowSettingHandle.handle);
-  ipcMain.handle(websocketHandle.channel, websocketHandle.handle);
+  // 统一多窗口消息总线（替代旧的 websocket 转发通道）
+  ipcMain.handle(appEventHandle.channel, appEventHandle.handle);
+  ipcMain.handle(authTokenHandle.channel, authTokenHandle.handle);
   ipcMain.handle(setTrayHandle.channel, setTrayHandle.handle);
   ipcMain.handle(setAuthorizehandle.channel, setAuthorizehandle.handle);
   ipcMain.handle(setColorSchemeHandle.channel, setColorSchemeHandle.handle);

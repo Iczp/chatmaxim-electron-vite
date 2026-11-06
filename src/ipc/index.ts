@@ -4,8 +4,8 @@ import { ipcRenderer } from 'electron';
 import Store from 'electron-store';
 import { router } from '../routes';
 import { useWindowStore } from '../stores/windowStore';
-import { websocketHandle } from '../apis/websockets/websocketHandle';
 import { globalEvent } from '../global-events';
+import { appEvent } from './appEvent';
 export enum WinEvents {
   'resize' = 'resize',
   'resized' = 'resized',
@@ -22,7 +22,8 @@ store.set('unicorn', '🦄');
 
 console.log(store.get('unicorn'));
 
-ipcRenderer.on('websocket', websocketHandle);
+// 统一多窗口消息总线（实时事件 / 会话状态 / 主题语言同步）
+appEvent.install();
 
 globalEvent.install();
 
@@ -57,4 +58,7 @@ ipcRenderer.on('window-event', (_, args) => {
   // console.log('[window-event]:', _, args);
   const winStore = useWindowStore();
   winStore.handle(args);
+  if (args?.event === 'init') {
+    void appEvent.ready(winStore.name || 'unknown');
+  }
 });

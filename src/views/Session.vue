@@ -206,11 +206,12 @@ onDeactivated(() => {
       </header>
 
       <!-- <div class="session-list"></div> -->
-      <RecycleScroller
+      <!-- 可变高度虚拟列表：会话项含标题/预览/时间，固定 64px 会截断 -->
+      <DynamicScroller
         ref="scrollerRef"
         class="scroller"
         :items="displayItems"
-        :item-size="64"
+        :min-item-size="64"
         key-field="id"
         @scroll-start="onReachStart"
         @scroll-end="onReachEnd"
@@ -225,18 +226,25 @@ onDeactivated(() => {
         <template #after>
           <Loading v-if="isPendingOfFetchHistorical" :text="t('loading')"</Loading>
         </template>
-        <template v-slot="{ item, index }: { item: SessionItemDto, index: number }">
-          <SessionItem
-            :id="item.id"
-            :index="index"
-            :active="acitveSessionUnitId == item.id"
-            :flash="flashSessionUnitId == item.id"
-            @click.native="onItemClick(item)"
-            @dragend="dragend(item)"
-            @contextmenu="showContextMenuForSession"
-          />
+        <template v-slot="{ item, index, active }">
+          <DynamicScrollerItem
+            :item="item"
+            :active="active"
+            :data-index="index"
+            :size-dependencies="[item.lastMessageId]"
+          >
+            <SessionItem
+              :id="item.id"
+              :index="index"
+              :active="acitveSessionUnitId == item.id"
+              :flash="flashSessionUnitId == item.id"
+              @click.native="onItemClick(item)"
+              @dragend="dragend(item)"
+              @contextmenu="showContextMenuForSession"
+            />
+          </DynamicScrollerItem>
         </template>
-      </RecycleScroller>
+      </DynamicScroller>
     </aside>
 
     <main class="content">

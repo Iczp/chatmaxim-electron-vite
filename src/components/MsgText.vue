@@ -4,10 +4,19 @@ import { MessageDto, TextContentDto } from '../apis/dtos';
 import Bubble from './Bubble.vue';
 import TextViewer from './TextViewer.vue';
 import { type WordDto } from '../commons/formatWords';
+
 const props = defineProps<{
   item: MessageDto;
 }>();
-const content = computed(() => props.item.content as TextContentDto);
+
+const textValue = computed<string>(() => {
+  const content: any = props.item.content;
+  if (typeof content === 'string') {
+    return content;
+  }
+  return content?.text || content?.content || (props.item as any)?.text || '';
+});
+
 const onWordClick = (item: WordDto, event?: Event) => {
   console.log('onWordClick', item, event);
 };
@@ -15,7 +24,7 @@ const onWordClick = (item: WordDto, event?: Event) => {
 
 <template>
   <Bubble :r="item.isSelf" class="msg-text" :class="{ self: item.isSelf }">
-    <TextViewer :value="content?.text!" @word-click="onWordClick" />
+    <TextViewer :value="textValue" @word-click="onWordClick" />
   </Bubble>
 </template>
 

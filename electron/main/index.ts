@@ -19,7 +19,7 @@ import { release } from 'node:os';
 import { join } from 'node:path';
 import Store from 'electron-store';
 import { createMainWindow } from './commons/createMainWindow';
-import { initMachine } from './commons/machine';
+import { getMachineId, initMachine } from './commons/machine';
 
 import './commons/logger';
 import './screenshots';
@@ -48,7 +48,10 @@ initMachine();
 if (release().startsWith('6.1')) app.disableHardwareAcceleration();
 
 // Set application name for Windows 10+ notifications
-if (process.platform === 'win32') app.setAppUserModelId(app.getName());
+if (process.platform === 'win32') {
+  app.setAppUserModelId(app.getName());
+  app.commandLine.appendSwitch('disable-features', 'NetworkServiceSandbox');
+}
 
 if (!app.requestSingleInstanceLock()) {
   app.quit();
@@ -78,13 +81,16 @@ if (app.isPackaged) {
   console.log('getLoginItemSettings', appSetting);
 }
 
-app.whenReady().then(() => {
-  // createBrowserWindow({
+app.whenReady().then(async () => {
+  // createLoginWindow({
   //   window: { name: 'browser', path: '/browser' },
   //   browser: {
   //     url: 'https://www.baidu.com',
   //   },
   // });
+
+  // 先完成机器码 -> UUID 映射，保证首屏请求与设备注册拿到 App-Device-Id
+  await getMachineId();
 
   createLoginWindow({ path: 'login', visiblity: true, isPreventClose: true });
 

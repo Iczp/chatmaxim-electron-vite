@@ -1,12 +1,8 @@
-import { machineId as MachineId, machineIdSync } from 'node-machine-id';
+import { machineId as MachineId } from 'node-machine-id';
+import { createHash } from 'node:crypto';
 import Store from 'electron-store';
-import { app } from 'electron';
-import { AppInfo } from '../ipc-types';
-import { env } from '../env';
 
 export const machineStoreKey = 'MachineId';
-
-// export let machineId: string | undefined;
 
 export const machine: {
   [key: string | 'id']: any;
@@ -19,8 +15,30 @@ export const machine: {
   picturesPath?: string;
 } = {};
 
+const UUID_PATTERN = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/;
+
+/**
+ * 后端 App-Device-Id 为 Guid 类型。
+ * 历史版本存的是 `electron-<machineId>`，这里统一做一次确定性映射，
+ * 保证同一台机器升级前后落到同一个 UUID，不会产生重复设备。
+ */
+export const toDeviceUuid = (input: string): string => {
+  const normalized = input.trim().toLowerCase();
+  if (UUID_PATTERN.test(normalized)) {
+    return normalized;
+  }
+  const hex = createHash('sha256').update(normalized).digest('hex');
+  return [
+    hex.slice(0, 8),
+    hex.slice(8, 12),
+    hex.slice(12, 16),
+    hex.slice(16, 20),
+    hex.slice(20, 32),
+  ].join('-');
+};
+
 export const initMachine = (): void => {
-  getMachineId();
+  void getMachineId();
 };
 
 export const getMachineId = async (): Promise<string> => {
@@ -30,12 +48,16 @@ export const getMachineId = async (): Promise<string> => {
   const store = new Store();
   const value = store.get(machineStoreKey);
   if (value) {
-    machine.id = value as string;
+    const uuid = toDeviceUuid(String(value));
+    machine.id = uuid;
+    if (uuid !== value) {
+      // 兼容旧值：只更新本机缓存，不改变机器指纹算法
+      store.set(machineStoreKey, uuid);
+    }
     return machine.id;
   }
-  machine.id = 'electron-' + (await MachineId());
+  const rawMachineId = await MachineId();
+  machine.id = toDeviceUuid(rawMachineId);
   store.set(machineStoreKey, machine.id);
   return machine.id;
 };
-
-

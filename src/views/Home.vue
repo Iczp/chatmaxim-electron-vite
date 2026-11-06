@@ -29,22 +29,21 @@ import { MusicLib, MusicQueue, MusicNote, MusicLyrics } from '../icons';
 
 // import { useVueWebSocket } from '../apis/websockets/useVueWebSocket';
 
-import { useWebSocketKit } from '../apis/websockets/useWebSocketKit';
-import { useWebsocketUi } from '../apis/websockets/useWebsocketUi';
-import { useSignalR } from '../composables/useSignalR';
+import { startRealtime, stopRealtime } from '../realtime/realtimeHub';
+import { onBeforeUnmount } from 'vue';
 const { t } = useI18n();
 const route = useRoute();
 // const { connectionText, connectionState, retryCount } = useWebsocket();
-const { badge, badgeItems, refresh } = useBadges();
+const { badge, badgeItems } = useBadges();
 // const router = useRouter();
 
 // const { status } = useVueWebSocket({});
 
-useSignalR({})
-useWebSocketKit({
-  onConnected(ws) {
-    refresh();
-  },
+// 仅主窗口建立 SignalR 连接；子窗口由 app-event 总线同步
+startRealtime();
+
+onBeforeUnmount(() => {
+  void stopRealtime();
 });
 
 const navToChatHistory = (item: BadgeDto) => {

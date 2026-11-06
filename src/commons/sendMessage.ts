@@ -1,4 +1,5 @@
 import { AxiosProgressEvent } from 'axios';
+import { ulid } from 'ulid';
 import { ApiError, CancelablePromise, ChatObjectService, MessageSenderService } from '../apis';
 import { ChatObjectDto, MessageDto, MessageOwnerDto, SessionUnitSenderDto } from '../apis/dtos';
 import { MessageStateEnums, MessageTypeEnums } from '../apis/enums';
@@ -69,6 +70,8 @@ export const uploadFileMork = ({
   });
 };
 
+export const createClientMessageId = (): string => ulid();
+
 export const sendMessage = async ({
   sessionUnitId,
   quoteMessage,
@@ -100,13 +103,16 @@ export const sendMessage = async ({
 }) => {
   const store = useImStore();
   const autoId = store.generateMessageId();
-  console.log('sendMessage content', content);
+  const clientMessageId = createClientMessageId();
+  console.log('sendMessage content', content, 'clientMessageId', clientMessageId);
 
   let input: MessageDto = formatMessage({
     sessionUnitId,
     items: [
       {
         autoId,
+        clientMessageId,
+        scrollerKey: `a-${autoId}`,
         isSelf: true,
         isShowTime: true,
         messageType,
@@ -149,6 +155,7 @@ export const sendMessage = async ({
         sessionUnitId,
         quoteMessageId,
         remindList,
+        clientMessageId,
         file,
         onUploadProgress,
       };
@@ -167,6 +174,7 @@ export const sendMessage = async ({
       messageType,
       sessionUnitId,
       requestBody: {
+        clientMessageId,
         quoteMessageId,
         ignoreConnections: null,
         remindList,

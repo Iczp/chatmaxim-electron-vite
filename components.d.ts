@@ -65,6 +65,7 @@ declare module 'vue' {
     LabelGroup: typeof import('./src/components/LabelGroup.vue')['default']
     LayoutItem: typeof import('./src/components/LayoutItem.vue')['default']
     Loading: typeof import('./src/components/Loading.vue')['default']
+    LoginQrCode: typeof import('./src/components/LoginQrCode.vue')['default']
     MessageItem: typeof import('./src/components/MessageItem.vue')['default']
     MessagePreview: typeof import('./src/components/MessagePreview.vue')['default']
     MsgCmd: typeof import('./src/components/MsgCmd.vue')['default']

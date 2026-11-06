@@ -2,16 +2,23 @@
 import { computed } from 'vue';
 import { formatWords, WordDto } from '../commons/formatWords';
 import { setSelectedNode } from '../commons/utils';
-const props = defineProps<{
-  value: string;
-}>();
+
+const props = withDefaults(
+  defineProps<{
+    value?: string;
+  }>(),
+  {
+    value: '',
+  },
+);
+
 const emits = defineEmits<{
-  // wordClick: [WordDto, Event?];
   (e: 'wordClick', item: WordDto, event?: Event): void;
 }>();
-const words = computed<WordDto[]>(() => formatWords(props.value!));
+
+const words = computed<WordDto[]>(() => formatWords(props.value || ''));
+
 const onWordClick = (item: WordDto, event?: Event) => {
-  // console.log('onWordClick', item, event);
   emits('wordClick', item, event);
 };
 

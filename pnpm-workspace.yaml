@@ -1,0 +1,12 @@
+allowBuilds:
+  '@parcel/watcher': true
+  '@tsparticles/engine': true
+  bufferutil: true
+  core-js: true
+  electron: true
+  electron-clipboard-ex: true
+  es5-ext: true
+  esbuild: true
+  ffmpeg-static: true
+  utf-8-validate: true
+  vue-demi: true

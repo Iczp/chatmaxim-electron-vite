@@ -33,4 +33,6 @@ export type SessionItemDto = {
    * @type {boolean}
    */
   isSeparated?: boolean;
+  score?: number | null;
+  ticks?: number | null;
 };

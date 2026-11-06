@@ -1,13 +1,32 @@
 import { Ref, onActivated, onDeactivated, ref, watch } from 'vue';
-import { SessionUnitService } from '../apis';
+import { apiV2 } from '../apis/v2';
 import { SessionItemDto, SessionUnitOwnerDto } from '../apis/dtos';
 import { SessionUnitGetListInput } from '../apis/dtos/SessionUnitGetListInput';
 import { useImStore } from '../stores/imStore';
+
 export type FetchSessionUnitResult = {
   items: SessionUnitOwnerDto[];
   list: Ref<SessionUnitOwnerDto[]>;
   maxResultCount: number;
 };
+
+const mergeSessionUnits = (
+  current: SessionUnitOwnerDto[],
+  incoming: SessionUnitOwnerDto[],
+  mode: 'replace' | 'append' = 'append',
+): SessionUnitOwnerDto[] => {
+  const map = new Map<string, SessionUnitOwnerDto>();
+  if (mode === 'append') {
+    current.forEach(item => item.id && map.set(item.id, item));
+    incoming.forEach(item => item.id && map.set(item.id, item));
+    return [...map.values()];
+  }
+  // replace / refresh: incoming takes precedence
+  incoming.forEach(item => item.id && map.set(item.id, item));
+  current.forEach(item => item.id && !map.has(item.id) && map.set(item.id, item));
+  return [...map.values()];
+};
+
 export const useSessionUnitList = ({
   ownerId,
   maxResultCount = 20,
@@ -28,51 +47,53 @@ export const useSessionUnitList = ({
   const isEof = ref(false);
 
   const list = ref<SessionUnitOwnerDto[]>([]);
-  const service = SessionUnitService.getApiChatSessionUnitList;
 
-  const setMaxMessageId = (items: SessionUnitOwnerDto[]): void => {
-    maxMessageId.value =
-      Math.max(maxMessageId.value || 0, ...items.map(x => x.lastMessage?.id || 0)) || undefined;
-    console.log('setMaxMessageId', maxMessageId.value);
-  };
-
-  const setMinMessageId = (items: SessionUnitOwnerDto[]): void => {
-    minMessageId.value = Math.min(...items.map(x => x.lastMessage?.id || 0)) || undefined;
-    console.log('setMinMessageId', minMessageId.value);
+  const updateMessageIdBounds = (items: SessionUnitOwnerDto[]): void => {
+    const ids = items.map(x => x.lastMessage?.id || x.lastMessageId || 0).filter(id => id > 0);
+    if (ids.length === 0) return;
+    const max = Math.max(...ids);
+    const min = Math.min(...ids);
+    maxMessageId.value = Math.max(maxMessageId.value || 0, max) || undefined;
+    minMessageId.value = minMessageId.value ? Math.min(minMessageId.value, min) : min;
   };
 
   const fetchItems = async (
-    query: SessionUnitGetListInput,
+    query: SessionUnitGetListInput & { maxScore?: number; cursorId?: string },
     isLast: boolean,
   ): Promise<SessionUnitOwnerDto[]> => {
-    const req = { maxResultCount, ownerId, ...query };
-    console.log('fetchItems query', req);
-    const ret = await service(req);
-    const items = ret.items!;
-    if (items.length != 0) {
+    // 新后端：会话列表走 /session-unit-cache/friends（支持 ownerId / maxResultCount / maxScore / cursorId / maxMessageId）
+    const ret = await apiV2.sessions.friends({
+      ownerId,
+      maxResultCount,
+      keyword: query.keyword || undefined,
+      maxMessageId: isLast ? undefined : query.maxMessageId || undefined,
+      maxScore: isLast ? undefined : query.maxScore,
+      cursorId: isLast ? undefined : query.cursorId,
+    });
+    const items = ret.items || [];
+    if (items.length !== 0) {
       store.setMany(items);
-      setMaxMessageId(items);
-      setMinMessageId(items);
+      updateMessageIdBounds(items);
     }
     return items;
   };
 
-  const fetchLatest = async ({ caller }: { caller?: string }): Promise<FetchSessionUnitResult> =>
+  const fetchLatest = async ({ caller }: { caller?: string } = {}): Promise<FetchSessionUnitResult> =>
     new Promise(async (resolve, reject) => {
       if (isPendingOfFetchLatest.value) {
-        reject(
-          `fetchLatest caller:${caller},isPendingForFetchLatest:${isPendingOfFetchLatest.value}`,
-        );
+        reject(`fetchLatest caller:${caller}, isPendingForFetchLatest: true`);
         return;
       }
       isPendingOfFetchLatest.value = true;
       console.warn('fetchLatest caller', caller);
-      fetchItems({ minMessageId: maxMessageId.value }, true)
+      fetchItems({}, true)
         .then(items => {
-          // console.log(
-          //   'fetchLatest',
-          //   items.map(x => x.id),
-          // );
+          if (list.value.length === 0) {
+            list.value = items;
+          } else {
+            list.value = mergeSessionUnits(list.value, items, 'replace');
+          }
+          isBof.value = items.length < maxResultCount;
           resolve({ items, list, maxResultCount });
         })
         .catch(reject)
@@ -89,18 +110,23 @@ export const useSessionUnitList = ({
       }
       isPendingOfFetchHistorical.value = true;
       console.warn('fetchHistorical caller', caller);
-      fetchItems({ maxMessageId: minMessageId.value, keyword: keyword.value }, false)
+
+      const lastItem = list.value[list.value.length - 1];
+      const queryParams: SessionUnitGetListInput & { maxScore?: number; cursorId?: string } = {
+        keyword: keyword.value || undefined,
+        maxMessageId: lastItem?.lastMessage?.id || lastItem?.lastMessageId || minMessageId.value,
+        maxScore: (lastItem as any)?.score ?? (lastItem as any)?.Score,
+        cursorId: lastItem?.id,
+      };
+
+      fetchItems(queryParams, false)
         .then(items => {
           isBof.value = items.length < maxResultCount;
-          if (items.length == 0) {
+          if (items.length === 0) {
             reject({ message: '没有数据' });
             return;
           }
-          list.value = items.concat(list.value);
-          // console.log(
-          //   'fetchHistorical',
-          //   items.map(x => x.id),
-          // );
+          list.value = mergeSessionUnits(list.value, items, 'append');
           resolve({ items, list, maxResultCount });
         })
         .catch(err => {
@@ -112,19 +138,16 @@ export const useSessionUnitList = ({
     });
 
   const refresh = () => {
-    fetchLatest({
-      caller: 'refresh',
-    });
+    fetchLatest({ caller: 'refresh' });
   };
 
   onActivated(() => {});
-
   onDeactivated(() => {});
 
   watch(
     () => keyword.value,
     async (newValue, oldValue) => {
-      if (newValue != oldValue && newValue.length > 0) {
+      if (newValue !== oldValue && newValue.length > 0) {
         console.warn('keyword changed', newValue, oldValue);
         await searchSessionUnitList(newValue);
       }
@@ -139,21 +162,37 @@ export const useSessionUnitList = ({
     };
   }>({});
 
-  const searchSessionUnitList = async (keyword: string) => {
-    console.log('searchSessionUnitList', keyword);
-    if (!searchResult.value[keyword]) {
-      searchResult.value[keyword] = { isEnd: false, isPosting: false, items: [] };
+  const searchSessionUnitList = async (searchKw: string) => {
+    console.log('searchSessionUnitList', searchKw);
+    if (!searchResult.value[searchKw]) {
+      searchResult.value[searchKw] = { isEnd: false, isPosting: false, items: [] };
     }
-    const ret = searchResult.value[keyword];
-    const req = { maxResultCount, ownerId, keyword, skipCount: ret.items.length };
-    console.log('fetchItems query', req);
-    ret.isPosting = false;
-    const res = await service(req);
+    const ret = searchResult.value[searchKw];
+    const last = ret.items[ret.items.length - 1];
     ret.isPosting = true;
-    ret.isEnd = res.items!.length < maxResultCount;
-    ret.items = ret.items.concat(res.items!);
-    searchResult.value[keyword] = ret;
-    console.log('searchResult', searchResult.value);
+    try {
+      const res = await apiV2.sessions.friends({
+        ownerId,
+        keyword: searchKw,
+        maxResultCount,
+        maxMessageId: last?.lastMessageId || undefined,
+        maxScore: last?.score || undefined,
+        cursorId: last?.id || undefined,
+      });
+      ret.isEnd = (res.items || []).length < maxResultCount;
+      const mapped = (res.items || []).map(x => ({
+        id: x.id,
+        ownerId: x.ownerId,
+        sorting: x.sorting,
+        lastMessageId: x.lastMessage?.id || x.lastMessageId,
+        score: (x as any).score,
+        ticks: (x as any).ticks,
+      }));
+      ret.items = ret.items.concat(mapped);
+      searchResult.value[searchKw] = ret;
+    } finally {
+      ret.isPosting = false;
+    }
   };
 
   return {

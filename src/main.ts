@@ -21,6 +21,12 @@ import PageContent from './components/PageContent.vue';
 import Icon from './components/Icon.vue';
 import { router } from './routes';
 import { createPinia } from 'pinia';
+import { message } from 'ant-design-vue';
+import { initToken } from './apis/auth/TokenController';
+import { installRealtimeBridge } from './realtime/realtimeHub';
+import { registerDevice } from './apis/v2/deviceRegistration';
+import { eventBus } from './commons/eventBus';
+import { useWindowStore } from './stores/windowStore';
 
 // import VueVirtualScroller from 'vue-virtual-scroller'
 // https://github.com/Akryum/vue-virtual-scroller
@@ -70,6 +76,28 @@ app
   })
 
   .mount('#app')
-  .$nextTick(() => {
+  .$nextTick(async () => {
     postMessage({ payload: 'removeLoading' }, '*');
+    // 多窗口实时事件桥接（子窗口只消费主窗口广播）
+    installRealtimeBridge();
+    // 与主进程对齐登录态（多窗口一致性）
+    await initToken();
+    // 设备注册（独立 client_credentials，失败不阻塞）
+    void registerDevice();
   });
+
+// 被踢下线 / Token 失效：清理后回到登录页
+eventBus.on('session:kicked' as any, ((payload: any) => {
+  const reason = payload?.reason || '';
+  const windowStore = useWindowStore();
+  message.error({
+    content: reason ? `该设备已退出登录：${reason}` : '该设备已退出登录',
+    duration: 5,
+  });
+  if (windowStore.name && windowStore.name !== 'main' && windowStore.name !== 'login') {
+    // 独立聊天/pop/tray 窗口直接关闭，避免继续以失效身份操作
+    window.close();
+    return;
+  }
+  void router.replace('/login');
+}) as any);

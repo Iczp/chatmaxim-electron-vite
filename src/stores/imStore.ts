@@ -15,6 +15,7 @@ import {
 } from '../apis/dtos';
 
 import { ChatObjectService, SessionUnitService } from '../apis';
+import { apiV2 } from '../apis/v2';
 import { mapToSessionItemDto, sortSessionItemDto } from '../commons/utils';
 import { TrayPayload } from '../ipc-types';
 import { toRaw } from 'vue';
@@ -370,22 +371,52 @@ export const useImStore = defineStore('im', {
     /**
      * 获取用户消息数量（角标）
      *
+     * 新后端以 `/session-unit-cache/overview` 提供各 chatObject 的未读总数，
+     * 聊天对象信息仍来自 `/chat-object/by-current-user`。
      */
     getBadgeByCurrentUser(): void {
       if (this.isPendingForGetBadgeByCurrentUser) {
-        const msg = `getBadgeByCurrentUser isPending:${this.isPendingForGetBadgeByCurrentUser}`;
-        console.warn(msg);
+        console.warn('getBadgeByCurrentUser isPending:', this.isPendingForGetBadgeByCurrentUser);
         return;
-        // throw new Error(msg);
       }
       this.isPendingForGetBadgeByCurrentUser = true;
-      SessionUnitService.getApiChatSessionUnitBadgeByCurrentUser({ isImmersed: false })
-        .then(items => {
-          console.log('getApiChatSessionUnitBadgeByCurrentUser', items);
+      (async () => {
+        try {
+          const [owners, overview] = await Promise.all([
+            ChatObjectService.getApiChatChatObjectByCurrentUser({}),
+            apiV2.sessions.overview(),
+          ]);
+          const badgeMap = new Map<number, number>();
+          (overview?.overviews || []).forEach(item => {
+            if (item.ownerId != null) {
+              badgeMap.set(Number(item.ownerId), Number(item.totalUnreadCount || 0));
+            }
+          });
+          const items = (owners.items || []).map(
+            owner =>
+              <BadgeDetialDto>{
+                chatObjectId: owner.id,
+                owner,
+                badge: badgeMap.get(Number(owner.id)) || 0,
+              },
+          );
           this.setChatObjects(items);
           this.updateTray();
-        })
-        .finally(() => (this.isPendingForGetBadgeByCurrentUser = false));
+        } catch (error) {
+          console.warn('[im] overview badge failed, fallback to legacy endpoint', error);
+          try {
+            const items = await SessionUnitService.getApiChatSessionUnitBadgeByCurrentUser({
+              isImmersed: false,
+            });
+            this.setChatObjects(items);
+            this.updateTray();
+          } catch (fallbackError) {
+            console.error('[im] get badge failed', fallbackError);
+          }
+        } finally {
+          this.isPendingForGetBadgeByCurrentUser = false;
+        }
+      })();
     },
     /**
      * 获取用户聊天对象

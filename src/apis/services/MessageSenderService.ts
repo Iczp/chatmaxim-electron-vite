@@ -41,6 +41,8 @@ export type SendUploadArgs = {
    * @type {Blob}
    */
   file: Blob;
+  /** 客户端消息 Id（幂等键，新后端必填） */
+  clientMessageId?: string;
   formdata?: any;
   onUploadProgress?: (progressEvent: AxiosProgressEvent) => void;
 };
@@ -469,6 +471,7 @@ export class MessageSenderService {
     quoteMessageId,
     remindList,
     file,
+    clientMessageId,
     type,
     formdata,
     onUploadProgress,
@@ -488,6 +491,7 @@ export class MessageSenderService {
       },
       formData: {
         file,
+        clientMessageId,
         ...formdata,
         // duration: 12345,
       },

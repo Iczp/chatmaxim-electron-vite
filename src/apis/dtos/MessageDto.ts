@@ -11,6 +11,18 @@ export type MessageDto = MessageOwnerDto & {
   autoId?: number;
 
   /**
+   * 客户端消息 Id（幂等键）
+   * @type {string}
+   */
+  clientMessageId?: string;
+
+  /**
+   * 虚拟列表稳定 key（服务端消息用 id，本地待发消息用 autoId）
+   * @type {string}
+   */
+  scrollerKey?: string;
+
+  /**
    * 是否显示发送时间
    * @type {boolean}
    */

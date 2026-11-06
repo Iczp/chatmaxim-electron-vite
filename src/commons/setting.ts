@@ -1,3 +1,4 @@
+import { apiV2 } from '../apis/v2';
 import { message } from 'ant-design-vue';
 import { SessionUnitOwnerDto, SettingService } from '../apis';
 
@@ -70,10 +71,20 @@ export const setReadedMessageId = ({
 }) => {
   console.log('setReadedMessageId', sessionUnitId, isForce, messageId);
 
-  SettingService.postApiChatSettingSetReadedMessageId({ sessionUnitId, isForce, messageId }).then(
-    entity => {
-      store.setMany([entity]);
-      console.log('setReadedMessageId success', messageId);
-    },
-  );
+  if (messageId != null) {
+    apiV2.messages
+      .setRead({ sessionUnitId, messageId })
+      .then(res => {
+        console.log('setReadedMessageId success (v2)', messageId, res);
+      })
+      .catch(err => {
+        console.warn('setReadedMessageId v2 failed, fallback to legacy', err);
+        SettingService.postApiChatSettingSetReadedMessageId({ sessionUnitId, isForce, messageId }).then(
+          entity => {
+            store.setMany([entity]);
+            console.log('setReadedMessageId success (legacy)', messageId);
+          },
+        );
+      });
+  }
 };

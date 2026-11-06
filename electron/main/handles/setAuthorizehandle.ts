@@ -3,6 +3,7 @@ import { TOKEN_KEY, globalState, store } from '../global';
 import { createMainWindow } from '../commons/createMainWindow';
 import { createPopWindow } from './openPopWindowHandle';
 import { windowManager } from '../commons/windowManager';
+import { messageHub } from '../commons/messageHub';
 
 export const setAuthorizehandle: IpcMainHandle = {
   channel: 'authorize',
@@ -11,6 +12,7 @@ export const setAuthorizehandle: IpcMainHandle = {
       store.set(TOKEN_KEY, payload);
       globalState.token = payload;
       globalState.isAuthorized = true;
+      messageHub.broadcastAll('auth:changed', [payload]);
       const loginWin = windowManager.get('login');
       loginWin?.close();
 

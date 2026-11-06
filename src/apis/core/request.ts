@@ -17,32 +17,37 @@ import type { ApiResult } from './ApiResult';
 import { CancelablePromise } from './CancelablePromise';
 import type { OnCancel } from './CancelablePromise';
 import type { OpenAPIConfig } from './OpenAPI';
-import { getToken, isTokenUrl } from '../auth/TokenController';
+import { getToken, getLocalToken, refreshToken, isTokenUrl } from '../auth/TokenController';
+import { env } from '../../env';
+import { version } from '../../../package.json';
 import { useWindowStore } from '../../stores/windowStore';
 
-let tokenCount: number = 0;
-const getTokenValue = () => {
-  return new Promise((resolve, reject) => {
-    setTimeout(() => {
-      tokenCount++;
-      resolve(tokenCount);
-    }, 1000);
-  });
+const applyAuthorizationHeader = (headers: any, authHeader: string) => {
+  if (!headers) {
+    return { Authorization: authHeader } as any;
+  }
+  if (typeof headers.set === 'function') {
+    headers.set('Authorization', authHeader);
+  } else {
+    headers['Authorization'] = authHeader;
+  }
+  return headers;
 };
+
 // Add a request interceptor
 axios.interceptors.request.use(
   async config => {
-    // Do something before request is sent
-    // console.log('axios.interceptors.request', config);
-    // const v = await getTokenValue();
-    // console.error('tokenValue', v, config);
-
     try {
-      if (!isTokenUrl(config.url)) {
-        //   config.headers['Authorization'] = `Bearer ${token}`;
+      const hasAuth =
+        config.headers &&
+        (typeof (config.headers as any).has === 'function'
+          ? (config.headers as any).has('Authorization')
+          : !!(config.headers as any)['Authorization']);
+      if (!isTokenUrl(config.url) && !hasAuth) {
         const token = await getToken();
         if (token) {
-          config.headers['Authorization'] = `${token.token_type} ${token.access_token}`;
+          const authHeader = `${token.token_type} ${token.access_token}`;
+          config.headers = applyAuthorizationHeader(config.headers, authHeader);
         }
       }
     } catch (error) {
@@ -52,7 +57,6 @@ axios.interceptors.request.use(
     return config;
   },
   err => {
-    // Do something with request error
     return Promise.reject(err);
   },
 );
@@ -60,14 +64,32 @@ axios.interceptors.request.use(
 // Add a response interceptor
 axios.interceptors.response.use(
   response => {
-    // Any status code that lie within the range of 2xx cause this function to trigger
-    // Do something with response data
-    // console.log('axios.interceptors.response', response);
     return response;
   },
-  err => {
-    // Any status codes that falls outside the range of 2xx cause this function to trigger
-    // Do something with response error
+  async err => {
+    const config = err?.config;
+    // 仅在 401、具备有效 config、未曾重试且非 Token 端点时尝试刷新重试（受控最多重试 1 次）
+    if (
+      err?.response?.status === 401 &&
+      config &&
+      !config._retry401 &&
+      !isTokenUrl(config.url)
+    ) {
+      config._retry401 = true;
+      try {
+        const local = getLocalToken();
+        if (local?.refresh_token) {
+          const newToken = await refreshToken(local);
+          if (newToken?.access_token) {
+            const authHeader = `${newToken.token_type} ${newToken.access_token}`;
+            config.headers = applyAuthorizationHeader(config.headers, authHeader);
+            return axios(config);
+          }
+        }
+      } catch (refreshErr) {
+        return Promise.reject(refreshErr);
+      }
+    }
     return Promise.reject(err);
   },
 );
@@ -169,7 +191,7 @@ const getUrl = (config: OpenAPIConfig, options: ApiRequestOptions): string => {
   const baseUrl = isTokenUrl(options.url) ? config.AUTH_HOST : config.BASE;
 
   let url = `${path}`;
-  if (!/^https?/g.test(url)) {
+  if (!/^https?:/i.test(url)) {
     url = `${baseUrl}${path}`;
   }
   if (options.query) {
@@ -230,13 +252,13 @@ export const getHeaders = async (
 
   const windowStore = useWindowStore();
 
-  const deviceType = 'pc'
-
   const headers = Object.entries({
+    Accept: '*/*',
     'App-Device-Id': windowStore.machineId,
-    'App-Device-Type': deviceType,
+    'App-Device-Type': env.device_type,
+    'App-Id': env.app_id,
+    'App-Version': version,
     // 'app-electron': process.electron,
-    // Accept: 'application/json',
     ...additionalHeaders,
     ...options.headers,
     ...formHeaders,
@@ -250,7 +272,9 @@ export const getHeaders = async (
       {} as Record<string, string>,
     );
 
-  if (isStringWithValue(token)) {
+  // 设备注册等场景会显式传入 Authorization（client_credentials），优先于用户 Token
+  const hasAuthorization = Object.keys(headers).some(key => key.toLowerCase() === 'authorization');
+  if (isStringWithValue(token) && !hasAuthorization) {
     headers['Authorization'] = `Bearer ${token}`;
   }
 
