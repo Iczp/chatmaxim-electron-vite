@@ -59,6 +59,10 @@ export type EnvType = {
   signalr_hub_path: string;
   signalr_skip_negotiation: boolean;
   signalr_reconnect_delays: number[];
+  /** SignalR 服务端超时容忍时间（毫秒，默认 60000） */
+  signalr_server_timeout_ms: number;
+  /** SignalR 客户端 Ping 发送间隔（毫秒，默认 10000） */
+  signalr_keep_alive_ms: number;
   /** 在线状态心跳间隔（秒） */
   presence_heartbeat_seconds: number;
   /** 扫码登录 Hub 地址 */
@@ -119,6 +123,10 @@ export const env: EnvType = {
   signalr_reconnect_delays: readNumberList('VITE_APP_SIGNALR_RECONNECT_DELAYS', [
     0, 2000, 10000, 30000,
   ]),
+
+  signalr_server_timeout_ms: readNumber('VITE_APP_SIGNALR_SERVER_TIMEOUT_MS', 60000),
+
+  signalr_keep_alive_ms: readNumber('VITE_APP_SIGNALR_KEEP_ALIVE_MS', 10000),
 
   presence_heartbeat_seconds: readNumber('VITE_APP_PRESENCE_HEARTBEAT_SECONDS', 10),
 

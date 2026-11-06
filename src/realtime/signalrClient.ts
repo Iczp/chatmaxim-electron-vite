@@ -112,9 +112,9 @@ class SignalRClient {
       .configureLogging(LogLevel.Warning)
       .build();
 
-    // 5s keep-alive / 15s server timeout，与后端及新客户端一致
-    connection.keepAliveIntervalInMilliseconds = 5000;
-    connection.serverTimeoutInMilliseconds = 15000;
+    // 保持高频 ping 保活（默认 10s），放宽服务端超时容忍窗口（默认 60s），防止偶发抖动误触发 Server timeout 强拆连接
+    connection.keepAliveIntervalInMilliseconds = env.signalr_keep_alive_ms;
+    connection.serverTimeoutInMilliseconds = env.signalr_server_timeout_ms;
 
     connection.on('ReceivedMessage', (...args: any[]) => {
       const value = args.length === 1 ? args[0] : args;

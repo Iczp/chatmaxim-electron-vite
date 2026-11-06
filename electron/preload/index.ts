@@ -3,14 +3,20 @@
 import { contextBridge, ipcRenderer } from 'electron'
 // import { electronAPI } from '@electron-toolkit/preload'
 
-// // Set up context bridge between the renderer process and the main process
-contextBridge.exposeInMainWorld(
-  'shell',
-  {
-    open: () => ipcRenderer.send('shell:open'),
-  }
-)
+const shellApi = {
+  open: () => ipcRenderer.send('shell:open'),
+}
 
+// 仅在启用 contextIsolation 时使用 contextBridge，否则直接挂载到 window，避免报错崩溃
+if (process.contextIsolated) {
+  try {
+    contextBridge.exposeInMainWorld('shell', shellApi)
+  } catch (error) {
+    console.error('[preload] exposeInMainWorld shell failed:', error)
+  }
+} else {
+  (window as any).shell = shellApi
+}
 
 function domReady(condition: DocumentReadyState[] = ['complete', 'interactive']) {
   return new Promise((resolve) => {
@@ -104,4 +110,3 @@ window.onmessage = (ev) => {
 }
 
 setTimeout(removeLoading, 4999)
-
