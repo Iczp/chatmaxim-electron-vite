@@ -12,6 +12,8 @@ const mergeSource = fs.readFileSync(path.resolve(__dirname, '../../src/data/loca
 fs.writeFileSync(path.join(root, 'friend-merge.js'), ts.transpileModule(mergeSource, { compilerOptions: { module: ts.ModuleKind.CommonJS, target: ts.ScriptTarget.ES2020 } }).outputText);
 const friendSource = fs.readFileSync(path.resolve(__dirname, '../../src/data/local/friendCache.ts'), 'utf8');
 fs.writeFileSync(path.join(root, 'friend-cache.js'), ts.transpileModule(friendSource, { compilerOptions: { module: ts.ModuleKind.CommonJS, target: ts.ScriptTarget.ES2020 } }).outputText);
+const messageSource = fs.readFileSync(path.resolve(__dirname, '../../src/data/local/messageCache.ts'), 'utf8');
+fs.writeFileSync(path.join(root, 'message-cache.js'), ts.transpileModule(messageSource, { compilerOptions: { module: ts.ModuleKind.CommonJS, target: ts.ScriptTarget.ES2020 } }).outputText);
 fs.writeFileSync(path.join(root, 'index.html'), '<!doctype html><title>database integration</title>');
 for (const phase of ['write', 'restart']) {
   const env = { ...process.env };

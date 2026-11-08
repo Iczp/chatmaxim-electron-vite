@@ -25,10 +25,13 @@ function createList(api) {
     '../commons/eventBus': { eventBus },
     '../commons/utils': { formatMessage: ({ items }) => items.map(x => ({ ...x, state: 1, scrollerKey: `m-${x.id}` })) },
     '../commons/mergeMessages': merge,
+    '../ipc/appEvent': { AppEvents: { authChanged: 'auth' }, appEvent: { on: () => () => {} } },
+    '../data/local/localAccount': { readAuthenticatedSessionVersion: async () => 1 },
+    '../data/local/messageCache': { readMessageScope: async () => null },
     '../realtime/messageMutationSync': { MessageMutationSync: class { applyKnown(rows) { return rows; } sync() { return Promise.resolve(); } } },
   };
   const mod = compile('../src/composables/useMessageList.ts', deps);
-  return { list: mod.useMessageList({ sessionUnitId: 'unit', maxResultCount: 2 }), listeners };
+  return { list: mod.useMessageList({ sessionUnitId: 'unit', ownerId: 1, maxResultCount: 2 }), listeners };
 }
 
 test('断线后 latest 连续翻页直到拉完，保留已获取消息', async () => {
@@ -61,6 +64,7 @@ test('拉取期间发生新通知时，再次请求以补齐并发变更', async
   const { list } = createList(api);
   await list.fetchLatest();
   const first = list.fetchLatest();
+  await new Promise(resolve => setImmediate(resolve));
   const next = list.fetchLatest();
   finish({ items: [{ id: 2 }] });
   await Promise.all([first, next]);

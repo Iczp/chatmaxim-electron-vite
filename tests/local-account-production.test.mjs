@@ -18,9 +18,9 @@ function setup({ invoke, getToken, userInfo }) {
 }
 
 test('已绑定账号时离线使用主进程标识，不调用网络', async () => {
-  const resolve = setup({ invoke: async () => ({ token: { access_token: 'x' }, accountId: 'bound', sessionVersion: 1 }),
+  const resolve = setup({ invoke: async () => ({ token: { access_token: 'x' }, accountId: JSON.stringify(['https://auth.test', 'bound']), sessionVersion: 1 }),
     getToken: () => { throw new Error('unexpected refresh'); }, userInfo: () => { throw new Error('unexpected request'); } });
-  assert.equal(await resolve(), 'bound');
+  assert.equal(await resolve(), JSON.stringify(['https://auth.test', 'bound']));
 });
 
 test('首次绑定只能使用 userinfo 的 sub 与当前令牌', async () => {
@@ -50,4 +50,15 @@ test('缺少可信用户标识时不绑定', async () => {
     getToken: async () => ({ access_token: 'x' }), userInfo: async () => ({ name: 'test' }) });
   await assert.rejects(resolve(), /缺少账号标识/);
   assert.equal(calls.length, 2);
+});
+
+
+test('认证服务地址变化时不复用旧服务的账号分区', async () => {
+  let called = 0;
+  const resolve = setup({ invoke: async (_channel, arg) => arg.action === 'get'
+    ? { token: { access_token: 'x' }, accountId: JSON.stringify(['https://old.test', 'user']), sessionVersion: 1 }
+    : { success: true }, getToken: async () => ({ access_token: 'x' }),
+    userInfo: async () => { called++; return { sub: 'user' }; } });
+  assert.equal(await resolve(), JSON.stringify(['https://auth.test', 'user']));
+  assert.equal(called, 1);
 });

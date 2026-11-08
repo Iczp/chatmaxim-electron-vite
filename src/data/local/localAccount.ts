@@ -3,12 +3,21 @@ import { getToken } from '../../apis/auth/TokenController';
 import { authV2 } from '../../apis/v2';
 import { env } from '../../env';
 
+function matchesAuthHost(accountId: unknown): accountId is string {
+  if (typeof accountId !== 'string') return false;
+  try {
+    const value = JSON.parse(accountId);
+    return Array.isArray(value) && value.length === 2 && value[0] === env.auth_host &&
+      typeof value[1] === 'string' && !!value[1].trim();
+  } catch { return false; }
+}
+
 /** 仅以认证服务 userinfo 返回的 sub 作为本地数据分区，不能从令牌内容猜测账号。 */
 export async function resolveLocalAccountId(): Promise<string | null> {
   if (!ipcRenderer?.invoke) return null;
   const current = await ipcRenderer.invoke('auth-token', { action: 'get' });
   if (!current?.token?.access_token) return null;
-  if (typeof current.accountId === 'string' && current.accountId.trim()) return current.accountId;
+  if (matchesAuthHost(current.accountId)) return current.accountId;
   // 首次建立绑定需要在线；已绑定时离线启动无需请求网络。
   for (let attempt = 0; attempt < 2; attempt++) {
     const token = await getToken();
@@ -32,8 +41,8 @@ export type LocalAccountSnapshot = { accountId: string; sessionVersion: number }
 /** 仅读取已绑定会话，不触发网络。 */
 export async function readLocalAccountSnapshot(): Promise<LocalAccountSnapshot | null> {
   const current = await ipcRenderer.invoke('auth-token', { action: 'get' });
-  if (!current?.token?.access_token || typeof current.accountId !== 'string' ||
-      !current.accountId.trim() || !Number.isSafeInteger(current.sessionVersion)) return null;
+  if (!current?.token?.access_token || !matchesAuthHost(current.accountId) ||
+      !Number.isSafeInteger(current.sessionVersion)) return null;
   return { accountId: current.accountId, sessionVersion: current.sessionVersion };
 }
 

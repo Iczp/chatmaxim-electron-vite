@@ -6,18 +6,28 @@ type MessageChangesApi = {
   syncItems(input: { sessionUnitId: string; messageIds: number[] }): PromiseLike<MessageChangeState[]>;
 };
 
-/** 当前聊天已加载消息的变更同步。游标与状态仅保留在内存；持久化接入后须事务提交。 */
+export type MutationStore = {
+  readCursor(): Promise<string | null>;
+  readIds(after: number, limit: number): Promise<number[]>;
+  apply(states: MessageChangeState[], cursor: string | null, calibration: boolean): Promise<void>;
+  readMessages(ids: number[]): Promise<MessageDto[]>;
+};
+
+/** 当前聊天消息的变更同步；有本地账号时将变更和游标原子持久化。 */
 export class MessageMutationSync {
   private cursor: string | null = null;
   private states = new Map<number, MessageChangeState>();
   private inFlight: Promise<void> | null = null;
   private requested = false;
+  private store: MutationStore | null = null;
 
   constructor(
     private readonly sessionUnitId: string,
     private readonly api: MessageChangesApi,
     private readonly getMessages: () => MessageDto[],
     private readonly setMessages: (messages: MessageDto[]) => void,
+    private readonly openStore?: () => Promise<MutationStore | null>,
+    private readonly restoreMessages?: (messages: MessageDto[]) => void,
   ) {}
 
   applyKnown(messages: MessageDto[]): MessageDto[] {
@@ -29,7 +39,7 @@ export class MessageMutationSync {
       if (state.isRollbacked || state.rollbackTime) {
         return [{ ...message, isRollbacked: true, rollbackTime: state.rollbackTime ?? message.rollbackTime }];
       }
-      return [message];
+      return [{ ...message, isRollbacked: false, rollbackTime: null }];
     });
   }
 
@@ -66,6 +76,13 @@ export class MessageMutationSync {
   }
 
   private async syncOnce(): Promise<void> {
+    if (!this.store && this.openStore) {
+      const store = await this.openStore();
+      if (store) {
+        this.cursor = await store.readCursor();
+        this.store = store;
+      }
+    }
     let snapshotCursor: string | null = null;
     let resets = 0;
     for (let pageNumber = 0; pageNumber < 1000; pageNumber++) {
@@ -80,16 +97,34 @@ export class MessageMutationSync {
       if (!next) throw new Error('消息变更同步缺少游标');
       if (page.resetRequired) {
         if (++resets > 2) throw new Error('消息变更同步基线反复重置');
-        const ids = [...new Set(this.getMessages().map(x => x.id).filter((id): id is number =>
-          id != null && Number.isSafeInteger(id) && id > 0))];
-        for (let offset = 0; offset < ids.length; offset += 200) {
-          const batch = ids.slice(offset, offset + 200);
+        const visibleIds = this.getMessages().map(x => x.id).filter((id): id is number =>
+          id != null && Number.isSafeInteger(id) && id > 0);
+        const seen = new Set<number>();
+        const calibrate = async (batch: number[]) => {
+          if (!batch.length) return;
           const states = await this.api.syncItems({ sessionUnitId: this.sessionUnitId, messageIds: batch });
-          if (states.some(row => !batch.includes(Number(row.messageId)))) {
-            throw new Error('消息校准包含未请求的消息');
-          }
+          if (states.some(row => !batch.includes(Number(row.messageId)))) throw new Error('消息校准包含未请求的消息');
+          if (this.store) await this.store.apply(states, null, true);
           this.apply(states);
+          if (this.store && this.restoreMessages) {
+            const restored = await this.store.readMessages(states.filter(row => !row.isDeleted).map(row => Number(row.messageId)));
+            this.restoreMessages(restored);
+          }
+        };
+        if (this.store) {
+          let after = 0;
+          while (true) {
+            const ids = await this.store.readIds(after, 200);
+            if (!ids.length) break;
+            ids.forEach(id => seen.add(id));
+            await calibrate(ids);
+            after = ids[ids.length - 1];
+            if (ids.length < 200) break;
+          }
         }
+        const remaining = [...new Set(visibleIds.filter(id => !seen.has(id)))];
+        for (let offset = 0; offset < remaining.length; offset += 200) await calibrate(remaining.slice(offset, offset + 200));
+        if (this.store) await this.store.apply([], next, false);
         this.cursor = next;
         snapshotCursor = null;
         continue;
@@ -105,6 +140,7 @@ export class MessageMutationSync {
       if (page.hasMore && (!page.snapshotCursor || next === this.cursor)) {
         throw new Error('消息变更分页边界无效');
       }
+      if (this.store) await this.store.apply(changes, next, false);
       this.apply(changes);
       this.cursor = next;
       if (!page.hasMore) return;

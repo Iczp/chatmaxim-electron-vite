@@ -83,3 +83,51 @@ test('重叠同步请求会在首轮完成后再次同步', async () => {
   assert.equal(h.rows().length, 1);
   assert.equal(h.rows()[0].isRollbacked, true);
 });
+
+test('恢复持久游标并先提交变更，再更新界面；提交失败时允许重试', async () => {
+  let cursor = 'saved';
+  let fail = true;
+  let rows = [{ id: 1 }];
+  const seen = [];
+  const store = {
+    readCursor: async () => cursor,
+    readIds: async () => [],
+    readMessages: async () => [],
+    apply: async (states, next) => {
+      assert.equal(rows.length, 1);
+      if (fail) throw new Error('transaction failed');
+      cursor = next;
+    },
+  };
+  const sync = new MessageMutationSync('unit', { changes: async input => {
+    seen.push(input.sessions[0].cursor);
+    return [page('next', [deleted(1)])];
+  } }, () => rows, value => { rows = value; }, async () => store);
+  await assert.rejects(sync.sync(), /transaction failed/);
+  assert.equal(cursor, 'saved');
+  assert.equal(rows.length, 1);
+  fail = false;
+  await sync.sync();
+  assert.deepEqual(seen, ['saved', 'saved']);
+  assert.equal(cursor, 'next');
+  assert.equal(rows.length, 0);
+});
+
+test('重置时校准未显示的本地消息，完成后才保存检查点', async () => {
+  const operations = [];
+  let calls = 0;
+  const store = {
+    readCursor: async () => 'old',
+    readIds: async after => after ? [] : [1, 2],
+    readMessages: async () => [],
+    apply: async (states, cursor, calibration) => operations.push([states.map(x => x.messageId), cursor, calibration]),
+  };
+  const sync = new MessageMutationSync('unit', {
+    changes: async () => ++calls === 1 ? [page('reset', [], { resetRequired: true })] : [page('done')],
+    syncItems: async input => { operations.push(['requested', ...input.messageIds]); return [deleted(2)]; },
+  }, () => [{ id: 1 }], () => {}, async () => store);
+  await sync.sync();
+  assert.deepEqual(JSON.parse(JSON.stringify(operations)), [
+    ['requested', 1, 2], [[2], null, true], [[], 'reset', false], [[], 'done', false],
+  ]);
+});

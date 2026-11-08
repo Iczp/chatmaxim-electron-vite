@@ -9,6 +9,9 @@ import { ReceivedDto } from '../apis/websockets/ReceivedDto';
 import { Handler } from 'mitt';
 import { mergeMessages } from '../commons/mergeMessages';
 import { MessageMutationSync } from '../realtime/messageMutationSync';
+import { appEvent, AppEvents } from '../ipc/appEvent';
+import { readAuthenticatedSessionVersion } from '../data/local/localAccount';
+import { readMessageScope, isMessageScopeCurrent, readCachedMessages, saveCachedMessages, readHistoryComplete, markHistoryComplete, openMutationStore, readCachedMessagesByIds } from '../data/local/messageCache';
 
 export type FetchMessageResult = {
   items: MessageDto[];
@@ -18,9 +21,11 @@ export type FetchMessageResult = {
 
 export const useMessageList = ({
   sessionUnitId,
+  ownerId = 0,
   maxResultCount = 20,
 }: {
   sessionUnitId: string;
+  ownerId?: number;
   maxResultCount?: number;
 }) => {
   const maxMessageId = ref<number | undefined>();
@@ -32,12 +37,60 @@ export const useMessageList = ({
   const isEof = ref(false);
   const latestMessageCount = ref<number>(0);
   const list = ref<MessageDto[]>([]);
-  const mutationSync = new MessageMutationSync(
-    sessionUnitId, apiV2.messages, () => list.value, messages => { list.value = messages; },
-  );
+  let authEpoch = 0;
+  let viewSessionVersion: number | null = null;
+  let localInitialized = false;
+  const createMutationSync = () => {
+    const epoch = authEpoch;
+    return new MessageMutationSync(sessionUnitId, apiV2.messages, () => list.value, messages => {
+      if (epoch === authEpoch) list.value = messages;
+    }, () => openMutationStore(ownerId, sessionUnitId, viewSessionVersion), restored => {
+      if (epoch !== authEpoch || !restored.length) return;
+      list.value = mutationSync.applyKnown(mergeMessages(list.value, restored, 'append'))
+        .sort((a, b) => (a.id ?? Number.MAX_SAFE_INTEGER) - (b.id ?? Number.MAX_SAFE_INTEGER));
+    });
+  };
+  let mutationSync = createMutationSync();
+  const unsubscribeAuth = appEvent.on(AppEvents.authChanged, payload => {
+    const version = payload.args?.[1];
+    if (payload.args?.[0] == null || (viewSessionVersion != null && version !== viewSessionVersion)) {
+      authEpoch++;
+      viewSessionVersion = null;
+      list.value = [];
+      maxMessageId.value = undefined;
+      minMessageId.value = undefined;
+      localInitialized = false;
+      latestTask = null;
+      latestRequested = false;
+      isPendingOfFetchLatest.value = false;
+      isPendingOfFetchHistorical.value = false;
+      isBof.value = false;
+      mutationSync = createMutationSync();
+    }
+  });
+  onUnmounted(unsubscribeAuth);
+
+  const ensureCurrent = async (epoch: number, version: number | null) => {
+    if (epoch !== authEpoch || version !== await readAuthenticatedSessionVersion()) throw new Error('登录状态已变化');
+  };
+  const persistMessages = async (items: MessageDto[], version: number | null) => {
+    try {
+      const scope = await readMessageScope(ownerId, true);
+      if (scope && scope.sessionVersion === version) {
+        await saveCachedMessages(scope, sessionUnitId, items);
+        return scope;
+      }
+    } catch (error) { console.warn('[chat] 写入本地消息失败', error); }
+    return null;
+  };
+
 
   const formatRawItems = (items: MessageOwnerDto[], isLast: boolean): MessageDto[] => {
-    const sorted = [...items].sort((a, b) => Number(a.id || 0) - Number(b.id || 0));
+    const sorted = items.map(item => {
+      const id = Number(item.id);
+      if (!Number.isSafeInteger(id) || id <= 0) throw new Error('服务器消息 ID 无法安全表示');
+      return { ...item, id };
+    }).sort((a, b) => a.id - b.id);
     return formatMessage({
       sessionUnitId,
       items: sorted,
@@ -57,13 +110,36 @@ export const useMessageList = ({
   let latestRequested = false;
 
   const fetchLatest = ({ caller }: { caller?: string } = {}): Promise<FetchMessageResult> => {
-    // 同步期间再次收到事件时再补一轮，避免请求与通知交错导致遗漏。
     latestRequested = true;
     if (latestTask) return latestTask;
     isPendingOfFetchLatest.value = true;
-    latestTask = (async () => {
+    const epoch = authEpoch;
+    const task = (async () => {
       const collected: MessageDto[] = [];
+      let cached: MessageDto[] = [];
+      const version = await readAuthenticatedSessionVersion();
+      viewSessionVersion = version;
       try {
+        if (!localInitialized) {
+          localInitialized = true;
+          try {
+            const scope = await readMessageScope(ownerId);
+            if (scope && scope.sessionVersion === version) {
+              cached = await readCachedMessages(scope, sessionUnitId, 10);
+              await ensureCurrent(epoch, version);
+              if (cached.length) {
+                const ids = cached.map(x => x.id).filter((id): id is number => id != null && id > 0);
+                if (ids.length) { minMessageId.value = Math.min(...ids); maxMessageId.value = Math.max(...ids); }
+                list.value = mutationSync.applyKnown(mergeMessages(list.value, cached, 'prepend'));
+                isBof.value = cached.length < 10 && await readHistoryComplete(scope, sessionUnitId);
+              }
+            }
+          } catch (error) {
+            await ensureCurrent(epoch, version);
+            localInitialized = false;
+            console.warn('[chat] 读取本地消息失败', error);
+          }
+        }
         do {
           latestRequested = false;
           const isInitial = maxMessageId.value == null;
@@ -73,83 +149,112 @@ export const useMessageList = ({
             const res = isInitial && pageCount === 0
               ? await apiV2.messages.history({ sessionUnitId, maxResultCount })
               : await apiV2.messages.latest({ sessionUnitId, minMessageId: cursor, maxResultCount });
+            await ensureCurrent(epoch, version);
             const rawItems = res.items || [];
-            if (isInitial && pageCount === 0) isBof.value = rawItems.length < maxResultCount;
             const items = formatRawItems(rawItems, true);
-            if (items.length > 0) {
-              const validIds = items.map(x => x.id).filter((id): id is number => id != null && id > 0);
-              if (validIds.length === 0) throw new Error('消息同步响应缺少有效消息 ID');
+            const validIds = items.map(x => x.id!);
+            if (items.length) {
               const batchMax = Math.max(...validIds);
-              if (!(isInitial && pageCount === 0) && cursor != null && batchMax <= cursor) {
-                throw new Error('消息同步游标未推进');
-              }
-              maxMessageId.value = Math.max(maxMessageId.value || 0, batchMax);
+              if (!(isInitial && pageCount === 0) && cursor != null && batchMax <= cursor) throw new Error('消息同步游标未推进');
+            }
+            const scope = await persistMessages(items, version);
+            await ensureCurrent(epoch, version);
+            const visible = scope && items.length ? await readCachedMessagesByIds(scope, sessionUnitId, validIds) : items;
+            await ensureCurrent(epoch, version);
+            if (items.length) {
+              maxMessageId.value = Math.max(maxMessageId.value || 0, ...validIds);
               if (minMessageId.value == null) minMessageId.value = Math.min(...validIds);
-              list.value = mutationSync.applyKnown(mergeMessages(list.value, items, isInitial && pageCount === 0 ? 'prepend' : 'append'));
-              collected.push(...items);
+              list.value = mutationSync.applyKnown(mergeMessages(list.value, visible, isInitial && pageCount === 0 ? 'prepend' : 'append'));
+              collected.push(...visible);
+            }
+            if (isInitial && pageCount === 0) {
+              isBof.value = rawItems.length < maxResultCount;
+              if (isBof.value && scope) await markHistoryComplete(scope, sessionUnitId);
             }
             pageCount++;
-            // history 首屏本来就是最新一页；latest 则必须逐页补齐断线期间的消息。
             if ((isInitial && pageCount === 1) || rawItems.length < maxResultCount) break;
             if (pageCount >= 100) throw new Error('消息同步页数超过上限，请重试');
           }
         } while (latestRequested);
         return { items: collected, list, maxResultCount };
-      } finally {
-        isPendingOfFetchLatest.value = false;
-        latestTask = null;
+      } catch (error) {
+        await ensureCurrent(epoch, version);
+        if (cached.length) {
+          console.warn('[chat] 网络同步失败，保留本地消息');
+          return { items: cached, list, maxResultCount };
+        }
+        throw error;
       }
     })();
-    return latestTask;
+    latestTask = task;
+    void task.finally(() => {
+      if (latestTask === task) { latestTask = null; isPendingOfFetchLatest.value = false; }
+    }).catch(() => {});
+    return task;
   };
 
-  /**
-   * 向上翻页拉取历史消息
-   */
-  const fetchHistorical = (): Promise<FetchMessageResult> =>
-    new Promise(async (resolve, reject) => {
-      if (isBof.value) {
-        reject({ message: '没有了' });
-        return;
-      }
-      if (isPendingOfFetchHistorical.value) {
-        reject({ message: '正在加载中' });
-        return;
-      }
-      isPendingOfFetchHistorical.value = true;
-
-      // 向上翻页游标取最顶部的 messageId
-      const topMessageId = minMessageId.value ?? (list.value.length > 0 ? list.value[0].id : undefined);
-
+  /** 本地历史优先，每页 30 条；本地不足且未到头时才请求服务端。 */
+  const fetchHistorical = async (): Promise<FetchMessageResult> => {
+    if (isBof.value) throw new Error('没有了');
+    if (isPendingOfFetchHistorical.value) throw new Error('正在加载中');
+    isPendingOfFetchHistorical.value = true;
+    const epoch = authEpoch;
+    let cached: MessageDto[] = [];
+    const pageSize = 30;
+    try {
+      const version = await readAuthenticatedSessionVersion();
+      viewSessionVersion = version;
+      let scope = null;
       try {
-        const res = await apiV2.messages.history({
-          sessionUnitId,
-          maxMessageId: topMessageId,
-          maxResultCount,
-        });
-        const rawItems = res.items || [];
-        isBof.value = rawItems.length < maxResultCount;
-
-        if (rawItems.length === 0) {
-          reject({ message: '没有数据' });
-          return;
+        scope = await readMessageScope(ownerId);
+        if (scope && scope.sessionVersion === version && minMessageId.value != null) {
+          cached = await readCachedMessages(scope, sessionUnitId, pageSize, { score: minMessageId.value, id: '\u0000' });
+          await ensureCurrent(epoch, version);
+          if (cached.length) {
+            const ids = cached.map(x => x.id).filter((id): id is number => id != null && id > 0);
+            if (ids.length) minMessageId.value = Math.min(minMessageId.value ?? Infinity, ...ids);
+            list.value = mutationSync.applyKnown(mergeMessages(list.value, cached, 'prepend'));
+          }
+          if (cached.length >= pageSize) return { items: cached, list, maxResultCount: pageSize };
+          if (await readHistoryComplete(scope, sessionUnitId)) {
+            await ensureCurrent(epoch, version);
+            isBof.value = true;
+            return { items: cached, list, maxResultCount: pageSize };
+          }
         }
-
-        const items = formatRawItems(rawItems, false);
-        const validIds = items.map(x => x.id).filter((id): id is number => id != null && id > 0);
-        if (validIds.length > 0) {
-          const batchMin = Math.min(...validIds);
-          minMessageId.value = minMessageId.value != null ? Math.min(minMessageId.value, batchMin) : batchMin;
-        }
-
-        list.value = mutationSync.applyKnown(mergeMessages(list.value, items, 'prepend'));
-        resolve({ items, list, maxResultCount });
-      } catch (err) {
-        reject(err);
-      } finally {
-        isPendingOfFetchHistorical.value = false;
+      } catch (error) {
+        await ensureCurrent(epoch, version);
+        scope = null;
+        console.warn('[chat] 读取本地历史消息失败', error);
       }
-    });
+      try {
+        const remaining = pageSize - cached.length;
+        const res = await apiV2.messages.history({ sessionUnitId, maxMessageId: minMessageId.value, maxResultCount: remaining });
+        await ensureCurrent(epoch, version);
+        const rawItems = res.items || [];
+        const items = formatRawItems(rawItems, false);
+        const ids = items.map(x => x.id!);
+        const savedScope = await persistMessages(items, version);
+        await ensureCurrent(epoch, version);
+        const visible = savedScope && items.length ? await readCachedMessagesByIds(savedScope, sessionUnitId, ids) : items;
+        await ensureCurrent(epoch, version);
+        if (ids.length) minMessageId.value = Math.min(minMessageId.value ?? Infinity, ...ids);
+        list.value = mutationSync.applyKnown(mergeMessages(list.value, visible, 'prepend'));
+        isBof.value = rawItems.length < remaining;
+        if (isBof.value && savedScope) await markHistoryComplete(savedScope, sessionUnitId);
+        return { items: [...visible, ...cached], list, maxResultCount: pageSize };
+      } catch (error) {
+        await ensureCurrent(epoch, version);
+        if (cached.length) {
+          console.warn('[chat] 网络历史加载失败，保留本地消息');
+          return { items: cached, list, maxResultCount: pageSize };
+        }
+        throw error;
+      }
+    } finally {
+      if (epoch === authEpoch) isPendingOfFetchHistorical.value = false;
+    }
+  };
 
   let messageHandler: Handler<[ReceivedDto<any>, MessageDto]> | undefined;
   const onMessage = (callback: (e: MessageDto) => void): void => {

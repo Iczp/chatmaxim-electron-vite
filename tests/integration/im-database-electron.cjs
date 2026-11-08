@@ -10,6 +10,7 @@ app.whenReady().then(async () => {
     const source = fs.readFileSync(path.join(root, 'database.js'), 'utf8');
     const mergeSource = fs.readFileSync(path.join(root, 'friend-merge.js'), 'utf8');
     const friendSource = fs.readFileSync(path.join(root, 'friend-cache.js'), 'utf8');
+    const messageSource = fs.readFileSync(path.join(root, 'message-cache.js'), 'utf8');
     async function makeWindow() {
       const win = new BrowserWindow({ show: false, webPreferences: { nodeIntegration: false, contextIsolation: true, sandbox: true } });
       windows.push(win);
@@ -23,6 +24,11 @@ app.whenReady().then(async () => {
           resolveLocalAccountId: async () => 'account-c',
         };
         globalThis.activeSession = 1; ${friendSource}\n globalThis.friendCache = exports;
+      })()`);
+      await win.webContents.executeJavaScript(`(() => {
+        const exports = {}; const require = name => name === './imDatabase' ? { ImDatabase } :
+          name === '../../apis/enums' ? { MessageStateEnums: { Ok: 1 } } : friendCache;
+        ${messageSource}\n globalThis.messageCache = exports;
       })()`);
       return win;
     }
@@ -38,6 +44,11 @@ app.whenReady().then(async () => {
         await db.upsertMessage({ ...a, sessionUnitId: 's', localId: 'server', clientMessageId: 'client', serverId: 10, score: 10, state: 'sent', raw: { text: 'hello' } });
         await db.applyMessageMutations(a, 's', [{ messageId: 20, syncVersion: '2', isDeleted: true }], 'cursor-1');
         await db.upsertMessage({ ...a, sessionUnitId: 's', localId: 'later', serverId: 20, score: 20, state: 'sent', raw: {} });
+        const ids = await db.readMessageServerIds(a, 's', 0, 10);
+        if (JSON.stringify(ids) !== '[10,20]') throw new Error('deleted messages missing from calibration');
+        await db.applyMessageMutations(a, 's', [{ messageId: 20, syncVersion: '3', isDeleted: false }], null, true);
+        if ((await db.readMessages(a, 's', 10)).length !== 2 || await db.readMessageCursor(a, 's') !== 'cursor-1') throw new Error('calibration failed');
+        await db.applyMessageMutations(a, 's', [{ messageId: 20, syncVersion: '4', isDeleted: true }], 'cursor-1');
         let mutationFailed = false;
         try { await db.applyMessageMutations(a, 's', [
           { messageId: 10, syncVersion: '3', isDeleted: true },
@@ -61,6 +72,18 @@ app.whenReady().then(async () => {
         await friendCache.saveCachedFriends(scope, [{ id: 'cached-friend', ownerId: 1, score: 8, destination: { code: 'code' } }]);
         await friendCache.saveCachedFriends(scope, [{ id: 'no-score', ownerId: 1 }]);
       })()`);
+      await first.webContents.executeJavaScript(`(async () => {
+        const scope = { accountId: 'account-d', ownerId: 1, sessionVersion: 1 };
+        await messageCache.saveCachedMessages(scope, 'chat', Array.from({ length: 12 }, (_, n) => ({ id: n + 1, content: { text: 'm' + n } })));
+        await messageCache.markHistoryComplete(scope, 'chat');
+      })()`);
+      const messageResult = await second.webContents.executeJavaScript(`(async () => {
+        const scope = { accountId: 'account-d', ownerId: 1, sessionVersion: 1 };
+        const recent = await messageCache.readCachedMessages(scope, 'chat', 10);
+        const older = await messageCache.readCachedMessages(scope, 'chat', 30, { score: 3, id: '\u0000' });
+        return { recent: recent.map(x => x.id), older: older.map(x => x.id), complete: await messageCache.readHistoryComplete(scope, 'chat') };
+      })()`);
+      if (JSON.stringify(messageResult) !== JSON.stringify({ recent: [3,4,5,6,7,8,9,10,11,12], older: [1,2], complete: true })) throw new Error(`message cache failed ${JSON.stringify(messageResult)}`);
       const cacheResult = await second.webContents.executeJavaScript(`(async () => {
         const scope = await friendCache.readFriendScope(1);
         const cached = await friendCache.readCachedFriends(scope, 10);
@@ -84,9 +107,11 @@ app.whenReady().then(async () => {
       const result = await first.webContents.executeJavaScript(`(async () => {
         const db = await ImDatabase.open(); const a = { accountId: 'account-a', ownerId: 1 };
         const messages = await db.readMessages(a, 's', 10); const cursor = await db.readMessageCursor(a, 's'); db.close();
-        return { count: messages.length, id: messages[1]?.serverId, cursor };
+        const scope = { accountId: 'account-d', ownerId: 1, sessionVersion: 1 };
+        const cached = await messageCache.readCachedMessages(scope, 'chat', 10);
+        return { count: messages.length, id: messages[1]?.serverId, cursor, cached: cached.length, complete: await messageCache.readHistoryComplete(scope, 'chat') };
       })()`);
-      if (JSON.stringify(result) !== JSON.stringify({ count: 2, id: 10, cursor: 'cursor-1' })) throw new Error(`restart failed ${JSON.stringify(result)}`);
+      if (JSON.stringify(result) !== JSON.stringify({ count: 2, id: 10, cursor: 'cursor-1', cached: 10, complete: true })) throw new Error(`restart failed ${JSON.stringify(result)}`);
     }
     console.log(`DB_INTEGRATION_OK:${phase}`);
   } catch (error) {

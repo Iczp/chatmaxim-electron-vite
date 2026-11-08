@@ -21,6 +21,7 @@ export type MessageMutation = {
   syncVersion: string;
   isDeleted?: boolean;
   isRollbacked?: boolean;
+  rollbackTime?: string | null;
 };
 export type LocalPageCursor = { score: number; id: string };
 
@@ -174,7 +175,8 @@ export class ImDatabase {
       if (mutation) {
         merged.syncVersion = mutation.syncVersion;
         merged.isDeleted = mutation.isDeleted;
-        merged.isRollbacked = mutation.isRollbacked;
+        merged.isRollbacked = !!mutation.isRollbacked || !!mutation.rollbackTime;
+        merged.raw = { ...merged.raw, isRollbacked: merged.isRollbacked, rollbackTime: mutation.rollbackTime ?? null };
       } else if (previous?.syncVersion) {
         merged.syncVersion = previous.syncVersion;
         merged.isDeleted = previous.isDeleted;
@@ -205,11 +207,11 @@ export class ImDatabase {
     } catch (error) { await done.catch(() => {}); throw error; }
   }
 
-  async applyMessageMutations(scope: LocalScope, unit: string, changes: MessageMutation[], cursor: string): Promise<void> {
+  async applyMessageMutations(scope: LocalScope, unit: string, changes: MessageMutation[], cursor: string | null, calibration = false): Promise<void> {
     validateScope(scope); validateUnit(unit);
-    if (!cursor) throw new Error('同步游标无效');
+    if (cursor !== null && !cursor) throw new Error('同步游标无效');
     for (const item of changes) {
-      if (!Number.isSafeInteger(item.messageId) || item.messageId <= 0 || !/^\d+$/.test(item.syncVersion) || !(item.isDeleted || item.isRollbacked)) {
+      if (!Number.isSafeInteger(item.messageId) || item.messageId <= 0 || !/^\d+$/.test(item.syncVersion) || (!calibration && !(item.isDeleted || item.isRollbacked || item.rollbackTime))) {
         throw new Error('消息变更无效');
       }
     }
@@ -224,17 +226,62 @@ export class ImDatabase {
         if (old && BigInt(item.syncVersion) <= BigInt(old.syncVersion)) continue;
         mutations.put({ ...scope, sessionUnitId: unit, ...item });
         const row: LocalMessage | undefined = await request(store.index('server').get(key));
-        if (row) store.put({ ...row, syncVersion: item.syncVersion, isDeleted: !!item.isDeleted, isRollbacked: !!item.isRollbacked });
+        if (row) store.put({ ...row, syncVersion: item.syncVersion, isDeleted: !!item.isDeleted,
+          isRollbacked: !!item.isRollbacked || !!item.rollbackTime,
+          raw: { ...row.raw, isRollbacked: !!item.isRollbacked || !!item.rollbackTime, rollbackTime: item.rollbackTime ?? null } });
       }
-      const cursorStore = tx.objectStore('cursors');
-      const current = await request(cursorStore.get([scope.accountId, scope.ownerId, unit]));
-      cursorStore.put({ ...current, ...scope, sessionUnitId: unit, cursor });
+      if (cursor !== null) {
+        const cursorStore = tx.objectStore('cursors');
+        const current = await request(cursorStore.get([scope.accountId, scope.ownerId, unit]));
+        cursorStore.put({ ...current, ...scope, sessionUnitId: unit, cursor });
+      }
       await done;
     } catch (error) {
       try { tx.abort(); } catch { /* 事务可能已经结束 */ }
       await done.catch(() => {});
       throw error;
     }
+  }
+
+  async readMessageServerIds(scope: LocalScope, unit: string, after: number, limit: number): Promise<number[]> {
+    validateScope(scope); validateUnit(unit);
+    if (!Number.isSafeInteger(after) || after < 0 || !Number.isSafeInteger(limit) || limit <= 0) throw new Error('消息校准分页无效');
+    if (after === Number.MAX_SAFE_INTEGER) return [];
+    const tx = this.db.transaction('messages', 'readonly');
+    const done = complete(tx);
+    const prefix = [scope.accountId, scope.ownerId, unit];
+    try {
+      const ids = await new Promise<number[]>((resolve, reject) => {
+        const values: number[] = [];
+        const range = IDBKeyRange.bound([...prefix, after], [...prefix, Number.MAX_SAFE_INTEGER], true, false);
+        const cursor = tx.objectStore('messages').index('server').openCursor(range, 'next');
+        cursor.onerror = () => reject(cursor.error ?? new Error('读取消息校准范围失败'));
+        cursor.onsuccess = () => {
+          const row = cursor.result;
+          if (!row) { resolve(values); return; }
+          values.push((row.value as LocalMessage).serverId!);
+          if (values.length >= limit) resolve(values); else row.continue();
+        };
+      });
+      await done;
+      return ids;
+    } catch (error) { await done.catch(() => {}); throw error; }
+  }
+
+  async readMessagesByServerIds(scope: LocalScope, unit: string, ids: number[]): Promise<LocalMessage[]> {
+    validateScope(scope); validateUnit(unit);
+    if (ids.some(id => !Number.isSafeInteger(id) || id <= 0)) throw new Error('消息标识无效');
+    const tx = this.db.transaction('messages', 'readonly');
+    const done = complete(tx);
+    try {
+      const rows: LocalMessage[] = [];
+      for (const id of ids) {
+        const row: LocalMessage | undefined = await request(tx.objectStore('messages').index('server').get([scope.accountId, scope.ownerId, unit, id]));
+        if (row && !row.isDeleted) rows.push(row);
+      }
+      await done;
+      return rows;
+    } catch (error) { await done.catch(() => {}); throw error; }
   }
 
   async setHistoryComplete(scope: LocalScope, unit: string, loadedAll: boolean): Promise<void> {

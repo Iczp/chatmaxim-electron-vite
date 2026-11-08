@@ -123,7 +123,7 @@ const {
   cancelChecked,
   isPendingOfFetchLatest,
   isPendingOfFetchHistorical,
-} = useMessageList({ sessionUnitId });
+} = useMessageList({ sessionUnitId, ownerId: chatObjectId });
 
 const chatInput = ref<InstanceType<typeof ChatInput> | null>(null);
 
