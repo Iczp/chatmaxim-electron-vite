@@ -45,9 +45,29 @@ export type SessionOverviewDto = {
   [key: string]: any;
 };
 
+/** 消息变更采用会话级游标；游标是不透明值，不能用消息 ID 替代。 */
 export type MessageChangesInput = {
-  sessions: Array<SessionScope & { minMessageId?: number; maxMessageId?: number }>;
+  sessions: Array<{ sessionUnitId: string; cursor?: string | null; snapshotCursor?: string | null }>;
   maxResultCount?: number;
+};
+
+export type MessageChangeState = {
+  messageId: string | number;
+  syncVersion: string | number;
+  changeType?: number | string;
+  isDeleted?: boolean;
+  isRollbacked?: boolean;
+  rollbackTime?: string | null;
+};
+
+export type MessageChangePage = {
+  sessionUnitId: string;
+  items?: MessageChangeState[];
+  nextCursor?: string | null;
+  snapshotCursor?: string | null;
+  resetRequired?: boolean;
+  hasMore?: boolean;
+  errorCode?: string | null;
 };
 
 const authUrl = (path: string): string => `${env.auth_host}${path}`;
@@ -90,7 +110,7 @@ export const messagesV2 = {
   },
 
   /** 多会话批量增量 */
-  changes(input: MessageChangesInput): CancelablePromise<MessageOwnerDto[]> {
+  changes(input: MessageChangesInput): CancelablePromise<MessageChangePage[]> {
     return __request(OpenAPI, {
       method: 'POST',
       url: '/api/chat/message/changes/query',
@@ -99,8 +119,8 @@ export const messagesV2 = {
     });
   },
 
-  /** 按 id 补齐消息体 */
-  syncItems(args: { sessionUnitId: string; messageIds: number[] }): CancelablePromise<MessageOwnerDto[]> {
+  /** 按消息 ID 校准撤回与删除状态 */
+  syncItems(args: { sessionUnitId: string; messageIds: number[] }): CancelablePromise<MessageChangeState[]> {
     return __request(OpenAPI, {
       method: 'POST',
       url: '/api/chat/message/sync-items',
@@ -354,3 +374,4 @@ export const apiV2 = {
   auth: authV2,
   app: appV2,
 };
+

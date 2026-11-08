@@ -9,3 +9,7 @@
 状态：实现及自动测试通过；真实后端、跨窗口、重启离线和界面联调待验证。合并同时使用服务器 ID 与客户端 ID，保留已有列表键，首屏不清掉待发送消息；发送成功先使用服务器回执更新当前消息，后台同步失败不删除；重试沿用客户端 ID。修正发送错误后状态、附件传递和事件监听释放。`tests/message-merge-production.test.mjs`、`tests/message-send-production.test.mjs` 直接运行生产模块。
 
 本阶段只改善内存列表，尚未实现消息持久化、同步游标、断线补偿和生产验收；不能据此认定 M4 或全量迁移完成。现有未提交的扫码、Vite 配置和锁文件工作不属于上述提交，保留原样。
+
+## 2026-11-09：M2 消息变更 API 契约
+
+状态：类型与生产请求封装测试通过；真实后端契约和完整同步调用链待验证。参考 Flutter `message_repository_sync.dart` 及 `message_changes_sync_test.dart`，将旧的消息 ID 范围参数改为会话级 cursor/snapshotCursor，并区分变更页面和状态校准结果。仅修正传输层契约，不代表游标同步已接入。
