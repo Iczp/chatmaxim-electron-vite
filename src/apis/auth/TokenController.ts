@@ -240,7 +240,7 @@ export const refreshToken = async (token?: TokenDto): Promise<TokenDto> => {
           return nextToken;
         }
         if (res?.rejected) {
-          await clearSession('refresh_token_rejected');
+          // 主进程已清理并广播；再次清理可能误删随后登录的新会话。
           throw new Error('refresh_token_rejected');
         }
         throw new Error(res?.error || 'refresh_token_failed');

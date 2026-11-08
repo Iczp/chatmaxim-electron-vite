@@ -30,6 +30,8 @@ const normalizeToken = (value: any): any => {
   return token;
 };
 
+let authGeneration = 0;
+
 let refreshInFlightPromise: Promise<{
   success: boolean;
   token?: any;
@@ -74,6 +76,8 @@ export const authTokenHandle: IpcMainHandle = {
       case 'set': {
         const normalized = normalizeToken(token);
         if (normalized) {
+          authGeneration++;
+          refreshInFlightPromise = null;
           store.set(TOKEN_KEY, normalized);
           globalState.token = normalized;
           globalState.isAuthorized = true;
@@ -83,6 +87,8 @@ export const authTokenHandle: IpcMainHandle = {
       }
 
       case 'clear': {
+        authGeneration++;
+        refreshInFlightPromise = null;
         store.delete(TOKEN_KEY);
         globalState.token = undefined;
         globalState.isAuthorized = false;
@@ -115,7 +121,8 @@ export const authTokenHandle: IpcMainHandle = {
           return refreshInFlightPromise;
         }
 
-        refreshInFlightPromise = (async () => {
+        const generation = authGeneration;
+        const refreshTask = (async () => {
           try {
             const tokenUrl = `${env.auth_host}/connect/token`;
             const params = new URLSearchParams();
@@ -137,11 +144,17 @@ export const authTokenHandle: IpcMainHandle = {
 
             if (response.ok) {
               const data = await response.json();
+              if (generation !== authGeneration) {
+                return { success: false, rejected: false, error: 'auth_session_changed' };
+              }
               if (!data.refresh_token) {
                 // 某些服务端不轮换 refresh_token，此时保留旧值
                 data.refresh_token = currentStored.refresh_token;
               }
               const nextToken = normalizeToken(data);
+              if (!nextToken) {
+                return { success: false, rejected: false, error: 'invalid_token_response' };
+              }
               store.set(TOKEN_KEY, nextToken);
               globalState.token = nextToken;
               globalState.isAuthorized = true;
@@ -154,6 +167,9 @@ export const authTokenHandle: IpcMainHandle = {
             }
 
             const status = response.status;
+            if (generation !== authGeneration) {
+              return { success: false, rejected: false, error: 'auth_session_changed' };
+            }
             // 400 (invalid_grant) 或 401 明确说明 refresh token 失效/被撤销
             if (status === 400 || status === 401) {
               store.delete(TOKEN_KEY);
@@ -183,12 +199,14 @@ export const authTokenHandle: IpcMainHandle = {
               rejected: false,
               error: error?.message || 'network_error',
             };
-          } finally {
-            refreshInFlightPromise = null;
           }
         })();
+        refreshInFlightPromise = refreshTask;
+        void refreshTask.finally(() => {
+          if (refreshInFlightPromise === refreshTask) refreshInFlightPromise = null;
+        });
 
-        return refreshInFlightPromise;
+        return refreshTask;
       }
 
       default:
