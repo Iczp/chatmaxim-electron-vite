@@ -26,3 +26,23 @@ export async function resolveLocalAccountId(): Promise<string | null> {
   }
   throw new Error('登录状态变化，无法绑定本地账号');
 }
+
+export type LocalAccountSnapshot = { accountId: string; sessionVersion: number };
+
+/** 仅读取已绑定会话，不触发网络。 */
+export async function readLocalAccountSnapshot(): Promise<LocalAccountSnapshot | null> {
+  const current = await ipcRenderer.invoke('auth-token', { action: 'get' });
+  if (!current?.token?.access_token || typeof current.accountId !== 'string' ||
+      !current.accountId.trim() || !Number.isSafeInteger(current.sessionVersion)) return null;
+  return { accountId: current.accountId, sessionVersion: current.sessionVersion };
+}
+
+export async function isLocalAccountCurrent(snapshot: LocalAccountSnapshot): Promise<boolean> {
+  const current = await readLocalAccountSnapshot();
+  return !!current && current.accountId === snapshot.accountId && current.sessionVersion === snapshot.sessionVersion;
+}
+
+export async function readAuthenticatedSessionVersion(): Promise<number | null> {
+  const current = await ipcRenderer.invoke('auth-token', { action: 'get' });
+  return current?.token?.access_token && Number.isSafeInteger(current.sessionVersion) ? current.sessionVersion : null;
+}

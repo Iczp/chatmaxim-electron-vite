@@ -1,3 +1,5 @@
+import { mergeFriendRaw } from './friendMerge';
+
 /** IndexedDB 是 Electron 渲染会话共享的事务存储；调用方不得写入 token 或附件二进制。 */
 export type LocalScope = { accountId: string; ownerId: number };
 export type LocalOwner = LocalScope & { raw: Record<string, unknown> };
@@ -117,7 +119,11 @@ export class ImDatabase {
     const tx = this.db.transaction('friends', 'readwrite');
     const done = complete(tx);
     try {
-      for (const row of items) tx.objectStore('friends').put(row);
+      const store = tx.objectStore('friends');
+      for (const row of items) {
+        const previous: LocalFriend | undefined = await request(store.get([scope.accountId, scope.ownerId, row.id]));
+        store.put({ ...row, raw: mergeFriendRaw(previous?.raw, row.raw) });
+      }
       await done;
     } catch (error) {
       try { tx.abort(); } catch { /* 事务可能已经结束 */ }

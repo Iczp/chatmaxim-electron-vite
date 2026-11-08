@@ -127,7 +127,7 @@ const onReachEnd = (event: CustomEvent) => {
     console.warn('onReachEnd isBof or isPending');
     return;
   }
-  fetchHistorical('onReachEnd');
+  void fetchHistorical('onReachEnd').catch(error => console.warn('[session] 加载好友分页失败', error));
 };
 const footerObserver = ref<HTMLElement | null>();
 
@@ -155,7 +155,7 @@ onActivated(() => {
   console.log('scrollerRef', scrollerRef.value?.scrollToItem);
   setTimeout(() => {
     console.log('scroll to item');
-    scrollerRef.value.scrollToPosition(0);
+    scrollerRef.value?.scrollToPosition(0);
   }, 0);
   init();
   // fetchHistorical().then(res => {});
@@ -224,7 +224,7 @@ onDeactivated(() => {
           ></Loading>
         </template>
         <template #after>
-          <Loading v-if="isPendingOfFetchHistorical" :text="t('loading')"</Loading>
+          <Loading v-if="isPendingOfFetchHistorical" :text="t('loading')"></Loading>
         </template>
         <template v-slot="{ item, index, active }">
           <DynamicScrollerItem

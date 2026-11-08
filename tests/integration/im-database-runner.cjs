@@ -8,6 +8,10 @@ const root = fs.mkdtempSync(path.join(os.tmpdir(), 'gotoim-db-integration-'));
 const source = fs.readFileSync(path.resolve(__dirname, '../../src/data/local/imDatabase.ts'), 'utf8');
 const js = ts.transpileModule(source, { compilerOptions: { module: ts.ModuleKind.CommonJS, target: ts.ScriptTarget.ES2020 } }).outputText;
 fs.writeFileSync(path.join(root, 'database.js'), js);
+const mergeSource = fs.readFileSync(path.resolve(__dirname, '../../src/data/local/friendMerge.ts'), 'utf8');
+fs.writeFileSync(path.join(root, 'friend-merge.js'), ts.transpileModule(mergeSource, { compilerOptions: { module: ts.ModuleKind.CommonJS, target: ts.ScriptTarget.ES2020 } }).outputText);
+const friendSource = fs.readFileSync(path.resolve(__dirname, '../../src/data/local/friendCache.ts'), 'utf8');
+fs.writeFileSync(path.join(root, 'friend-cache.js'), ts.transpileModule(friendSource, { compilerOptions: { module: ts.ModuleKind.CommonJS, target: ts.ScriptTarget.ES2020 } }).outputText);
 fs.writeFileSync(path.join(root, 'index.html'), '<!doctype html><title>database integration</title>');
 for (const phase of ['write', 'restart']) {
   const env = { ...process.env };

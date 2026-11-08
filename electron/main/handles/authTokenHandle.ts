@@ -104,7 +104,7 @@ export const authTokenHandle: IpcMainHandle = {
           store.set(TOKEN_KEY, candidate);
           globalState.token = candidate;
           globalState.isAuthorized = true;
-          messageHub.broadcastAll('auth:changed', [candidate]);
+          messageHub.broadcastAll('auth:changed', [candidate, authGeneration]);
         }
         return { token: candidate };
       }
@@ -119,7 +119,7 @@ export const authTokenHandle: IpcMainHandle = {
           store.set(TOKEN_KEY, normalized);
           globalState.token = normalized;
           globalState.isAuthorized = true;
-          messageHub.broadcastAll('auth:changed', [normalized]);
+          messageHub.broadcastAll('auth:changed', [normalized, authGeneration]);
         }
         return { success: true };
       }
@@ -132,7 +132,7 @@ export const authTokenHandle: IpcMainHandle = {
         store.delete(TOKEN_KEY);
         globalState.token = undefined;
         globalState.isAuthorized = false;
-        messageHub.broadcastAll('auth:changed', [null]);
+        messageHub.broadcastAll('auth:changed', [null, authGeneration]);
         return { success: true };
       }
 
@@ -198,7 +198,7 @@ export const authTokenHandle: IpcMainHandle = {
               store.set(TOKEN_KEY, nextToken);
               globalState.token = nextToken;
               globalState.isAuthorized = true;
-              messageHub.broadcastAll('auth:changed', [nextToken]);
+              messageHub.broadcastAll('auth:changed', [nextToken, authGeneration]);
               console.log('[auth-token] refresh succeeded', {
                 token_type: nextToken.token_type,
                 expires_in: nextToken.expires_in,
@@ -212,12 +212,13 @@ export const authTokenHandle: IpcMainHandle = {
             }
             // 400 (invalid_grant) 或 401 明确说明 refresh token 失效/被撤销
             if (status === 400 || status === 401) {
+              authGeneration++;
               store.set(LEGACY_MIGRATION_KEY, true);
               store.delete(ACCOUNT_KEY);
               store.delete(TOKEN_KEY);
               globalState.token = undefined;
               globalState.isAuthorized = false;
-              messageHub.broadcastAll('auth:changed', [null]);
+              messageHub.broadcastAll('auth:changed', [null, authGeneration]);
               console.warn('[auth-token] refresh rejected by server:', status);
               return {
                 success: false,

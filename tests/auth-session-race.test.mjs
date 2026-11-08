@@ -119,3 +119,15 @@ test('账号绑定保存在主进程存储中，可在进程重建后离线读�
   const restarted = createHandler(h.values);
   assert.equal((await restarted.call('get')).accountId, 'issuer/user');
 });
+
+test('刷新保留会话版本，重新登录和退出的广播携带新的版本', async () => {
+  const h = createHandler();
+  await h.call('set', { token: token('old') });
+  const first = h.events.at(-1)[1][1];
+  const pending = h.call('refresh', { currentAccessToken: 'old' });
+  h.requests[0](response(200, token('new')));
+  await pending;
+  assert.equal(h.events.at(-1)[1][1], first);
+  await h.call('clear');
+  assert.ok(h.events.at(-1)[1][1] > first);
+});
