@@ -37,6 +37,7 @@ import { useSessionUnitDetail } from '../../composables/useSessionUnitDetail';
 import { setReadedMessageId } from '../../commons/setting';
 import { sendMessage } from '../../commons/sendMessage';
 import { mergeMessages } from '../../commons/mergeMessages';
+import { eventBus } from '../../commons/eventBus';
 import { useDrop } from '../../composables/useDrop';
 import { useShortcutStore } from '../../stores/shortcutStore';
 import {
@@ -256,7 +257,14 @@ let startShortcutWatch = () => {
   );
 };
 
+const syncAfterReconnect = () => {
+  void fetchLatest({ caller: 'reconnected' }).catch(error => {
+    console.warn('[chat] reconnect sync failed', error);
+  });
+};
+
 const _onDeactivated = () => {
+  eventBus.off('connected', syncAfterReconnect);
   // activeLastMessageId.value = lastMessageId.value;
   stopShortcutWatch?.call(this);
   localReadedMessageId.value = readedMessageId.value;
@@ -264,8 +272,9 @@ const _onDeactivated = () => {
   cancelChecked();
 };
 
-const isSendPending = ref(false);
 const _onActivated = () => {
+  eventBus.off('connected', syncAfterReconnect);
+  eventBus.on('connected', syncAfterReconnect);
   startShortcutWatch();
   scrollTo(0);
   scrollToTop();
@@ -294,7 +303,7 @@ const _onActivated = () => {
     );
     // store.clearBadge(chatObjectId, sessionUnitId);
     // setReadedMessageId({ sessionUnitId, messageId: receivedMessage!.id! });
-    if (isLatestMessage && !isSendPending.value) {
+    if (isLatestMessage) {
       fetchLatest({
         caller: 'onMessage',
       })
@@ -376,8 +385,6 @@ const sendMessageContent = async ({
   file?: Blob | File | any;
   clientMessageId?: string;
 }) => {
-  isSendPending.value = true;
-
   sendMessage({
     file,
     clientMessageId,
@@ -416,11 +423,9 @@ const sendMessageContent = async ({
       }], 'append');
       fetchLatest({ caller: 'sendMessageContent' })
         .then(() => nextTick(() => scrollToBottom()))
-        .catch(err => console.error('[chat] sync after send failed', err))
-        .finally(() => { isSendPending.value = false; });
+        .catch(err => console.error('[chat] sync after send failed', err));
     },
     onError(err, input) {
-      isSendPending.value = false;
       // 如果推送已确认该消息，迟到的发送错误不能覆盖确认状态。
       const confirmed = list.value.find(x => x.clientMessageId === input.clientMessageId && x.id != null);
       if (confirmed) return;
@@ -439,7 +444,6 @@ const sendMessageContent = async ({
     },
     onAfter(input) {
       isSendBtnEnabled.value = true;
-      // isSendPending.value = false;
     },
   });
 };

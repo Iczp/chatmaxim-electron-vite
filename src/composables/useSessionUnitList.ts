@@ -138,7 +138,9 @@ export const useSessionUnitList = ({
     });
 
   const refresh = () => {
-    fetchLatest({ caller: 'refresh' });
+    void fetchLatest({ caller: 'refresh' }).catch(error => {
+      console.warn('[session] refresh failed', error);
+    });
   };
 
   onActivated(() => {});

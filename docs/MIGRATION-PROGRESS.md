@@ -13,3 +13,7 @@
 ## 2026-11-09：M2 消息变更 API 契约
 
 状态：类型与生产请求封装测试通过；真实后端契约和完整同步调用链待验证。参考 Flutter `message_repository_sync.dart` 及 `message_changes_sync_test.dart`，将旧的消息 ID 范围参数改为会话级 cursor/snapshotCursor，并区分变更页面和状态校准结果。仅修正传输层契约，不代表游标同步已接入。
+
+## 2026-11-09：M5 连接恢复与聊天增量补拉
+
+状态：自动测试通过；真实 SignalR 服务和多窗口验收待验证。连接恢复通知主窗口与子窗口的活跃聊天、会话页，刷新在线设备与角标；聊天 latest 分页直到小于页大小，并合并拉取期间的新通知，检测未推进游标；修复会话监听注销及重复状态监听。`tests/message-latest-production.test.mjs` 和 `tests/realtime-reconnect-production.test.mjs` 测试生产模块及模拟边界。这只补拉新增消息；撤回/删除游标同步、本地持久化、真实网络及 UI 验收仍未完成。

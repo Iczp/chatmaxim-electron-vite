@@ -16,6 +16,7 @@ import {
 
 let started = false;
 let clientHandlerRegistered = false;
+let statusWatchInstalled = false;
 const sessionRefreshTimers = new Map<string, ReturnType<typeof setTimeout>>();
 
 const isMainWindow = (): boolean => {
@@ -198,7 +199,10 @@ export const installRealtimeBridge = (): void => {
     });
     appEvent.on(AppEvents.realtimeStatus, payload => {
       if (!isMainWindow()) {
-        useRealtimeStore().setStatus(payload.args?.[0] || {});
+        const realtime = useRealtimeStore();
+        const wasConnected = realtime.state === 'connected';
+        realtime.setStatus(payload.args?.[0] || {});
+        if (!wasConnected && realtime.state === 'connected') eventBus.emit('connected', undefined);
       }
     });
     appEvent.on(AppEvents.sessionUpdated, () => {
@@ -208,16 +212,20 @@ export const installRealtimeBridge = (): void => {
     });
     started = true;
   }
-  watch(
-    [
-      signalRClient.state,
-      signalRClient.connectionId,
-      signalRClient.netDelay,
-      signalRClient.lastError,
-    ],
-    broadcastStatus,
-    { immediate: true },
-  );
+  if (!statusWatchInstalled) {
+    statusWatchInstalled = true;
+    watch(
+      [signalRClient.state, signalRClient.connectionId, signalRClient.netDelay, signalRClient.lastError],
+      broadcastStatus,
+      { immediate: true },
+    );
+    watch(signalRClient.state, (state, previous) => {
+      if (state !== 'connected' || previous === 'connected' || !isMainWindow()) return;
+      eventBus.emit('connected', undefined);
+      void refreshPresence();
+      useImStore().getBadgeByCurrentUser();
+    }, { flush: 'sync' });
+  }
 };
 
 const waitForWindowInit = async (timeoutMs = 4000): Promise<void> => {
@@ -248,8 +256,6 @@ export const startRealtime = async (): Promise<void> => {
   }
   try {
     await signalRClient.start();
-    await refreshPresence();
-    await useImStore().getBadgeByCurrentUser();
   } catch (error) {
     console.error('[realtime] start failed', error);
   }

@@ -163,7 +163,7 @@ onActivated(() => {
 });
 
 onDeactivated(() => {
-  eventBus.off('disconnected', refresh);
+  eventBus.off('connected', refresh);
 });
 </script>
 

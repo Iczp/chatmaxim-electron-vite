@@ -49,59 +49,55 @@ export const useMessageList = ({
   /**
    * 拉取最新增量或首屏消息
    */
-  const fetchLatest = async ({ caller }: { caller?: string } = {}): Promise<FetchMessageResult> =>
-    new Promise(async (resolve, reject) => {
-      if (isPendingOfFetchLatest.value) {
-        reject(`fetchLatest caller:${caller}, isPendingForFetchLatest: true`);
-        return;
-      }
-      isPendingOfFetchLatest.value = true;
-      console.warn('fetchLatest caller', caller, 'currentMaxMessageId:', maxMessageId.value);
+  let latestTask: Promise<FetchMessageResult> | null = null;
+  let latestRequested = false;
 
+  const fetchLatest = ({ caller }: { caller?: string } = {}): Promise<FetchMessageResult> => {
+    // 同步期间再次收到事件时再补一轮，避免请求与通知交错导致遗漏。
+    latestRequested = true;
+    if (latestTask) return latestTask;
+    isPendingOfFetchLatest.value = true;
+    latestTask = (async () => {
+      const collected: MessageDto[] = [];
       try {
-        const isInitial = maxMessageId.value == null;
-        let rawItems: MessageOwnerDto[] = [];
-
-        if (isInitial) {
-          // 首次加载：通过 history 取最新的一屏消息（不带 maxMessageId）
-          const res = await apiV2.messages.history({
-            sessionUnitId,
-            maxResultCount,
-          });
-          rawItems = res.items || [];
-          isBof.value = rawItems.length < maxResultCount;
-        } else {
-          // 增量补齐：通过 latest 查大于 minMessageId 的新消息
-          const res = await apiV2.messages.latest({
-            sessionUnitId,
-            minMessageId: maxMessageId.value,
-            maxResultCount,
-          });
-          rawItems = res.items || [];
-        }
-
-        const items = formatRawItems(rawItems, true);
-
-        if (items.length > 0) {
-          const validIds = items.map(x => x.id).filter((id): id is number => id != null && id > 0);
-          if (validIds.length > 0) {
-            const batchMax = Math.max(...validIds);
-            maxMessageId.value = Math.max(maxMessageId.value || 0, batchMax);
-            if (isInitial || minMessageId.value == null) {
-              minMessageId.value = Math.min(...validIds);
+        do {
+          latestRequested = false;
+          const isInitial = maxMessageId.value == null;
+          let pageCount = 0;
+          while (true) {
+            const cursor = maxMessageId.value;
+            const res = isInitial && pageCount === 0
+              ? await apiV2.messages.history({ sessionUnitId, maxResultCount })
+              : await apiV2.messages.latest({ sessionUnitId, minMessageId: cursor, maxResultCount });
+            const rawItems = res.items || [];
+            if (isInitial && pageCount === 0) isBof.value = rawItems.length < maxResultCount;
+            const items = formatRawItems(rawItems, true);
+            if (items.length > 0) {
+              const validIds = items.map(x => x.id).filter((id): id is number => id != null && id > 0);
+              if (validIds.length === 0) throw new Error('消息同步响应缺少有效消息 ID');
+              const batchMax = Math.max(...validIds);
+              if (!(isInitial && pageCount === 0) && cursor != null && batchMax <= cursor) {
+                throw new Error('消息同步游标未推进');
+              }
+              maxMessageId.value = Math.max(maxMessageId.value || 0, batchMax);
+              if (minMessageId.value == null) minMessageId.value = Math.min(...validIds);
+              list.value = mergeMessages(list.value, items, isInitial && pageCount === 0 ? 'prepend' : 'append');
+              collected.push(...items);
             }
+            pageCount++;
+            // history 首屏本来就是最新一页；latest 则必须逐页补齐断线期间的消息。
+            if ((isInitial && pageCount === 1) || rawItems.length < maxResultCount) break;
+            if (pageCount >= 100) throw new Error('消息同步页数超过上限，请重试');
           }
-
-          list.value = mergeMessages(list.value, items, isInitial ? 'prepend' : 'append');
-        }
-
-        resolve({ items, list, maxResultCount });
-      } catch (err) {
-        reject(err);
+        } while (latestRequested);
+        return { items: collected, list, maxResultCount };
       } finally {
         isPendingOfFetchLatest.value = false;
+        latestTask = null;
       }
-    });
+    })();
+    return latestTask;
+  };
 
   /**
    * 向上翻页拉取历史消息
