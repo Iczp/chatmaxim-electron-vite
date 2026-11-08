@@ -327,16 +327,17 @@ export const useImStore = defineStore('im', {
      * @param {number} messageId
      */
     setMaxMessageId(messageId: number): void {
+      if (!Number.isSafeInteger(messageId) || messageId <= 0) return;
       this.maxMessageId = Math.max(messageId, this.maxMessageId || 0);
-      this.autoMessageId = this.maxMessageId;
     },
     /**
-     * 生成消息Id(自增0.0001)
+     * 生成窗口内的本地临时消息 ID
      *
      * @return {*}
      */
     generateMessageId(): number {
-      this.autoMessageId = Number((this.autoMessageId + 0.0001).toFixed(4));
+      // 本地临时 ID 与服务器正整数 ID 分离，服务端刷新不能重置生成器。
+      this.autoMessageId = Math.min(0, this.autoMessageId || 0) - 1;
       return this.autoMessageId;
     },
 
