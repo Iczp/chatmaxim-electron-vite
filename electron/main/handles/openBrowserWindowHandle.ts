@@ -1,4 +1,4 @@
-import { BrowserView, BrowserWindow, Menu, nativeImage } from 'electron';
+import { BrowserView, BrowserWindow, Menu, shell } from 'electron';
 import { initWindowEvent } from '../commons/initWindowEvent';
 import { preventClose, setWindow } from './windowSettingHandle';
 import { getBackgroundColor, globalState, icon, preload } from '../global';
@@ -6,7 +6,19 @@ import { windowManager } from '../commons/windowManager';
 import { WindowParams } from '../ipc-types';
 import { IpcMainHandle } from '../IpcMainHandle';
 import { BrowserPayload } from '../ipc-types/BrowserPayload';
-import fs from 'fs-extra';
+
+const browserViews = new WeakMap<BrowserWindow, BrowserView>();
+
+/** 只允许普通网页地址，禁止 file、javascript、data 等协议进入远程页面。 */
+export const isWebUrl = (value: unknown): value is string => {
+  if (typeof value !== 'string') return false;
+  try {
+    const parsed = new URL(value);
+    return (parsed.protocol === 'http:' || parsed.protocol === 'https:') && !!parsed.hostname;
+  } catch {
+    return false;
+  }
+};
 
 export const openBrowserWindowHandle: IpcMainHandle = {
   channel: 'open-browser',
@@ -15,9 +27,12 @@ export const openBrowserWindowHandle: IpcMainHandle = {
     args: { window: WindowParams; browser: BrowserPayload },
   ): any => {
     return new Promise((resolve, reject) => {
-      console.log('openBrowserWindowHandle', args);
-      createBrowserWindow(args);
-      resolve({});
+      try {
+        createBrowserWindow(args);
+        resolve({});
+      } catch (error) {
+        reject(error);
+      }
     });
   },
 };
@@ -32,10 +47,17 @@ export const createBrowserWindow = (
   },
   _?: Electron.IpcMainInvokeEvent,
 ) => {
+  if (!isWebUrl(browser?.url)) throw new Error('只支持 HTTP 或 HTTPS 网页地址');
+  if (window?.name !== 'browser' || window?.path !== '/browser') {
+    throw new Error('无效的浏览器窗口参数');
+  }
   let win = windowManager.get(window.name);
   if (win) {
-    console.log('createBrowserWindow setWindow', window);
     setWindow(win, window, _);
+    const existingView = browserViews.get(win);
+    if (existingView) void existingView.webContents.loadURL(browser.url).catch(() => {
+      console.warn('[browser] 页面加载失败');
+    });
     return win;
   }
   win = new BrowserWindow({
@@ -64,7 +86,15 @@ export const createBrowserWindow = (
   });
   initWindowEvent(win, { name: window.name, path: window.path });
 
-  const view = new BrowserView({});
+  const view = new BrowserView({
+    webPreferences: {
+      nodeIntegration: false,
+      contextIsolation: true,
+      sandbox: true,
+      webSecurity: true,
+    },
+  });
+  browserViews.set(win, view);
   win.setBrowserView(view);
   const headerHieght = 200;
   view.setBounds({
@@ -81,41 +111,8 @@ export const createBrowserWindow = (
     // vertical: true,
   });
 
-  view.webContents.loadURL(browser.url);
-
-  // 当页面加载完成后，生成快照
-  view.webContents.on('did-finish-load', async () => {
-    // try {
-    //   const { width, height } = await view.webContents.executeJavaScript(`
-    //     (() => {
-    //       return {
-    //         width: document.documentElement.scrollWidth,
-    //         height: document.documentElement.scrollHeight
-    //       };
-    //     })();
-    //   `);
-    //   const devicePixelRatio = win.webContents.getZoomFactor();
-    //   const fullWidth = Math.ceil(width * devicePixelRatio);
-    //   const fullHeight = Math.ceil(height * devicePixelRatio);
-    //   win.setContentSize(fullWidth, fullHeight);
-    //   const numberOfScreenshots = Math.ceil(fullHeight / 600); // Adjust 600 according to your need
-    //   const screenshots:Electron.NativeImage[] = [];
-    //   for (let i = 0; i < numberOfScreenshots; i++) {
-    //     await view.webContents.executeJavaScript(`window.scrollTo(0, ${i * 600})`);
-    //     await new Promise(resolve => setTimeout(resolve, 1000)); // Adjust the delay if necessary
-    //     const screenshot = await view.webContents.capturePage();
-    //     screenshots.push(screenshot);
-    //   }
-    //   let combinedImage = nativeImage.createEmpty();
-    //   screenshots.forEach(image => {
-    //     combinedImage.addRepresentation({ scaleFactor: 1.0, dataURL: image.toDataURL() });
-    //   });
-    //   const pngBuffer = combinedImage.toPNG();
-    //   fs.writeFileSync('snapshot.png', pngBuffer);
-    //   console.log('快照已保存至 snapshot.png');
-    // } catch (error) {
-    //   console.error('无法生成快照:', error);
-    // }
+  void view.webContents.loadURL(browser.url).catch(() => {
+    console.warn('[browser] 页面加载失败');
   });
 
   view.webContents.on('context-menu', (event, params) => {
@@ -132,31 +129,21 @@ export const createBrowserWindow = (
     menu.popup({ window: win });
   });
 
-  const setWindowOpenHandler = (win: BrowserView | BrowserWindow) => {
-    win.webContents.on('did-create-window', (win, detail) => {
-      console.log('did-create-window', detail);
-      setWindowOpenHandler(win);
-    });
-
-    win.webContents.setWindowOpenHandler((details: Electron.HandlerDetails) => {
-      console.log('details', details);
-
-      return {
-        action: 'allow',
-        outlivesOpener: true,
-        overrideBrowserWindowOptions: {
-          autoHideMenuBar: true,
-        },
-      };
-    });
-  };
-
-  setWindowOpenHandler(view);
-
-  view.webContents.on('will-navigate', (event, url) => {
-    event.preventDefault(); // 阻止在当前窗口打开链接
-    console.log('will-navigate', url);
+  // 远程页面的弹窗只能交给系统浏览器，不能继承本应用窗口权限。
+  view.webContents.setWindowOpenHandler(({ url }) => {
+    if (isWebUrl(url)) {
+      void shell.openExternal(url).catch(() => console.warn('[browser] 打开外部链接失败'));
+    }
+    return { action: 'deny' };
   });
+
+  const preventUnsafeNavigation = (event: Electron.Event, url: string) => {
+    if (!isWebUrl(url)) event.preventDefault();
+  };
+  view.webContents.on('will-navigate', preventUnsafeNavigation);
+  view.webContents.on('will-redirect', preventUnsafeNavigation);
+  // 宿主只加载应用自身的路由；远程跳转必须留在隔离的 BrowserView 中。
+  win.webContents.on('will-navigate', event => event.preventDefault());
 
   return win;
 };

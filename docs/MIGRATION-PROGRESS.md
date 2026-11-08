@@ -29,3 +29,9 @@
 ## 2026-11-09：M5 SignalR 生命周期竞态
 
 状态：生产客户端隔离测试与类型检查通过；真实 SignalR 断网、登出和跨窗口联调待验证。停止或切换连接后忽略旧连接的迟到成功、失败、事件与心跳结果，旧启动任务不能清除新任务的单飞锁；首次连接失败仍由客户端调度重试。`tests/signalr-lifecycle-production.test.mjs` 使用可控 Hub 边界运行真实客户端。
+
+## 2026-11-09：M9 外部浏览器视图隔离
+
+状态：生产窗口处理器隔离测试与定向类型检查通过；真实 Electron、外部站点及各平台联调待验证。BrowserView 显式启用沙箱、上下文隔离和 Web 安全，禁用 Node；限制 HTTP/HTTPS 导航和重定向，弹窗转系统浏览器；宿主禁止页面导航，复用窗口加载新地址。`tests/browser-security-production.test.mjs` 使用模拟 Electron 边界检查生产处理器。其他业务窗口仍使用旧权限配置，不能视为全部完成安全整改。
+
+验证限制：`npx tsc --noEmit -p tsconfig.node.json` 未通过，报告已有 `vite-plugin-electron/electron-env` 类型引用、`ImportMeta.env` 与第三方可选类型依赖问题；当前 Vite/TypeScript 配置为用户原有未提交更改，未擅自修改。对本次主进程文件单独运行 `npx tsc --noEmit --skipLibCheck --module esnext --moduleResolution bundler --target es2020 --types vite/client --esModuleInterop electron/main/handles/openBrowserWindowHandle.ts` 通过。
