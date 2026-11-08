@@ -23,6 +23,7 @@ import { router } from './routes';
 import { createPinia } from 'pinia';
 import { message } from 'ant-design-vue';
 import { initToken } from './apis/auth/TokenController';
+import { resolveLocalAccountId } from './data/local/localAccount';
 import { installRealtimeBridge } from './realtime/realtimeHub';
 import { registerDevice } from './apis/v2/deviceRegistration';
 import { eventBus } from './commons/eventBus';
@@ -82,6 +83,10 @@ app
     installRealtimeBridge();
     // 与主进程对齐登录态（多窗口一致性）
     await initToken();
+    // 首次在线时建立本地账号分区；失败不阻塞登录或离线界面。
+    void resolveLocalAccountId().catch(error => {
+      console.warn('[local] 账号分区暂不可用', error?.message);
+    });
     // 设备注册（独立 client_credentials，失败不阻塞）
     void registerDevice();
   });

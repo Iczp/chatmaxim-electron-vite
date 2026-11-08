@@ -32,6 +32,7 @@ const normalizeToken = (value: any): any => {
 
 // 持久标记用于区分首次迁移旧版 localStorage 和明确退出后的空会话。
 const LEGACY_MIGRATION_KEY = `${TOKEN_KEY}-legacy-migrated`;
+const ACCOUNT_KEY = `${TOKEN_KEY}-account-id`;
 let authGeneration = 0;
 
 let refreshInFlightPromise: Promise<{
@@ -61,18 +62,32 @@ export const authTokenHandle: IpcMainHandle = {
       token,
       currentAccessToken,
       force,
+      accountId,
+      sessionVersion,
     }: {
-      action: 'get' | 'set' | 'clear' | 'refresh' | 'migrate';
+      action: 'get' | 'set' | 'clear' | 'refresh' | 'migrate' | 'set-account';
       token?: any;
       currentAccessToken?: string;
       force?: boolean;
+      accountId?: string;
+      sessionVersion?: number;
     },
   ): Promise<any> => {
     switch (action) {
       case 'get': {
         const value = store.get(TOKEN_KEY);
         const resolved = normalizeToken(value ?? globalState.token ?? null);
-        return { token: resolved };
+        return { token: resolved, accountId: resolved ? store.get(ACCOUNT_KEY) ?? null : null, sessionVersion: authGeneration };
+      }
+
+      case 'set-account': {
+        const current = normalizeToken(store.get(TOKEN_KEY) ?? globalState.token ?? null);
+        if (!current?.access_token || current.access_token !== currentAccessToken || sessionVersion !== authGeneration ||
+            typeof accountId !== 'string' || !accountId.trim() || accountId.length > 1024) {
+          return { success: false, error: 'auth_session_changed' };
+        }
+        store.set(ACCOUNT_KEY, accountId);
+        return { success: true };
       }
 
       case 'migrate': {
@@ -85,6 +100,7 @@ export const authTokenHandle: IpcMainHandle = {
           authGeneration++;
           refreshInFlightPromise = null;
           store.set(LEGACY_MIGRATION_KEY, true);
+          store.delete(ACCOUNT_KEY);
           store.set(TOKEN_KEY, candidate);
           globalState.token = candidate;
           globalState.isAuthorized = true;
@@ -99,6 +115,7 @@ export const authTokenHandle: IpcMainHandle = {
           authGeneration++;
           refreshInFlightPromise = null;
           store.set(LEGACY_MIGRATION_KEY, true);
+          store.delete(ACCOUNT_KEY);
           store.set(TOKEN_KEY, normalized);
           globalState.token = normalized;
           globalState.isAuthorized = true;
@@ -111,6 +128,7 @@ export const authTokenHandle: IpcMainHandle = {
         authGeneration++;
         refreshInFlightPromise = null;
         store.set(LEGACY_MIGRATION_KEY, true);
+        store.delete(ACCOUNT_KEY);
         store.delete(TOKEN_KEY);
         globalState.token = undefined;
         globalState.isAuthorized = false;
@@ -195,6 +213,7 @@ export const authTokenHandle: IpcMainHandle = {
             // 400 (invalid_grant) 或 401 明确说明 refresh token 失效/被撤销
             if (status === 400 || status === 401) {
               store.set(LEGACY_MIGRATION_KEY, true);
+              store.delete(ACCOUNT_KEY);
               store.delete(TOKEN_KEY);
               globalState.token = undefined;
               globalState.isAuthorized = false;

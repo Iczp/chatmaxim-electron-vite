@@ -80,3 +80,42 @@ test('清除后重新创建主进程协调器仍禁止旧缓存迁移', async ()
   const restarted = createHandler(h.values);
   assert.equal((await restarted.call('migrate', { token: token('legacy') })).token, null);
 });
+
+test('用户标识绑定当前令牌，刷新保留，切换账号和退出时清除', async () => {
+  const h = createHandler();
+  await h.call('set', { token: token('old') });
+  const oldVersion = (await h.call('get')).sessionVersion;
+  assert.equal((await h.call('set-account', { currentAccessToken: 'old', sessionVersion: oldVersion, accountId: 'issuer/old' })).success, true);
+  const pending = h.call('refresh', { currentAccessToken: 'old' });
+  h.requests[0](response(200, token('refreshed')));
+  await pending;
+  assert.equal((await h.call('get')).accountId, 'issuer/old');
+  await h.call('set', { token: token('new') });
+  assert.equal((await h.call('get')).accountId, null);
+  assert.equal((await h.call('set-account', { currentAccessToken: 'old', sessionVersion: oldVersion, accountId: 'issuer/old' })).success, false);
+  assert.equal((await h.call('get')).accountId, null);
+  await h.call('set-account', { currentAccessToken: 'new', sessionVersion: (await h.call('get')).sessionVersion, accountId: 'issuer/new' });
+  await h.call('clear');
+  assert.equal((await h.call('get')).accountId, null);
+  assert.equal(h.values.has('token-account-id'), false);
+});
+
+test('相同令牌字符串的新登录不能接收前一会话迟到的账号绑定', async () => {
+  const h = createHandler();
+  await h.call('set', { token: token('same') });
+  const oldVersion = (await h.call('get')).sessionVersion;
+  await h.call('clear');
+  await h.call('set', { token: token('same') });
+  const result = await h.call('set-account', { currentAccessToken: 'same', sessionVersion: oldVersion, accountId: 'old-account' });
+  assert.equal(result.success, false);
+  assert.equal((await h.call('get')).accountId, null);
+});
+
+test('账号绑定保存在主进程存储中，可在进程重建后离线读取', async () => {
+  const h = createHandler();
+  await h.call('set', { token: token('account') });
+  const sessionVersion = (await h.call('get')).sessionVersion;
+  await h.call('set-account', { currentAccessToken: 'account', sessionVersion, accountId: 'issuer/user' });
+  const restarted = createHandler(h.values);
+  assert.equal((await restarted.call('get')).accountId, 'issuer/user');
+});
