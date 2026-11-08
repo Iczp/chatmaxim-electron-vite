@@ -16,7 +16,7 @@ const emits = defineEmits<{
   sender: [MouseEvent | PointerEvent];
   content: [MouseEvent | PointerEvent];
 }>();
-const { senderName } = useMessageEntity(props.entity);
+const { senderName } = useMessageEntity(() => props.entity);
 
 const flashSeconds = ref(props.flash || 0);
 if (props.flash) {

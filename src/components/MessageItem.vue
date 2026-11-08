@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { computed, ref, useSlots, watch } from 'vue';
+import { computed, ref, toRef, useSlots, watch } from 'vue';
 
 import { MessageDto } from '../apis/dtos';
 import { MessageTypeEnums } from '../apis/enums';
@@ -48,7 +48,7 @@ const emits = defineEmits<{
 }>();
 
 const { senderName, messageType, isRollbacked, sendTime, sendTimeTitle, state } = useMessageEntity(
-  props.entity,
+  toRef(props, 'entity'),
 );
 const msg = computed(() => props.entity);
 const isPlay = computed<boolean>(

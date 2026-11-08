@@ -213,7 +213,8 @@ export const useImStore = defineStore('im', {
             console.warn('setLastMessage: sessionItemsMap undefined,keyName:', keyName);
             return;
           }
-          this.sessionItemsMap[keyName][sessionUnitId].lastMessageId = message.id;
+          const sessionItem = this.sessionItemsMap[keyName][sessionUnitId];
+          if (sessionItem) sessionItem.lastMessageId = message.id;
           // setBadge
         },
         'setLastMessage',

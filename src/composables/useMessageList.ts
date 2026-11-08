@@ -1,4 +1,4 @@
-import { Ref, onActivated, onDeactivated, ref } from 'vue';
+import { Ref, onActivated, onDeactivated, onUnmounted, ref } from 'vue';
 import { apiV2 } from '../apis/v2';
 import { MessageDto, MessageOwnerDto } from '../apis/dtos';
 import { MessageGetListInput } from '../apis/dtos/MessageGetListInput';
@@ -8,6 +8,7 @@ import { formatMessage } from '../commons/utils';
 import { ReceivedDto } from '../apis/websockets/ReceivedDto';
 import { Handler } from 'mitt';
 import { mergeMessages } from '../commons/mergeMessages';
+import { MessageMutationSync } from '../realtime/messageMutationSync';
 
 export type FetchMessageResult = {
   items: MessageDto[];
@@ -31,6 +32,9 @@ export const useMessageList = ({
   const isEof = ref(false);
   const latestMessageCount = ref<number>(0);
   const list = ref<MessageDto[]>([]);
+  const mutationSync = new MessageMutationSync(
+    sessionUnitId, apiV2.messages, () => list.value, messages => { list.value = messages; },
+  );
 
   const formatRawItems = (items: MessageOwnerDto[], isLast: boolean): MessageDto[] => {
     const sorted = [...items].sort((a, b) => Number(a.id || 0) - Number(b.id || 0));
@@ -81,7 +85,7 @@ export const useMessageList = ({
               }
               maxMessageId.value = Math.max(maxMessageId.value || 0, batchMax);
               if (minMessageId.value == null) minMessageId.value = Math.min(...validIds);
-              list.value = mergeMessages(list.value, items, isInitial && pageCount === 0 ? 'prepend' : 'append');
+              list.value = mutationSync.applyKnown(mergeMessages(list.value, items, isInitial && pageCount === 0 ? 'prepend' : 'append'));
               collected.push(...items);
             }
             pageCount++;
@@ -138,7 +142,7 @@ export const useMessageList = ({
           minMessageId.value = minMessageId.value != null ? Math.min(minMessageId.value, batchMin) : batchMin;
         }
 
-        list.value = mergeMessages(list.value, items, 'prepend');
+        list.value = mutationSync.applyKnown(mergeMessages(list.value, items, 'prepend'));
         resolve({ items, list, maxResultCount });
       } catch (err) {
         reject(err);
@@ -165,6 +169,7 @@ export const useMessageList = ({
 
   onActivated(() => {});
   onDeactivated(offMessage);
+  onUnmounted(offMessage);
 
   const cancelChecked = () => {
     list.value.forEach(x => (x.checked = false));
@@ -179,6 +184,7 @@ export const useMessageList = ({
     minMessageId,
     fetchLatest,
     fetchHistorical,
+    syncMutations: () => mutationSync.sync(),
     onMessage,
     offMessage,
     cancelChecked,

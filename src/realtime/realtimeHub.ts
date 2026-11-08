@@ -117,6 +117,7 @@ export const dispatchEnvelope = async (
   const store = useImStore();
   try {
     if (isMessageCommand(command)) {
+      if (command === SignalRCommand.MessageRollbacked) eventBus.emit('messageMutation', envelope);
       handleMessageCommand(command, envelope);
     } else if (isAiCommand(command)) {
       eventBus.emit('ai' as any, [command, envelope.payload] as any);
@@ -127,6 +128,8 @@ export const dispatchEnvelope = async (
           eventBus.emit('session:updated' as any, envelope.scopes as any);
           break;
         case SignalRCommand.MessageDeleted:
+          eventBus.emit('messageMutation', envelope);
+          // 同时刷新对应会话详情和角标。
         case SignalRCommand.SessionUnitChanged: {
           const scopes = envelope.scopes || [];
           scopes.forEach(scope => {

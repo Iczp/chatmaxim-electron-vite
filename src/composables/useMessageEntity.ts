@@ -1,23 +1,27 @@
 //
 
-import { computed, onUnmounted, ref } from 'vue';
+import { computed, onUnmounted, ref, toValue, watch, type MaybeRefOrGetter } from 'vue';
 import { formatMessageTime, getSenderNameForMessage } from '../commons/utils';
 import { MessageDto } from '../apis/dtos';
 
-export const useMessageEntity = (entity: MessageDto | undefined) => {
-  const senderName = computed(() => getSenderNameForMessage(entity));
+export const useMessageEntity = (source: MaybeRefOrGetter<MessageDto | undefined>) => {
+  const entity = computed(() => toValue(source));
+  const senderName = computed(() => getSenderNameForMessage(entity.value));
 
-  const messageType = computed(() => entity?.messageType);
+  const messageType = computed(() => entity.value?.messageType);
 
-  const isRollbacked = computed(() => entity?.isRollbacked || entity?.rollbackTime != null);
+  const isRollbacked = computed(() => entity.value?.isRollbacked || entity.value?.rollbackTime != null);
 
-  // const sendTime = computed(() => formatMessageTime(new Date(entity?.creationTime!)));
+  // const sendTime = computed(() => formatMessageTime(new Date(entity.value?.creationTime!)));
 
   const sendTime = ref(
-    entity?.creationTime ? formatMessageTime(new Date(entity?.creationTime!)) : '',
+    entity.value?.creationTime ? formatMessageTime(new Date(entity.value?.creationTime!)) : '',
   );
+  watch(() => entity.value?.creationTime, value => {
+    sendTime.value = value ? formatMessageTime(new Date(value)) : '';
+  });
   const timer = setInterval(() => {
-    const creationTime = new Date(entity?.creationTime!);
+    const creationTime = new Date(entity.value?.creationTime!);
     const s = (new Date().getTime() - creationTime.getTime()) / 1000;
     if (s > 60 * 60 * 24 * 7) {
       clearInterval(timer);
@@ -33,9 +37,9 @@ export const useMessageEntity = (entity: MessageDto | undefined) => {
     }
   });
 
-  const sendTimeTitle = computed(() => entity?.creationTime);
+  const sendTimeTitle = computed(() => entity.value?.creationTime);
 
-  const state = computed(() => entity?.state);
+  const state = computed(() => entity.value?.state);
 
   return { senderName, messageType, isRollbacked, sendTime, sendTimeTitle, state };
 };

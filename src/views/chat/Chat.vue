@@ -115,6 +115,7 @@ const {
   list,
   fetchHistorical,
   fetchLatest,
+  syncMutations,
   maxMessageId,
   onMessage,
   latestMessageCount,
@@ -257,14 +258,22 @@ let startShortcutWatch = () => {
   );
 };
 
+const syncMessageMutations = () => {
+  void syncMutations().catch(error => console.warn('[chat] message changes failed', error));
+};
+const onMessageMutation = (event: { scopes?: Array<{ sessionUnitId?: string }>; payload?: any }) => {
+  if (event.scopes?.some(scope => scope.sessionUnitId === sessionUnitId) ||
+      event.payload?.sessionUnitId === sessionUnitId) syncMessageMutations();
+};
 const syncAfterReconnect = () => {
-  void fetchLatest({ caller: 'reconnected' }).catch(error => {
+  void fetchLatest({ caller: 'reconnected' }).then(syncMessageMutations).catch(error => {
     console.warn('[chat] reconnect sync failed', error);
   });
 };
 
 const _onDeactivated = () => {
   eventBus.off('connected', syncAfterReconnect);
+  eventBus.off('messageMutation', onMessageMutation);
   // activeLastMessageId.value = lastMessageId.value;
   stopShortcutWatch?.call(this);
   localReadedMessageId.value = readedMessageId.value;
@@ -275,6 +284,8 @@ const _onDeactivated = () => {
 const _onActivated = () => {
   eventBus.off('connected', syncAfterReconnect);
   eventBus.on('connected', syncAfterReconnect);
+  eventBus.off('messageMutation', onMessageMutation);
+  eventBus.on('messageMutation', onMessageMutation);
   startShortcutWatch();
   scrollTo(0);
   scrollToTop();
@@ -286,6 +297,7 @@ const _onActivated = () => {
     caller: 'onActivated',
   })
     .then(() => {
+      syncMessageMutations();
       nextTick(() => scrollToBottom());
     })
     .catch(err => {

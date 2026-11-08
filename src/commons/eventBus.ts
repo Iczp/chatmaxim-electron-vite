@@ -23,6 +23,7 @@ export type EventBus = {
    * websocket chat
    */
   chat: [ReceivedDto<any>, MessageDto];
+  messageMutation: { scopes?: Array<{ sessionUnitId?: string }>; payload?: any };
   /**
    * websocket IncrementCompleted
    */

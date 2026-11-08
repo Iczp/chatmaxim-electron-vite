@@ -19,12 +19,13 @@ function createList(api) {
     off: (name, fn) => { if (listeners.get(name) === fn) listeners.delete(name); },
   };
   const deps = {
-    vue: { ref: value => ({ value }), onActivated() {}, onDeactivated() {} },
+    vue: { ref: value => ({ value }), onActivated() {}, onDeactivated() {}, onUnmounted() {} },
     '../apis/v2': { apiV2: { messages: api } },
     '../apis/enums': { MessageStateEnums: { Ok: 1 } },
     '../commons/eventBus': { eventBus },
     '../commons/utils': { formatMessage: ({ items }) => items.map(x => ({ ...x, state: 1, scrollerKey: `m-${x.id}` })) },
     '../commons/mergeMessages': merge,
+    '../realtime/messageMutationSync': { MessageMutationSync: class { applyKnown(rows) { return rows; } sync() { return Promise.resolve(); } } },
   };
   const mod = compile('../src/composables/useMessageList.ts', deps);
   return { list: mod.useMessageList({ sessionUnitId: 'unit', maxResultCount: 2 }), listeners };
