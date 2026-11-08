@@ -374,4 +374,3 @@ export const apiV2 = {
   auth: authV2,
   app: appV2,
 };
-

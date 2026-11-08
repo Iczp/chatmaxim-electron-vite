@@ -33,4 +33,3 @@ test('消息状态校准使用会话 ID 和消息 ID 列表', () => {
   assert.equal(call.body.sessionUnitId, 'unit');
   assert.deepEqual(Array.from(call.body.messageIds), [1, 2]);
 });
-
