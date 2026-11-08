@@ -117,6 +117,7 @@ class SignalRClient {
     connection.serverTimeoutInMilliseconds = env.signalr_server_timeout_ms;
 
     connection.on('ReceivedMessage', (...args: any[]) => {
+      if (this.connection !== connection || this.explicitlyStopped) return;
       const value = args.length === 1 ? args[0] : args;
       const envelope: RealtimeEnvelope =
         typeof value === 'string'
@@ -135,6 +136,7 @@ class SignalRClient {
     });
 
     connection.onreconnecting(error => {
+      if (this.connection !== connection || this.explicitlyStopped) return;
       this.state.value = 'reconnecting';
       this.stopHeartbeat();
       this.lastError.value = error?.message || String(error ?? '');
@@ -142,6 +144,7 @@ class SignalRClient {
     });
 
     connection.onreconnected(connectionId => {
+      if (this.connection !== connection || this.explicitlyStopped) return;
       this.connectionId.value = connectionId ?? null;
       this.state.value = 'connected';
       this.lastError.value = null;
@@ -150,6 +153,7 @@ class SignalRClient {
     });
 
     connection.onclose(error => {
+      if (this.connection !== connection || this.explicitlyStopped) return;
       this.state.value = 'disconnected';
       this.connectionId.value = null;
       this.stopHeartbeat();
@@ -175,34 +179,45 @@ class SignalRClient {
     ) {
       return;
     }
-    this.startPromise = (async () => {
-      this.explicitlyStopped = false;
-      this.clearRestartTimer();
-      this.state.value = 'connecting';
-      this.connection = this.buildConnection();
+    this.explicitlyStopped = false;
+    this.clearRestartTimer();
+    this.state.value = 'connecting';
+    const connection = this.buildConnection();
+    this.connection = connection;
+    const task = (async () => {
       try {
-        await this.connection.start();
-        this.connectionId.value = this.connection.connectionId ?? null;
+        await connection.start();
+        if (this.connection !== connection || this.explicitlyStopped) {
+          // 停止期间迟到的 start 不能复活旧连接。
+          await connection.stop();
+          throw new Error('signalr_start_cancelled');
+        }
+        this.connectionId.value = connection.connectionId ?? null;
         this.state.value = 'connected';
         this.lastError.value = null;
         this.startHeartbeat();
         console.log('[realtime] connected', this.connectionId.value, this.hubUrl);
       } catch (error: any) {
-        this.state.value = 'disconnected';
-        this.lastError.value = error?.message || String(error);
-        console.error('[realtime] connect failed', error);
-        // 首次连接失败不会触发 withAutomaticReconnect，这里自行退避重试
-        this.scheduleRestart();
+        if (this.connection === connection && !this.explicitlyStopped) {
+          this.state.value = 'disconnected';
+          this.lastError.value = error?.message || String(error);
+          console.error('[realtime] connect failed', error);
+          // 首次连接失败不会触发自动重连。
+          this.scheduleRestart();
+        }
         throw error;
-      } finally {
-        this.startPromise = null;
       }
     })();
-    return this.startPromise;
+    this.startPromise = task;
+    void task.finally(() => {
+      if (this.startPromise === task) this.startPromise = null;
+    }).catch(() => {});
+    return task;
   }
 
   async stop(): Promise<void> {
     this.explicitlyStopped = true;
+    this.startPromise = null;
     this.clearRestartTimer();
     this.stopHeartbeat();
     const connection = this.connection;
@@ -239,7 +254,8 @@ class SignalRClient {
     this.clearRestartTimer();
     this.restartTimer = setTimeout(() => {
       if (!this.explicitlyStopped) {
-        this.start().catch(() => this.scheduleRestart());
+        // start 内部负责调度重试，过期任务不能为新连接额外创建重试。
+        this.start().catch(() => {});
       }
     }, 5000);
   }
@@ -258,10 +274,13 @@ class SignalRClient {
       if (!this.connection || this.connection.state !== HubConnectionState.Connected) {
         return;
       }
+      const connection = this.connection;
       const ticks = Date.now();
       try {
-        await this.connection.invoke('Heartbeat', ticks);
-        this.netDelay.value = Date.now() - ticks;
+        await connection.invoke('Heartbeat', ticks);
+        if (this.connection === connection && !this.explicitlyStopped) {
+          this.netDelay.value = Date.now() - ticks;
+        }
       } catch (error) {
         console.warn('[realtime] heartbeat failed', error);
       }
