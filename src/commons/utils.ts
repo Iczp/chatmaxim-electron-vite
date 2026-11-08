@@ -338,7 +338,7 @@ export const formatMessage = ({
   items.map(item => {
     // console.error('item.isReverse', item.isReverse)
 
-    item.isSelf = sessionUnitId == item.senderSessionUnit?.id;
+    item.isSelf = item.isSelf ?? (sessionUnitId == item.senderSessionUnit?.id);
     // item.sendTime = getTmpSendTime(item);
     if (typeof item.state == 'undefined') {
       item.state = MessageStateEnums.Ok;

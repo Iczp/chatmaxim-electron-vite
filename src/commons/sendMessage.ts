@@ -86,8 +86,10 @@ export const sendMessage = async ({
   onSuccess,
   onError,
   onAfter,
+  clientMessageId: retryClientMessageId,
 }: {
   sessionUnitId: string;
+  clientMessageId?: string;
   messageType: MessageTypeEnums;
   content: any;
   senderSessionUnit?: SessionUnitSenderDto;
@@ -103,8 +105,7 @@ export const sendMessage = async ({
 }) => {
   const store = useImStore();
   const autoId = store.generateMessageId();
-  const clientMessageId = createClientMessageId();
-  console.log('sendMessage content', content, 'clientMessageId', clientMessageId);
+  const clientMessageId = retryClientMessageId || createClientMessageId();
 
   let input: MessageDto = formatMessage({
     sessionUnitId,
@@ -140,8 +141,6 @@ export const sendMessage = async ({
 
   const senderService = (): CancelablePromise<MessageOwnerDto> => {
     if (file) {
-      console.log('file', file);
-
       const onUploadProgress = (progressEvent: AxiosProgressEvent): void => {
         progressStore.set(
           `${autoId}`,
@@ -186,7 +185,6 @@ export const sendMessage = async ({
   const _send = () => {
     senderService()
       .then(res => {
-        console.log('sendRet', res);
         store.setMaxMessageId(res.id!);
         store.setLastMessageForSender(res);
         onSuccess?.call(this, res, input);

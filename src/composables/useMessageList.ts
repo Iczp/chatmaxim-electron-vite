@@ -7,50 +7,12 @@ import { eventBus } from '../commons/eventBus';
 import { formatMessage } from '../commons/utils';
 import { ReceivedDto } from '../apis/websockets/ReceivedDto';
 import { Handler } from 'mitt';
+import { mergeMessages } from '../commons/mergeMessages';
 
 export type FetchMessageResult = {
   items: MessageDto[];
   list: Ref<MessageDto[]>;
   maxResultCount: number;
-};
-
-const deduplicateMessages = (existing: MessageDto[], incoming: MessageDto[], position: 'prepend' | 'append'): MessageDto[] => {
-  const seenIds = new Set<string>();
-  const result: MessageDto[] = [];
-
-  const add = (msg: MessageDto) => {
-    if (!msg.scrollerKey) {
-      msg.scrollerKey =
-        msg.id != null
-          ? `m-${msg.id}`
-          : msg.clientMessageId
-            ? `c-${msg.clientMessageId}`
-            : `a-${msg.autoId || Math.random()}`;
-    }
-    const key =
-      msg.id != null
-        ? `id-${msg.id}`
-        : msg.clientMessageId
-          ? `c-${msg.clientMessageId}`
-          : msg.autoId
-            ? `a-${msg.autoId}`
-            : msg.scrollerKey;
-    if (key && seenIds.has(key)) {
-      return;
-    }
-    if (key) seenIds.add(key);
-    result.push(msg);
-  };
-
-  if (position === 'prepend') {
-    incoming.forEach(add);
-    existing.forEach(add);
-  } else {
-    existing.forEach(add);
-    incoming.forEach(add);
-  }
-
-  return result;
 };
 
 export const useMessageList = ({
@@ -130,7 +92,7 @@ export const useMessageList = ({
             }
           }
 
-          list.value = deduplicateMessages(isInitial ? [] : list.value, items, 'append');
+          list.value = mergeMessages(list.value, items, isInitial ? 'prepend' : 'append');
         }
 
         resolve({ items, list, maxResultCount });
@@ -180,7 +142,7 @@ export const useMessageList = ({
           minMessageId.value = minMessageId.value != null ? Math.min(minMessageId.value, batchMin) : batchMin;
         }
 
-        list.value = deduplicateMessages(list.value, items, 'prepend');
+        list.value = mergeMessages(list.value, items, 'prepend');
         resolve({ items, list, maxResultCount });
       } catch (err) {
         reject(err);
@@ -189,17 +151,21 @@ export const useMessageList = ({
       }
     });
 
+  let messageHandler: Handler<[ReceivedDto<any>, MessageDto]> | undefined;
   const onMessage = (callback: (e: MessageDto) => void): void => {
-    eventBus.on('chat', ([data, receivedMessage]) => {
-      console.log('onMessage', receivedMessage);
+    if (messageHandler) eventBus.off('chat', messageHandler);
+    messageHandler = ([data, receivedMessage]) => {
       if (data?.scopes?.some((x: any) => x.sessionUnitId === sessionUnitId)) {
         callback(receivedMessage);
       }
-    });
+    };
+    eventBus.on('chat', messageHandler);
   };
 
-  const offMessage = (handler?: Handler<[ReceivedDto<any>, MessageDto]>): void =>
-    eventBus.off('chat', handler);
+  const offMessage = (): void => {
+    if (messageHandler) eventBus.off('chat', messageHandler);
+    messageHandler = undefined;
+  };
 
   onActivated(() => {});
   onDeactivated(offMessage);

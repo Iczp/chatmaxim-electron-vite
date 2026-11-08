@@ -36,6 +36,7 @@ import { MessageStateEnums, MessageTypeEnums } from '../../apis/enums';
 import { useSessionUnitDetail } from '../../composables/useSessionUnitDetail';
 import { setReadedMessageId } from '../../commons/setting';
 import { sendMessage } from '../../commons/sendMessage';
+import { mergeMessages } from '../../commons/mergeMessages';
 import { useDrop } from '../../composables/useDrop';
 import { useShortcutStore } from '../../stores/shortcutStore';
 import {
@@ -288,7 +289,7 @@ const _onActivated = () => {
     console.warn(
       'onMessage isLatestMessage',
       isLatestMessage,
-      receivedMessage.id,
+      receivedMessage?.id,
       maxMessageId.value,
     );
     // store.clearBadge(chatObjectId, sessionUnitId);
@@ -339,6 +340,7 @@ const onSend = async ({
     isClearInput: true,
     messageType,
     content,
+    file,
   });
 };
 
@@ -350,15 +352,15 @@ const clearChatInput = (isClear: boolean): void => {
   quoteMessage.value = undefined;
 };
 
-const spliceItem = (autoId: number | undefined, arr: MessageDto[]) => {
-  const findIndex = list.value?.findIndex(x => x.autoId == autoId);
-  console.log('findIndex', findIndex);
-  if (findIndex != -1) {
-    // if (arr.length > 0) {
-    //   arr[0].isShowTime = list.value[0].isShowTime;
-    // }
-    list.value.splice(findIndex, 1, ...arr);
-  }
+const removeItem = (item: MessageDto) => {
+  const index = list.value.findIndex(row =>
+    item.clientMessageId
+      ? row.clientMessageId === item.clientMessageId
+      : item.scrollerKey
+        ? row.scrollerKey === item.scrollerKey
+        : item.id != null && row.id === item.id,
+  );
+  if (index !== -1) list.value.splice(index, 1);
 };
 
 const sendMessageContent = async ({
@@ -366,16 +368,19 @@ const sendMessageContent = async ({
   messageType,
   isClearInput,
   file,
+  clientMessageId,
 }: {
   messageType: MessageTypeEnums;
   content: any;
   isClearInput: boolean;
   file?: Blob | File | any;
+  clientMessageId?: string;
 }) => {
   isSendPending.value = true;
 
   sendMessage({
     file,
+    clientMessageId,
     sessionUnitId,
     senderSessionUnit: detail.value,
     messageType,
@@ -387,7 +392,6 @@ const sendMessageContent = async ({
     quoteMessage: quoteMessage.value,
     content,
     async onBefore(input) {
-      console.log('input', input);
       isSendBtnEnabled.value = false;
       list.value.push(input);
       scrollToBottom();
@@ -400,26 +404,27 @@ const sendMessageContent = async ({
       // return;
       clearChatInput(isClearInput);
 
+      // 先应用发送回执；增量同步失败时仍保留已发送消息。
+      list.value = mergeMessages(list.value, [{
+        ...input,
+        ...entity,
+        clientMessageId: input.clientMessageId,
+        scrollerKey: input.scrollerKey,
+        autoId: input.autoId,
+        isSelf: true,
+        state: MessageStateEnums.Ok,
+      }], 'append');
       fetchLatest({ caller: 'sendMessageContent' })
-        .then(({ items, list }) => {
-          // setTimeout(() => {
-          spliceItem(input.autoId, items);
-          // list.value = list.value.concat(items);
-          // }, 1000);
-
-          // scroll.value?.scrollTo({ duration: 0 });
-          nextTick(() => scrollToBottom());
-        })
-        .catch(err => {
-          spliceItem(input.autoId, []);
-          console.error(err);
-        })
-        .finally(() => {
-          isSendPending.value = false;
-        });
+        .then(() => nextTick(() => scrollToBottom()))
+        .catch(err => console.error('[chat] sync after send failed', err))
+        .finally(() => { isSendPending.value = false; });
     },
     onError(err, input) {
-      spliceItem(input.autoId, []);
+      isSendPending.value = false;
+      // 如果推送已确认该消息，迟到的发送错误不能覆盖确认状态。
+      const confirmed = list.value.find(x => x.clientMessageId === input.clientMessageId && x.id != null);
+      if (confirmed) return;
+      removeItem(input);
       list.value.push({
         ...input,
         state: MessageStateEnums.Error,
@@ -608,6 +613,7 @@ const onResend = (entity: MessageDto) => {
   onRemove(entity);
   sendMessageContent({
     content: entity.content,
+    clientMessageId: entity.clientMessageId,
     messageType: entity.messageType!,
     isClearInput: false,
     file: entity.file,
@@ -615,7 +621,7 @@ const onResend = (entity: MessageDto) => {
 };
 const onRemove = (entity: MessageDto) => {
   console.log('onRemove', entity);
-  spliceItem(entity.autoId, []);
+  removeItem(entity);
 };
 // const isWaiter = computed(
 //   () =>
