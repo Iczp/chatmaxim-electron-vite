@@ -5,8 +5,7 @@ import vm from 'node:vm';
 import ts from 'typescript';
 
 // 加载真实主进程处理器，仅替换 Electron 状态、IPC 广播与 HTTP 边界。
-function createHandler() {
-  const values = new Map();
+function createHandler(values = new Map()) {
   const events = [];
   const state = {};
   const requests = [];
@@ -63,4 +62,21 @@ test('无效刷新响应不能覆盖当前会话', async () => {
   h.requests[0](response(200, {}));
   assert.equal((await pending).error, 'invalid_token_response');
   assert.equal((await h.call('get')).token.access_token, 'old');
+});
+
+test('旧缓存仅可首次迁移，退出后不能恢复，先登录的新账号不会被覆盖', async () => {
+  const h = createHandler();
+  assert.equal((await h.call('migrate', { token: token('legacy') })).token.access_token, 'legacy');
+  await h.call('clear');
+  assert.equal((await h.call('migrate', { token: token('legacy') })).token, null);
+  await h.call('set', { token: token('new') });
+  assert.equal((await h.call('migrate', { token: token('legacy') })).token.access_token, 'new');
+});
+
+test('清除后重新创建主进程协调器仍禁止旧缓存迁移', async () => {
+  const h = createHandler();
+  await h.call('clear');
+  assert.equal(h.values.get('token-legacy-migrated'), true);
+  const restarted = createHandler(h.values);
+  assert.equal((await restarted.call('migrate', { token: token('legacy') })).token, null);
 });

@@ -9,6 +9,6 @@ export const setAuthorize = (token: TokenDto) =>
         console.warn(1, res);
         resolve(res);
       })
-      .catch(err => reject)
+      .catch(reject)
       .finally(() => {});
   });

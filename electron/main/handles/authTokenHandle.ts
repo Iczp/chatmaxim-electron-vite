@@ -30,6 +30,8 @@ const normalizeToken = (value: any): any => {
   return token;
 };
 
+// 持久标记用于区分首次迁移旧版 localStorage 和明确退出后的空会话。
+const LEGACY_MIGRATION_KEY = `${TOKEN_KEY}-legacy-migrated`;
 let authGeneration = 0;
 
 let refreshInFlightPromise: Promise<{
@@ -60,7 +62,7 @@ export const authTokenHandle: IpcMainHandle = {
       currentAccessToken,
       force,
     }: {
-      action: 'get' | 'set' | 'clear' | 'refresh';
+      action: 'get' | 'set' | 'clear' | 'refresh' | 'migrate';
       token?: any;
       currentAccessToken?: string;
       force?: boolean;
@@ -73,11 +75,30 @@ export const authTokenHandle: IpcMainHandle = {
         return { token: resolved };
       }
 
+      case 'migrate': {
+        const current = normalizeToken(store.get(TOKEN_KEY) ?? globalState.token ?? null);
+        if (current || store.get(LEGACY_MIGRATION_KEY)) {
+          return { token: current };
+        }
+        const candidate = normalizeToken(token);
+        if (candidate) {
+          authGeneration++;
+          refreshInFlightPromise = null;
+          store.set(LEGACY_MIGRATION_KEY, true);
+          store.set(TOKEN_KEY, candidate);
+          globalState.token = candidate;
+          globalState.isAuthorized = true;
+          messageHub.broadcastAll('auth:changed', [candidate]);
+        }
+        return { token: candidate };
+      }
+
       case 'set': {
         const normalized = normalizeToken(token);
         if (normalized) {
           authGeneration++;
           refreshInFlightPromise = null;
+          store.set(LEGACY_MIGRATION_KEY, true);
           store.set(TOKEN_KEY, normalized);
           globalState.token = normalized;
           globalState.isAuthorized = true;
@@ -89,6 +110,7 @@ export const authTokenHandle: IpcMainHandle = {
       case 'clear': {
         authGeneration++;
         refreshInFlightPromise = null;
+        store.set(LEGACY_MIGRATION_KEY, true);
         store.delete(TOKEN_KEY);
         globalState.token = undefined;
         globalState.isAuthorized = false;
@@ -172,6 +194,7 @@ export const authTokenHandle: IpcMainHandle = {
             }
             // 400 (invalid_grant) 或 401 明确说明 refresh token 失效/被撤销
             if (status === 400 || status === 401) {
+              store.set(LEGACY_MIGRATION_KEY, true);
               store.delete(TOKEN_KEY);
               globalState.token = undefined;
               globalState.isAuthorized = false;

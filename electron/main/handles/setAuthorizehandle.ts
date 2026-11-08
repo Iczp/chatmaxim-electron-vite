@@ -3,16 +3,18 @@ import { TOKEN_KEY, globalState, store } from '../global';
 import { createMainWindow } from '../commons/createMainWindow';
 import { createPopWindow } from './openPopWindowHandle';
 import { windowManager } from '../commons/windowManager';
-import { messageHub } from '../commons/messageHub';
 
 export const setAuthorizehandle: IpcMainHandle = {
   channel: 'authorize',
   handle: (_: Electron.IpcMainInvokeEvent | undefined, payload: any): any => {
     return new Promise((resolve, reject) => {
-      store.set(TOKEN_KEY, payload);
-      globalState.token = payload;
+      // 登录令牌必须已由 auth-token 协调器提交，迟到的 authorize 不能复活已退出会话。
+      const current: any = store.get(TOKEN_KEY);
+      if (!current?.access_token || current.access_token !== payload?.access_token) {
+        reject(new Error('auth_session_changed'));
+        return;
+      }
       globalState.isAuthorized = true;
-      messageHub.broadcastAll('auth:changed', [payload]);
       const loginWin = windowManager.get('login');
       loginWin?.close();
 

@@ -21,6 +21,7 @@ let refreshPromise: Promise<TokenDto> | null = null;
 let loadPromise: Promise<void> | null = null;
 
 let authListenerInstalled = false;
+let authRevision = 0;
 
 type ClientCredentialsCache = { token: string; expiresAt: number };
 
@@ -75,6 +76,7 @@ export const setupAuthListener = (): void => {
   if (authListenerInstalled) return;
   authListenerInstalled = true;
   appEvent.on(AppEvents.authChanged, payload => {
+    authRevision++;
     const rawToken = payload.args?.[0];
     if (rawToken) {
       const token = normalizeToken(rawToken);
@@ -97,22 +99,26 @@ export const setupAuthListener = (): void => {
 export const initToken = async (): Promise<void> => {
   try {
     setupAuthListener();
+    const revision = authRevision;
     if (typeof ipcRenderer !== 'undefined' && ipcRenderer?.invoke) {
       const result = await ipcRenderer.invoke('auth-token', { action: 'get' });
-      const token = normalizeToken(result?.token);
-      if (token) {
-        cacheToken = token;
-        setStorageToken(JSON.stringify(token));
-        return;
+      if (revision !== authRevision) return;
+      let token = normalizeToken(result?.token);
+      if (!token) {
+        const local = normalizeToken(getStorageToken());
+        if (local) {
+          // 主进程原子检查是否允许迁移，避免退出后旧窗口恢复旧账号。
+          const migrated = await ipcRenderer.invoke('auth-token', { action: 'migrate', token: local });
+          if (revision !== authRevision) return;
+          token = normalizeToken(migrated?.token);
+        }
       }
+      cacheToken = token;
+      if (token) setStorageToken(JSON.stringify(token));
+      else localStorage.removeItem(TOKEN_KEY);
+      return;
     }
-    const local = normalizeToken(getStorageToken());
-    if (local) {
-      cacheToken = local;
-      if (typeof ipcRenderer !== 'undefined' && ipcRenderer?.invoke) {
-        await ipcRenderer.invoke('auth-token', { action: 'set', token: local });
-      }
-    }
+    cacheToken = normalizeToken(getStorageToken());
   } catch (error) {
     console.warn('[auth] initToken failed', error);
   }
@@ -194,6 +200,7 @@ export const handleToken = async (token: TokenDto, caller?: string): Promise<Tok
   normalized.creation_time = normalized.creation_time || new Date();
   normalized.expires_at =
     normalized.creation_time.getTime() + Number(normalized.expires_in || 0) * 1000;
+  authRevision++;
   cacheToken = normalized;
   console.log(`[auth] handleToken(${caller})`, {
     token_type: normalized.token_type,
@@ -206,6 +213,10 @@ export const handleToken = async (token: TokenDto, caller?: string): Promise<Tok
     }
   } catch (error) {
     console.warn('[auth] sync token to main failed', error);
+    throw error;
+  }
+  if (cacheToken?.access_token !== normalized.access_token) {
+    throw new Error('auth_session_changed');
   }
   emitAuthChanged(normalized);
   return normalized;
@@ -225,7 +236,8 @@ export const refreshToken = async (token?: TokenDto): Promise<TokenDto> => {
   if (refreshPromise) {
     return refreshPromise;
   }
-  refreshPromise = (async () => {
+  const revision = authRevision;
+  const task = (async () => {
     try {
       if (typeof ipcRenderer !== 'undefined' && ipcRenderer?.invoke) {
         const res = await ipcRenderer.invoke('auth-token', {
@@ -234,6 +246,9 @@ export const refreshToken = async (token?: TokenDto): Promise<TokenDto> => {
         });
         if (res?.success && res.token) {
           const nextToken = normalizeToken(res.token)!;
+          if (revision !== authRevision && cacheToken?.access_token !== nextToken?.access_token) {
+            throw new Error('auth_session_changed');
+          }
           cacheToken = nextToken;
           setStorageToken(JSON.stringify(nextToken));
           emitAuthChanged(nextToken);
@@ -264,11 +279,13 @@ export const refreshToken = async (token?: TokenDto): Promise<TokenDto> => {
         await clearSession('refresh_token_rejected');
       }
       throw error;
-    } finally {
-      refreshPromise = null;
     }
   })();
-  return refreshPromise;
+  refreshPromise = task;
+  void task.finally(() => {
+    if (refreshPromise === task) refreshPromise = null;
+  }).catch(() => {});
+  return task;
 };
 
 /**
@@ -322,6 +339,7 @@ export const isTokenExpired = (token: TokenDto | null, skewSeconds = 300): boole
  * 清除登录态（本地 + 主进程 + 其它窗口）
  */
 export const clearSession = async (reason?: string): Promise<void> => {
+  authRevision++;
   cacheToken = null;
   refreshPromise = null;
   clientCredentialsCache.clear();
