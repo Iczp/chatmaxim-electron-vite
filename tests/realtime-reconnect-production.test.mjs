@@ -23,6 +23,7 @@ function createBridge(windowName) {
       AppEvents: { realtimeEvent: 'event', realtimeStatus: 'status', sessionUpdated: 'session' } },
     './signalrClient': { signalRClient: refs },
     './commands': {},
+    './sessionRefreshQueue': { SessionRefreshQueue: class { schedule() {} cancelAll() {} } },
   };
   const source = fs.readFileSync(new URL('../src/realtime/realtimeHub.ts', import.meta.url), 'utf8');
   const js = ts.transpileModule(source, { compilerOptions: { module: ts.ModuleKind.CommonJS, target: ts.ScriptTarget.ES2020 } }).outputText;

@@ -35,3 +35,7 @@
 状态：生产窗口处理器隔离测试与定向类型检查通过；真实 Electron、外部站点及各平台联调待验证。BrowserView 显式启用沙箱、上下文隔离和 Web 安全，禁用 Node；限制 HTTP/HTTPS 导航和重定向，弹窗转系统浏览器；宿主禁止页面导航，复用窗口加载新地址。`tests/browser-security-production.test.mjs` 使用模拟 Electron 边界检查生产处理器。其他业务窗口仍使用旧权限配置，不能视为全部完成安全整改。
 
 验证限制：`npx tsc --noEmit -p tsconfig.node.json` 未通过，报告已有 `vite-plugin-electron/electron-env` 类型引用、`ImportMeta.env` 与第三方可选类型依赖问题；当前 Vite/TypeScript 配置为用户原有未提交更改，未擅自修改。对本次主进程文件单独运行 `npx tsc --noEmit --skipLibCheck --module esnext --moduleResolution bundler --target es2020 --types vite/client --esModuleInterop electron/main/handles/openBrowserWindowHandle.ts` 通过。
+
+## 2026-11-09：M5 实时会话角标一致性
+
+状态：生产队列与事件处理器自动测试通过；真实服务、已读竞态和多窗口联调待验证。消息通知不再直接累加角标或信任消息体更新会话，而是合并通知后读取服务端好友详情与角标总览；请求中出现新通知时丢弃过时结果并补跑，停止后不应用迟到结果。无消息体通知同样触发刷新。`tests/session-refresh-queue-production.test.mjs` 与 `tests/realtime-mutation-production.test.mjs` 覆盖合并和事件分发。本地持久化与断网增量同步仍未完成。

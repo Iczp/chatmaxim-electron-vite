@@ -7,6 +7,7 @@ import { useRealtimeStore } from '../stores/realtimeStore';
 import { useWindowStore } from '../stores/windowStore';
 import { appEvent, AppEvents } from '../ipc/appEvent';
 import { signalRClient, RealtimeEnvelope } from './signalrClient';
+import { SessionRefreshQueue } from './sessionRefreshQueue';
 import {
   isAiCommand,
   isMessageCommand,
@@ -17,31 +18,26 @@ import {
 let started = false;
 let clientHandlerRegistered = false;
 let statusWatchInstalled = false;
-const sessionRefreshTimers = new Map<string, ReturnType<typeof setTimeout>>();
-
 const isMainWindow = (): boolean => {
   const windowStore = useWindowStore();
   return windowStore.name === 'main';
 };
 
-const debouncedRefreshSession = (sessionUnitId: string) => {
-  const existing = sessionRefreshTimers.get(sessionUnitId);
-  if (existing) clearTimeout(existing);
-  sessionRefreshTimers.set(
-    sessionUnitId,
-    setTimeout(async () => {
-      sessionRefreshTimers.delete(sessionUnitId);
-      try {
-        const detail = await apiV2.sessions.friend(sessionUnitId);
-        if (detail) {
-          const store = useImStore();
-          store.setMany([detail]);
-        }
-      } catch (error) {
-        console.warn('[realtime] refresh session failed', sessionUnitId, error);
-      }
-    }, 400),
-  );
+const sessionOwnerHints = new Map<string, number>();
+const sessionRefreshQueue = new SessionRefreshQueue(async (sessionUnitId, isCurrent) => {
+  const detail = await apiV2.sessions.friend(sessionUnitId);
+  if (!isCurrent() || !detail) return;
+  const store = useImStore();
+  const ownerId = detail.ownerId ?? store.getSessionUnit(sessionUnitId)?.ownerId ?? sessionOwnerHints.get(sessionUnitId);
+  sessionOwnerHints.delete(sessionUnitId);
+  if (ownerId != null) store.setMany([{ ...detail, id: detail.id || sessionUnitId, ownerId }]);
+  // 汇总角标同样来自服务端，不能按可能重复或乱序的通知自行累加。
+  store.getBadgeByCurrentUser();
+}, error => console.warn('[realtime] refresh session failed', error));
+
+const debouncedRefreshSession = (sessionUnitId: string, ownerId?: number) => {
+  if (ownerId != null && ownerId > 0) sessionOwnerHints.set(sessionUnitId, ownerId);
+  sessionRefreshQueue.schedule(sessionUnitId);
 };
 
 const refreshPresence = async () => {
@@ -67,33 +63,11 @@ const handleKicked = async (payload: any) => {
   await signalRClient.stop();
 };
 
-const handleMessageCommand = (command: SignalRCommand, envelope: RealtimeEnvelope) => {
-  const store = useImStore();
+const handleMessageCommand = (envelope: RealtimeEnvelope) => {
   const message = envelope.payload;
   const scopes = envelope.scopes || [];
   scopes.forEach(scope => {
-    const sessionUnitId = scope.sessionUnitId;
-    if (!sessionUnitId) return;
-    const owner = store.getSessionUnit(sessionUnitId);
-    const chatObjectId = scope.chatObjectId || owner?.ownerId || 0;
-    if (!message || !message.id) {
-      // payload 仅为变更通知时，交给当前聊天页/会话列表自行增量拉取
-      return;
-    }
-    const isSelf = message.senderSessionUnit?.id === sessionUnitId;
-    if (owner) {
-      const currentId = owner.lastMessage?.id || 0;
-      if (!currentId || message.id >= currentId) {
-        store.setLastMessage(chatObjectId, sessionUnitId, message);
-      }
-    }
-    if (command === SignalRCommand.MessageCreated || command === SignalRCommand.MessageForwarded) {
-      if (!isSelf) {
-        store.incrementBadge(chatObjectId, sessionUnitId, message);
-      }
-    }
-    store.setMaxMessageId(message.id);
-    debouncedRefreshSession(sessionUnitId);
+    if (scope.sessionUnitId) debouncedRefreshSession(scope.sessionUnitId, scope.chatObjectId);
   });
   // 保持旧事件契约：Chat.vue 监听 'chat' 后按需 fetchLatest
   eventBus.emit('chat' as any, [envelope, message] as any);
@@ -118,12 +92,15 @@ export const dispatchEnvelope = async (
   try {
     if (isMessageCommand(command)) {
       if (command === SignalRCommand.MessageRollbacked) eventBus.emit('messageMutation', envelope);
-      handleMessageCommand(command, envelope);
+      handleMessageCommand(envelope);
     } else if (isAiCommand(command)) {
       eventBus.emit('ai' as any, [command, envelope.payload] as any);
     } else {
       switch (command) {
         case SignalRCommand.MessageBadgeUpdated:
+          (envelope.scopes || []).forEach(scope => {
+            if (scope.sessionUnitId) debouncedRefreshSession(scope.sessionUnitId, scope.chatObjectId);
+          });
           store.getBadgeByCurrentUser();
           eventBus.emit('session:updated' as any, envelope.scopes as any);
           break;
@@ -133,7 +110,7 @@ export const dispatchEnvelope = async (
         case SignalRCommand.SessionUnitChanged: {
           const scopes = envelope.scopes || [];
           scopes.forEach(scope => {
-            if (scope.sessionUnitId) debouncedRefreshSession(scope.sessionUnitId);
+            if (scope.sessionUnitId) debouncedRefreshSession(scope.sessionUnitId, scope.chatObjectId);
           });
           const payloadUnit = (envelope.payload as any)?.sessionUnitId;
           if (payloadUnit) debouncedRefreshSession(payloadUnit);
@@ -265,8 +242,8 @@ export const startRealtime = async (): Promise<void> => {
 };
 
 export const stopRealtime = async (): Promise<void> => {
-  sessionRefreshTimers.forEach(timer => clearTimeout(timer));
-  sessionRefreshTimers.clear();
+  sessionRefreshQueue.cancelAll();
+  sessionOwnerHints.clear();
   if (isMainWindow()) {
     await signalRClient.stop();
   }
