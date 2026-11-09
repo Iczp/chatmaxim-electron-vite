@@ -10,6 +10,7 @@ app.whenReady().then(async () => {
     const source = fs.readFileSync(path.join(root, 'database.js'), 'utf8');
     const mergeSource = fs.readFileSync(path.join(root, 'friend-merge.js'), 'utf8');
     const friendSource = fs.readFileSync(path.join(root, 'friend-cache.js'), 'utf8');
+    const ownerSource = fs.readFileSync(path.join(root, 'owner-cache.js'), 'utf8');
     const messageSource = fs.readFileSync(path.join(root, 'message-cache.js'), 'utf8');
     const invalidationSource = fs.readFileSync(path.join(root, 'message-invalidation.js'), 'utf8');
     const sendLockSource = fs.readFileSync(path.join(root, 'message-send-lock.js'), 'utf8');
@@ -26,6 +27,13 @@ app.whenReady().then(async () => {
           resolveLocalAccountId: async () => 'account-c',
         };
         globalThis.activeSession = 1; ${friendSource}\n globalThis.friendCache = exports;
+      })()`);
+      await win.webContents.executeJavaScript(`(() => {
+        const exports = {}; const require = name => name === './imDatabase' ? { ImDatabase } : {
+          isLocalAccountCurrent: async scope => globalThis.activeSession === scope.sessionVersion,
+          readLocalAccountSnapshot: async () => ({ accountId: 'account-c', sessionVersion: globalThis.activeSession }),
+          resolveLocalAccountId: async () => 'account-c',
+        }; ${ownerSource}\n globalThis.ownerCache = exports;
       })()`);
       await win.webContents.executeJavaScript(`(() => {
         const exports = {}; const require = name => name === './imDatabase' ? { ImDatabase } :
@@ -105,6 +113,11 @@ app.whenReady().then(async () => {
         await friendCache.saveCachedFriends(scope, [{ id: 'no-score', ownerId: 1 }]);
       })()`);
       await first.webContents.executeJavaScript(`(async () => {
+        const scope = await ownerCache.readOwnerScope();
+        await ownerCache.saveCachedOwners(scope, [{ id: 7, name: 'owner-c' }, { id: 8, name: 'second' }]);
+        await ownerCache.saveCurrentOwner(scope, 8);
+      })()`);
+      await first.webContents.executeJavaScript(`(async () => {
         const scope = { accountId: 'account-d', ownerId: 1, sessionVersion: 1 };
         await messageCache.saveCachedMessages(scope, 'chat', Array.from({ length: 12 }, (_, n) => ({ id: n + 1, content: { text: 'm' + n } })));
         await messageCache.markHistoryComplete(scope, 'chat');
@@ -143,14 +156,16 @@ app.whenReady().then(async () => {
         const scope = { accountId: 'account-d', ownerId: 1, sessionVersion: 1 };
         const cached = await messageCache.readCachedMessages(scope, 'chat', 10);
         const pending = await messageCache.readPendingMessages(scope, 'chat');
+        const ownerScope = await ownerCache.readOwnerScope();
+        const owners = await ownerCache.readCachedOwners(ownerScope);
         await messageCache.saveCachedMessages(scope, 'chat', [{ id: 13, clientMessageId: 'outbox', content: { text: 'unsent' } }]);
         let rejected = false;
         try { await messageCache.savePendingMessage(scope, 'chat', { clientMessageId: 'outbox', state: 4, error: 'late' }); } catch { rejected = true; }
         await messageCache.deletePendingMessage(scope, 'chat', 'outbox');
         const confirmed = await messageCache.readCachedMessagesByIds(scope, 'chat', [13]);
-        return { count: messages.length, id: messages[1]?.serverId, cursor, cached: cached.length, complete: await messageCache.readHistoryComplete(scope, 'chat'), pending: pending.map(x => [x.clientMessageId, x.state]), confirmed: confirmed.length, remaining: (await messageCache.readPendingMessages(scope, 'chat')).length, rejected };
+        return { count: messages.length, id: messages[1]?.serverId, cursor, cached: cached.length, complete: await messageCache.readHistoryComplete(scope, 'chat'), pending: pending.map(x => [x.clientMessageId, x.state]), confirmed: confirmed.length, remaining: (await messageCache.readPendingMessages(scope, 'chat')).length, rejected, owners: owners.owners.map(x => x.id), currentOwner: owners.currentOwnerId };
       })()`);
-      if (JSON.stringify(result) !== JSON.stringify({ count: 2, id: 10, cursor: 'cursor-1', cached: 10, complete: true, pending: [['outbox', 4]], confirmed: 1, remaining: 0, rejected: true })) throw new Error(`restart failed ${JSON.stringify(result)}`);
+      if (JSON.stringify(result) !== JSON.stringify({ count: 2, id: 10, cursor: 'cursor-1', cached: 10, complete: true, pending: [['outbox', 4]], confirmed: 1, remaining: 0, rejected: true, owners: [7, 8], currentOwner: 8 })) throw new Error(`restart failed ${JSON.stringify(result)}`);
     }
     console.log(`DB_INTEGRATION_OK:${phase}`);
   } catch (error) {

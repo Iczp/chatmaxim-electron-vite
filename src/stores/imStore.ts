@@ -20,6 +20,8 @@ import { mapToSessionItemDto, sortSessionItemDto } from '../commons/utils';
 import { TrayPayload } from '../ipc-types';
 import { toRaw } from 'vue';
 import { setTray } from '../commons/setTray';
+import { readAuthenticatedSessionVersion } from '../data/local/localAccount';
+import { readOwnerScope, saveCachedOwners } from '../data/local/ownerCache';
 
 interface State {
   /**
@@ -84,6 +86,8 @@ interface State {
    * @memberof State
    */
   isPendingForGetChatObjectByCurrentUser: boolean;
+  badgeRequestSessionVersion: number | null;
+  ownerRequestSessionVersion: number | null;
 }
 
 const key = (chatObjectId: number, keyword?: string) => `${chatObjectId}-${keyword || ''}`;
@@ -100,6 +104,8 @@ const defaultValue: State = {
   autoMessageId: 0,
   isPendingForGetBadgeByCurrentUser: false,
   isPendingForGetChatObjectByCurrentUser: false,
+  badgeRequestSessionVersion: null,
+  ownerRequestSessionVersion: null,
 };
 
 export const useImStore = defineStore('im', {
@@ -357,7 +363,6 @@ export const useImStore = defineStore('im', {
           ...x,
         });
       });
-      console.log('setChatObjects', this.chatObjects);
     },
     /**
      *
@@ -365,7 +370,6 @@ export const useImStore = defineStore('im', {
      * @returns
      */
     getChatObject(chatObjectId: number | string | undefined): BadgeDetialDto | undefined {
-      console.log('getChatObject', chatObjectId, this.chatObjects);
       if (chatObjectId) {
         return this.chatObjects.get(Number(chatObjectId));
       }
@@ -377,17 +381,21 @@ export const useImStore = defineStore('im', {
      * 聊天对象信息仍来自 `/chat-object/by-current-user`。
      */
     getBadgeByCurrentUser(): void {
-      if (this.isPendingForGetBadgeByCurrentUser) {
-        console.warn('getBadgeByCurrentUser isPending:', this.isPendingForGetBadgeByCurrentUser);
-        return;
-      }
-      this.isPendingForGetBadgeByCurrentUser = true;
       (async () => {
+        let version: number | null = null;
+        let started = false;
         try {
+          version = await readAuthenticatedSessionVersion();
+          if (version == null) return;
+          if (this.isPendingForGetBadgeByCurrentUser && this.badgeRequestSessionVersion === version) return;
+          this.isPendingForGetBadgeByCurrentUser = true;
+          this.badgeRequestSessionVersion = version;
+          started = true;
           const [owners, overview] = await Promise.all([
             ChatObjectService.getApiChatChatObjectByCurrentUser({}),
             apiV2.sessions.overview(),
           ]);
+          if (version == null || version !== await readAuthenticatedSessionVersion()) return;
           const badgeMap = new Map<number, number>();
           (overview?.overviews || []).forEach(item => {
             if (item.ownerId != null) {
@@ -404,19 +412,28 @@ export const useImStore = defineStore('im', {
           );
           this.setChatObjects(items);
           this.updateTray();
+          try {
+            const scope = await readOwnerScope(true);
+            if (scope?.sessionVersion === version) await saveCachedOwners(scope, owners.items || []);
+          } catch { console.warn('[im] 保存聊天身份失败'); }
         } catch (error) {
+          if (version == null || version !== await readAuthenticatedSessionVersion()) return;
           console.warn('[im] overview badge failed, fallback to legacy endpoint', error);
           try {
             const items = await SessionUnitService.getApiChatSessionUnitBadgeByCurrentUser({
               isImmersed: false,
             });
+            if (version !== await readAuthenticatedSessionVersion()) return;
             this.setChatObjects(items);
             this.updateTray();
           } catch (fallbackError) {
             console.error('[im] get badge failed', fallbackError);
           }
         } finally {
-          this.isPendingForGetBadgeByCurrentUser = false;
+          if (started && this.badgeRequestSessionVersion === version) {
+            this.isPendingForGetBadgeByCurrentUser = false;
+            this.badgeRequestSessionVersion = null;
+          }
         }
       })();
     },
@@ -425,20 +442,32 @@ export const useImStore = defineStore('im', {
      *
      */
     getChatObjectByCurrentUser(): void {
-      if (this.isPendingForGetChatObjectByCurrentUser) {
-        const msg = `getChatObjectByCurrentUser isPending:${this.isPendingForGetChatObjectByCurrentUser}`;
-        console.warn(msg);
-        return;
-        // throw new Error(msg);
-      }
-      this.isPendingForGetChatObjectByCurrentUser = true;
-      ChatObjectService.getApiChatChatObjectByCurrentUser({})
-        .then(res => {
-          console.log('getChatObjectByCurrentUser', res);
-          const items = res.items!.map(owner => <BadgeDetialDto>{ chatObjectId: owner.id, owner });
-          this.setChatObjects(items);
-        })
-        .finally(() => (this.isPendingForGetChatObjectByCurrentUser = false));
+      (async () => {
+        let version: number | null = null;
+        let started = false;
+        try {
+          version = await readAuthenticatedSessionVersion();
+          if (version == null) return;
+          if (this.isPendingForGetChatObjectByCurrentUser && this.ownerRequestSessionVersion === version) return;
+          this.isPendingForGetChatObjectByCurrentUser = true;
+          this.ownerRequestSessionVersion = version;
+          started = true;
+          const res = await ChatObjectService.getApiChatChatObjectByCurrentUser({});
+          if (version !== await readAuthenticatedSessionVersion()) return;
+          const owners = res.items || [];
+          this.setChatObjects(owners.map(owner => <BadgeDetialDto>{ chatObjectId: owner.id, owner }));
+          try {
+            const scope = await readOwnerScope(true);
+            if (scope?.sessionVersion === version) await saveCachedOwners(scope, owners);
+          } catch { console.warn('[im] 保存聊天身份失败'); }
+        } catch { console.warn('[im] 获取聊天身份失败'); }
+        finally {
+          if (started && this.ownerRequestSessionVersion === version) {
+            this.isPendingForGetChatObjectByCurrentUser = false;
+            this.ownerRequestSessionVersion = null;
+          }
+        }
+      })();
     },
     /**
      * 修正角标

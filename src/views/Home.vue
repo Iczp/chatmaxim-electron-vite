@@ -26,6 +26,8 @@ import Avatar from '../components/Avatar.vue';
 import { useI18n } from 'vue-i18n';
 import AudioPlayer from '../components/AudioPlayer.vue';
 import { MusicLib, MusicQueue, MusicNote, MusicLyrics } from '../icons';
+import { readOwnerScope, saveCurrentOwner } from '../data/local/ownerCache';
+import { isLocalAccountCurrent } from '../data/local/localAccount';
 
 // import { useVueWebSocket } from '../apis/websockets/useVueWebSocket';
 
@@ -34,7 +36,7 @@ import { onBeforeUnmount } from 'vue';
 const { t } = useI18n();
 const route = useRoute();
 // const { connectionText, connectionState, retryCount } = useWebsocket();
-const { badge, badgeItems } = useBadges();
+const { badge, badgeItems, ready } = useBadges();
 // const router = useRouter();
 
 // const { status } = useVueWebSocket({});
@@ -46,8 +48,26 @@ onBeforeUnmount(() => {
   void stopRealtime();
 });
 
+void ready.then(async selected => {
+  if (!selected || route.name !== 'im-empty') return;
+  const scope = await readOwnerScope();
+  if (scope?.sessionVersion === selected.sessionVersion && await isLocalAccountCurrent(scope) && route.name === 'im-empty') {
+    await router.replace({ name: 'im', params: { chatObjectId: selected.ownerId } });
+  }
+}).catch(() => { /* 缓存不可用时保留现有首页 */ });
+
+let selectionWrite: Promise<void> = Promise.resolve();
+const rememberOwner = (ownerId: number) => {
+  const capturedScope = readOwnerScope();
+  selectionWrite = selectionWrite.then(async () => {
+    const scope = await capturedScope;
+    if (scope) await saveCurrentOwner(scope, ownerId);
+  }).catch(() => { console.warn('[im] 保存当前聊天身份失败'); });
+};
+
 const navToChatHistory = (item: BadgeDto) => {
   const chatObjectId = item.chatObjectId!;
+  rememberOwner(chatObjectId);
   const arg = chatHistories[chatObjectId];
   if (arg) {
     navToChat({
@@ -283,4 +303,3 @@ const getKey = (route: RouteLocationNormalizedLoaded, component: any): string | 
   height: 100%;
 }
 </style>
-../composables/useBadges
