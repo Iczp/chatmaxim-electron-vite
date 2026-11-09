@@ -5,8 +5,9 @@ import { SessionUnitGetListInput } from '../apis/dtos/SessionUnitGetListInput';
 import { useImStore } from '../stores/imStore';
 import { appEvent, AppEvents } from '../ipc/appEvent';
 import { readAuthenticatedSessionVersion } from '../data/local/localAccount';
-import { readFriendScope, readCachedFriends, saveCachedFriends, isFriendScopeCurrent } from '../data/local/friendCache';
+import { readFriendScope, readCachedFriends, saveCachedFriends, isFriendScopeCurrent, openFriendChangesStore } from '../data/local/friendCache';
 import { mergeFriendRaw } from '../data/local/friendMerge';
+import { syncFriendChanges } from '../realtime/friendChangesSync';
 
 export type FetchSessionUnitResult = {
   items: SessionUnitOwnerDto[];
@@ -23,12 +24,22 @@ const mergeSessionUnits = (
   if (mode === 'append') {
     current.forEach(item => item.id && map.set(item.id, item));
     incoming.forEach(item => item.id && map.set(item.id, item));
-    return [...map.values()];
+  } else {
+    // replace / refresh: incoming takes precedence
+    incoming.forEach(item => item.id && map.set(item.id, item));
+    current.forEach(item => item.id && !map.has(item.id) && map.set(item.id, item));
   }
-  // replace / refresh: incoming takes precedence
-  incoming.forEach(item => item.id && map.set(item.id, item));
-  current.forEach(item => item.id && !map.has(item.id) && map.set(item.id, item));
-  return [...map.values()];
+  // 本地分页索引按 score、id 降序；变更后列表末项仍必须是正确的分页边界。
+  return [...map.values()].sort((a, b) => {
+    const aValue = a.score ?? (a as any).Score;
+    const bValue = b.score ?? (b as any).Score;
+    const aScore = aValue == null ? NaN : Number(aValue);
+    const bScore = bValue == null ? NaN : Number(bValue);
+    const aValid = Number.isSafeInteger(aScore);
+    const bValid = Number.isSafeInteger(bScore);
+    if (aValid && bValid) return bScore - aScore || (a.id! < b.id! ? 1 : a.id! > b.id! ? -1 : 0);
+    return aValid === bValid ? 0 : aValid ? -1 : 1;
+  });
 };
 
 export const useSessionUnitList = ({
@@ -55,7 +66,7 @@ export const useSessionUnitList = ({
   let authEpoch = 0;
   const unsubscribeAuth = appEvent.on(AppEvents.authChanged, payload => {
     const version = payload.args?.[1];
-    if (payload.args?.[0] == null || (viewSessionVersion != null && version !== viewSessionVersion)) {
+    if (payload.args?.[0] == null || viewSessionVersion == null || version !== viewSessionVersion) {
       authEpoch++;
       viewSessionVersion = null;
       list.value = [];
@@ -68,6 +79,8 @@ export const useSessionUnitList = ({
       minMessageId.value = undefined;
       maxMessageId.value = undefined;
       isBof.value = false;
+      isPendingOfFetchLatest.value = false;
+      isPendingOfFetchHistorical.value = false;
     }
   });
   onUnmounted(unsubscribeAuth);
@@ -124,6 +137,7 @@ export const useSessionUnitList = ({
     let cached: SessionUnitOwnerDto[] = [];
     try {
       const sessionVersion = await readAuthenticatedSessionVersion();
+      if (epoch !== authEpoch) throw new Error('登录状态已变化');
       viewSessionVersion = sessionVersion;
       try {
         const scope = await readFriendScope(ownerId);
@@ -151,7 +165,7 @@ export const useSessionUnitList = ({
         throw error;
       }
     } finally {
-      isPendingOfFetchLatest.value = false;
+      if (epoch === authEpoch) isPendingOfFetchLatest.value = false;
     }
   };
 
@@ -163,6 +177,7 @@ export const useSessionUnitList = ({
     let cached: SessionUnitOwnerDto[] = [];
     try {
       const sessionVersion = await readAuthenticatedSessionVersion();
+      if (epoch !== authEpoch) throw new Error('登录状态已变化');
       viewSessionVersion = sessionVersion;
       const last = list.value[list.value.length - 1];
       const score = Number(last?.score ?? (last as any)?.Score);
@@ -203,12 +218,32 @@ export const useSessionUnitList = ({
         throw error;
       }
     } finally {
-      isPendingOfFetchHistorical.value = false;
+      if (epoch === authEpoch) isPendingOfFetchHistorical.value = false;
     }
   };
 
+  const syncChanges = async () => {
+    const epoch = authEpoch;
+    const sessionVersion = await readAuthenticatedSessionVersion();
+    if (sessionVersion == null || epoch !== authEpoch) return;
+    viewSessionVersion = sessionVersion;
+    const scope = await readFriendScope(ownerId);
+    if (!scope || scope.sessionVersion !== sessionVersion) {
+      await fetchLatest({ caller: 'refresh' });
+      return;
+    }
+    if (typeof navigator === 'undefined' || !navigator.locks) throw new Error('当前环境不支持好友增量同步协调');
+    await navigator.locks.request(`gotoim-friend-changes:${ownerId}`, { mode: 'exclusive', ifAvailable: true }, async lock => {
+      if (!lock) return;
+      const local = await openFriendChangesStore(scope);
+      const synced = await syncFriendChanges(ownerId, local, apiV2.sessions.changes,
+        items => applyItems(items, 'replace'),
+        async () => epoch === authEpoch && await isFriendScopeCurrent(scope));
+      if (!synced && epoch === authEpoch) await fetchLatest({ caller: 'refresh-without-baseline' });
+    });
+  };
   const refresh = () => {
-    void fetchLatest({ caller: 'refresh' }).catch(error => {
+    void syncChanges().catch(error => {
       console.warn('[session] refresh failed', error);
     });
   };
@@ -278,6 +313,7 @@ export const useSessionUnitList = ({
     maxMessageId,
     minMessageId,
     refresh,
+    syncChanges,
     fetchLatest,
     fetchHistorical,
     isPendingOfFetchLatest,

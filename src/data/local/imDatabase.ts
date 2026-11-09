@@ -42,6 +42,7 @@ const validateScope = (scope: LocalScope) => {
 };
 const validateUnit = (unit: string) => { if (!unit?.trim()) throw new Error('本地数据库需要会话 ID'); };
 const validateScore = (score: number) => { if (!Number.isSafeInteger(score)) throw new Error('本地数据库排序值无效'); };
+const FRIEND_CHANGES_KEY = '\u0000friend-changes';
 
 export class ImDatabase {
   private constructor(private readonly db: IDBDatabase) {}
@@ -113,29 +114,79 @@ export class ImDatabase {
   }
 
   async upsertFriends(scope: LocalScope, items: LocalFriendWrite[]): Promise<void> {
-    validateScope(scope);
-    for (const row of items) {
-      if (row.accountId !== scope.accountId || row.ownerId !== scope.ownerId || !row.id?.trim()) throw new Error('好友作用域无效');
-      if (row.score != null) validateScore(row.score);
-    }
+    this.validateFriends(scope, items);
     const tx = this.db.transaction('friends', 'readwrite');
     const done = complete(tx);
     try {
-      const store = tx.objectStore('friends');
-      for (const row of items) {
-        const previous: LocalFriend | undefined = await request(store.get([scope.accountId, scope.ownerId, row.id]));
-        if (!previous && row.score == null) continue;
-        const raw = mergeFriendRaw(previous ? { ...previous.raw, score: previous.score } : undefined, row.raw);
-        const mergedScore = Number(raw.score ?? raw.Score ?? row.score ?? previous?.score);
-        validateScore(mergedScore);
-        store.put({ ...row, score: mergedScore, raw });
-      }
+      await this.writeFriends(tx.objectStore('friends'), scope, items, false);
       await done;
     } catch (error) {
       try { tx.abort(); } catch { /* 事务可能已经结束 */ }
       await done.catch(() => {});
       throw error;
     }
+  }
+
+  private validateFriends(scope: LocalScope, items: LocalFriendWrite[]): void {
+    validateScope(scope);
+    for (const row of items) {
+      if (row.accountId !== scope.accountId || row.ownerId !== scope.ownerId || !row.id?.trim()) throw new Error('好友作用域无效');
+      if (row.score != null) validateScore(row.score);
+    }
+  }
+
+  private async writeFriends(store: IDBObjectStore, scope: LocalScope, items: LocalFriendWrite[], strict: boolean): Promise<LocalFriend[]> {
+    const saved: LocalFriend[] = [];
+    for (const row of items) {
+      const previous: LocalFriend | undefined = await request(store.get([scope.accountId, scope.ownerId, row.id]));
+      if (!previous && row.score == null) {
+        if (strict) throw new Error('新好友变更缺少排序分数');
+        continue;
+      }
+      const raw = mergeFriendRaw(previous ? { ...previous.raw, score: previous.score } : undefined, row.raw);
+      const mergedScore = Number(raw.score ?? raw.Score ?? row.score ?? previous?.score);
+      validateScore(mergedScore);
+      const value = { ...row, score: mergedScore, raw };
+      store.put(value);
+      saved.push(value);
+    }
+    return saved;
+  }
+
+  /** 原子提交好友变更和高水位；重放边界时不允许高水位倒退。 */
+  async applyFriendChanges(scope: LocalScope, items: LocalFriendWrite[], ticks: number): Promise<LocalFriend[]> {
+    this.validateFriends(scope, items);
+    if (!Number.isSafeInteger(ticks) || ticks < 0) throw new Error('好友变更游标无效');
+    const tx = this.db.transaction(['friends', 'cursors'], 'readwrite');
+    const done = complete(tx);
+    try {
+      const saved = await this.writeFriends(tx.objectStore('friends'), scope, items, true);
+      const store = tx.objectStore('cursors');
+      const key = [scope.accountId, scope.ownerId, FRIEND_CHANGES_KEY];
+      const old = await request(store.get(key));
+      store.put({ ...scope, sessionUnitId: FRIEND_CHANGES_KEY, friendTicks: Math.max(old?.friendTicks ?? 0, ticks) });
+      await done;
+      return saved;
+    } catch (error) { try { tx.abort(); } catch {} await done.catch(() => {}); throw error; }
+  }
+
+  async readFriendChangesTicks(scope: LocalScope): Promise<number | null> {
+    validateScope(scope);
+    const tx = this.db.transaction(['friends', 'cursors'], 'readonly');
+    const done = complete(tx);
+    try {
+      const cursor = await request(tx.objectStore('cursors').get([scope.accountId, scope.ownerId, FRIEND_CHANGES_KEY]));
+      if (Number.isSafeInteger(cursor?.friendTicks) && cursor.friendTicks > 0) { await done; return cursor.friendTicks; }
+      const range = IDBKeyRange.bound([scope.accountId, scope.ownerId, ''], [scope.accountId, scope.ownerId, '\uffff']);
+      const rows: LocalFriend[] = await request(tx.objectStore('friends').getAll(range));
+      let max = 0;
+      for (const row of rows) {
+        const ticks = Number(row.raw.ticks ?? row.raw.Ticks);
+        if (Number.isSafeInteger(ticks) && ticks > max) max = ticks;
+      }
+      await done;
+      return max || null;
+    } catch (error) { await done.catch(() => {}); throw error; }
   }
 
   async readFriends(scope: LocalScope, limit: number, before?: LocalPageCursor): Promise<LocalFriend[]> {

@@ -35,6 +35,7 @@ const {
   maxMessageId,
   minMessageId,
   refresh,
+  syncChanges,
   keyword,
   fetchLatest,
   fetchHistorical,
@@ -147,7 +148,7 @@ const init = () => {
   }
   fetchLatest({
     caller: 'onActivated',
-  }).catch(err => {
+  }).then(() => syncChanges()).catch(err => {
     // fetchLatestTimer = setTimeout(init, 1000 * 10);
   });
 };

@@ -101,3 +101,9 @@
 状态：生产模块自动测试、类型检查及 Windows Electron 数据库测试通过；真实接口数据和 UI 排序待验证。参考 Flutter 的 FriendScore 规则，完整排序字段以 `score = sorting × 10^13 + ticks` 解码；服务端分数有效但 ticks 较旧时采用解码后的 ticks。局部或无法解码的响应保留已有排序字段，完整的较低分数可反映取消置顶；数据库分页索引与合并后的分数一致。缺少 score 的局部响应可更新已有好友，不为新好友猜测分页游标。
 
 消息预览按可安全比较的整数 ID 保留较新记录，支持字符串形式的大 ID；本地已读到最新消息时不恢复过时未读数。`tests/friend-merge-production.test.mjs` 覆盖局部字段、取消置顶、大小写、ticks 修正、大 ID 与已读；`tests/integration/im-database-runner.cjs` 覆盖真实 IndexedDB 中局部更新、排序分数及好友详情持久化。真实服务端排序契约、分页游标与跨窗口更新仍需联调；消息发送和历史其他链路尚未完成大 ID 全链路支持。
+
+## 2026-11-09：M3 好友 changes 增量基础
+
+状态：生产同步逻辑自动测试、类型检查及 Windows Electron IndexedDB 重启测试通过；真实后端契约与 UI 待联调。会话页面激活及 SignalR 重连时，在已有本地基线的情况下调用好友 changes，重放边界 tick，分页校验后将变更和高水位在同一事务提交，再更新界面；无本地基线时回退加载好友首页。异常响应、身份不匹配、新好友缺少排序分数或事务失败不会推进该页游标；窗口间以 Web Lock 避免同一身份并发执行。列表变更后按本地分页索引的 score、id 顺序排列，保持分页边界。
+
+`tests/friend-changes-production.test.mjs` 覆盖分页、边界重放、提交失败及无效游标；`tests/friend-local-first-production.test.mjs` 覆盖页面调用、排序边界和账号切换竞态；真实 Electron 数据库测试覆盖变更与游标事务回滚、高水位不倒退和重启恢复。初始高水位参考 Flutter 从已有好友 ticks 推导，尚未证明它能覆盖未缓存好友的全部历史变化；服务端删除事件、游标格式及同 tick 分页规则仍需真实契约确认。其他窗口在锁被占用时不会立即收到好友变更，仍需数据变更广播；缺少 Web Lock 的环境不会执行该增量流程。不能据此认定完整离线同步或生产验收完成。

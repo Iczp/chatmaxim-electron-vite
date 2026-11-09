@@ -233,7 +233,7 @@ export const sessionsV2 = {
     minTicks: number;
     cursorId?: string;
     maxResultCount?: number;
-  }): CancelablePromise<PagedResultDto<SessionUnitOwnerDto>> {
+  }): CancelablePromise<PagedResultDto<SessionUnitOwnerDto> & { extra?: { hasMore?: boolean; nextCursorTicks?: number; nextCursorId?: string; nextCursor?: { cursorScore?: number | string; cursorId?: string } } }> {
     return __request(OpenAPI, {
       method: 'GET',
       url: '/api/chat/session-unit-cache/changes',

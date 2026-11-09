@@ -51,6 +51,17 @@ app.whenReady().then(async () => {
         const a = { accountId: 'account-a', ownerId: 1 };
         await db.saveOwners('account-a', [{ ...a, raw: { name: 'owner' } }], 1);
         await db.upsertFriends(a, [{ ...a, id: 'f1', score: 5, raw: { name: 'friend' } }]);
+        const syncScope = { accountId: 'sync-account', ownerId: 2 };
+        await db.upsertFriends(syncScope, [{ ...syncScope, id: 'f', score: 100, raw: { score: 100, sorting: 0, ticks: 100 } }]);
+        let rolledBack = false;
+        try { await db.applyFriendChanges(syncScope, [
+          { ...syncScope, id: 'f', score: 110, raw: { score: 110, sorting: 0, ticks: 110 } },
+          { ...syncScope, id: 'missing', raw: { name: 'no-score' } },
+        ], 110); } catch { rolledBack = true; }
+        if (!rolledBack || await db.readFriendChangesTicks(syncScope) !== 100 || (await db.readFriend(syncScope, 'f')).score !== 100) throw new Error('friend change rollback failed');
+        await db.applyFriendChanges(syncScope, [{ ...syncScope, id: 'f', score: 110, raw: { score: 110, sorting: 0, ticks: 110 } }], 110);
+        await db.applyFriendChanges(syncScope, [], 105);
+        if (await db.readFriendChangesTicks(syncScope) !== 110) throw new Error('friend change cursor regressed');
         await db.setHistoryComplete(a, 's', true);
         await db.upsertMessage({ ...a, sessionUnitId: 's', localId: 'local', clientMessageId: 'client', score: 1, state: 'sending', raw: { text: 'hello' } });
         await db.upsertMessage({ ...a, sessionUnitId: 's', localId: 'server', clientMessageId: 'client', serverId: 10, score: 10, state: 'sent', raw: { text: 'hello' } });
@@ -155,7 +166,8 @@ app.whenReady().then(async () => {
     } else {
       const result = await first.webContents.executeJavaScript(`(async () => {
         const db = await ImDatabase.open(); const a = { accountId: 'account-a', ownerId: 1 };
-        const messages = await db.readMessages(a, 's', 10); const cursor = await db.readMessageCursor(a, 's'); db.close();
+        const messages = await db.readMessages(a, 's', 10); const cursor = await db.readMessageCursor(a, 's');
+        const friendTicks = await db.readFriendChangesTicks({ accountId: 'sync-account', ownerId: 2 }); db.close();
         const scope = { accountId: 'account-d', ownerId: 1, sessionVersion: 1 };
         const cached = await messageCache.readCachedMessages(scope, 'chat', 10);
         const pending = await messageCache.readPendingMessages(scope, 'chat');
@@ -166,9 +178,9 @@ app.whenReady().then(async () => {
         try { await messageCache.savePendingMessage(scope, 'chat', { clientMessageId: 'outbox', state: 4, error: 'late' }); } catch { rejected = true; }
         await messageCache.deletePendingMessage(scope, 'chat', 'outbox');
         const confirmed = await messageCache.readCachedMessagesByIds(scope, 'chat', [13]);
-        return { count: messages.length, id: messages[1]?.serverId, cursor, cached: cached.length, complete: await messageCache.readHistoryComplete(scope, 'chat'), pending: pending.map(x => [x.clientMessageId, x.state]), confirmed: confirmed.length, remaining: (await messageCache.readPendingMessages(scope, 'chat')).length, rejected, owners: owners.owners.map(x => x.id), currentOwner: owners.currentOwnerId };
+        return { count: messages.length, id: messages[1]?.serverId, cursor, friendTicks, cached: cached.length, complete: await messageCache.readHistoryComplete(scope, 'chat'), pending: pending.map(x => [x.clientMessageId, x.state]), confirmed: confirmed.length, remaining: (await messageCache.readPendingMessages(scope, 'chat')).length, rejected, owners: owners.owners.map(x => x.id), currentOwner: owners.currentOwnerId };
       })()`);
-      if (JSON.stringify(result) !== JSON.stringify({ count: 2, id: 10, cursor: 'cursor-1', cached: 10, complete: true, pending: [['outbox', 4]], confirmed: 1, remaining: 0, rejected: true, owners: [7, 8], currentOwner: 8 })) throw new Error(`restart failed ${JSON.stringify(result)}`);
+      if (JSON.stringify(result) !== JSON.stringify({ count: 2, id: 10, cursor: 'cursor-1', friendTicks: 110, cached: 10, complete: true, pending: [['outbox', 4]], confirmed: 1, remaining: 0, rejected: true, owners: [7, 8], currentOwner: 8 })) throw new Error(`restart failed ${JSON.stringify(result)}`);
     }
     console.log(`DB_INTEGRATION_OK:${phase}`);
   } catch (error) {

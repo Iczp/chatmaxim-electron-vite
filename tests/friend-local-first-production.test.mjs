@@ -3,7 +3,7 @@ import assert from 'node:assert/strict';
 import fs from 'node:fs';
 import vm from 'node:vm';
 import ts from 'typescript';
-function setup({ initial = [], remote, pages = [] }) {
+function setup({ initial = [], remote, pages = [], changes, changesStore } ) {
   let version = 1;
   let listener;
   let resolveRemote;
@@ -12,7 +12,7 @@ function setup({ initial = [], remote, pages = [] }) {
   const api = remote || (() => new Promise(resolve => { resolveRemote = resolve; }));
   const deps = {
     vue: { ref: value => ({ value }), watch() {}, onActivated() {}, onDeactivated() {}, onUnmounted() {} },
-    '../apis/v2': { apiV2: { sessions: { friends: api } } },
+    '../apis/v2': { apiV2: { sessions: { friends: api, changes } } },
     '../stores/imStore': { useImStore: () => store },
     '../ipc/appEvent': { AppEvents: { authChanged: 'auth' }, appEvent: { on: (_event, callback) => { listener = callback; return () => {}; } } },
     '../data/local/localAccount': { readAuthenticatedSessionVersion: async () => version },
@@ -22,16 +22,47 @@ function setup({ initial = [], remote, pages = [] }) {
       readCachedFriends: async (_scope, _limit, before) => before ? pages : initial,
       isFriendScopeCurrent: async scope => scope.sessionVersion === version,
       saveCachedFriends: async (scope, rows) => { saved.push({ scope, rows }); },
+      openFriendChangesStore: async () => changesStore,
     },
   };
+  const changesSource = fs.readFileSync(new URL('../src/realtime/friendChangesSync.ts', import.meta.url), 'utf8');
+  const changesJs = ts.transpileModule(changesSource, { compilerOptions: { module: ts.ModuleKind.CommonJS, target: ts.ScriptTarget.ES2020 } }).outputText;
+  const changesExports = {};
+  vm.runInNewContext(changesJs, { exports: changesExports, require: name => deps[name], console, Map, Set, Number, Math, JSON, Error, Promise });
+  deps['../realtime/friendChangesSync'] = changesExports;
   const source = fs.readFileSync(new URL('../src/composables/useSessionUnitList.ts', import.meta.url), 'utf8');
   const js = ts.transpileModule(source, { compilerOptions: { module: ts.ModuleKind.CommonJS, target: ts.ScriptTarget.ES2020 } }).outputText;
   const exports = {};
-  vm.runInNewContext(js, { exports, require: name => deps[name], console, Map, Number, Error, Promise });
+  vm.runInNewContext(js, { exports, require: name => deps[name], console, Map, Number, Error, Promise,
+    navigator: { locks: { request: (_name, _options, callback) => callback({}) } } });
   return { list: exports.useSessionUnitList({ ownerId: 1, maxResultCount: 2 }), store, saved,
     resolve: rows => resolveRemote({ items: rows }), refreshToken: () => listener({ args: [{ access_token: 'refreshed' }, version] }), changeAccount: () => { version++; listener({ args: [{ access_token: 'new' }, version] }); } };
 }
 const flush = () => new Promise(resolve => setImmediate(resolve));
+
+test('重连刷新使用持久增量并把提交后的好友更新到列表', async () => {
+  const calls = [];
+  const h = setup({ initial: [{ id: 'old', ownerId: 1, score: 100 }], remote: async () => ({ items: [] }),
+    changes: async input => { calls.push(input); return { items: [{ id: 'old', ownerId: 1, ticks: 101, score: 101 }] }; },
+    changesStore: { readTicks: async () => 100, apply: async rows => rows.map(row => ({ ...row, destination: { name: 'merged' } })) } });
+  await h.list.fetchLatest();
+  await h.list.syncChanges();
+  assert.equal(calls[0].minTicks, 99);
+  assert.equal(h.store.ownerMap.get('old').destination.name, 'merged');
+});
+
+test('变更提高末项分数后，分页边界仍指向当前排序的最后一项', async () => {
+  const h = setup({ initial: [{ id: 'a', ownerId: 1, score: 10 }, { id: 'b', ownerId: 1, score: 5 }],
+    remote: async () => ({ items: [{ id: 'a', ownerId: 1, score: 10 }, { id: 'b', ownerId: 1, score: 5 }] }),
+    pages: [{ id: 'c', ownerId: 1, score: 4 }, { id: 'd', ownerId: 1, score: 3 }],
+    changes: async () => ({ items: [{ id: 'b', ownerId: 1, score: 11, ticks: 11 }] }),
+    changesStore: { readTicks: async () => 10, apply: async rows => rows } });
+  await h.list.fetchLatest();
+  await h.list.syncChanges();
+  assert.equal(h.list.list.value.map(x => x.id).join(','), 'b,a');
+  await h.list.fetchHistorical();
+  assert.equal(h.list.list.value.map(x => x.id).join(','), 'b,a,c,d');
+});
 
 test('本地好友先进入真实 store，网络响应后更新并写入缓存', async () => {
   const h = setup({ initial: [{ id: 'old', ownerId: 1, score: 1 }] });
@@ -74,6 +105,23 @@ test('账号切换立即清除旧列表，旧请求晚到不得恢复旧数据',
   await assert.rejects(pending, /登录状态已变化/);
   assert.equal(h.list.list.value.length, 0);
   assert.equal(h.saved.length, 0);
+});
+
+test('账号切换后新请求可启动，旧请求结束不清除新加载状态', async () => {
+  const calls = [];
+  const h = setup({ remote: () => new Promise(resolve => calls.push(resolve)) });
+  const old = h.list.fetchLatest();
+  await flush();
+  h.changeAccount();
+  const current = h.list.fetchLatest();
+  await flush();
+  assert.equal(calls.length, 2);
+  calls[0]({ items: [] });
+  await assert.rejects(old, /登录状态已变化/);
+  assert.equal(h.list.isPendingOfFetchLatest.value, true);
+  calls[1]({ items: [] });
+  await current;
+  assert.equal(h.list.isPendingOfFetchLatest.value, false);
 });
 
 

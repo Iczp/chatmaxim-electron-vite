@@ -41,7 +41,14 @@ export async function readCachedFriends(scope: FriendCacheScope, limit: number, 
 
 export async function saveCachedFriends(scope: FriendCacheScope, items: SessionUnitOwnerDto[]): Promise<void> {
   if (!await isFriendScopeCurrent(scope)) return;
-  const rows = items.flatMap(item => {
+  const rows = toFriendRows(scope, items);
+  if (!rows.length) return;
+  const db = await getDatabase();
+  if (await isFriendScopeCurrent(scope)) await db.upsertFriends(scope as LocalScope, rows);
+}
+
+function toFriendRows(scope: FriendCacheScope, items: SessionUnitOwnerDto[]) {
+  return items.flatMap(item => {
     const rawScore = item.score ?? (item as any).Score;
     const score = rawScore == null ? undefined : Number(rawScore);
     // 无 score 的局部更新只合并已有记录，不为新好友猜测分页游标。
@@ -51,7 +58,21 @@ export async function saveCachedFriends(scope: FriendCacheScope, items: SessionU
     const raw = JSON.parse(JSON.stringify(item)) as Record<string, unknown>;
     return [{ accountId: scope.accountId, ownerId: scope.ownerId, id: item.id, score, raw }];
   });
-  if (!rows.length) return;
+}
+
+export async function openFriendChangesStore(scope: FriendCacheScope) {
   const db = await getDatabase();
-  if (await isFriendScopeCurrent(scope)) await db.upsertFriends(scope as LocalScope, rows);
+  const ensure = async () => { if (!await isFriendScopeCurrent(scope)) throw new Error('登录状态已变化'); };
+  await ensure();
+  return {
+    async readTicks() { const ticks = await db.readFriendChangesTicks(scope); await ensure(); return ticks; },
+    async apply(items: SessionUnitOwnerDto[], ticks: number) {
+      const rows = toFriendRows(scope, items);
+      if (rows.length !== items.length) throw new Error('好友变更包含无效记录');
+      await ensure();
+      const saved = await db.applyFriendChanges(scope, rows, ticks);
+      await ensure();
+      return saved.map(row => ({ ...(row.raw as SessionUnitOwnerDto), id: row.id, ownerId: scope.ownerId, score: row.score }));
+    },
+  };
 }
