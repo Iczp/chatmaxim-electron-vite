@@ -162,6 +162,8 @@ export class ImDatabase {
       const byServer = row.serverId == null ? undefined : await request(store.index('server').get([...prefix, row.serverId]));
       const byClient = !row.clientMessageId ? undefined : await request(store.index('client').get([...prefix, row.clientMessageId]));
       const previous: LocalMessage | undefined = byClient ?? byServer ?? byLocal;
+      // 迟到的失败或重试状态不能覆盖已经收到服务端确认的消息。
+      if (previous?.serverId != null && row.serverId == null) { await done; return; }
       if (byLocal && previous && byLocal.localId !== previous.localId && byLocal.localId !== byServer?.localId) {
         throw new Error('本地消息 ID 与已有消息冲突');
       }
@@ -191,7 +193,7 @@ export class ImDatabase {
     }
   }
 
-  async readMessages(scope: LocalScope, unit: string, limit: number, before?: LocalPageCursor): Promise<LocalMessage[]> {
+  async readMessages(scope: LocalScope, unit: string, limit: number, before?: LocalPageCursor, serverOnly = false): Promise<LocalMessage[]> {
     validateScope(scope); validateUnit(unit);
     if (!Number.isSafeInteger(limit) || limit <= 0) throw new Error('分页大小无效');
     if (before) { validateScore(before.score); if (!before.id) throw new Error('分页游标无效'); }
@@ -201,10 +203,36 @@ export class ImDatabase {
     const tx = this.db.transaction('messages', 'readonly');
     const done = complete(tx);
     try {
-      const rows = await this.readCursor<LocalMessage>(tx.objectStore('messages').index('page'), IDBKeyRange.bound(lower, upper, false, !!before), limit, row => !row.isDeleted);
+      const rows = await this.readCursor<LocalMessage>(tx.objectStore('messages').index('page'), IDBKeyRange.bound(lower, upper, false, !!before), limit, row => !row.isDeleted && (!serverOnly || row.serverId != null));
       await done;
       return rows;
     } catch (error) { await done.catch(() => {}); throw error; }
+  }
+
+  async readPendingMessages(scope: LocalScope, unit: string): Promise<LocalMessage[]> {
+    validateScope(scope); validateUnit(unit);
+    const prefix = [scope.accountId, scope.ownerId, unit, Number.MAX_SAFE_INTEGER];
+    const tx = this.db.transaction('messages', 'readonly');
+    const done = complete(tx);
+    try {
+      const rows: LocalMessage[] = await request(tx.objectStore('messages').index('page').getAll(
+        IDBKeyRange.bound([...prefix, ''], [...prefix, '\uffff'])));
+      await done;
+      return rows.filter(row => row.serverId == null && !row.isDeleted);
+    } catch (error) { await done.catch(() => {}); throw error; }
+  }
+
+  async deletePendingMessage(scope: LocalScope, unit: string, clientMessageId: string): Promise<void> {
+    validateScope(scope); validateUnit(unit);
+    if (!clientMessageId?.trim()) throw new Error('客户端消息 ID 无效');
+    const tx = this.db.transaction('messages', 'readwrite');
+    const done = complete(tx);
+    try {
+      const store = tx.objectStore('messages');
+      const row: LocalMessage | undefined = await request(store.index('client').get([scope.accountId, scope.ownerId, unit, clientMessageId]));
+      if (row && row.serverId == null) store.delete([scope.accountId, scope.ownerId, unit, row.localId]);
+      await done;
+    } catch (error) { try { tx.abort(); } catch {} await done.catch(() => {}); throw error; }
   }
 
   async applyMessageMutations(scope: LocalScope, unit: string, changes: MessageMutation[], cursor: string | null, calibration = false): Promise<void> {

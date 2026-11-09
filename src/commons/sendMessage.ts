@@ -99,9 +99,9 @@ export const sendMessage = async ({
   file?: Blob | File | any;
   onBefore?: (input: MessageDto) => Promise<void>;
   onProgress?: (progressEvent: AxiosProgressEvent) => void;
-  onSuccess?: (entity: MessageOwnerDto, input: MessageDto) => void;
-  onError?: (error: SendMessageError, input: MessageDto) => void;
-  onAfter?: (input: MessageDto) => void;
+  onSuccess?: (entity: MessageOwnerDto, input: MessageDto) => void | Promise<void>;
+  onError?: (error: SendMessageError, input: MessageDto) => void | Promise<void>;
+  onAfter?: (input: MessageDto) => void | Promise<void>;
 }) => {
   const store = useImStore();
   const autoId = store.generateMessageId();
@@ -182,30 +182,24 @@ export const sendMessage = async ({
     });
   };
 
-  const _send = () => {
-    senderService()
-      .then(res => {
-        store.setMaxMessageId(res.id!);
-        store.setLastMessageForSender(res);
-        onSuccess?.call(this, res, input);
-      })
-      .catch((err: ApiError) => {
-        onError?.call(
-          this,
-          <SendMessageError>{
-            message: `发送失败:${err?.body?.error?.message || err?.message}`,
-            success: false,
-            detail: err,
-          },
-          input,
-        );
-      })
-      .finally(() => {
-        onAfter?.call(this, input);
-      });
-  };
-
-  _send();
+  let result: MessageOwnerDto;
+  try {
+    result = await senderService();
+  } catch (err: any) {
+    try {
+      await onError?.call(this, {
+        message: `发送失败:${err?.body?.error?.message || err?.message}`,
+        success: false,
+        detail: err,
+      }, input);
+    } finally { await onAfter?.call(this, input); }
+    return;
+  }
+  try {
+    store.setMaxMessageId(result.id!);
+    store.setLastMessageForSender(result);
+    await onSuccess?.call(this, result, input);
+  } finally { await onAfter?.call(this, input); }
 };
 
 

@@ -11,7 +11,7 @@ function compile(path, deps) {
   return exports;
 }
 const merge = compile('../src/commons/mergeMessages.ts', {});
-function setup({ local = [], older = [], history, latest, complete = false } = {}) {
+function setup({ local = [], pending = [], older = [], history, latest, complete = false } = {}) {
   let version = 1;
   let authHandler;
   const writes = [];
@@ -31,6 +31,7 @@ function setup({ local = [], older = [], history, latest, complete = false } = {
     '../data/local/messageCache': {
       readMessageScope: async () => scope(), isMessageScopeCurrent: async value => value.sessionVersion === version,
       readCachedMessages: async (_scope, _unit, limit, before) => { reads.push({ limit, before }); return before ? older : local; },
+      readPendingMessages: async () => pending,
       saveCachedMessages: async (_scope, _unit, rows) => writes.push(rows),
       readCachedMessagesByIds: async (_scope, _unit, ids) => writes.flat().filter(row => ids.includes(row.id)),
       openMutationStore: async () => null,
@@ -43,6 +44,13 @@ function setup({ local = [], older = [], history, latest, complete = false } = {
     switchAccount: () => { version++; authHandler({ args: [{ access_token: 'new' }, version] }); } };
 }
 const flush = () => new Promise(resolve => setImmediate(resolve));
+
+test('首屏恢复未确认消息，同时保持服务端分页游标', async () => {
+  const h = setup({ local: [{ id: 5 }], pending: [{ clientMessageId: 'pending', state: 4 }], latest: async () => ({ items: [] }) });
+  await h.list.fetchLatest();
+  assert.equal(h.list.list.value.map(x => x.id || x.clientMessageId).join(','), '5,pending');
+  assert.equal(h.list.maxMessageId.value, 5);
+});
 
 test('本地最近 10 条先显示，随后按本地最大 ID 在线补齐', async () => {
   let finish;

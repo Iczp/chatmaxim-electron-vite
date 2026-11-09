@@ -56,6 +56,8 @@ import { openChildWindow } from '../../ipc/openChildWindow';
 import ProfileModal from '../../components/ProfileModal.vue';
 import { provide } from 'vue';
 import { MessageContent } from '../../apis/dtos/message/messageContent';
+import { readMessageScope, isMessageScopeCurrent, savePendingMessage, saveCachedMessages, deletePendingMessage } from '../../data/local/messageCache';
+import type { FriendCacheScope } from '../../data/local/friendCache';
 
 const props = defineProps<{
   sessionUnitId: string;
@@ -390,14 +392,17 @@ const sendMessageContent = async ({
   isClearInput,
   file,
   clientMessageId,
+  retryQuote,
 }: {
   messageType: MessageTypeEnums;
   content: any;
   isClearInput: boolean;
   file?: Blob | File | any;
   clientMessageId?: string;
+  retryQuote?: MessageDto['quoteMessage'];
 }) => {
-  sendMessage({
+  let scope: FriendCacheScope | null = null;
+  try { await sendMessage({
     file,
     clientMessageId,
     sessionUnitId,
@@ -408,23 +413,26 @@ const sendMessageContent = async ({
         ? //list.value.findLast(x => x.state == MessageStateEnums.Ok) ||
           list.value[list.value.length - 1]
         : undefined,
-    quoteMessage: quoteMessage.value,
+    quoteMessage: clientMessageId ? retryQuote : quoteMessage.value,
     content,
     async onBefore(input) {
       isSendBtnEnabled.value = false;
-      list.value.push(input);
+      if (!file) {
+        scope = await readMessageScope(chatObjectId, true);
+        if (!scope) throw new Error('本地账号尚未准备好，无法保存待发送消息');
+        await savePendingMessage(scope, sessionUnitId, input);
+      }
+      list.value = mergeMessages(list.value, [input], 'append');
       scrollToBottom();
       scrollToBottom();
       /* =================== update file info =================== */
       // nextTick(() => scrollToBottom());
       nextTick(() => scrollToBottom());
     },
-    onSuccess(entity, input) {
+    async onSuccess(entity, input) {
       // return;
-      clearChatInput(isClearInput);
-
       // 先应用发送回执；增量同步失败时仍保留已发送消息。
-      list.value = mergeMessages(list.value, [{
+      const confirmed = {
         ...input,
         ...entity,
         clientMessageId: input.clientMessageId,
@@ -432,21 +440,36 @@ const sendMessageContent = async ({
         autoId: input.autoId,
         isSelf: true,
         state: MessageStateEnums.Ok,
-      }], 'append');
+      };
+      if (scope) {
+        if (!await isMessageScopeCurrent(scope)) return;
+        try { await saveCachedMessages(scope, sessionUnitId, [confirmed]); }
+        catch { console.warn('[chat] 保存发送回执失败'); }
+        if (!await isMessageScopeCurrent(scope)) return;
+      }
+      clearChatInput(isClearInput);
+      list.value = mergeMessages(list.value, [confirmed], 'append');
       fetchLatest({ caller: 'sendMessageContent' })
         .then(() => nextTick(() => scrollToBottom()))
         .catch(err => console.error('[chat] sync after send failed', err));
     },
-    onError(err, input) {
+    async onError(err, input) {
+      if (scope && !await isMessageScopeCurrent(scope)) return;
       // 如果推送已确认该消息，迟到的发送错误不能覆盖确认状态。
       const confirmed = list.value.find(x => x.clientMessageId === input.clientMessageId && x.id != null);
       if (confirmed) return;
-      removeItem(input);
-      list.value.push({
+      const failed = {
         ...input,
         state: MessageStateEnums.Error,
         error: err.message,
-      });
+      };
+      if (scope) {
+        try { await savePendingMessage(scope, sessionUnitId, failed); }
+        catch { console.warn('[chat] 保存发送失败状态失败'); }
+        if (!await isMessageScopeCurrent(scope)) return;
+      }
+      if (list.value.some(x => x.clientMessageId === input.clientMessageId && x.id != null)) return;
+      list.value = mergeMessages(list.value, [failed], 'append');
       // scrollToBottom();
       console.error('sendRet', err);
       message.error({
@@ -457,7 +480,10 @@ const sendMessageContent = async ({
     onAfter(input) {
       isSendBtnEnabled.value = true;
     },
-  });
+  }); } catch (error) {
+    isSendBtnEnabled.value = true;
+    message.error({ key: 'vm-chat', content: error instanceof Error ? error.message : '发送消息失败' });
+  }
 };
 
 const onRemoveQuoteMessage = () => (quoteMessage.value = undefined);
@@ -626,17 +652,24 @@ const { vDrop } = useDrop();
 
 const onResend = (entity: MessageDto) => {
   console.log('onResend', entity);
-  onRemove(entity);
   sendMessageContent({
     content: entity.content,
     clientMessageId: entity.clientMessageId,
+    retryQuote: entity.quoteMessage,
     messageType: entity.messageType!,
     isClearInput: false,
     file: entity.file,
   });
 };
-const onRemove = (entity: MessageDto) => {
+const onRemove = async (entity: MessageDto) => {
   console.log('onRemove', entity);
+  if (entity.clientMessageId && entity.id == null && !entity.file) {
+    try {
+      const scope = await readMessageScope(chatObjectId);
+      if (!scope) throw new Error('本地账号尚未准备好');
+      await deletePendingMessage(scope, sessionUnitId, entity.clientMessageId);
+    } catch { message.error('删除本地消息失败'); return; }
+  }
   removeItem(entity);
 };
 // const isWaiter = computed(

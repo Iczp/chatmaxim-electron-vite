@@ -27,7 +27,7 @@ app.whenReady().then(async () => {
       })()`);
       await win.webContents.executeJavaScript(`(() => {
         const exports = {}; const require = name => name === './imDatabase' ? { ImDatabase } :
-          name === '../../apis/enums' ? { MessageStateEnums: { Ok: 1 } } : friendCache;
+          name === '../../apis/enums' ? { MessageStateEnums: { Ok: 1, Sending: 2, Error: 4 } } : friendCache;
         ${messageSource}\n globalThis.messageCache = exports;
       })()`);
       return win;
@@ -76,6 +76,7 @@ app.whenReady().then(async () => {
         const scope = { accountId: 'account-d', ownerId: 1, sessionVersion: 1 };
         await messageCache.saveCachedMessages(scope, 'chat', Array.from({ length: 12 }, (_, n) => ({ id: n + 1, content: { text: 'm' + n } })));
         await messageCache.markHistoryComplete(scope, 'chat');
+        await messageCache.savePendingMessage(scope, 'chat', { clientMessageId: 'outbox', state: 2, content: { text: 'unsent' } });
       })()`);
       const messageResult = await second.webContents.executeJavaScript(`(async () => {
         const scope = { accountId: 'account-d', ownerId: 1, sessionVersion: 1 };
@@ -109,9 +110,14 @@ app.whenReady().then(async () => {
         const messages = await db.readMessages(a, 's', 10); const cursor = await db.readMessageCursor(a, 's'); db.close();
         const scope = { accountId: 'account-d', ownerId: 1, sessionVersion: 1 };
         const cached = await messageCache.readCachedMessages(scope, 'chat', 10);
-        return { count: messages.length, id: messages[1]?.serverId, cursor, cached: cached.length, complete: await messageCache.readHistoryComplete(scope, 'chat') };
+        const pending = await messageCache.readPendingMessages(scope, 'chat');
+        await messageCache.saveCachedMessages(scope, 'chat', [{ id: 13, clientMessageId: 'outbox', content: { text: 'unsent' } }]);
+        await messageCache.savePendingMessage(scope, 'chat', { clientMessageId: 'outbox', state: 4, error: 'late' });
+        await messageCache.deletePendingMessage(scope, 'chat', 'outbox');
+        const confirmed = await messageCache.readCachedMessagesByIds(scope, 'chat', [13]);
+        return { count: messages.length, id: messages[1]?.serverId, cursor, cached: cached.length, complete: await messageCache.readHistoryComplete(scope, 'chat'), pending: pending.map(x => [x.clientMessageId, x.state]), confirmed: confirmed.length, remaining: (await messageCache.readPendingMessages(scope, 'chat')).length };
       })()`);
-      if (JSON.stringify(result) !== JSON.stringify({ count: 2, id: 10, cursor: 'cursor-1', cached: 10, complete: true })) throw new Error(`restart failed ${JSON.stringify(result)}`);
+      if (JSON.stringify(result) !== JSON.stringify({ count: 2, id: 10, cursor: 'cursor-1', cached: 10, complete: true, pending: [['outbox', 4]], confirmed: 1, remaining: 0 })) throw new Error(`restart failed ${JSON.stringify(result)}`);
     }
     console.log(`DB_INTEGRATION_OK:${phase}`);
   } catch (error) {

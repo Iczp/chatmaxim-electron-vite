@@ -25,9 +25,37 @@ function toMessage(row: LocalMessage): MessageDto {
 
 export async function readCachedMessages(scope: FriendCacheScope, unit: string, limit: number, before?: LocalPageCursor): Promise<MessageDto[]> {
   const db = await getDatabase();
-  const rows = await db.readMessages(scope, unit, limit, before);
+  const rows = await db.readMessages(scope, unit, limit, before, true);
   if (!await isFriendScopeCurrent(scope)) throw new Error('登录状态已变化');
   return rows.reverse().map(toMessage);
+}
+
+/** 恢复未确认消息；不自动重发，避免进程中断时重复发送。 */
+export async function readPendingMessages(scope: FriendCacheScope, unit: string): Promise<MessageDto[]> {
+  const db = await getDatabase();
+  const rows = await db.readPendingMessages(scope, unit);
+  if (!await isFriendScopeCurrent(scope)) throw new Error('登录状态已变化');
+  return rows.map(row => ({ ...toMessage(row), state: MessageStateEnums.Error,
+    error: (row.raw.error as string) || '发送状态未确认，请检查后重试' }));
+}
+
+export async function savePendingMessage(scope: FriendCacheScope, unit: string, item: MessageDto): Promise<void> {
+  if (!item.clientMessageId || item.file) throw new Error('消息不能保存为本地待发送消息');
+  if (!await isFriendScopeCurrent(scope)) throw new Error('登录状态已变化');
+  const db = await getDatabase();
+  const raw = JSON.parse(JSON.stringify(item)) as Record<string, unknown>;
+  delete raw.file;
+  await db.upsertMessage({ accountId: scope.accountId, ownerId: scope.ownerId, sessionUnitId: unit,
+    localId: `client-${item.clientMessageId}`, clientMessageId: item.clientMessageId,
+    score: Number.MAX_SAFE_INTEGER, state: item.state === MessageStateEnums.Sending ? 'sending' : 'failed', raw });
+  if (!await isFriendScopeCurrent(scope)) throw new Error('登录状态已变化');
+}
+
+export async function deletePendingMessage(scope: FriendCacheScope, unit: string, clientMessageId: string): Promise<void> {
+  if (!await isFriendScopeCurrent(scope)) throw new Error('登录状态已变化');
+  const db = await getDatabase();
+  await db.deletePendingMessage(scope, unit, clientMessageId);
+  if (!await isFriendScopeCurrent(scope)) throw new Error('登录状态已变化');
 }
 
 export async function readCachedMessagesByIds(scope: FriendCacheScope, unit: string, ids: number[]): Promise<MessageDto[]> {

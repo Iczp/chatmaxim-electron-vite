@@ -43,3 +43,22 @@ test('附件重试把原客户端 ID 和文件传给上传接口', async () => {
   assert.equal(requests[0].clientMessageId, 'original-id');
   assert.equal(requests[0].file, file);
 });
+
+test('发送前持久化失败时不发起请求', async () => {
+  const { send, requests } = createSender();
+  await assert.rejects(send({ sessionUnitId: 'unit', messageType: 1, content: {},
+    onBefore: async () => { throw new Error('storage failed'); } }), /storage failed/);
+  assert.equal(requests.length, 0);
+});
+
+test('发送成功后的回调失败不能伪装成服务端发送失败', async () => {
+  const { send, requests } = createSender();
+  let failures = 0;
+  let completed = 0;
+  await assert.rejects(send({ sessionUnitId: 'unit', messageType: 1, content: {},
+    onSuccess: async () => { throw new Error('callback failed'); },
+    onError: () => { failures++; }, onAfter: () => { completed++; } }), /callback failed/);
+  assert.equal(requests.length, 1);
+  assert.equal(failures, 0);
+  assert.equal(completed, 1);
+});

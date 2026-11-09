@@ -11,7 +11,7 @@ import { mergeMessages } from '../commons/mergeMessages';
 import { MessageMutationSync } from '../realtime/messageMutationSync';
 import { appEvent, AppEvents } from '../ipc/appEvent';
 import { readAuthenticatedSessionVersion } from '../data/local/localAccount';
-import { readMessageScope, isMessageScopeCurrent, readCachedMessages, saveCachedMessages, readHistoryComplete, markHistoryComplete, openMutationStore, readCachedMessagesByIds } from '../data/local/messageCache';
+import { readMessageScope, isMessageScopeCurrent, readCachedMessages, saveCachedMessages, readHistoryComplete, markHistoryComplete, openMutationStore, readCachedMessagesByIds, readPendingMessages } from '../data/local/messageCache';
 
 export type FetchMessageResult = {
   items: MessageDto[];
@@ -126,7 +126,9 @@ export const useMessageList = ({
             const scope = await readMessageScope(ownerId);
             if (scope && scope.sessionVersion === version) {
               cached = await readCachedMessages(scope, sessionUnitId, 10);
+              const pending = await readPendingMessages(scope, sessionUnitId);
               await ensureCurrent(epoch, version);
+              if (pending.length) list.value = mergeMessages(list.value, pending, 'append');
               if (cached.length) {
                 const ids = cached.map(x => x.id).filter((id): id is number => id != null && id > 0);
                 if (ids.length) { minMessageId.value = Math.min(...ids); maxMessageId.value = Math.max(...ids); }
