@@ -34,6 +34,7 @@ import { computedSessionUnitEntity, useSessionUnitId } from '../../composables/u
 import { useMessageList } from '../../composables/useMessageList';
 import { MessageStateEnums, MessageTypeEnums } from '../../apis/enums';
 import { useSessionUnitDetail } from '../../composables/useSessionUnitDetail';
+import { useFriendDetail } from '../../composables/useFriendDetail';
 import { setReadedMessageId } from '../../commons/setting';
 import { sendMessage } from '../../commons/sendMessage';
 import { mergeMessages } from '../../commons/mergeMessages';
@@ -180,6 +181,7 @@ const isSendBtnEnabled = ref(true);
 const playMessageId = ref<number>();
 
 const { detail, fetchDetail } = useSessionUnitDetail({ sessionUnitId });
+const { load: loadFriendDetail } = useFriendDetail(chatObjectId, sessionUnitId);
 // provide:profile
 provide('profile', profileModal);
 provide('sessionUnitId', sessionUnitId);
@@ -286,6 +288,7 @@ const _onDeactivated = () => {
 };
 
 const _onActivated = () => {
+  void loadFriendDetail().catch(() => console.warn('[chat] 好友详情加载失败'));
   eventBus.off('connected', syncAfterReconnect);
   eventBus.on('connected', syncAfterReconnect);
   eventBus.off('messageMutation', onMessageMutation);

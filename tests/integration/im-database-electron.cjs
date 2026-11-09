@@ -133,12 +133,13 @@ app.whenReady().then(async () => {
       const cacheResult = await second.webContents.executeJavaScript(`(async () => {
         const scope = await friendCache.readFriendScope(1);
         const cached = await friendCache.readCachedFriends(scope, 10);
+        const detail = await friendCache.readCachedFriend(scope, 'cached-friend');
         globalThis.activeSession = 2;
         let stale = false;
         try { await friendCache.readCachedFriends(scope, 10); } catch { stale = true; }
-        return { ids: cached.map(x => x.id), name: cached[0]?.destination?.name, score: cached[0]?.score, lastId: cached[0]?.lastMessage?.id, stale };
+        return { ids: cached.map(x => x.id), name: cached[0]?.destination?.name, score: cached[0]?.score, lastId: cached[0]?.lastMessage?.id, detail: detail?.destination?.name, stale };
       })()`);
-      if (JSON.stringify(cacheResult) !== JSON.stringify({ ids: ['cached-friend'], name: 'cached', score: 8, lastId: 10, stale: true })) throw new Error(`friend cache failed ${JSON.stringify(cacheResult)}`);
+      if (JSON.stringify(cacheResult) !== JSON.stringify({ ids: ['cached-friend'], name: 'cached', score: 8, lastId: 10, detail: 'cached', stale: true })) throw new Error(`friend cache failed ${JSON.stringify(cacheResult)}`);
       const result = await second.webContents.executeJavaScript(`(async () => {
         const db = await ImDatabase.open(); const a = { accountId: 'account-a', ownerId: 1 };
         const friends = await db.readFriends(a, 10); const messages = await db.readMessages(a, 's', 10);

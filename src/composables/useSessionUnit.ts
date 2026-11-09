@@ -12,16 +12,31 @@ import { useImStore } from '../stores/imStore';
 import { useWindowStore } from '../stores/windowStore';
 import { useRemoteStore } from './useRemoteStore';
 import { usePayload } from './usePayload';
+import { appEvent, AppEvents } from '../ipc/appEvent';
+import { readAuthenticatedSessionVersion } from '../data/local/localAccount';
 
 export const computedSessionUnitEntity = (sessionUnitId: string) => {
   const windowStore = useWindowStore();
+  const store = useImStore();
   const isMainWindow = windowStore.name == 'main';
   if (!isMainWindow) {
     const payload = usePayload<{ sessionUnit: SessionUnitOwnerDto }>();
-    console.log('payload', payload.value?.sessionUnit);
-    return computed(() => payload.value?.sessionUnit);
+    const payloadAllowed = ref(true);
+    let version: number | null = null;
+    let observedAuthChange = false;
+    const unsubscribe = appEvent.on(AppEvents.authChanged, event => {
+      if (event.args?.[0] == null || version == null || event.args?.[1] !== version) {
+        observedAuthChange = true;
+        payloadAllowed.value = false;
+      }
+    });
+    void readAuthenticatedSessionVersion().then(value => {
+      if (!observedAuthChange) { version = value; if (value == null) payloadAllowed.value = false; }
+    }).catch(() => { payloadAllowed.value = false; });
+    onUnmounted(unsubscribe);
+    return computed(() => store.getSessionUnit(sessionUnitId) ??
+      (payloadAllowed.value && payload.value?.sessionUnit?.id === sessionUnitId ? payload.value.sessionUnit : undefined));
   }
-  const store = useImStore();
   return computed(() => store.getSessionUnit(sessionUnitId!));
 };
 

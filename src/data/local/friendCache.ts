@@ -25,6 +25,13 @@ export async function readFriendScope(ownerId: number, bindIfNeeded = false): Pr
 
 export const isFriendScopeCurrent = (scope: FriendCacheScope): Promise<boolean> => isLocalAccountCurrent(scope);
 
+export async function readCachedFriend(scope: FriendCacheScope, sessionUnitId: string): Promise<SessionUnitOwnerDto | null> {
+  const db = await getDatabase();
+  const row = await db.readFriend(scope, sessionUnitId);
+  if (!await isFriendScopeCurrent(scope)) throw new Error('登录状态已变化');
+  return row ? { ...(row.raw as SessionUnitOwnerDto), id: row.id, ownerId: scope.ownerId, score: row.score } : null;
+}
+
 export async function readCachedFriends(scope: FriendCacheScope, limit: number, before?: LocalPageCursor): Promise<SessionUnitOwnerDto[]> {
   const db = await getDatabase();
   const rows = await db.readFriends(scope, limit, before);
