@@ -108,8 +108,10 @@ app.whenReady().then(async () => {
       })()`)));
       await first.webContents.executeJavaScript(`(async () => {
         const scope = await friendCache.readFriendScope(1);
-        await friendCache.saveCachedFriends(scope, [{ id: 'cached-friend', ownerId: 1, score: 9, destination: { name: 'cached' }, lastMessage: { id: 10, content: 'hello' } }]);
-        await friendCache.saveCachedFriends(scope, [{ id: 'cached-friend', ownerId: 1, score: 8, destination: { code: 'code' } }]);
+        await friendCache.saveCachedFriends(scope, [{ id: 'cached-friend', ownerId: 1, score: 9, sorting: 0, ticks: 9, destination: { name: 'cached' }, lastMessage: { id: 10, content: 'hello' } }]);
+        await friendCache.saveCachedFriends(scope, [{ id: 'cached-friend', ownerId: 1, score: 8, sorting: 0, ticks: 8, destination: { code: 'code' } }]);
+        await friendCache.saveCachedFriends(scope, [{ id: 'cached-friend', ownerId: 1, score: 7, destination: { code: 'partial' } }]);
+        await friendCache.saveCachedFriends(scope, [{ id: 'cached-friend', ownerId: 1, destination: { description: 'no-score update' } }]);
         await friendCache.saveCachedFriends(scope, [{ id: 'no-score', ownerId: 1 }]);
       })()`);
       await first.webContents.executeJavaScript(`(async () => {
@@ -137,9 +139,9 @@ app.whenReady().then(async () => {
         globalThis.activeSession = 2;
         let stale = false;
         try { await friendCache.readCachedFriends(scope, 10); } catch { stale = true; }
-        return { ids: cached.map(x => x.id), name: cached[0]?.destination?.name, score: cached[0]?.score, lastId: cached[0]?.lastMessage?.id, detail: detail?.destination?.name, stale };
+        return { ids: cached.map(x => x.id), name: cached[0]?.destination?.name, score: cached[0]?.score, lastId: cached[0]?.lastMessage?.id, detail: detail?.destination?.name, description: detail?.destination?.description, stale };
       })()`);
-      if (JSON.stringify(cacheResult) !== JSON.stringify({ ids: ['cached-friend'], name: 'cached', score: 8, lastId: 10, detail: 'cached', stale: true })) throw new Error(`friend cache failed ${JSON.stringify(cacheResult)}`);
+      if (JSON.stringify(cacheResult) !== JSON.stringify({ ids: ['cached-friend'], name: 'cached', score: 8, lastId: 10, detail: 'cached', description: 'no-score update', stale: true })) throw new Error(`friend cache failed ${JSON.stringify(cacheResult)}`);
       const result = await second.webContents.executeJavaScript(`(async () => {
         const db = await ImDatabase.open(); const a = { accountId: 'account-a', ownerId: 1 };
         const friends = await db.readFriends(a, 10); const messages = await db.readMessages(a, 's', 10);

@@ -4,6 +4,7 @@ import { mergeFriendRaw } from './friendMerge';
 export type LocalScope = { accountId: string; ownerId: number };
 export type LocalOwner = LocalScope & { raw: Record<string, unknown> };
 export type LocalFriend = LocalScope & { id: string; score: number; raw: Record<string, unknown> };
+export type LocalFriendWrite = Omit<LocalFriend, 'score'> & { score?: number };
 export type LocalMessage = LocalScope & {
   sessionUnitId: string;
   localId: string;
@@ -111,11 +112,11 @@ export class ImDatabase {
     } catch (error) { await done.catch(() => {}); throw error; }
   }
 
-  async upsertFriends(scope: LocalScope, items: LocalFriend[]): Promise<void> {
+  async upsertFriends(scope: LocalScope, items: LocalFriendWrite[]): Promise<void> {
     validateScope(scope);
     for (const row of items) {
       if (row.accountId !== scope.accountId || row.ownerId !== scope.ownerId || !row.id?.trim()) throw new Error('好友作用域无效');
-      validateScore(row.score);
+      if (row.score != null) validateScore(row.score);
     }
     const tx = this.db.transaction('friends', 'readwrite');
     const done = complete(tx);
@@ -123,7 +124,11 @@ export class ImDatabase {
       const store = tx.objectStore('friends');
       for (const row of items) {
         const previous: LocalFriend | undefined = await request(store.get([scope.accountId, scope.ownerId, row.id]));
-        store.put({ ...row, raw: mergeFriendRaw(previous?.raw, row.raw) });
+        if (!previous && row.score == null) continue;
+        const raw = mergeFriendRaw(previous ? { ...previous.raw, score: previous.score } : undefined, row.raw);
+        const mergedScore = Number(raw.score ?? raw.Score ?? row.score ?? previous?.score);
+        validateScore(mergedScore);
+        store.put({ ...row, score: mergedScore, raw });
       }
       await done;
     } catch (error) {

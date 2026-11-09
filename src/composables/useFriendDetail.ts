@@ -53,7 +53,6 @@ export function useFriendDetail(ownerId: number, sessionUnitId: string) {
         }
         const previous = store.getSessionUnit(sessionUnitId);
         const merged: SessionUnitOwnerDto = mergeFriendRaw(previous, { ...remote, id: sessionUnitId, ownerId });
-        if (remote.score == null && previous?.score != null) merged.score = previous.score;
         store.setMany([merged]);
         const scope = await readFriendScope(ownerId, true);
         if (scope?.sessionVersion === sessionVersion && await current()) await saveCachedFriends(scope, [merged]);

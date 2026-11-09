@@ -43,9 +43,9 @@ export async function saveCachedFriends(scope: FriendCacheScope, items: SessionU
   if (!await isFriendScopeCurrent(scope)) return;
   const rows = items.flatMap(item => {
     const rawScore = item.score ?? (item as any).Score;
-    const score = Number(rawScore);
-    // 没有服务端排序游标时不缓存，避免本地分页使用猜测的 maxScore。
-    if (!item.id || rawScore == null || !Number.isSafeInteger(score) ||
+    const score = rawScore == null ? undefined : Number(rawScore);
+    // 无 score 的局部更新只合并已有记录，不为新好友猜测分页游标。
+    if (!item.id || (score != null && !Number.isSafeInteger(score)) ||
         (item.ownerId != null && item.ownerId !== scope.ownerId)) return [];
     // IndexedDB 不能存 Vue Proxy；只存 API DTO，不写入令牌或文件。
     const raw = JSON.parse(JSON.stringify(item)) as Record<string, unknown>;
