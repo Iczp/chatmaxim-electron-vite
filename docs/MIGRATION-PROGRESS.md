@@ -77,3 +77,9 @@
 状态：生产逻辑自动测试、类型检查及 Windows Electron 双窗口 BroadcastChannel 测试通过；真实后端和完整 UI 联调待验证。待发送记录、失败、删除和服务端确认持久化后通知其他窗口，通知只携带身份、会话、认证代次及客户端消息 ID，不携带消息正文；接收方校验会话与认证代次后重新读取本地库，认证变化或较早读取迟到时丢弃结果。数据库事务拒绝把已确认消息重新写成待发送状态，旧窗口因此不能在确认已经落库后再次发起重试。
 
 `tests/message-invalidation-production.test.mjs`、`tests/message-local-first-production.test.mjs` 验证消息键、窗口隔离、删除、异步乱序和账号切换；`tests/integration/im-database-runner.cjs` 使用两个真实 Electron 窗口验证通知，并验证重启后确认消息不可降级。通知并非可靠队列，窗口未运行时靠启动读取本地库恢复；目前只覆盖无附件待发送消息的相关状态，好友、普通消息变更和附件尚未完整广播。两个窗口在服务端确认落库之前同时重试仍无发送租约，真实服务端 clientMessageId 去重也未验证，因此不能声称完全防止重复发送。其他平台、打包模式和真实 UI 尚未验证。
+
+## 2026-11-09：M4 无附件消息跨窗口发送互斥
+
+状态：生产锁逻辑自动测试、类型检查和 Windows Electron 多窗口测试通过；真实服务和界面交互待验证。无附件消息在保存待发送记录及发起请求之前取得 Chromium Web Lock，同一消息的并发发送被拒绝；锁保留至回执或失败处理完成，持有窗口销毁时由 Chromium 释放。锁键不包含认证代次，避免同一消息重新登录后与旧请求并发；无 Web Lock 支持时明确报错，不静默绕过保护。
+
+`tests/message-send-lock-production.test.mjs` 覆盖不支持和认证代次变化；`tests/message-send-production.test.mjs` 验证回执处理结束后才执行清理；`tests/integration/im-database-runner.cjs` 在真实 Electron 窗口验证互斥、释放及窗口销毁后恢复。该锁只协调同一 Chromium 存储来源和运行中的窗口，不协调其他设备、独立 profile 或附件发送；窗口销毁不代表已发往服务端的请求一定未被处理，服务端 clientMessageId 幂等仍需真实验证。网络请求若持续挂起，锁会保持到请求结束或窗口销毁；完整超时和取消机制仍需补齐。

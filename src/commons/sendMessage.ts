@@ -135,12 +135,11 @@ export const sendMessage = async ({
     await onBefore?.call(this, input);
   }
 
-  const progressStore = useProgressStore();
-
   const quoteMessageId = quoteMessage?.id;
 
   const senderService = (): CancelablePromise<MessageOwnerDto> => {
     if (file) {
+      const progressStore = useProgressStore();
       const onUploadProgress = (progressEvent: AxiosProgressEvent): void => {
         progressStore.set(
           `${autoId}`,

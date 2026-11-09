@@ -12,6 +12,7 @@ app.whenReady().then(async () => {
     const friendSource = fs.readFileSync(path.join(root, 'friend-cache.js'), 'utf8');
     const messageSource = fs.readFileSync(path.join(root, 'message-cache.js'), 'utf8');
     const invalidationSource = fs.readFileSync(path.join(root, 'message-invalidation.js'), 'utf8');
+    const sendLockSource = fs.readFileSync(path.join(root, 'message-send-lock.js'), 'utf8');
     async function makeWindow() {
       const win = new BrowserWindow({ show: false, webPreferences: { nodeIntegration: false, contextIsolation: true, sandbox: true } });
       windows.push(win);
@@ -32,6 +33,7 @@ app.whenReady().then(async () => {
         ${messageSource}\n globalThis.messageCache = exports;
       })()`);
       await win.webContents.executeJavaScript(`(() => { const exports = {}; ${invalidationSource}\n globalThis.invalidation = exports; })()`);
+      await win.webContents.executeJavaScript(`(() => { const exports = {}; ${sendLockSource}\n globalThis.sendLock = exports; })()`);
       return win;
     }
     const first = await makeWindow();
@@ -63,6 +65,26 @@ app.whenReady().then(async () => {
         db.close();
       })()`);
       const second = await makeWindow();
+      await first.webContents.executeJavaScript(`(async () => { globalThis.releaseLock = await sendLock.acquireMessageSendLock(1, 1, 'chat', 'same'); return true; })()`);
+      const denied = await second.webContents.executeJavaScript(`(async () => {
+        try { await sendLock.acquireMessageSendLock(2, 1, 'chat', 'same'); return false; } catch { return true; }
+      })()`);
+      if (!denied) throw new Error('duplicate send lock accepted');
+      await first.webContents.executeJavaScript(`releaseLock(); true;`);
+      await second.webContents.executeJavaScript(`(async () => { globalThis.releaseLock = await sendLock.acquireMessageSendLock(1, 1, 'chat', 'same'); return true; })()`);
+      await second.webContents.executeJavaScript(`releaseLock(); true;`);
+      const temporary = await makeWindow();
+      await temporary.webContents.executeJavaScript(`(async () => { await sendLock.acquireMessageSendLock(1, 1, 'chat', 'closed'); return true; })()`);
+      temporary.destroy();
+      const recovered = await first.webContents.executeJavaScript(`(async () => {
+        const deadline = Date.now() + 3000;
+        do {
+          try { const release = await sendLock.acquireMessageSendLock(1, 1, 'chat', 'closed'); release(); return true; }
+          catch { await new Promise(resolve => setTimeout(resolve, 20)); }
+        } while (Date.now() < deadline);
+        return false;
+      })()`);
+      if (!recovered) throw new Error('closed window did not release send lock');
       await second.webContents.executeJavaScript(`globalThis.invalidationEvents = []; invalidation.onMessageChanged(event => invalidationEvents.push(event)); true;`);
       await first.webContents.executeJavaScript(`invalidation.notifyMessageChanged({ ownerId: 1, sessionUnitId: 'chat', sessionVersion: 1, clientMessageId: 'outbox' });`);
       const events = await second.webContents.executeJavaScript(`(async () => {
@@ -135,7 +157,7 @@ app.whenReady().then(async () => {
     console.error('DB_INTEGRATION_ERROR', error);
     process.exitCode = 1;
   } finally {
-    windows.forEach(win => win.destroy());
+    windows.forEach(win => { if (!win.isDestroyed()) win.destroy(); });
     app.quit();
   }
 }).catch(error => { console.error(error); app.exit(1); });

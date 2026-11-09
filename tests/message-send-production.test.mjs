@@ -62,3 +62,17 @@ test('发送成功后的回调失败不能伪装成服务端发送失败', async
   assert.equal(failures, 0);
   assert.equal(completed, 1);
 });
+
+test('异步回执处理结束之后才执行发送结束回调', async () => {
+  const { send } = createSender();
+  let finish;
+  const steps = [];
+  const task = send({ sessionUnitId: 'unit', messageType: 1, content: {},
+    onSuccess: () => new Promise(resolve => { steps.push('success'); finish = resolve; }),
+    onAfter: () => { steps.push('after'); } });
+  await new Promise(resolve => setImmediate(resolve));
+  assert.equal(steps.join(','), 'success');
+  finish();
+  await task;
+  assert.equal(steps.join(','), 'success,after');
+});

@@ -16,6 +16,8 @@ const messageSource = fs.readFileSync(path.resolve(__dirname, '../../src/data/lo
 fs.writeFileSync(path.join(root, 'message-cache.js'), ts.transpileModule(messageSource, { compilerOptions: { module: ts.ModuleKind.CommonJS, target: ts.ScriptTarget.ES2020 } }).outputText);
 const invalidationSource = fs.readFileSync(path.resolve(__dirname, '../../src/data/local/messageInvalidation.ts'), 'utf8');
 fs.writeFileSync(path.join(root, 'message-invalidation.js'), ts.transpileModule(invalidationSource, { compilerOptions: { module: ts.ModuleKind.CommonJS, target: ts.ScriptTarget.ES2020 } }).outputText);
+const sendLockSource = fs.readFileSync(path.resolve(__dirname, '../../src/data/local/messageSendLock.ts'), 'utf8');
+fs.writeFileSync(path.join(root, 'message-send-lock.js'), ts.transpileModule(sendLockSource, { compilerOptions: { module: ts.ModuleKind.CommonJS, target: ts.ScriptTarget.ES2020 } }).outputText);
 fs.writeFileSync(path.join(root, 'index.html'), '<!doctype html><title>database integration</title>');
 for (const phase of ['write', 'restart']) {
   const env = { ...process.env };

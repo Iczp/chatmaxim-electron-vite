@@ -59,6 +59,7 @@ import { MessageContent } from '../../apis/dtos/message/messageContent';
 import { readMessageScope, isMessageScopeCurrent, savePendingMessage, saveCachedMessages, deletePendingMessage } from '../../data/local/messageCache';
 import type { FriendCacheScope } from '../../data/local/friendCache';
 import { notifyMessageChanged } from '../../data/local/messageInvalidation';
+import { acquireMessageSendLock } from '../../data/local/messageSendLock';
 
 const props = defineProps<{
   sessionUnitId: string;
@@ -403,6 +404,7 @@ const sendMessageContent = async ({
   retryQuote?: MessageDto['quoteMessage'];
 }) => {
   let scope: FriendCacheScope | null = null;
+  let releaseSendLock: (() => void) | null = null;
   const notify = (clientId?: string) => {
     if (scope && clientId) notifyMessageChanged({ ownerId: scope.ownerId, sessionUnitId, sessionVersion: scope.sessionVersion, clientMessageId: clientId });
   };
@@ -421,19 +423,23 @@ const sendMessageContent = async ({
     content,
     async onBefore(input) {
       isSendBtnEnabled.value = false;
-      if (!file) {
-        scope = await readMessageScope(chatObjectId, true);
-        if (!scope) throw new Error('本地账号尚未准备好，无法保存待发送消息');
-        try { await savePendingMessage(scope, sessionUnitId, input); }
-        catch (error) { notify(input.clientMessageId); throw error; }
-        notify(input.clientMessageId);
+      try {
+        if (!file) {
+          scope = await readMessageScope(chatObjectId, true);
+          if (!scope || !input.clientMessageId) throw new Error('本地账号或消息标识尚未准备好');
+          releaseSendLock = await acquireMessageSendLock(scope.sessionVersion, scope.ownerId, sessionUnitId, input.clientMessageId);
+          try { await savePendingMessage(scope, sessionUnitId, input); }
+          catch (error) { notify(input.clientMessageId); throw error; }
+          notify(input.clientMessageId);
+        }
+        list.value = mergeMessages(list.value, [input], 'append');
+        scrollToBottom();
+        nextTick(() => scrollToBottom());
+      } catch (error) {
+        releaseSendLock?.();
+        releaseSendLock = null;
+        throw error;
       }
-      list.value = mergeMessages(list.value, [input], 'append');
-      scrollToBottom();
-      scrollToBottom();
-      /* =================== update file info =================== */
-      // nextTick(() => scrollToBottom());
-      nextTick(() => scrollToBottom());
     },
     async onSuccess(entity, input) {
       // return;
@@ -486,6 +492,8 @@ const sendMessageContent = async ({
       });
     },
     onAfter(input) {
+      releaseSendLock?.();
+      releaseSendLock = null;
       isSendBtnEnabled.value = true;
     },
   }); } catch (error) {
