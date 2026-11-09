@@ -3,10 +3,11 @@ import assert from 'node:assert/strict';
 import fs from 'node:fs';
 import vm from 'node:vm';
 import ts from 'typescript';
-function setup({ initial = [], remote, pages = [], changes, changesStore } ) {
+function setup({ initial = [], remote, pages = [], changes, changesStore, readFriend = async () => null } ) {
   let version = 1;
   let listener;
   let resolveRemote;
+  let friendEvent;
   const saved = [];
   const store = { ownerMap: new Map(), destinationMap: new Map(), chatObjects: new Map(), messageMap: {}, sessionItemsMap: {}, getSessionUnit(id) { return this.ownerMap.get(id); }, setMany(items) { for (const item of items) this.ownerMap.set(item.id, item); } };
   const api = remote || (() => new Promise(resolve => { resolveRemote = resolve; }));
@@ -17,9 +18,11 @@ function setup({ initial = [], remote, pages = [], changes, changesStore } ) {
     '../ipc/appEvent': { AppEvents: { authChanged: 'auth' }, appEvent: { on: (_event, callback) => { listener = callback; return () => {}; } } },
     '../data/local/localAccount': { readAuthenticatedSessionVersion: async () => version },
     '../data/local/friendMerge': { mergeFriendRaw: (old, item) => ({ ...old, ...item }) },
+    '../data/local/friendInvalidation': { onFriendsChanged: handler => { friendEvent = handler; return () => {}; } },
     '../data/local/friendCache': {
       readFriendScope: async () => ({ accountId: 'account', ownerId: 1, sessionVersion: version }),
       readCachedFriends: async (_scope, _limit, before) => before ? pages : initial,
+      readCachedFriend: readFriend,
       isFriendScopeCurrent: async scope => scope.sessionVersion === version,
       saveCachedFriends: async (scope, rows) => { saved.push({ scope, rows }); },
       openFriendChangesStore: async () => changesStore,
@@ -36,9 +39,52 @@ function setup({ initial = [], remote, pages = [], changes, changesStore } ) {
   vm.runInNewContext(js, { exports, require: name => deps[name], console, Map, Number, Error, Promise,
     navigator: { locks: { request: (_name, _options, callback) => callback({}) } } });
   return { list: exports.useSessionUnitList({ ownerId: 1, maxResultCount: 2 }), store, saved,
+    friendChanged: (ids, extra = {}) => friendEvent({ ownerId: 1, sessionVersion: version, ids, ...extra }),
     resolve: rows => resolveRemote({ items: rows }), refreshToken: () => listener({ args: [{ access_token: 'refreshed' }, version] }), changeAccount: () => { version++; listener({ args: [{ access_token: 'new' }, version] }); } };
 }
 const flush = () => new Promise(resolve => setImmediate(resolve));
+
+test('窗口好友通知读取已提交缓存，低于已加载边界的好友不插入当前分页', async () => {
+  const data = { a: { id: 'a', ownerId: 1, score: 11, destination: { name: 'updated' } },
+    low: { id: 'low', ownerId: 1, score: 1 } };
+  const h = setup({ initial: [{ id: 'a', ownerId: 1, score: 10 }, { id: 'b', ownerId: 1, score: 5 }],
+    remote: async () => ({ items: [{ id: 'a', ownerId: 1, score: 10 }, { id: 'b', ownerId: 1, score: 5 }] }),
+    readFriend: async (_scope, id) => data[id] });
+  await h.list.fetchLatest();
+  h.friendChanged(['a', 'low']);
+  await flush();
+  assert.equal(h.store.ownerMap.get('a').destination.name, 'updated');
+  assert.equal(h.list.list.value.map(x => x.id).join(','), 'a,b');
+});
+
+test('切换账号后迟到的好友通知不能更新列表', async () => {
+  let finish;
+  const h = setup({ initial: [{ id: 'a', ownerId: 1, score: 1 }], remote: async () => ({ items: [] }),
+    readFriend: () => new Promise(resolve => { finish = resolve; }) });
+  await h.list.fetchLatest();
+  h.friendChanged(['a']);
+  await flush();
+  h.changeAccount();
+  finish({ id: 'a', ownerId: 1, score: 2 });
+  await flush();
+  assert.equal(h.list.list.value.length, 0);
+});
+
+test('较早的好友缓存读取迟到时不能覆盖较新的窗口通知', async () => {
+  let finish;
+  let reads = 0;
+  const h = setup({ initial: [{ id: 'a', ownerId: 1, score: 1 }], remote: async () => ({ items: [] }),
+    readFriend: () => ++reads === 1 ? new Promise(resolve => { finish = resolve; })
+      : Promise.resolve({ id: 'a', ownerId: 1, score: 3, destination: { name: 'new' } }) });
+  await h.list.fetchLatest();
+  h.friendChanged(['a']);
+  await flush();
+  h.friendChanged(['a']);
+  await flush();
+  finish({ id: 'a', ownerId: 1, score: 2, destination: { name: 'old' } });
+  await flush();
+  assert.equal(h.store.ownerMap.get('a').destination.name, 'new');
+});
 
 test('重连刷新使用持久增量并把提交后的好友更新到列表', async () => {
   const calls = [];

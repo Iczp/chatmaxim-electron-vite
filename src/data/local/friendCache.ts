@@ -1,6 +1,7 @@
 import type { SessionUnitOwnerDto } from '../../apis/dtos';
 import { ImDatabase, type LocalPageCursor, type LocalScope } from './imDatabase';
 import { isLocalAccountCurrent, readLocalAccountSnapshot, resolveLocalAccountId, type LocalAccountSnapshot } from './localAccount';
+import { notifyFriendsChanged } from './friendInvalidation';
 
 let database: Promise<ImDatabase> | null = null;
 const getDatabase = (): Promise<ImDatabase> => {
@@ -44,7 +45,16 @@ export async function saveCachedFriends(scope: FriendCacheScope, items: SessionU
   const rows = toFriendRows(scope, items);
   if (!rows.length) return;
   const db = await getDatabase();
-  if (await isFriendScopeCurrent(scope)) await db.upsertFriends(scope as LocalScope, rows);
+  if (await isFriendScopeCurrent(scope)) {
+    const saved = await db.upsertFriends(scope as LocalScope, rows);
+    if (await isFriendScopeCurrent(scope)) notifySaved(scope, saved.map(row => row.id));
+  }
+}
+
+function notifySaved(scope: FriendCacheScope, ids: string[]): void {
+  for (let offset = 0; offset < ids.length; offset += 200) {
+    notifyFriendsChanged({ ownerId: scope.ownerId, sessionVersion: scope.sessionVersion, ids: ids.slice(offset, offset + 200) });
+  }
 }
 
 function toFriendRows(scope: FriendCacheScope, items: SessionUnitOwnerDto[]) {
@@ -72,6 +82,7 @@ export async function openFriendChangesStore(scope: FriendCacheScope) {
       await ensure();
       const saved = await db.applyFriendChanges(scope, rows, ticks);
       await ensure();
+      notifySaved(scope, saved.map(row => row.id));
       return saved.map(row => ({ ...(row.raw as SessionUnitOwnerDto), id: row.id, ownerId: scope.ownerId, score: row.score }));
     },
   };

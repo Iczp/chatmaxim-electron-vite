@@ -12,6 +12,8 @@ const mergeSource = fs.readFileSync(path.resolve(__dirname, '../../src/data/loca
 fs.writeFileSync(path.join(root, 'friend-merge.js'), ts.transpileModule(mergeSource, { compilerOptions: { module: ts.ModuleKind.CommonJS, target: ts.ScriptTarget.ES2020 } }).outputText);
 const friendSource = fs.readFileSync(path.resolve(__dirname, '../../src/data/local/friendCache.ts'), 'utf8');
 fs.writeFileSync(path.join(root, 'friend-cache.js'), ts.transpileModule(friendSource, { compilerOptions: { module: ts.ModuleKind.CommonJS, target: ts.ScriptTarget.ES2020 } }).outputText);
+const friendInvalidationSource = fs.readFileSync(path.resolve(__dirname, '../../src/data/local/friendInvalidation.ts'), 'utf8');
+fs.writeFileSync(path.join(root, 'friend-invalidation.js'), ts.transpileModule(friendInvalidationSource, { compilerOptions: { module: ts.ModuleKind.CommonJS, target: ts.ScriptTarget.ES2020 } }).outputText);
 const ownerSource = fs.readFileSync(path.resolve(__dirname, '../../src/data/local/ownerCache.ts'), 'utf8');
 fs.writeFileSync(path.join(root, 'owner-cache.js'), ts.transpileModule(ownerSource, { compilerOptions: { module: ts.ModuleKind.CommonJS, target: ts.ScriptTarget.ES2020 } }).outputText);
 const messageSource = fs.readFileSync(path.resolve(__dirname, '../../src/data/local/messageCache.ts'), 'utf8');

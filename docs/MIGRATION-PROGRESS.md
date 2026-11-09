@@ -107,3 +107,9 @@
 状态：生产同步逻辑自动测试、类型检查及 Windows Electron IndexedDB 重启测试通过；真实后端契约与 UI 待联调。会话页面激活及 SignalR 重连时，在已有本地基线的情况下调用好友 changes，重放边界 tick，分页校验后将变更和高水位在同一事务提交，再更新界面；无本地基线时回退加载好友首页。异常响应、身份不匹配、新好友缺少排序分数或事务失败不会推进该页游标；窗口间以 Web Lock 避免同一身份并发执行。列表变更后按本地分页索引的 score、id 顺序排列，保持分页边界。
 
 `tests/friend-changes-production.test.mjs` 覆盖分页、边界重放、提交失败及无效游标；`tests/friend-local-first-production.test.mjs` 覆盖页面调用、排序边界和账号切换竞态；真实 Electron 数据库测试覆盖变更与游标事务回滚、高水位不倒退和重启恢复。初始高水位参考 Flutter 从已有好友 ticks 推导，尚未证明它能覆盖未缓存好友的全部历史变化；服务端删除事件、游标格式及同 tick 分页规则仍需真实契约确认。其他窗口在锁被占用时不会立即收到好友变更，仍需数据变更广播；缺少 Web Lock 的环境不会执行该增量流程。不能据此认定完整离线同步或生产验收完成。
+
+## 2026-11-09：M3 好友跨窗口缓存变更通知
+
+状态：生产逻辑自动测试、类型检查及 Windows Electron 双窗口数据库/通知测试通过；真实后端与界面联调待验证。好友列表、详情和 changes 增量写入成功后，仅广播身份、认证代次及好友 ID；接收窗口校验作用域并从本地库读取已提交结果。已加载好友更新到列表和聊天详情，未加载且低于分页边界的好友留在本地等待翻页；账号切换、通知乱序和旧详情请求不会覆盖较新结果。
+
+`tests/friend-invalidation-production.test.mjs`、`tests/friend-local-first-production.test.mjs`、`tests/friend-detail-production.test.mjs` 覆盖通知内容、分页边界、认证变化和乱序；`tests/integration/im-database-runner.cjs` 使用真实双窗口验证普通好友写入和 changes 事务提交后的通知与读取。通知不保证窗口离线期间送达，重新进入仍依靠数据库和增量同步；删除通知、服务端删除语义、无浏览器广播支持时的恢复以及打包模式和其他平台仍需验证。

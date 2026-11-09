@@ -10,6 +10,7 @@ app.whenReady().then(async () => {
     const source = fs.readFileSync(path.join(root, 'database.js'), 'utf8');
     const mergeSource = fs.readFileSync(path.join(root, 'friend-merge.js'), 'utf8');
     const friendSource = fs.readFileSync(path.join(root, 'friend-cache.js'), 'utf8');
+    const friendInvalidationSource = fs.readFileSync(path.join(root, 'friend-invalidation.js'), 'utf8');
     const ownerSource = fs.readFileSync(path.join(root, 'owner-cache.js'), 'utf8');
     const messageSource = fs.readFileSync(path.join(root, 'message-cache.js'), 'utf8');
     const invalidationSource = fs.readFileSync(path.join(root, 'message-invalidation.js'), 'utf8');
@@ -20,8 +21,9 @@ app.whenReady().then(async () => {
       await win.loadFile(path.join(root, 'index.html'));
       await win.webContents.executeJavaScript(`(() => { const exports = {}; ${mergeSource}\n globalThis.friendMerge = exports; })()`);
       await win.webContents.executeJavaScript(`(() => { const exports = {}; const require = () => globalThis.friendMerge; ${source}\n globalThis.ImDatabase = exports.ImDatabase; })()`);
+      await win.webContents.executeJavaScript(`(() => { const exports = {}; ${friendInvalidationSource}\n globalThis.friendInvalidation = exports; })()`);
       await win.webContents.executeJavaScript(`(() => {
-        const exports = {}; const require = name => name === './imDatabase' ? { ImDatabase } : {
+        const exports = {}; const require = name => name === './imDatabase' ? { ImDatabase } : name === './friendInvalidation' ? friendInvalidation : {
           isLocalAccountCurrent: async scope => globalThis.activeSession === scope.sessionVersion,
           readLocalAccountSnapshot: async () => ({ accountId: 'account-c', sessionVersion: globalThis.activeSession }),
           resolveLocalAccountId: async () => 'account-c',
@@ -84,6 +86,7 @@ app.whenReady().then(async () => {
         db.close();
       })()`);
       const second = await makeWindow();
+      await second.webContents.executeJavaScript(`globalThis.friendEvents = []; friendInvalidation.onFriendsChanged(event => friendEvents.push(event)); true;`);
       await first.webContents.executeJavaScript(`(async () => { globalThis.releaseLock = await sendLock.acquireMessageSendLock(1, 1, 'chat', 'same'); return true; })()`);
       const denied = await second.webContents.executeJavaScript(`(async () => {
         try { await sendLock.acquireMessageSendLock(2, 1, 'chat', 'same'); return false; } catch { return true; }
@@ -124,7 +127,17 @@ app.whenReady().then(async () => {
         await friendCache.saveCachedFriends(scope, [{ id: 'cached-friend', ownerId: 1, score: 7, destination: { code: 'partial' } }]);
         await friendCache.saveCachedFriends(scope, [{ id: 'cached-friend', ownerId: 1, destination: { description: 'no-score update' } }]);
         await friendCache.saveCachedFriends(scope, [{ id: 'no-score', ownerId: 1 }]);
+        const sync = await friendCache.openFriendChangesStore(scope);
+        await sync.apply([{ id: 'cached-friend', ownerId: 1, score: 11, sorting: 0, ticks: 11 }], 11);
       })()`);
+      const friendEvents = await second.webContents.executeJavaScript(`(async () => {
+        const deadline = Date.now() + 3000;
+        while (friendEvents.length < 5 && Date.now() < deadline) await new Promise(resolve => setTimeout(resolve, 20));
+        const scope = await friendCache.readFriendScope(1);
+        const row = await friendCache.readCachedFriend(scope, 'cached-friend');
+        return { events: friendEvents, description: row?.destination?.description };
+      })()`);
+      if (friendEvents.events.length !== 5 || friendEvents.events.some(event => JSON.stringify(event) !== JSON.stringify({ ownerId: 1, sessionVersion: 1, ids: ['cached-friend'] })) || friendEvents.description !== 'no-score update') throw new Error(`friend notification failed ${JSON.stringify(friendEvents)}`);
       await first.webContents.executeJavaScript(`(async () => {
         const scope = await ownerCache.readOwnerScope();
         await ownerCache.saveCachedOwners(scope, [{ id: 7, name: 'owner-c' }, { id: 8, name: 'second' }]);
@@ -152,7 +165,7 @@ app.whenReady().then(async () => {
         try { await friendCache.readCachedFriends(scope, 10); } catch { stale = true; }
         return { ids: cached.map(x => x.id), name: cached[0]?.destination?.name, score: cached[0]?.score, lastId: cached[0]?.lastMessage?.id, detail: detail?.destination?.name, description: detail?.destination?.description, stale };
       })()`);
-      if (JSON.stringify(cacheResult) !== JSON.stringify({ ids: ['cached-friend'], name: 'cached', score: 8, lastId: 10, detail: 'cached', description: 'no-score update', stale: true })) throw new Error(`friend cache failed ${JSON.stringify(cacheResult)}`);
+      if (JSON.stringify(cacheResult) !== JSON.stringify({ ids: ['cached-friend'], name: 'cached', score: 11, lastId: 10, detail: 'cached', description: 'no-score update', stale: true })) throw new Error(`friend cache failed ${JSON.stringify(cacheResult)}`);
       const result = await second.webContents.executeJavaScript(`(async () => {
         const db = await ImDatabase.open(); const a = { accountId: 'account-a', ownerId: 1 };
         const friends = await db.readFriends(a, 10); const messages = await db.readMessages(a, 's', 10);

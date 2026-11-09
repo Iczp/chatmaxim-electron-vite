@@ -13,8 +13,10 @@ function compile(file, deps) {
 }
 const merge = compile('../src/data/local/friendMerge.ts', {});
 function setup({ cached = null, network } = {}) {
+  let cachedItem = cached;
   let version = 1;
   let auth;
+  let friendEvent;
   const rows = new Map();
   const writes = [];
   const store = { ownerMap: rows, getSessionUnit: id => rows.get(id), setMany: items => items.forEach(item => rows.set(item.id, item)) };
@@ -25,13 +27,32 @@ function setup({ cached = null, network } = {}) {
     '../ipc/appEvent': { appEvent: { on: (_name, handler) => { auth = handler; return () => {}; } }, AppEvents: { authChanged: 'auth' } },
     '../data/local/localAccount': { readAuthenticatedSessionVersion: async () => version },
     '../data/local/friendCache': { readFriendScope: async () => ({ accountId: 'a', ownerId: 3, sessionVersion: version }),
-      readCachedFriend: async () => cached, saveCachedFriends: async (_scope, items) => writes.push(...items) },
+      readCachedFriend: async () => cachedItem, saveCachedFriends: async (_scope, items) => writes.push(...items) },
     '../data/local/friendMerge': merge,
+    '../data/local/friendInvalidation': { onFriendsChanged: handler => { friendEvent = handler; return () => {}; } },
   };
   return { service: compile('../src/composables/useFriendDetail.ts', deps).useFriendDetail(3, 'unit'), rows, writes,
+    friendChanged: () => friendEvent({ ownerId: 3, sessionVersion: version, ids: ['unit'] }),
+    setCached: value => { cachedItem = value; },
     switchAccount: () => { version++; auth({ args: [{ access_token: 'new' }, version] }); } };
 }
 const flush = () => new Promise(resolve => setImmediate(resolve));
+
+test('其他窗口提交详情后刷新本地视图并丢弃更早发起的网络响应', async () => {
+  let finish;
+  const h = setup({ cached: { id: 'unit', ownerId: 3, score: 1, destination: { name: 'old' } },
+    network: () => new Promise(resolve => { finish = resolve; }) });
+  const task = h.service.load();
+  await flush();
+  h.setCached({ id: 'unit', ownerId: 3, score: 2, destination: { name: 'other window' } });
+  h.friendChanged();
+  await flush();
+  assert.equal(h.rows.get('unit').destination.name, 'other window');
+  finish({ id: 'unit', ownerId: 3, score: 1, destination: { name: 'stale' } });
+  await task;
+  assert.equal(h.rows.get('unit').destination.name, 'other window');
+  assert.equal(h.writes.length, 0);
+});
 
 test('先显示本地好友，随后合并网络详情并写回', async () => {
   let finish;

@@ -113,13 +113,14 @@ export class ImDatabase {
     } catch (error) { await done.catch(() => {}); throw error; }
   }
 
-  async upsertFriends(scope: LocalScope, items: LocalFriendWrite[]): Promise<void> {
+  async upsertFriends(scope: LocalScope, items: LocalFriendWrite[]): Promise<LocalFriend[]> {
     this.validateFriends(scope, items);
     const tx = this.db.transaction('friends', 'readwrite');
     const done = complete(tx);
     try {
-      await this.writeFriends(tx.objectStore('friends'), scope, items, false);
+      const saved = await this.writeFriends(tx.objectStore('friends'), scope, items, false);
       await done;
+      return saved;
     } catch (error) {
       try { tx.abort(); } catch { /* 事务可能已经结束 */ }
       await done.catch(() => {});

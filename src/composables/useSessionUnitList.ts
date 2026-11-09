@@ -5,8 +5,9 @@ import { SessionUnitGetListInput } from '../apis/dtos/SessionUnitGetListInput';
 import { useImStore } from '../stores/imStore';
 import { appEvent, AppEvents } from '../ipc/appEvent';
 import { readAuthenticatedSessionVersion } from '../data/local/localAccount';
-import { readFriendScope, readCachedFriends, saveCachedFriends, isFriendScopeCurrent, openFriendChangesStore } from '../data/local/friendCache';
+import { readFriendScope, readCachedFriend, readCachedFriends, saveCachedFriends, isFriendScopeCurrent, openFriendChangesStore } from '../data/local/friendCache';
 import { mergeFriendRaw } from '../data/local/friendMerge';
+import { onFriendsChanged } from '../data/local/friendInvalidation';
 import { syncFriendChanges } from '../realtime/friendChangesSync';
 
 export type FetchSessionUnitResult = {
@@ -94,6 +95,36 @@ export const useSessionUnitList = ({
     updateMessageIdBounds(normalized);
     list.value = mergeSessionUnits(list.value, normalized, mode);
   };
+
+  let disposed = false;
+  let changeSequence = 0;
+  const changesInFlight = new Map<string, number>();
+  const unsubscribeFriends = onFriendsChanged(event => {
+    if (disposed || event.ownerId !== ownerId || event.sessionVersion !== viewSessionVersion) return;
+    const epoch = authEpoch;
+    for (const id of event.ids) {
+      const sequence = ++changeSequence;
+      changesInFlight.set(id, sequence);
+      void (async () => {
+        try {
+          const scope = await readFriendScope(ownerId);
+          if (!scope || scope.sessionVersion !== event.sessionVersion) return;
+          const row = await readCachedFriend(scope, id);
+          if (!row || !await isFriendScopeCurrent(scope)) return;
+          if (disposed || epoch !== authEpoch || changesInFlight.get(id) !== sequence) return;
+          const existing = list.value.some(item => item.id === id);
+          const last = list.value[list.value.length - 1];
+          const score = row.score == null ? NaN : Number(row.score);
+          const lastScore = last?.score == null ? NaN : Number(last.score);
+          const withinLoaded = last && Number.isSafeInteger(score) && Number.isSafeInteger(lastScore) &&
+            (score > lastScore || (score === lastScore && id > (last.id ?? '')));
+          if (existing || isBof.value || withinLoaded) applyItems([row], 'append');
+        } catch { /* 认证或数据库变化时等待下一次刷新 */ }
+        finally { if (changesInFlight.get(id) === sequence) changesInFlight.delete(id); }
+      })();
+    }
+  });
+  onUnmounted(() => { disposed = true; changesInFlight.clear(); unsubscribeFriends(); });
 
   const cacheItems = async (items: SessionUnitOwnerDto[], expectedVersion: number | null) => {
     if (!items.length) return;
