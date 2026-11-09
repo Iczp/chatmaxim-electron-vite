@@ -57,6 +57,7 @@ import { openChildWindow } from '../../ipc/openChildWindow';
 import ProfileModal from '../../components/ProfileModal.vue';
 import { provide } from 'vue';
 import { MessageContent } from '../../apis/dtos/message/messageContent';
+import { preserveHistoryAnchor } from './historyAnchor';
 import { readMessageScope, isMessageScopeCurrent, savePendingMessage, saveCachedMessages, deletePendingMessage } from '../../data/local/messageCache';
 import type { FriendCacheScope } from '../../data/local/friendCache';
 import { notifyMessageChanged } from '../../data/local/messageInvalidation';
@@ -128,13 +129,25 @@ const {
   cancelChecked,
   isPendingOfFetchLatest,
   isPendingOfFetchHistorical,
-} = useMessageList({ sessionUnitId, ownerId: chatObjectId });
+} = useMessageList({ sessionUnitId, ownerId: chatObjectId, prependHistory: preserveHistoryPrepend });
 
 const chatInput = ref<InstanceType<typeof ChatInput> | null>(null);
 
 const scroll = ref<InstanceType<typeof ScrollView> | null>(null);
 
 const scrollerRef = ref();
+let scrollInteraction = 0;
+const noteScrollInteraction = () => { scrollInteraction++; };
+
+async function preserveHistoryPrepend(apply: () => void): Promise<void> {
+  const scroller = scrollerRef.value;
+  const element = getScrollerEl();
+  const revision = scrollInteraction;
+  await preserveHistoryAnchor(element && scroller ? { element, scrollToItem: (index: number) => scroller.scrollToItem(index) } : null,
+    () => list.value, apply,
+    async () => { await nextTick(); await new Promise<void>(resolve => requestAnimationFrame(() => resolve())); },
+    () => revision !== scrollInteraction || getScrollerEl() !== element);
+}
 
 const dropViewer = ref<InstanceType<typeof DropViewer> | null>(null);
 
@@ -278,6 +291,7 @@ const syncAfterReconnect = () => {
 };
 
 const _onDeactivated = () => {
+  noteScrollInteraction();
   eventBus.off('connected', syncAfterReconnect);
   eventBus.off('messageMutation', onMessageMutation);
   // activeLastMessageId.value = lastMessageId.value;
@@ -323,12 +337,17 @@ const _onActivated = () => {
     // store.clearBadge(chatObjectId, sessionUnitId);
     // setReadedMessageId({ sessionUnitId, messageId: receivedMessage!.id! });
     if (isLatestMessage) {
+      const el = getScrollerEl();
+      const follow = !!el && el.scrollHeight - el.scrollTop - el.clientHeight < 80;
+      const revision = scrollInteraction;
       fetchLatest({
         caller: 'onMessage',
       })
         .then(() => {
           console.warn('[chat] fetchLatest');
-          nextTick(() => scrollToBottom());
+          if (follow) nextTick(() => {
+            if (revision === scrollInteraction && getScrollerEl() === el) el.scrollTop = el.scrollHeight;
+          });
         })
         .catch(err => {
           console.error(err);
@@ -546,22 +565,7 @@ const onReachStart = (event: CustomEvent) => {
   if (!el) {
     return;
   }
-  // 记录加载前的滚动锚点，prepend 历史消息后补偿高度差，避免视口跳动
-  const originalScrollHeight = el.scrollHeight;
-  const originalScrollTop = el.scrollTop;
-
   fetchHistorical()
-    .then(() => {
-      // 虚拟列表在下一帧才完成新项目测量
-      nextTick(() => {
-        requestAnimationFrame(() => {
-          const nextEl = getScrollerEl();
-          if (!nextEl) return;
-          const delta = nextEl.scrollHeight - originalScrollHeight;
-          nextEl.scrollTop = originalScrollTop + Math.max(0, delta);
-        });
-      });
-    })
     .catch(err => {
       console.log(err);
     });
@@ -772,12 +776,17 @@ const onTransfer = () => {
         class="message-container scroller"
         @scroll-start="onReachStart"
         @resize="onResize"
+        @wheel.passive="noteScrollInteraction"
+        @pointerdown="noteScrollInteraction"
+        @touchstart.passive="noteScrollInteraction"
+        @keydown="noteScrollInteraction"
       >
         <template v-slot="{ item, index, active }">
           <DynamicScrollerItem
             :item="item"
             :active="active"
             :data-index="index"
+            :data-message-key="item.scrollerKey"
             :size-dependencies="[item.isRollbacked, item.state, item.error, item.file]"
           >
             <MessageItem

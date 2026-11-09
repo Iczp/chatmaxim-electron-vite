@@ -113,3 +113,9 @@
 状态：生产逻辑自动测试、类型检查及 Windows Electron 双窗口数据库/通知测试通过；真实后端与界面联调待验证。好友列表、详情和 changes 增量写入成功后，仅广播身份、认证代次及好友 ID；接收窗口校验作用域并从本地库读取已提交结果。已加载好友更新到列表和聊天详情，未加载且低于分页边界的好友留在本地等待翻页；账号切换、通知乱序和旧详情请求不会覆盖较新结果。
 
 `tests/friend-invalidation-production.test.mjs`、`tests/friend-local-first-production.test.mjs`、`tests/friend-detail-production.test.mjs` 覆盖通知内容、分页边界、认证变化和乱序；`tests/integration/im-database-runner.cjs` 使用真实双窗口验证普通好友写入和 changes 事务提交后的通知与读取。通知不保证窗口离线期间送达，重新进入仍依靠数据库和增量同步；删除通知、服务端删除语义、无浏览器广播支持时的恢复以及打包模式和其他平台仍需验证。
+
+## 2026-11-09：M4 聊天历史分页滚动锚点
+
+状态：生产模块自动测试、类型检查和 Windows Electron 虚拟列表集成测试通过；真实聊天、多媒体和其他平台待验收。本地历史和网络历史分别插入前捕获当前可见消息及视口偏移，虚拟列表渲染及延迟尺寸测量后校正；用户在恢复期间操作或页面退出时取消旧锚点恢复。实时新消息仅在用户原本接近底部且未改变滚动意图时跟随到底部。
+
+`tests/history-anchor-production.test.mjs` 和 `tests/message-local-first-production.test.mjs` 覆盖用户中断和分阶段插入；`node tests/integration/scroll-anchor-runner.cjs` 在真实 Electron 中使用真实 Vue 虚拟列表验证本地页、用户滚动后网络页及一次高度变化。当前 node_modules 的虚拟列表为 2.0.1，而 npm 锁文件为 2.0.0-beta.8；另从 npm 获取与锁文件完整性匹配的 beta.8，在临时目录通过 `GOTOIM_SCROLLER_PACKAGE` 指向该包重复测试，两个版本通过。测试是隔离界面，不代表真实消息组件、异步图片/视频加载、长时间滚动性能或 macOS/Linux 已通过生产验收。

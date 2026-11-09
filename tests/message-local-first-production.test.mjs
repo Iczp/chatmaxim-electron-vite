@@ -11,7 +11,7 @@ function compile(path, deps) {
   return exports;
 }
 const merge = compile('../src/commons/mergeMessages.ts', {});
-function setup({ local = [], pending = [], older = [], history, latest, complete = false, readClient = async () => null } = {}) {
+function setup({ local = [], pending = [], older = [], history, latest, complete = false, readClient = async () => null, prependHistory } = {}) {
   let version = 1;
   let authHandler;
   let changeHandler;
@@ -43,11 +43,28 @@ function setup({ local = [], pending = [], older = [], history, latest, complete
     },
   };
   const mod = compile('../src/composables/useMessageList.ts', deps);
-  return { list: mod.useMessageList({ ownerId: 1, sessionUnitId: 'unit', maxResultCount: 20 }), writes, reads, marks,
+  return { list: mod.useMessageList({ ownerId: 1, sessionUnitId: 'unit', maxResultCount: 20, prependHistory }), writes, reads, marks,
     change: (clientMessageId, extra = {}) => changeHandler({ ownerId: 1, sessionUnitId: 'unit', sessionVersion: version, clientMessageId, ...extra }),
     switchAccount: () => { version++; authHandler({ args: [{ access_token: 'new' }, version] }); } };
 }
 const flush = () => new Promise(resolve => setImmediate(resolve));
+
+test('本地和网络历史分别插入，分别捕获滚动锚点', async () => {
+  let finish;
+  let anchors = 0;
+  const h = setup({ local: [{ id: 10 }], older: [{ id: 8 }, { id: 9 }],
+    latest: async () => ({ items: [] }), history: () => new Promise(resolve => { finish = resolve; }),
+    prependHistory: async apply => { anchors++; apply(); } });
+  await h.list.fetchLatest();
+  const task = h.list.fetchHistorical();
+  await flush();
+  assert.equal(anchors, 1);
+  assert.equal(h.list.list.value.map(x => x.id).join(','), '8,9,10');
+  finish({ items: [{ id: 7 }] });
+  await task;
+  assert.equal(anchors, 2);
+  assert.equal(h.list.list.value.map(x => x.id).join(','), '7,8,9,10');
+});
 
 test('窗口通知从本地库恢复确认消息并忽略其他会话', async () => {
   let reads = 0;

@@ -24,10 +24,12 @@ export const useMessageList = ({
   sessionUnitId,
   ownerId = 0,
   maxResultCount = 20,
+  prependHistory,
 }: {
   sessionUnitId: string;
   ownerId?: number;
   maxResultCount?: number;
+  prependHistory?: (apply: () => void) => Promise<void>;
 }) => {
   const maxMessageId = ref<number | undefined>();
   const minMessageId = ref<number | undefined>();
@@ -246,7 +248,9 @@ export const useMessageList = ({
           if (cached.length) {
             const ids = cached.map(x => x.id).filter((id): id is number => id != null && id > 0);
             if (ids.length) minMessageId.value = Math.min(minMessageId.value ?? Infinity, ...ids);
-            list.value = mutationSync.applyKnown(mergeMessages(list.value, cached, 'prepend'));
+            const apply = () => { list.value = mutationSync.applyKnown(mergeMessages(list.value, cached, 'prepend')); };
+            if (prependHistory) await prependHistory(apply); else apply();
+            await ensureCurrent(epoch, version);
           }
           if (cached.length >= pageSize) return { items: cached, list, maxResultCount: pageSize };
           if (await readHistoryComplete(scope, sessionUnitId)) {
@@ -272,7 +276,11 @@ export const useMessageList = ({
         const visible = savedScope && items.length ? await readCachedMessagesByIds(savedScope, sessionUnitId, ids) : items;
         await ensureCurrent(epoch, version);
         if (ids.length) minMessageId.value = Math.min(minMessageId.value ?? Infinity, ...ids);
-        list.value = mutationSync.applyKnown(mergeMessages(list.value, visible, 'prepend'));
+        if (visible.length) {
+          const apply = () => { list.value = mutationSync.applyKnown(mergeMessages(list.value, visible, 'prepend')); };
+          if (prependHistory) await prependHistory(apply); else apply();
+          await ensureCurrent(epoch, version);
+        }
         isBof.value = rawItems.length < remaining;
         if (isBof.value && savedScope) await markHistoryComplete(savedScope, sessionUnitId);
         return { items: [...visible, ...cached], list, maxResultCount: pageSize };
