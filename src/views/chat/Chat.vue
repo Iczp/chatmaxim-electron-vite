@@ -58,6 +58,7 @@ import { provide } from 'vue';
 import { MessageContent } from '../../apis/dtos/message/messageContent';
 import { readMessageScope, isMessageScopeCurrent, savePendingMessage, saveCachedMessages, deletePendingMessage } from '../../data/local/messageCache';
 import type { FriendCacheScope } from '../../data/local/friendCache';
+import { notifyMessageChanged } from '../../data/local/messageInvalidation';
 
 const props = defineProps<{
   sessionUnitId: string;
@@ -402,6 +403,9 @@ const sendMessageContent = async ({
   retryQuote?: MessageDto['quoteMessage'];
 }) => {
   let scope: FriendCacheScope | null = null;
+  const notify = (clientId?: string) => {
+    if (scope && clientId) notifyMessageChanged({ ownerId: scope.ownerId, sessionUnitId, sessionVersion: scope.sessionVersion, clientMessageId: clientId });
+  };
   try { await sendMessage({
     file,
     clientMessageId,
@@ -420,7 +424,9 @@ const sendMessageContent = async ({
       if (!file) {
         scope = await readMessageScope(chatObjectId, true);
         if (!scope) throw new Error('本地账号尚未准备好，无法保存待发送消息');
-        await savePendingMessage(scope, sessionUnitId, input);
+        try { await savePendingMessage(scope, sessionUnitId, input); }
+        catch (error) { notify(input.clientMessageId); throw error; }
+        notify(input.clientMessageId);
       }
       list.value = mergeMessages(list.value, [input], 'append');
       scrollToBottom();
@@ -446,6 +452,7 @@ const sendMessageContent = async ({
         try { await saveCachedMessages(scope, sessionUnitId, [confirmed]); }
         catch { console.warn('[chat] 保存发送回执失败'); }
         if (!await isMessageScopeCurrent(scope)) return;
+        notify(input.clientMessageId);
       }
       clearChatInput(isClearInput);
       list.value = mergeMessages(list.value, [confirmed], 'append');
@@ -467,6 +474,7 @@ const sendMessageContent = async ({
         try { await savePendingMessage(scope, sessionUnitId, failed); }
         catch { console.warn('[chat] 保存发送失败状态失败'); }
         if (!await isMessageScopeCurrent(scope)) return;
+        notify(input.clientMessageId);
       }
       if (list.value.some(x => x.clientMessageId === input.clientMessageId && x.id != null)) return;
       list.value = mergeMessages(list.value, [failed], 'append');
@@ -668,6 +676,7 @@ const onRemove = async (entity: MessageDto) => {
       const scope = await readMessageScope(chatObjectId);
       if (!scope) throw new Error('本地账号尚未准备好');
       await deletePendingMessage(scope, sessionUnitId, entity.clientMessageId);
+      notifyMessageChanged({ ownerId: scope.ownerId, sessionUnitId, sessionVersion: scope.sessionVersion, clientMessageId: entity.clientMessageId });
     } catch { message.error('删除本地消息失败'); return; }
   }
   removeItem(entity);

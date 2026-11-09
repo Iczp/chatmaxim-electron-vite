@@ -11,9 +11,10 @@ function compile(path, deps) {
   return exports;
 }
 const merge = compile('../src/commons/mergeMessages.ts', {});
-function setup({ local = [], pending = [], older = [], history, latest, complete = false } = {}) {
+function setup({ local = [], pending = [], older = [], history, latest, complete = false, readClient = async () => null } = {}) {
   let version = 1;
   let authHandler;
+  let changeHandler;
   const writes = [];
   const reads = [];
   const marks = [];
@@ -28,10 +29,12 @@ function setup({ local = [], pending = [], older = [], history, latest, complete
     '../realtime/messageMutationSync': { MessageMutationSync: class { applyKnown(rows) { return rows; } sync() { return Promise.resolve(); } } },
     '../ipc/appEvent': { AppEvents: { authChanged: 'auth' }, appEvent: { on: (_name, callback) => { authHandler = callback; return () => {}; } } },
     '../data/local/localAccount': { readAuthenticatedSessionVersion: async () => version },
+    '../data/local/messageInvalidation': { onMessageChanged: handler => { changeHandler = handler; return () => {}; }, notifyMessageChanged() {} },
     '../data/local/messageCache': {
       readMessageScope: async () => scope(), isMessageScopeCurrent: async value => value.sessionVersion === version,
       readCachedMessages: async (_scope, _unit, limit, before) => { reads.push({ limit, before }); return before ? older : local; },
       readPendingMessages: async () => pending,
+      readCachedMessageByClientId: readClient,
       saveCachedMessages: async (_scope, _unit, rows) => writes.push(rows),
       readCachedMessagesByIds: async (_scope, _unit, ids) => writes.flat().filter(row => ids.includes(row.id)),
       openMutationStore: async () => null,
@@ -41,9 +44,57 @@ function setup({ local = [], pending = [], older = [], history, latest, complete
   };
   const mod = compile('../src/composables/useMessageList.ts', deps);
   return { list: mod.useMessageList({ ownerId: 1, sessionUnitId: 'unit', maxResultCount: 20 }), writes, reads, marks,
+    change: (clientMessageId, extra = {}) => changeHandler({ ownerId: 1, sessionUnitId: 'unit', sessionVersion: version, clientMessageId, ...extra }),
     switchAccount: () => { version++; authHandler({ args: [{ access_token: 'new' }, version] }); } };
 }
 const flush = () => new Promise(resolve => setImmediate(resolve));
+
+test('窗口通知从本地库恢复确认消息并忽略其他会话', async () => {
+  let reads = 0;
+  const h = setup({ pending: [{ clientMessageId: 'c', state: 4 }], readClient: async () => { reads++; return { id: 9, clientMessageId: 'c', state: 1 }; } });
+  await h.list.fetchLatest();
+  h.change('c', { sessionUnitId: 'other' });
+  h.change('c');
+  await flush();
+  assert.equal(reads, 1);
+  assert.equal(h.list.list.value.length, 1);
+  assert.equal(h.list.list.value[0].id, 9);
+});
+
+test('较早的缓存读取迟到时不能覆盖较新通知', async () => {
+  let finish;
+  let reads = 0;
+  const h = setup({ pending: [{ clientMessageId: 'c', state: 4 }], readClient: () => ++reads === 1
+    ? new Promise(resolve => { finish = resolve; }) : Promise.resolve({ id: 9, clientMessageId: 'c', state: 1 }) });
+  await h.list.fetchLatest();
+  h.change('c');
+  await flush();
+  h.change('c');
+  await flush();
+  finish({ clientMessageId: 'c', state: 4 });
+  await flush();
+  assert.equal(h.list.list.value[0].id, 9);
+});
+
+test('删除待发送记录后移除旧窗口中的副本', async () => {
+  const h = setup({ pending: [{ clientMessageId: 'c', state: 4 }] });
+  await h.list.fetchLatest();
+  h.change('c');
+  await flush();
+  assert.equal(h.list.list.value.length, 0);
+});
+
+test('账号切换后丢弃迟到的窗口缓存读取', async () => {
+  let finish;
+  const h = setup({ pending: [{ clientMessageId: 'c', state: 4 }], readClient: () => new Promise(resolve => { finish = resolve; }) });
+  await h.list.fetchLatest();
+  h.change('c');
+  await flush();
+  h.switchAccount();
+  finish({ id: 9, clientMessageId: 'c', state: 1 });
+  await flush();
+  assert.equal(h.list.list.value.length, 0);
+});
 
 test('首屏恢复未确认消息，同时保持服务端分页游标', async () => {
   const h = setup({ local: [{ id: 5 }], pending: [{ clientMessageId: 'pending', state: 4 }], latest: async () => ({ items: [] }) });

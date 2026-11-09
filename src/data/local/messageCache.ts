@@ -39,16 +39,24 @@ export async function readPendingMessages(scope: FriendCacheScope, unit: string)
     error: (row.raw.error as string) || '发送状态未确认，请检查后重试' }));
 }
 
+export async function readCachedMessageByClientId(scope: FriendCacheScope, unit: string, clientMessageId: string): Promise<MessageDto | null> {
+  const db = await getDatabase();
+  const row = await db.readMessageByClientId(scope, unit, clientMessageId);
+  if (!await isFriendScopeCurrent(scope)) throw new Error('登录状态已变化');
+  return row ? toMessage(row) : null;
+}
+
 export async function savePendingMessage(scope: FriendCacheScope, unit: string, item: MessageDto): Promise<void> {
   if (!item.clientMessageId || item.file) throw new Error('消息不能保存为本地待发送消息');
   if (!await isFriendScopeCurrent(scope)) throw new Error('登录状态已变化');
   const db = await getDatabase();
   const raw = JSON.parse(JSON.stringify(item)) as Record<string, unknown>;
   delete raw.file;
-  await db.upsertMessage({ accountId: scope.accountId, ownerId: scope.ownerId, sessionUnitId: unit,
+  const saved = await db.upsertMessage({ accountId: scope.accountId, ownerId: scope.ownerId, sessionUnitId: unit,
     localId: `client-${item.clientMessageId}`, clientMessageId: item.clientMessageId,
     score: Number.MAX_SAFE_INTEGER, state: item.state === MessageStateEnums.Sending ? 'sending' : 'failed', raw });
   if (!await isFriendScopeCurrent(scope)) throw new Error('登录状态已变化');
+  if (!saved) throw new Error('消息已确认，请刷新聊天后查看');
 }
 
 export async function deletePendingMessage(scope: FriendCacheScope, unit: string, clientMessageId: string): Promise<void> {

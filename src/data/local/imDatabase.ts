@@ -148,7 +148,7 @@ export class ImDatabase {
     } catch (error) { await done.catch(() => {}); throw error; }
   }
 
-  async upsertMessage(row: LocalMessage): Promise<void> {
+  async upsertMessage(row: LocalMessage): Promise<boolean> {
     validateScope(row); validateUnit(row.sessionUnitId); validateScore(row.score);
     if (!row.localId?.trim()) throw new Error('本地消息 ID 无效');
     if (row.clientMessageId != null && !row.clientMessageId.trim()) throw new Error('客户端消息 ID 无效');
@@ -163,7 +163,7 @@ export class ImDatabase {
       const byClient = !row.clientMessageId ? undefined : await request(store.index('client').get([...prefix, row.clientMessageId]));
       const previous: LocalMessage | undefined = byClient ?? byServer ?? byLocal;
       // 迟到的失败或重试状态不能覆盖已经收到服务端确认的消息。
-      if (previous?.serverId != null && row.serverId == null) { await done; return; }
+      if (previous?.serverId != null && row.serverId == null) { await done; return false; }
       if (byLocal && previous && byLocal.localId !== previous.localId && byLocal.localId !== byServer?.localId) {
         throw new Error('本地消息 ID 与已有消息冲突');
       }
@@ -186,6 +186,7 @@ export class ImDatabase {
       }
       store.put(merged);
       await done;
+      return true;
     } catch (error) {
       try { tx.abort(); } catch { /* 事务可能已经结束 */ }
       await done.catch(() => {});
@@ -219,6 +220,19 @@ export class ImDatabase {
         IDBKeyRange.bound([...prefix, ''], [...prefix, '\uffff'])));
       await done;
       return rows.filter(row => row.serverId == null && !row.isDeleted);
+    } catch (error) { await done.catch(() => {}); throw error; }
+  }
+
+  async readMessageByClientId(scope: LocalScope, unit: string, clientMessageId: string): Promise<LocalMessage | null> {
+    validateScope(scope); validateUnit(unit);
+    if (!clientMessageId?.trim()) throw new Error('客户端消息 ID 无效');
+    const tx = this.db.transaction('messages', 'readonly');
+    const done = complete(tx);
+    try {
+      const row: LocalMessage | undefined = await request(tx.objectStore('messages').index('client').get(
+        [scope.accountId, scope.ownerId, unit, clientMessageId]));
+      await done;
+      return row && !row.isDeleted ? row : null;
     } catch (error) { await done.catch(() => {}); throw error; }
   }
 

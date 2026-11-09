@@ -11,7 +11,8 @@ import { mergeMessages } from '../commons/mergeMessages';
 import { MessageMutationSync } from '../realtime/messageMutationSync';
 import { appEvent, AppEvents } from '../ipc/appEvent';
 import { readAuthenticatedSessionVersion } from '../data/local/localAccount';
-import { readMessageScope, isMessageScopeCurrent, readCachedMessages, saveCachedMessages, readHistoryComplete, markHistoryComplete, openMutationStore, readCachedMessagesByIds, readPendingMessages } from '../data/local/messageCache';
+import { readMessageScope, isMessageScopeCurrent, readCachedMessages, saveCachedMessages, readHistoryComplete, markHistoryComplete, openMutationStore, readCachedMessagesByIds, readPendingMessages, readCachedMessageByClientId } from '../data/local/messageCache';
+import { notifyMessageChanged, onMessageChanged } from '../data/local/messageInvalidation';
 
 export type FetchMessageResult = {
   items: MessageDto[];
@@ -78,11 +79,41 @@ export const useMessageList = ({
       const scope = await readMessageScope(ownerId, true);
       if (scope && scope.sessionVersion === version) {
         await saveCachedMessages(scope, sessionUnitId, items);
+        for (const item of items) if (item.clientMessageId) notifyMessageChanged({
+          ownerId, sessionUnitId, sessionVersion: scope.sessionVersion, clientMessageId: item.clientMessageId,
+        });
         return scope;
       }
     } catch (error) { console.warn('[chat] 写入本地消息失败', error); }
     return null;
   };
+
+  let disposed = false;
+  let invalidationSequence = 0;
+  const invalidationVersion = new Map<string, number>();
+  const unsubscribeMessages = onMessageChanged(event => {
+    if (disposed || event.ownerId !== ownerId || event.sessionUnitId !== sessionUnitId ||
+        event.sessionVersion !== viewSessionVersion) return;
+    const key = event.clientMessageId;
+    const sequence = ++invalidationSequence;
+    invalidationVersion.set(key, sequence);
+    const epoch = authEpoch;
+    void (async () => {
+      try {
+        const scope = await readMessageScope(ownerId);
+        if (!scope || scope.sessionVersion !== event.sessionVersion) return;
+        const row = await readCachedMessageByClientId(scope, sessionUnitId, key);
+        await ensureCurrent(epoch, scope.sessionVersion);
+        if (disposed || invalidationVersion.get(key) !== sequence) return;
+        if (row && (row.id == null || list.value.some(item => item.clientMessageId === key))) {
+          list.value = mutationSync.applyKnown(mergeMessages(list.value, [row], 'append'));
+        }
+        else list.value = list.value.filter(item => item.clientMessageId !== key || item.id != null);
+      } catch { /* 认证变化或缓存不可用时，等待下一次刷新 */ }
+      finally { if (invalidationVersion.get(key) === sequence) invalidationVersion.delete(key); }
+    })();
+  });
+  onUnmounted(() => { disposed = true; unsubscribeMessages(); invalidationVersion.clear(); });
 
 
   const formatRawItems = (items: MessageOwnerDto[], isLast: boolean): MessageDto[] => {

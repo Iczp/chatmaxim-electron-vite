@@ -28,6 +28,7 @@ function createList(api) {
     '../ipc/appEvent': { AppEvents: { authChanged: 'auth' }, appEvent: { on: () => () => {} } },
     '../data/local/localAccount': { readAuthenticatedSessionVersion: async () => 1 },
     '../data/local/messageCache': { readMessageScope: async () => null },
+    '../data/local/messageInvalidation': { onMessageChanged: () => () => {}, notifyMessageChanged() {} },
     '../realtime/messageMutationSync': { MessageMutationSync: class { applyKnown(rows) { return rows; } sync() { return Promise.resolve(); } } },
   };
   const mod = compile('../src/composables/useMessageList.ts', deps);

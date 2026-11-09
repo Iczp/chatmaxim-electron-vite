@@ -11,6 +11,7 @@ app.whenReady().then(async () => {
     const mergeSource = fs.readFileSync(path.join(root, 'friend-merge.js'), 'utf8');
     const friendSource = fs.readFileSync(path.join(root, 'friend-cache.js'), 'utf8');
     const messageSource = fs.readFileSync(path.join(root, 'message-cache.js'), 'utf8');
+    const invalidationSource = fs.readFileSync(path.join(root, 'message-invalidation.js'), 'utf8');
     async function makeWindow() {
       const win = new BrowserWindow({ show: false, webPreferences: { nodeIntegration: false, contextIsolation: true, sandbox: true } });
       windows.push(win);
@@ -30,6 +31,7 @@ app.whenReady().then(async () => {
           name === '../../apis/enums' ? { MessageStateEnums: { Ok: 1, Sending: 2, Error: 4 } } : friendCache;
         ${messageSource}\n globalThis.messageCache = exports;
       })()`);
+      await win.webContents.executeJavaScript(`(() => { const exports = {}; ${invalidationSource}\n globalThis.invalidation = exports; })()`);
       return win;
     }
     const first = await makeWindow();
@@ -61,6 +63,14 @@ app.whenReady().then(async () => {
         db.close();
       })()`);
       const second = await makeWindow();
+      await second.webContents.executeJavaScript(`globalThis.invalidationEvents = []; invalidation.onMessageChanged(event => invalidationEvents.push(event)); true;`);
+      await first.webContents.executeJavaScript(`invalidation.notifyMessageChanged({ ownerId: 1, sessionUnitId: 'chat', sessionVersion: 1, clientMessageId: 'outbox' });`);
+      const events = await second.webContents.executeJavaScript(`(async () => {
+        const deadline = Date.now() + 3000;
+        while (!invalidationEvents.length && Date.now() < deadline) await new Promise(resolve => setTimeout(resolve, 20));
+        return invalidationEvents;
+      })()`);
+      if (JSON.stringify(events) !== JSON.stringify([{ ownerId: 1, sessionUnitId: 'chat', sessionVersion: 1, clientMessageId: 'outbox' }])) throw new Error(`window notification failed ${JSON.stringify(events)}`);
       await Promise.all([first, second].map((win, index) => win.webContents.executeJavaScript(`(async () => {
         const db = await ImDatabase.open();
         await db.upsertMessage({ accountId: 'account-a', ownerId: 1, sessionUnitId: 's', localId: 'race-' + ${index}, clientMessageId: 'race-client', score: 30, state: 'sending', raw: {} });
@@ -112,12 +122,13 @@ app.whenReady().then(async () => {
         const cached = await messageCache.readCachedMessages(scope, 'chat', 10);
         const pending = await messageCache.readPendingMessages(scope, 'chat');
         await messageCache.saveCachedMessages(scope, 'chat', [{ id: 13, clientMessageId: 'outbox', content: { text: 'unsent' } }]);
-        await messageCache.savePendingMessage(scope, 'chat', { clientMessageId: 'outbox', state: 4, error: 'late' });
+        let rejected = false;
+        try { await messageCache.savePendingMessage(scope, 'chat', { clientMessageId: 'outbox', state: 4, error: 'late' }); } catch { rejected = true; }
         await messageCache.deletePendingMessage(scope, 'chat', 'outbox');
         const confirmed = await messageCache.readCachedMessagesByIds(scope, 'chat', [13]);
-        return { count: messages.length, id: messages[1]?.serverId, cursor, cached: cached.length, complete: await messageCache.readHistoryComplete(scope, 'chat'), pending: pending.map(x => [x.clientMessageId, x.state]), confirmed: confirmed.length, remaining: (await messageCache.readPendingMessages(scope, 'chat')).length };
+        return { count: messages.length, id: messages[1]?.serverId, cursor, cached: cached.length, complete: await messageCache.readHistoryComplete(scope, 'chat'), pending: pending.map(x => [x.clientMessageId, x.state]), confirmed: confirmed.length, remaining: (await messageCache.readPendingMessages(scope, 'chat')).length, rejected };
       })()`);
-      if (JSON.stringify(result) !== JSON.stringify({ count: 2, id: 10, cursor: 'cursor-1', cached: 10, complete: true, pending: [['outbox', 4]], confirmed: 1, remaining: 0 })) throw new Error(`restart failed ${JSON.stringify(result)}`);
+      if (JSON.stringify(result) !== JSON.stringify({ count: 2, id: 10, cursor: 'cursor-1', cached: 10, complete: true, pending: [['outbox', 4]], confirmed: 1, remaining: 0, rejected: true })) throw new Error(`restart failed ${JSON.stringify(result)}`);
     }
     console.log(`DB_INTEGRATION_OK:${phase}`);
   } catch (error) {
