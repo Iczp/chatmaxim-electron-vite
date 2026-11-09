@@ -58,10 +58,11 @@ import ProfileModal from '../../components/ProfileModal.vue';
 import { provide } from 'vue';
 import { MessageContent } from '../../apis/dtos/message/messageContent';
 import { preserveHistoryAnchor } from './historyAnchor';
-import { readMessageScope, isMessageScopeCurrent, savePendingMessage, saveCachedMessages, deletePendingMessage } from '../../data/local/messageCache';
+import { readMessageScope, isMessageScopeCurrent, savePendingMessage, saveCachedMessages, deletePendingMessage, readCachedMessageByClientId, releaseAttachmentPreview } from '../../data/local/messageCache';
 import type { FriendCacheScope } from '../../data/local/friendCache';
 import { notifyMessageChanged } from '../../data/local/messageInvalidation';
 import { acquireMessageSendLock } from '../../data/local/messageSendLock';
+import { savePendingAttachment, readPendingAttachment, deletePendingAttachment, type LocalAttachment } from '../../data/local/attachmentStore';
 
 const props = defineProps<{
   sessionUnitId: string;
@@ -417,6 +418,7 @@ const sendMessageContent = async ({
   file,
   clientMessageId,
   retryQuote,
+  retryAttachment,
 }: {
   messageType: MessageTypeEnums;
   content: any;
@@ -424,6 +426,7 @@ const sendMessageContent = async ({
   file?: Blob | File | any;
   clientMessageId?: string;
   retryQuote?: MessageDto['quoteMessage'];
+  retryAttachment?: LocalAttachment;
 }) => {
   let scope: FriendCacheScope | null = null;
   let releaseSendLock: (() => void) | null = null;
@@ -445,19 +448,28 @@ const sendMessageContent = async ({
     content,
     async onBefore(input) {
       isSendBtnEnabled.value = false;
+      let createdAttachment = false;
+      let savedPending = false;
       try {
-        if (!file) {
-          scope = await readMessageScope(chatObjectId, true);
-          if (!scope || !input.clientMessageId) throw new Error('本地账号或消息标识尚未准备好');
-          releaseSendLock = await acquireMessageSendLock(scope.sessionVersion, scope.ownerId, sessionUnitId, input.clientMessageId);
-          try { await savePendingMessage(scope, sessionUnitId, input); }
-          catch (error) { notify(input.clientMessageId); throw error; }
-          notify(input.clientMessageId);
+        scope = await readMessageScope(chatObjectId, true);
+        if (!scope || !input.clientMessageId) throw new Error('本地账号或消息标识尚未准备好');
+        releaseSendLock = await acquireMessageSendLock(scope.sessionVersion, scope.ownerId, sessionUnitId, input.clientMessageId);
+        if (file) {
+          if (retryAttachment) await readPendingAttachment(scope, sessionUnitId, input.clientMessageId, retryAttachment);
+          input.localAttachment = retryAttachment ?? await savePendingAttachment(scope, sessionUnitId, input.clientMessageId, file);
+          createdAttachment = !retryAttachment;
         }
+        try { await savePendingMessage(scope, sessionUnitId, input); }
+        catch (error) { notify(input.clientMessageId); throw error; }
+        savedPending = true;
+        notify(input.clientMessageId);
         list.value = mergeMessages(list.value, [input], 'append');
         scrollToBottom();
         nextTick(() => scrollToBottom());
       } catch (error) {
+        if (createdAttachment && !savedPending && scope && input.clientMessageId) {
+          try { await deletePendingAttachment(scope, sessionUnitId, input.clientMessageId); } catch { /* 待清理的孤立附件 */ }
+        }
         releaseSendLock?.();
         releaseSendLock = null;
         throw error;
@@ -472,12 +484,21 @@ const sendMessageContent = async ({
         clientMessageId: input.clientMessageId,
         scrollerKey: input.scrollerKey,
         autoId: input.autoId,
+        file: undefined,
+        localAttachment: undefined,
         isSelf: true,
         state: MessageStateEnums.Ok,
       };
       if (scope) {
         if (!await isMessageScopeCurrent(scope)) return;
-        try { await saveCachedMessages(scope, sessionUnitId, [confirmed]); }
+        try {
+          await saveCachedMessages(scope, sessionUnitId, [confirmed]);
+          if (input.localAttachment && input.clientMessageId &&
+              (await readCachedMessageByClientId(scope, sessionUnitId, input.clientMessageId))?.id != null) {
+            await deletePendingAttachment(scope, sessionUnitId, input.clientMessageId);
+            releaseAttachmentPreview(scope, sessionUnitId, input.clientMessageId);
+          }
+        }
         catch { console.warn('[chat] 保存发送回执失败'); }
         if (!await isMessageScopeCurrent(scope)) return;
         notify(input.clientMessageId);
@@ -507,7 +528,7 @@ const sendMessageContent = async ({
       if (list.value.some(x => x.clientMessageId === input.clientMessageId && x.id != null)) return;
       list.value = mergeMessages(list.value, [failed], 'append');
       // scrollToBottom();
-      console.error('sendRet', err);
+      console.warn('[chat] 消息发送失败');
       message.error({
         key: 'vm-chat',
         content: err.message,
@@ -590,7 +611,6 @@ const onReachEnd = (event: CustomEvent) => {
 };
 
 const dropHandle = (ev: DragEvent, { files, text }: { files?: any[]; text?: string }) => {
-  console.log('dropHandle', ev, { files, text });
   if (!(Number(files?.length) > 0 || text)) {
     return;
   }
@@ -604,7 +624,6 @@ const viewSendDetail = ({ files, text }: { files?: any[]; text?: string }) =>
     files,
     text,
     onConfirm(files, text) {
-      console.log('onDropToSend', files, text);
       if (text) {
         sendMessageContent({
           isClearInput: false,
@@ -674,25 +693,33 @@ const sendFiles = (files: File[]) => {
 const { vDrop } = useDrop();
 
 const onResend = (entity: MessageDto) => {
-  console.log('onResend', entity);
+  if (entity.localAttachment && !entity.file) { message.error('本地附件不可用，请重新选择文件'); return; }
   sendMessageContent({
     content: entity.content,
     clientMessageId: entity.clientMessageId,
     retryQuote: entity.quoteMessage,
+    retryAttachment: entity.localAttachment,
     messageType: entity.messageType!,
     isClearInput: false,
     file: entity.file,
   });
 };
 const onRemove = async (entity: MessageDto) => {
-  console.log('onRemove', entity);
-  if (entity.clientMessageId && entity.id == null && !entity.file) {
+  if (entity.clientMessageId && entity.id == null) {
+    let release: (() => void) | undefined;
     try {
       const scope = await readMessageScope(chatObjectId);
       if (!scope) throw new Error('本地账号尚未准备好');
+      release = await acquireMessageSendLock(scope.sessionVersion, scope.ownerId, sessionUnitId, entity.clientMessageId);
       await deletePendingMessage(scope, sessionUnitId, entity.clientMessageId);
+      if (entity.localAttachment) {
+        try { await deletePendingAttachment(scope, sessionUnitId, entity.clientMessageId); }
+        catch { console.warn('[chat] 清理本地附件失败'); }
+      }
+      releaseAttachmentPreview(scope, sessionUnitId, entity.clientMessageId);
       notifyMessageChanged({ ownerId: scope.ownerId, sessionUnitId, sessionVersion: scope.sessionVersion, clientMessageId: entity.clientMessageId });
     } catch { message.error('删除本地消息失败'); return; }
+    finally { release?.(); }
   }
   removeItem(entity);
 };

@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { computed, ref, watch } from 'vue';
+import { computed, onUnmounted, ref, watch } from 'vue';
 import { formatImageRect, formatUrl, getImageRect } from '../commons/utils';
 import { useDownload } from '../composables/useDownload';
 import { useI18n } from 'vue-i18n';
@@ -27,6 +27,11 @@ const props = withDefaults(
 );
 
 const src = ref(EmptyImg);
+
+watch(() => props.path, path => {
+  if (path?.startsWith('blob:')) src.value = path;
+  else if (!props.url) src.value = EmptyImg;
+}, { immediate: true });
 
 const target = ref<HTMLDivElement>();
 
@@ -56,7 +61,12 @@ const onError = (event: Event) => {
 const { downloadFile, percent, blobUrl, isPending } = useDownload();
 
 const isLoaded = ref(false);
+let imageGeneration = 0;
+let retryTimer: ReturnType<typeof setTimeout> | undefined;
+let retryCount = 0;
+onUnmounted(() => { imageGeneration++; if (retryTimer) clearTimeout(retryTimer); });
 const loadImage = () => {
+  if (props.path?.startsWith('blob:')) return;
   if (!props.url) {
     return;
   }
@@ -66,27 +76,43 @@ const loadImage = () => {
   if (isLoaded.value) {
     return;
   }
-  console.log('loadImage', props.url);
+  const generation = imageGeneration;
   downloadFile(props.url)
     .then(res => {
+      if (generation !== imageGeneration) return;
       isLoaded.value = true;
+      isError.value = false;
+      errMessage.value = undefined;
       src.value = res.objectUrl;
       getImageRect(res.objectUrl).then(res => {
-        console.log('getImageRect', res);
-        rect.value = formatImageRect(res.width / res.height, maxWidth, maxHeight);
+        if (generation === imageGeneration) rect.value = formatImageRect(res.width / res.height, maxWidth, maxHeight);
       });
     })
-    .catch(err => {
-      console.error('downloadFile image:', props.url, JSON.stringify(err));
-      setTimeout(() => loadImage, props.delay);
+    .catch(() => {
+      if (generation === imageGeneration && retryCount < 3) {
+        retryCount++;
+        retryTimer = setTimeout(() => { if (generation === imageGeneration) loadImage(); }, props.delay);
+      }
     })
     .finally(() => {
-      if (!(props.path || blobUrl)) {
+      if (generation === imageGeneration && !(props.path || blobUrl.value)) {
         isError.value = true;
         errMessage.value = 'url is null';
       }
     });
 };
+
+watch(() => [props.path, props.url], ([path]) => {
+  imageGeneration++;
+  if (retryTimer) clearTimeout(retryTimer);
+  retryCount = 0;
+  isLoaded.value = false;
+  isError.value = false;
+  errMessage.value = undefined;
+  blobUrl.value = undefined;
+  src.value = path?.startsWith('blob:') ? path : EmptyImg;
+  if (!path?.startsWith('blob:') && props.url && (!props.lazy || targetIsVisible.value)) loadImage();
+});
 
 if (!props.lazy) {
   loadImage();

@@ -13,6 +13,7 @@ app.whenReady().then(async () => {
     const friendInvalidationSource = fs.readFileSync(path.join(root, 'friend-invalidation.js'), 'utf8');
     const ownerSource = fs.readFileSync(path.join(root, 'owner-cache.js'), 'utf8');
     const messageSource = fs.readFileSync(path.join(root, 'message-cache.js'), 'utf8');
+    const attachmentSource = fs.readFileSync(path.join(root, 'attachment-store.js'), 'utf8');
     const invalidationSource = fs.readFileSync(path.join(root, 'message-invalidation.js'), 'utf8');
     const sendLockSource = fs.readFileSync(path.join(root, 'message-send-lock.js'), 'utf8');
     async function makeWindow() {
@@ -30,6 +31,7 @@ app.whenReady().then(async () => {
         };
         globalThis.activeSession = 1; ${friendSource}\n globalThis.friendCache = exports;
       })()`);
+      await win.webContents.executeJavaScript(`(() => { const exports = {}; const require = () => friendCache; ${attachmentSource}\n globalThis.attachmentStore = exports; })()`);
       await win.webContents.executeJavaScript(`(() => {
         const exports = {}; const require = name => name === './imDatabase' ? { ImDatabase } : {
           isLocalAccountCurrent: async scope => globalThis.activeSession === scope.sessionVersion,
@@ -39,7 +41,7 @@ app.whenReady().then(async () => {
       })()`);
       await win.webContents.executeJavaScript(`(() => {
         const exports = {}; const require = name => name === './imDatabase' ? { ImDatabase } :
-          name === '../../apis/enums' ? { MessageStateEnums: { Ok: 1, Sending: 2, Error: 4 } } : friendCache;
+          name === '../../apis/enums' ? { MessageStateEnums: { Ok: 1, Sending: 2, Error: 4 } } : name === './attachmentStore' ? attachmentStore : friendCache;
         ${messageSource}\n globalThis.messageCache = exports;
       })()`);
       await win.webContents.executeJavaScript(`(() => { const exports = {}; ${invalidationSource}\n globalThis.invalidation = exports; })()`);
@@ -145,9 +147,25 @@ app.whenReady().then(async () => {
       })()`);
       await first.webContents.executeJavaScript(`(async () => {
         const scope = { accountId: 'account-d', ownerId: 1, sessionVersion: 1 };
+        const changingFile = { name: 'changing.bin', type: 'application/octet-stream', size: 1, lastModified: 1,
+          stream: () => new ReadableStream({ start(controller) { globalThis.activeSession = 2; controller.enqueue(new Uint8Array([1])); controller.close(); } }) };
+        let interrupted = false;
+        try { await attachmentStore.savePendingAttachment(scope, 'chat', 'changing', changingFile); } catch { interrupted = true; }
+        globalThis.activeSession = 1;
+        let removed = false;
+        try { await attachmentStore.readPendingAttachment(scope, 'chat', 'changing', { name: 'changing.bin', type: 'application/octet-stream', size: 1, lastModified: 1 }); } catch { removed = true; }
+        if (!interrupted || !removed) throw new Error('stale attachment was not removed');
         await messageCache.saveCachedMessages(scope, 'chat', Array.from({ length: 12 }, (_, n) => ({ id: n + 1, content: { text: 'm' + n } })));
         await messageCache.markHistoryComplete(scope, 'chat');
         await messageCache.savePendingMessage(scope, 'chat', { clientMessageId: 'outbox', state: 2, content: { text: 'unsent' } });
+        const file = new File(['attachment data'], 'photo.png', { type: 'image/png', lastModified: 1234 });
+        const meta = await attachmentStore.savePendingAttachment(scope, 'chat', 'file-outbox', file);
+        await messageCache.savePendingMessage(scope, 'chat', { clientMessageId: 'file-outbox', state: 2, file, localAttachment: meta, content: { path: 'blob:temporary', fileName: 'photo.png' } });
+        const confirmMeta = await attachmentStore.savePendingAttachment(scope, 'chat', 'file-confirmed', file);
+        await messageCache.savePendingMessage(scope, 'chat', { clientMessageId: 'file-confirmed', state: 2, file, localAttachment: confirmMeta, content: { path: 'blob:temporary' } });
+        const missingMeta = await attachmentStore.savePendingAttachment(scope, 'chat', 'file-missing', file);
+        await messageCache.savePendingMessage(scope, 'chat', { clientMessageId: 'file-missing', state: 2, file, localAttachment: missingMeta, content: {} });
+        await attachmentStore.deletePendingAttachment(scope, 'chat', 'file-missing');
       })()`);
       const messageResult = await second.webContents.executeJavaScript(`(async () => {
         const scope = { accountId: 'account-d', ownerId: 1, sessionVersion: 1 };
@@ -184,6 +202,27 @@ app.whenReady().then(async () => {
         const scope = { accountId: 'account-d', ownerId: 1, sessionVersion: 1 };
         const cached = await messageCache.readCachedMessages(scope, 'chat', 10);
         const pending = await messageCache.readPendingMessages(scope, 'chat');
+        const fileItem = pending.find(x => x.clientMessageId === 'file-outbox');
+        const confirmationItem = pending.find(x => x.clientMessageId === 'file-confirmed');
+        const missingItem = pending.find(x => x.clientMessageId === 'file-missing');
+        const attachmentText = await fileItem?.file?.text();
+        messageCache.clearAttachmentPreviews(1);
+        const sameSessionPreview = await (await fetch(fileItem.content.path)).text();
+        messageCache.clearAttachmentPreviews(2);
+        let revoked = false;
+        try { await fetch(fileItem.content.path); } catch { revoked = true; }
+        let isolated = false;
+        try { await attachmentStore.readPendingAttachment({ ...scope, accountId: 'other-account' }, 'chat', 'file-outbox', fileItem.localAttachment); } catch { isolated = true; }
+        const dbCheck = await ImDatabase.open();
+        const storedFile = await dbCheck.readMessageByClientId(scope, 'chat', 'file-outbox');
+        dbCheck.close();
+        await messageCache.deletePendingMessage(scope, 'chat', 'file-outbox');
+        await attachmentStore.deletePendingAttachment(scope, 'chat', 'file-outbox');
+        await messageCache.deletePendingMessage(scope, 'chat', 'file-missing');
+        await messageCache.saveCachedMessages(scope, 'chat', [{ id: 14, clientMessageId: 'file-confirmed', content: { url: '/remote' } }]);
+        let cleaned = false;
+        try { await attachmentStore.readPendingAttachment(scope, 'chat', 'file-confirmed', confirmationItem.localAttachment); } catch { cleaned = true; }
+        const confirmedFile = await messageCache.readCachedMessageByClientId(scope, 'chat', 'file-confirmed');
         const ownerScope = await ownerCache.readOwnerScope();
         const owners = await ownerCache.readCachedOwners(ownerScope);
         await messageCache.saveCachedMessages(scope, 'chat', [{ id: 13, clientMessageId: 'outbox', content: { text: 'unsent' } }]);
@@ -191,9 +230,9 @@ app.whenReady().then(async () => {
         try { await messageCache.savePendingMessage(scope, 'chat', { clientMessageId: 'outbox', state: 4, error: 'late' }); } catch { rejected = true; }
         await messageCache.deletePendingMessage(scope, 'chat', 'outbox');
         const confirmed = await messageCache.readCachedMessagesByIds(scope, 'chat', [13]);
-        return { count: messages.length, id: messages[1]?.serverId, cursor, friendTicks, cached: cached.length, complete: await messageCache.readHistoryComplete(scope, 'chat'), pending: pending.map(x => [x.clientMessageId, x.state]), confirmed: confirmed.length, remaining: (await messageCache.readPendingMessages(scope, 'chat')).length, rejected, owners: owners.owners.map(x => x.id), currentOwner: owners.currentOwnerId };
+        return { count: messages.length, id: messages[1]?.serverId, cursor, friendTicks, cached: cached.length, complete: await messageCache.readHistoryComplete(scope, 'chat'), pending: pending.filter(x => x.clientMessageId === 'outbox').map(x => [x.clientMessageId, x.state]), confirmed: confirmed.length, remaining: (await messageCache.readPendingMessages(scope, 'chat')).length, rejected, owners: owners.owners.map(x => x.id), currentOwner: owners.currentOwnerId, attachmentText, name: fileItem?.file?.name, preview: fileItem?.content?.path?.startsWith('blob:'), storedPath: storedFile?.raw?.content?.path ?? null, isolated, cleaned, confirmedFileId: confirmedFile?.id, confirmedFileMeta: confirmedFile?.localAttachment ?? null, missing: !missingItem?.file && missingItem?.state === 4 && !!missingItem?.error, sameSessionPreview, revoked };
       })()`);
-      if (JSON.stringify(result) !== JSON.stringify({ count: 2, id: 10, cursor: 'cursor-1', friendTicks: 110, cached: 10, complete: true, pending: [['outbox', 4]], confirmed: 1, remaining: 0, rejected: true, owners: [7, 8], currentOwner: 8 })) throw new Error(`restart failed ${JSON.stringify(result)}`);
+      if (JSON.stringify(result) !== JSON.stringify({ count: 2, id: 10, cursor: 'cursor-1', friendTicks: 110, cached: 10, complete: true, pending: [['outbox', 4]], confirmed: 1, remaining: 0, rejected: true, owners: [7, 8], currentOwner: 8, attachmentText: 'attachment data', name: 'photo.png', preview: true, storedPath: null, isolated: true, cleaned: true, confirmedFileId: 14, confirmedFileMeta: null, missing: true, sameSessionPreview: 'attachment data', revoked: true })) throw new Error(`restart failed ${JSON.stringify(result)}`);
     }
     console.log(`DB_INTEGRATION_OK:${phase}`);
   } catch (error) {

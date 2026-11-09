@@ -4,6 +4,7 @@ import { ImDatabase, type LocalPageCursor } from './imDatabase';
 import { isFriendScopeCurrent, readFriendScope, type FriendCacheScope } from './friendCache';
 import type { MessageChangeState } from '../../apis/v2';
 import type { LocalMessage } from './imDatabase';
+import { deletePendingAttachment, readPendingAttachment } from './attachmentStore';
 
 let database: Promise<ImDatabase> | null = null;
 function getDatabase(): Promise<ImDatabase> {
@@ -15,12 +16,45 @@ function getDatabase(): Promise<ImDatabase> {
   return database;
 }
 export { readFriendScope as readMessageScope, isFriendScopeCurrent as isMessageScopeCurrent };
+const previews = new Map<string, { url: string; file: File; sessionVersion: number }>();
+const previewKey = (scope: FriendCacheScope, unit: string, clientId: string) => JSON.stringify([scope.accountId, scope.ownerId, unit, clientId]);
+export function releaseAttachmentPreview(scope: FriendCacheScope, unit: string, clientId: string): void {
+  const key = previewKey(scope, unit, clientId);
+  const preview = previews.get(key);
+  if (preview) { URL.revokeObjectURL(preview.url); previews.delete(key); }
+}
+export function clearAttachmentPreviews(currentVersion?: number): void {
+  for (const [key, preview] of previews) {
+    if (currentVersion == null || preview.sessionVersion !== currentVersion) {
+      URL.revokeObjectURL(preview.url);
+      previews.delete(key);
+    }
+  }
+}
 
 function toMessage(row: LocalMessage): MessageDto {
   const raw = row.raw as MessageDto;
   return { ...raw, id: row.serverId, clientMessageId: row.clientMessageId,
     scrollerKey: row.localId, isRollbacked: row.syncVersion ? !!row.isRollbacked : !!raw.isRollbacked,
     rollbackTime: row.syncVersion && !row.isRollbacked ? null : raw.rollbackTime };
+}
+
+async function hydratePending(scope: FriendCacheScope, unit: string, row: LocalMessage): Promise<MessageDto> {
+  const item = toMessage(row);
+  if (!item.localAttachment || !item.clientMessageId) return item;
+  try {
+    const key = previewKey(scope, unit, item.clientMessageId);
+    let preview = previews.get(key);
+    if (!preview) {
+      const file = await readPendingAttachment(scope, unit, item.clientMessageId, item.localAttachment);
+      if (!await isFriendScopeCurrent(scope)) throw new Error('登录状态已变化');
+      preview = previews.get(key);
+      if (!preview) { preview = { file, url: URL.createObjectURL(file), sessionVersion: scope.sessionVersion }; previews.set(key, preview); }
+    }
+    return { ...item, file: preview.file, content: { ...(item.content as object), path: preview.url } };
+  } catch {
+    return { ...item, state: MessageStateEnums.Error, error: '本地附件不可用，请重新选择文件' };
+  }
 }
 
 export async function readCachedMessages(scope: FriendCacheScope, unit: string, limit: number, before?: LocalPageCursor): Promise<MessageDto[]> {
@@ -35,23 +69,30 @@ export async function readPendingMessages(scope: FriendCacheScope, unit: string)
   const db = await getDatabase();
   const rows = await db.readPendingMessages(scope, unit);
   if (!await isFriendScopeCurrent(scope)) throw new Error('登录状态已变化');
-  return rows.map(row => ({ ...toMessage(row), state: MessageStateEnums.Error,
-    error: (row.raw.error as string) || '发送状态未确认，请检查后重试' }));
+  const items = await Promise.all(rows.map(row => hydratePending(scope, unit, row)));
+  if (!await isFriendScopeCurrent(scope)) throw new Error('登录状态已变化');
+  return items.map(item => ({ ...item, state: MessageStateEnums.Error,
+    error: item.error || '发送状态未确认，请检查后重试' }));
 }
 
 export async function readCachedMessageByClientId(scope: FriendCacheScope, unit: string, clientMessageId: string): Promise<MessageDto | null> {
   const db = await getDatabase();
   const row = await db.readMessageByClientId(scope, unit, clientMessageId);
   if (!await isFriendScopeCurrent(scope)) throw new Error('登录状态已变化');
-  return row ? toMessage(row) : null;
+  if (!row) return null;
+  if (row.serverId != null) { releaseAttachmentPreview(scope, unit, clientMessageId); return toMessage(row); }
+  const item = await hydratePending(scope, unit, row);
+  if (!await isFriendScopeCurrent(scope)) throw new Error('登录状态已变化');
+  return item;
 }
 
 export async function savePendingMessage(scope: FriendCacheScope, unit: string, item: MessageDto): Promise<void> {
-  if (!item.clientMessageId || item.file) throw new Error('消息不能保存为本地待发送消息');
+  if (!item.clientMessageId || (item.file && !item.localAttachment)) throw new Error('消息不能保存为本地待发送消息');
   if (!await isFriendScopeCurrent(scope)) throw new Error('登录状态已变化');
   const db = await getDatabase();
   const raw = JSON.parse(JSON.stringify(item)) as Record<string, unknown>;
   delete raw.file;
+  if (raw.content && typeof raw.content === 'object' && String((raw.content as any).path || '').startsWith('blob:')) delete (raw.content as any).path;
   const saved = await db.upsertMessage({ accountId: scope.accountId, ownerId: scope.ownerId, sessionUnitId: unit,
     localId: `client-${item.clientMessageId}`, clientMessageId: item.clientMessageId,
     score: Number.MAX_SAFE_INTEGER, state: item.state === MessageStateEnums.Sending ? 'sending' : 'failed', raw });
@@ -81,13 +122,20 @@ export async function saveCachedMessages(scope: FriendCacheScope, unit: string, 
     const serverId = Number(item.id);
     if (!Number.isSafeInteger(serverId) || serverId <= 0) continue;
     if (!await isFriendScopeCurrent(scope)) return;
+    const previous = item.clientMessageId ? await db.readMessageByClientId(scope, unit, item.clientMessageId) : null;
     const raw = JSON.parse(JSON.stringify(item)) as Record<string, unknown>;
     delete raw.file;
+    delete raw.localAttachment;
+    if (raw.content && typeof raw.content === 'object' && String((raw.content as any).path || '').startsWith('blob:')) delete (raw.content as any).path;
     await db.upsertMessage({
       accountId: scope.accountId, ownerId: scope.ownerId, sessionUnitId: unit,
       localId: `server-${serverId}`, serverId, clientMessageId: item.clientMessageId,
       score: serverId, state: 'sent', raw: { ...raw, state: MessageStateEnums.Ok },
     });
+    if (previous?.raw.localAttachment && item.clientMessageId && await isFriendScopeCurrent(scope)) {
+      try { await deletePendingAttachment(scope, unit, item.clientMessageId); }
+      catch { console.warn('[chat] 清理已确认附件失败'); }
+    }
   }
 }
 

@@ -18,6 +18,8 @@ const ownerSource = fs.readFileSync(path.resolve(__dirname, '../../src/data/loca
 fs.writeFileSync(path.join(root, 'owner-cache.js'), ts.transpileModule(ownerSource, { compilerOptions: { module: ts.ModuleKind.CommonJS, target: ts.ScriptTarget.ES2020 } }).outputText);
 const messageSource = fs.readFileSync(path.resolve(__dirname, '../../src/data/local/messageCache.ts'), 'utf8');
 fs.writeFileSync(path.join(root, 'message-cache.js'), ts.transpileModule(messageSource, { compilerOptions: { module: ts.ModuleKind.CommonJS, target: ts.ScriptTarget.ES2020 } }).outputText);
+const attachmentSource = fs.readFileSync(path.resolve(__dirname, '../../src/data/local/attachmentStore.ts'), 'utf8');
+fs.writeFileSync(path.join(root, 'attachment-store.js'), ts.transpileModule(attachmentSource, { compilerOptions: { module: ts.ModuleKind.CommonJS, target: ts.ScriptTarget.ES2020 } }).outputText);
 const invalidationSource = fs.readFileSync(path.resolve(__dirname, '../../src/data/local/messageInvalidation.ts'), 'utf8');
 fs.writeFileSync(path.join(root, 'message-invalidation.js'), ts.transpileModule(invalidationSource, { compilerOptions: { module: ts.ModuleKind.CommonJS, target: ts.ScriptTarget.ES2020 } }).outputText);
 const sendLockSource = fs.readFileSync(path.resolve(__dirname, '../../src/data/local/messageSendLock.ts'), 'utf8');

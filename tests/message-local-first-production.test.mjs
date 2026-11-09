@@ -11,7 +11,7 @@ function compile(path, deps) {
   return exports;
 }
 const merge = compile('../src/commons/mergeMessages.ts', {});
-function setup({ local = [], pending = [], older = [], history, latest, complete = false, readClient = async () => null, prependHistory } = {}) {
+function setup({ local = [], pending = [], older = [], history, latest, complete = false, readClient = async () => null, prependHistory, readVersion } = {}) {
   let version = 1;
   let authHandler;
   let changeHandler;
@@ -28,10 +28,11 @@ function setup({ local = [], pending = [], older = [], history, latest, complete
     '../commons/mergeMessages': merge,
     '../realtime/messageMutationSync': { MessageMutationSync: class { applyKnown(rows) { return rows; } sync() { return Promise.resolve(); } } },
     '../ipc/appEvent': { AppEvents: { authChanged: 'auth' }, appEvent: { on: (_name, callback) => { authHandler = callback; return () => {}; } } },
-    '../data/local/localAccount': { readAuthenticatedSessionVersion: async () => version },
+    '../data/local/localAccount': { readAuthenticatedSessionVersion: () => readVersion ? readVersion(version) : Promise.resolve(version) },
     '../data/local/messageInvalidation': { onMessageChanged: handler => { changeHandler = handler; return () => {}; }, notifyMessageChanged() {} },
     '../data/local/messageCache': {
       readMessageScope: async () => scope(), isMessageScopeCurrent: async value => value.sessionVersion === version,
+      clearAttachmentPreviews() {},
       readCachedMessages: async (_scope, _unit, limit, before) => { reads.push({ limit, before }); return before ? older : local; },
       readPendingMessages: async () => pending,
       readCachedMessageByClientId: readClient,
@@ -48,6 +49,18 @@ function setup({ local = [], pending = [], older = [], history, latest, complete
     switchAccount: () => { version++; authHandler({ args: [{ access_token: 'new' }, version] }); } };
 }
 const flush = () => new Promise(resolve => setImmediate(resolve));
+
+test('认证版本尚在读取时发生切换，旧任务不得恢复消息或覆盖新版本', async () => {
+  let finish;
+  let first = true;
+  const h = setup({ local: [{ id: 1 }], readVersion: version => first
+    ? (first = false, new Promise(resolve => { finish = resolve; })) : Promise.resolve(version) });
+  const task = h.list.fetchLatest();
+  h.switchAccount();
+  finish(1);
+  await assert.rejects(task, /登录状态已变化/);
+  assert.equal(h.list.list.value.length, 0);
+});
 
 test('本地和网络历史分别插入，分别捕获滚动锚点', async () => {
   let finish;

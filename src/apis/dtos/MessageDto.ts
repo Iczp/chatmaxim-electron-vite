@@ -1,6 +1,7 @@
 import { MessageStateEnums } from '../enums';
 import { ChatObjectDto } from './ChatObjectDto';
 import { MessageOwnerDto } from './MessageOwnerDto';
+import type { LocalAttachment } from '../../data/local/attachmentStore';
 
 export type MessageDto = MessageOwnerDto & {
   /**
@@ -65,4 +66,5 @@ export type MessageDto = MessageOwnerDto & {
 
   //
   file?: Blob | any;
+  localAttachment?: LocalAttachment;
 };

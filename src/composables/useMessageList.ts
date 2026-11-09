@@ -11,7 +11,7 @@ import { mergeMessages } from '../commons/mergeMessages';
 import { MessageMutationSync } from '../realtime/messageMutationSync';
 import { appEvent, AppEvents } from '../ipc/appEvent';
 import { readAuthenticatedSessionVersion } from '../data/local/localAccount';
-import { readMessageScope, isMessageScopeCurrent, readCachedMessages, saveCachedMessages, readHistoryComplete, markHistoryComplete, openMutationStore, readCachedMessagesByIds, readPendingMessages, readCachedMessageByClientId } from '../data/local/messageCache';
+import { readMessageScope, isMessageScopeCurrent, readCachedMessages, saveCachedMessages, readHistoryComplete, markHistoryComplete, openMutationStore, readCachedMessagesByIds, readPendingMessages, readCachedMessageByClientId, clearAttachmentPreviews } from '../data/local/messageCache';
 import { notifyMessageChanged, onMessageChanged } from '../data/local/messageInvalidation';
 
 export type FetchMessageResult = {
@@ -56,8 +56,9 @@ export const useMessageList = ({
   let mutationSync = createMutationSync();
   const unsubscribeAuth = appEvent.on(AppEvents.authChanged, payload => {
     const version = payload.args?.[1];
-    if (payload.args?.[0] == null || (viewSessionVersion != null && version !== viewSessionVersion)) {
+    if (payload.args?.[0] == null || viewSessionVersion == null || version !== viewSessionVersion) {
       authEpoch++;
+      clearAttachmentPreviews(payload.args?.[0] != null && Number.isSafeInteger(version) ? version : undefined);
       viewSessionVersion = null;
       list.value = [];
       maxMessageId.value = undefined;
@@ -151,6 +152,7 @@ export const useMessageList = ({
       const collected: MessageDto[] = [];
       let cached: MessageDto[] = [];
       const version = await readAuthenticatedSessionVersion();
+      await ensureCurrent(epoch, version);
       viewSessionVersion = version;
       try {
         if (!localInitialized) {
@@ -238,6 +240,7 @@ export const useMessageList = ({
     const pageSize = 30;
     try {
       const version = await readAuthenticatedSessionVersion();
+      await ensureCurrent(epoch, version);
       viewSessionVersion = version;
       let scope = null;
       try {

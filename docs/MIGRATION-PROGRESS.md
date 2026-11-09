@@ -119,3 +119,9 @@
 状态：生产模块自动测试、类型检查和 Windows Electron 虚拟列表集成测试通过；真实聊天、多媒体和其他平台待验收。本地历史和网络历史分别插入前捕获当前可见消息及视口偏移，虚拟列表渲染及延迟尺寸测量后校正；用户在恢复期间操作或页面退出时取消旧锚点恢复。实时新消息仅在用户原本接近底部且未改变滚动意图时跟随到底部。
 
 `tests/history-anchor-production.test.mjs` 和 `tests/message-local-first-production.test.mjs` 覆盖用户中断和分阶段插入；`node tests/integration/scroll-anchor-runner.cjs` 在真实 Electron 中使用真实 Vue 虚拟列表验证本地页、用户滚动后网络页及一次高度变化。当前 node_modules 的虚拟列表为 2.0.1，而 npm 锁文件为 2.0.0-beta.8；另从 npm 获取与锁文件完整性匹配的 beta.8，在临时目录通过 `GOTOIM_SCROLLER_PACKAGE` 指向该包重复测试，两个版本通过。测试是隔离界面，不代表真实消息组件、异步图片/视频加载、长时间滚动性能或 macOS/Linux 已通过生产验收。
+
+## 2026-11-09：M4 待发送附件磁盘持久化
+
+状态：生产存储与发送逻辑自动测试、类型检查、Windows Electron 重启和本地 HTTP 上传测试通过；真实后端及完整附件界面待验收。发送前通过文件流写入 Chromium Origin Private File System（OPFS），消息数据库只保存文件名、类型、大小和时间等元数据，不保存文件二进制或临时 blob URL。文件键由账号、聊天身份、会话和客户端消息 ID 哈希生成；附件发送、重试和删除使用跨窗口发送锁。重启后重建 File 和图片本地预览；文件缺失时保留失败消息并阻止错误地作为普通消息重发。服务端确认消息写库后清理待发送文件，账号变化时释放旧会话预览。
+
+`tests/attachment-store-production.test.mjs` 覆盖不支持及认证变化；`tests/integration/im-database-runner.cjs` 在真实 Electron 中验证重启恢复、作用域隔离、写入期间账号切换、丢失文件和确认清理；`tests/integration/attachment-upload-runner.cjs` 跨进程重启后通过实际上传封装向本地测试 HTTP 服务发送恢复文件；`tests/integration/attachment-preview-runner.cjs` 运行真实图片组件，验证本地预览、网络预览切换和迟到结果。HTTP 服务及认证边界使用测试替身，不代表真实服务端已验证。OPFS 由 Chromium 保存在应用 profile 中，开发服务器与打包页面是不同来源；数据库和文件系统没有跨存储原子事务，崩溃、磁盘错误或登出时可能留下孤立文件，尚缺清理机制。大文件配额、真实上传、音视频预览、重新选择文件交互、打包升级及其他平台仍需验证；文件恢复目前校验大小而非内容哈希。
